@@ -44,7 +44,7 @@ std::vector<GLuint> INDICES {
 };
 
 template<typename T>
-unsigned int vector_byte_size(std::vector<T> array) {
+unsigned int byte_size_of_vector(std::vector<T> array) {
   return sizeof(T) * array.size();
 }
 
@@ -104,12 +104,12 @@ int main() {
   GLuint vbo; // vertex buffer object
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, VERTICES.size() * sizeof(float), VERTICES.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, byte_size_of_vector(VERTICES), VERTICES.data(), GL_STATIC_DRAW);
 
   GLuint ebo; // element buffer object
   glGenBuffers(1, &ebo);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, INDICES.size() * sizeof(int), INDICES.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, byte_size_of_vector(INDICES), INDICES.data(), GL_STATIC_DRAW);
 
   glVertexAttribPointer(POSITION_LOCATION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0); glEnableVertexAttribArray(POSITION_LOCATION);
 

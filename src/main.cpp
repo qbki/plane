@@ -1,11 +1,19 @@
+#include <atomic>
+#include <glm/common.hpp>
+#include <iterator>
 #define GLM_ENABLE_EXPERIMENTAL
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#define TINYGLTF_IMPLEMENTATION
 #include <iostream>
 #include <vector>
+#include <memory>
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <SDL2/SDL.h>
 #include <glm/vec2.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <tiny_gltf.h>
 
 #include "shader.h"
 
@@ -31,21 +39,46 @@ std::string FRAGMENT_SHADER = R"""(
   }
 )""";
 
-std::vector<float> VERTICES {
-   0.5f,  0.5f, 0.0f,
-   0.5f, -0.5f, 0.0f,
-  -0.5f, -0.5f, 0.0f,
-  -0.5f,  0.5f, 0.0f
-};
-
-std::vector<GLuint> INDICES {
-  0, 1, 3,
-  1, 2, 3
-};
+#define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 template<typename T>
 unsigned int byte_size_of_vector(std::vector<T> array) {
   return sizeof(T) * array.size();
+}
+
+int buffer_size() {
+  GLint size = 0;
+  glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
+  return size;
+}
+
+template<typename T>
+void print(T& value) {
+  std::cout << value << std::endl;
+}
+
+tinygltf::Model loadModel(const std::string& filename) {
+  tinygltf::Model model;
+  tinygltf::TinyGLTF loader;
+  std::string err;
+  std::string warn;
+
+  bool res = loader.LoadBinaryFromFile(&model, &err, &warn, filename);
+  if (!warn.empty()) {
+    std::cout << "WARN: " << warn << std::endl;
+  }
+
+  if (!err.empty()) {
+    std::cout << "ERR: " << err << std::endl;
+  }
+
+  if (!res) {
+    throw new std::runtime_error("Failed to load glTF: " + filename);
+  } else {
+    std::cout << "Loaded glTF: " << filename << std::endl;
+  }
+
+  return model;
 }
 
 int main() {
@@ -67,14 +100,16 @@ int main() {
     800, 600,
     SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   if (window == nullptr) {
-    auto err_text = std::string("Unable to create window: ") + SDL_GetError();
+    auto err_sdl = std::unique_ptr<const char>(SDL_GetError());
+    auto err_text = std::string("Unable to create window: ") + *err_sdl;
     throw new std::runtime_error(err_text);
   }
   std::cout << "Window has been created." << std::endl;
 
   auto ctx = SDL_GL_CreateContext(window);
   if (ctx == nullptr) {
-    auto err_text = std::string("Unable to create GL Context: ") + SDL_GetError();
+    auto err_sdl = std::unique_ptr<const char>(SDL_GetError());
+    auto err_text = std::string("Unable to create GL Context: ") + *err_sdl;
     throw new std::runtime_error(err_text);
   }
   std::cout << "Context has been created." << std::endl;
@@ -82,7 +117,8 @@ int main() {
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
   if (GLEW_OK != err) {
-    auto err_text = std::string("Unable to initialize GLEW: ") + reinterpret_cast<const char*>(glewGetErrorString(err));
+    auto err_glew = std::unique_ptr<const char>(reinterpret_cast<const char*>(glewGetErrorString(err)));
+    auto err_text = std::string() + *err_glew;
     throw new std::runtime_error(err_text);
   }
   std::cout << "GLEW has been inited." << std::endl;
@@ -101,17 +137,47 @@ int main() {
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  GLuint vbo; // vertex buffer object
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, byte_size_of_vector(VERTICES), VERTICES.data(), GL_STATIC_DRAW);
+  auto model = loadModel("./models/plane.glb");
+  auto primitive = model.meshes[0].primitives[0];
 
-  GLuint ebo; // element buffer object
-  glGenBuffers(1, &ebo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, byte_size_of_vector(INDICES), INDICES.data(), GL_STATIC_DRAW);
+  {
+    auto value = primitive.attributes.at("POSITION");
+    auto accessor = model.accessors.at(value);
+    auto bufferView = model.bufferViews.at(accessor.bufferView);
+    auto buffer = model.buffers.at(bufferView.buffer);
 
-  glVertexAttribPointer(POSITION_LOCATION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0); glEnableVertexAttribArray(POSITION_LOCATION);
+    GLuint vbo; // vertex buffer object
+    glGenBuffers(1, &vbo);
+    glBindBuffer(bufferView.target, vbo);
+    glBufferData(
+      bufferView.target,
+      bufferView.byteLength,
+      buffer.data.data(),
+      GL_STATIC_DRAW
+    );
+  }
+
+  {
+    auto accessor = model.accessors.at(primitive.indices);
+    auto bufferView = model.bufferViews.at(accessor.bufferView);
+    auto buffer = model.buffers.at(bufferView.buffer);
+
+    GLuint ebo; // element buffer object
+    glGenBuffers(1, &ebo);
+    glBindBuffer(bufferView.target, ebo);
+    glBufferData(
+      bufferView.target,
+      bufferView.byteLength,
+      &buffer.data.at(0) + bufferView.byteOffset,
+      GL_STATIC_DRAW
+    );
+  }
+
+  auto accessor = model.accessors[primitive.indices];
+  auto stride = accessor.ByteStride(model.bufferViews.at(accessor.bufferView));
+
+  glVertexAttribPointer(POSITION_LOCATION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
+  glEnableVertexAttribArray(POSITION_LOCATION);
 
   SDL_Event event;
   while (is_running) {
@@ -126,7 +192,12 @@ int main() {
 
     shader.use();
     glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, INDICES.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(
+      primitive.mode,
+      accessor.count,
+      accessor.componentType,
+      0
+    );
     glBindVertexArray(0);
     SDL_GL_SwapWindow(window);
   }

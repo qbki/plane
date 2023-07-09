@@ -1,0 +1,8 @@
+[requires]
+glew/2.2.0
+glm/cci.20230113
+sdl/2.26.5
+
+[generators]
+CMakeDeps
+CMakeToolchain

@@ -3,6 +3,7 @@ project(plane)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(MODELS_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/models/)
+set(SHADERS_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/shaders/)
 
 find_package(GLM REQUIRED)
 find_package(SDL2 REQUIRED)
@@ -21,11 +22,23 @@ add_custom_command(
   TARGET ${PROJECT_NAME} POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E make_directory ${MODELS_DIRECTORY})
 
+add_custom_command(
+  TARGET ${PROJECT_NAME} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${SHADERS_DIRECTORY})
+
 file(GLOB GLB_FILES ./models/*.glb)
 foreach(file IN LISTS GLB_FILES)
   add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${file} ${MODELS_DIRECTORY}
+    COMMENT "Copying: ${file}")
+endforeach()
+
+file(GLOB GLSL_FILES ./shaders/*.glsl)
+foreach(file IN LISTS GLSL_FILES)
+  add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${file} ${SHADERS_DIRECTORY}
     COMMENT "Copying: ${file}")
 endforeach()
 

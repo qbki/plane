@@ -11,26 +11,10 @@
 #include "./shader.h"
 #include "./mesh.h"
 #include "./utils.h"
+#include "./model.h"
+
 
 GLuint POSITION_LOCATION = 0;
-
-std::string VERTEX_SHADER = R"""(
-  #version 330 core
-  layout (location = 0) in vec3 aPos;
-
-  void main() {
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-  }
-)""";
-
-std::string FRAGMENT_SHADER = R"""(
-  #version 330 core
-  out vec4 FragColor;
-
-  void main() {
-    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-  }
-)""";
 
 int main() {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -77,17 +61,17 @@ int main() {
   glEnable(GL_DEPTH_TEST);
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-  SDL_SetRelativeMouseMode(SDL_TRUE);
+  // SDL_SetRelativeMouseMode(SDL_TRUE);
+
+  auto model(Model::load(
+    "./models/plane.glb",
+    "./shaders/main_v.glsl",
+    "./shaders/main_f.glsl"
+  ));
 
   bool is_running = true;
-
-  Shader shader;
-  shader.load(VERTEX_SHADER, FRAGMENT_SHADER);
-
-  auto model = loadModel("./models/plane.glb");
-  Mesh mesh(model);
-
   SDL_Event event;
+
   while (is_running) {
     while (SDL_PollEvent(&event)) {
       switch (event.type) {
@@ -98,8 +82,7 @@ int main() {
       }
     }
 
-    shader.use();
-    mesh.draw();
+    model->draw();
     SDL_GL_SwapWindow(window);
   }
 

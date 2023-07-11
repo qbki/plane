@@ -1,6 +1,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <iostream>
+#include <fstream>
+#include <stdexcept>
 
 #include "./utils.h"
 
@@ -18,7 +20,7 @@ void print(T& value) {
 }
 
 
-tinygltf::Model loadModel(const std::string& filename) {
+tinygltf::Model load_mesh(const std::string& filename) {
   tinygltf::Model model;
   tinygltf::TinyGLTF loader;
   std::string err;
@@ -40,4 +42,19 @@ tinygltf::Model loadModel(const std::string& filename) {
   }
 
   return model;
+}
+
+
+std::string load_text(const std::string &file_name) {
+  std::ifstream ifs(file_name);
+
+  if (ifs.fail()) {
+    throw new std::runtime_error("Cannot read a file: " + file_name);
+  }
+
+  std::string content(
+    (std::istreambuf_iterator<char>(ifs)),
+    (std::istreambuf_iterator<char>())
+  );
+  return content;
 }

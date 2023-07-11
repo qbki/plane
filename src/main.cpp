@@ -1,10 +1,4 @@
-#include <atomic>
-#include <glm/common.hpp>
-#include <iterator>
 #define GLM_ENABLE_EXPERIMENTAL
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#define TINYGLTF_IMPLEMENTATION
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -13,9 +7,10 @@
 #include <SDL2/SDL.h>
 #include <glm/vec2.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include <tiny_gltf.h>
 
-#include "shader.h"
+#include "./shader.h"
+#include "./mesh.h"
+#include "./utils.h"
 
 GLuint POSITION_LOCATION = 0;
 
@@ -23,8 +18,7 @@ std::string VERTEX_SHADER = R"""(
   #version 330 core
   layout (location = 0) in vec3 aPos;
 
-  void main()
-  {
+  void main() {
     gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
   }
 )""";
@@ -33,53 +27,10 @@ std::string FRAGMENT_SHADER = R"""(
   #version 330 core
   out vec4 FragColor;
 
-  void main()
-  {
+  void main() {
     FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
   }
 )""";
-
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
-
-template<typename T>
-unsigned int byte_size_of_vector(std::vector<T> array) {
-  return sizeof(T) * array.size();
-}
-
-int buffer_size() {
-  GLint size = 0;
-  glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-  return size;
-}
-
-template<typename T>
-void print(T& value) {
-  std::cout << value << std::endl;
-}
-
-tinygltf::Model loadModel(const std::string& filename) {
-  tinygltf::Model model;
-  tinygltf::TinyGLTF loader;
-  std::string err;
-  std::string warn;
-
-  bool res = loader.LoadBinaryFromFile(&model, &err, &warn, filename);
-  if (!warn.empty()) {
-    std::cout << "WARN: " << warn << std::endl;
-  }
-
-  if (!err.empty()) {
-    std::cout << "ERR: " << err << std::endl;
-  }
-
-  if (!res) {
-    throw new std::runtime_error("Failed to load glTF: " + filename);
-  } else {
-    std::cout << "Loaded glTF: " << filename << std::endl;
-  }
-
-  return model;
-}
 
 int main() {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -133,51 +84,8 @@ int main() {
   Shader shader;
   shader.load(VERTEX_SHADER, FRAGMENT_SHADER);
 
-  GLuint vao; // vertex array object
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-
   auto model = loadModel("./models/plane.glb");
-  auto primitive = model.meshes[0].primitives[0];
-
-  {
-    auto value = primitive.attributes.at("POSITION");
-    auto accessor = model.accessors.at(value);
-    auto bufferView = model.bufferViews.at(accessor.bufferView);
-    auto buffer = model.buffers.at(bufferView.buffer);
-
-    GLuint vbo; // vertex buffer object
-    glGenBuffers(1, &vbo);
-    glBindBuffer(bufferView.target, vbo);
-    glBufferData(
-      bufferView.target,
-      bufferView.byteLength,
-      buffer.data.data(),
-      GL_STATIC_DRAW
-    );
-  }
-
-  {
-    auto accessor = model.accessors.at(primitive.indices);
-    auto bufferView = model.bufferViews.at(accessor.bufferView);
-    auto buffer = model.buffers.at(bufferView.buffer);
-
-    GLuint ebo; // element buffer object
-    glGenBuffers(1, &ebo);
-    glBindBuffer(bufferView.target, ebo);
-    glBufferData(
-      bufferView.target,
-      bufferView.byteLength,
-      &buffer.data.at(0) + bufferView.byteOffset,
-      GL_STATIC_DRAW
-    );
-  }
-
-  auto accessor = model.accessors[primitive.indices];
-  auto stride = accessor.ByteStride(model.bufferViews.at(accessor.bufferView));
-
-  glVertexAttribPointer(POSITION_LOCATION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
-  glEnableVertexAttribArray(POSITION_LOCATION);
+  Mesh mesh(model);
 
   SDL_Event event;
   while (is_running) {
@@ -191,14 +99,7 @@ int main() {
     }
 
     shader.use();
-    glBindVertexArray(vao);
-    glDrawElements(
-      primitive.mode,
-      accessor.count,
-      accessor.componentType,
-      0
-    );
-    glBindVertexArray(0);
+    mesh.draw();
     SDL_GL_SwapWindow(window);
   }
 

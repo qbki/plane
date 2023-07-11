@@ -4,7 +4,7 @@
 
 class Shader {
 private:
-  GLuint program;
+  GLuint program = 0;
 
 public:
   Shader();

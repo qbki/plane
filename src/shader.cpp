@@ -5,13 +5,14 @@
 
 #include "./shader.h"
 
-Shader::Shader() : program(0) {}
+
+Shader::Shader() {}
+
 
 Shader::~Shader() {
-  // A value of 0 for program will be silently ignored.
-  // https://registry.khronos.org/OpenGL-Refpages/gl4/html/glDeleteProgram.xhtml
   glDeleteProgram(program);
 }
+
 
 void throw_on_shader_error(GLuint shader, GLenum status) {
   GLint result;
@@ -27,6 +28,7 @@ void throw_on_shader_error(GLuint shader, GLenum status) {
   }
 }
 
+
 void throw_on_program_error(GLuint program, GLenum status) {
   GLint result;
   glGetProgramiv(program, status, &result);
@@ -41,12 +43,14 @@ void throw_on_program_error(GLuint program, GLenum status) {
   }
 }
 
+
 void Shader::createProgram() {
   program = glCreateProgram();
   if (program == 0) {
     throw std::runtime_error("Can't create a program.");
   }
 }
+
 
 GLuint Shader::compile(std::string& text, GLuint shader_type) {
   auto shader = glCreateShader(shader_type);
@@ -65,14 +69,17 @@ GLuint Shader::compile(std::string& text, GLuint shader_type) {
   return shader;
 }
 
+
 void Shader::link() {
   glLinkProgram(program);
   throw_on_program_error(program, GL_LINK_STATUS);
 }
 
+
 void Shader::use() {
   glUseProgram(program);
 }
+
 
 void Shader::load(std::string& vertext, std::string& fragment) {
   createProgram();

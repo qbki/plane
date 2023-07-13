@@ -11,7 +11,7 @@ Model::Model(
   std::shared_ptr<Mesh> _mesh,
   std::shared_ptr<Shader> _shader
 ) : mesh(_mesh),
-    shader(_shader) {}
+  shader(_shader) {}
 
 
 void Model::draw(const Camera& camera) {

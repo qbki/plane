@@ -11,12 +11,12 @@ Model::Model(
   std::shared_ptr<Mesh> _mesh,
   std::shared_ptr<Shader> _shader
 ) : mesh(_mesh),
-  shader(_shader) {}
+    shader(_shader) {}
 
 
 void Model::draw(const Camera& camera) {
   shader->use();
-  shader->setUniform("PV", camera.pv());
+  shader->setUniform("PVM", camera.pv() * this->transform);
   shader->setUniform("camera_pos", camera.get_position());
   mesh->draw();
 }

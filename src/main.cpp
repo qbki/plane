@@ -5,14 +5,7 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <SDL2/SDL.h>
-#include <glm/vec2.hpp>
-#include <glm/matrix.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/string_cast.hpp>
 
-#include "./shader.h"
-#include "./mesh.h"
-#include "./utils.h"
 #include "./model.h"
 #include "./camera.h"
 

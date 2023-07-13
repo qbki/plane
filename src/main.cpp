@@ -1,3 +1,4 @@
+#include "sun_light.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <iostream>
 #include <vector>
@@ -66,7 +67,12 @@ int main() {
 
   std::unique_ptr<Camera> camera(new Camera(
     glm::vec3(0.0, 0.0, 2.0),
-    static_cast<float>(SCREEN_WIDTH) / SCREEN_WIDTH
+    static_cast<float>(SCREEN_WIDTH) / SCREEN_HEIGHT
+  ));
+
+  std::unique_ptr<SunLight> light(new SunLight(
+    glm::vec3(1.0, 1.0, 1.0),
+    glm::vec3(0.2, 0.2, 1.0)
   ));
 
   auto model(Model::load(
@@ -74,6 +80,8 @@ int main() {
     "./shaders/main_v.glsl",
     "./shaders/main_f.glsl"
   ));
+
+  model->set_position({0.0, 0.0, 0.0});
 
   bool is_running = true;
   SDL_Event event;
@@ -88,7 +96,7 @@ int main() {
       }
     }
 
-    model->draw(*camera);
+    model->draw(*camera, *light);
     SDL_GL_SwapWindow(window);
   }
 

@@ -6,6 +6,7 @@
 #include "mesh.h"
 #include "shader.h"
 #include "camera.h"
+#include "sun_light.h"
 
 class Model : public Graphic {
 private:
@@ -17,7 +18,7 @@ public:
 
   Model(std::shared_ptr<Mesh> mesh, std::shared_ptr<Shader> shader);
 
-  void draw(const Camera& camera);
+  void draw(const Camera& camera, const SunLight& light);
 
   static std::unique_ptr<Model> load(
     const std::string& mesh_file_name,

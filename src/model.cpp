@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <filesystem>
+#include <glm/matrix.hpp>
 #include <memory>
 
 #include "./model.h"
@@ -14,10 +15,13 @@ Model::Model(
     shader(_shader) {}
 
 
-void Model::draw(const Camera& camera) {
+void Model::draw(const Camera& camera, const SunLight& light) {
   shader->use();
-  shader->setUniform("PVM", camera.pv() * this->transform);
-  shader->setUniform("camera_pos", camera.get_position());
+  shader->setUniform("u_PVM", camera.pv() * this->transform);
+  shader->setUniform("u_normal_matrix", glm::transpose(glm::inverse(glm::mat3(this->transform))));
+  shader->setUniform("u_camera_pos", camera.get_position());
+  shader->setUniform("u_light.color", light.get_color());
+  shader->setUniform("u_light.direction", light.get_direction());
   mesh->draw();
 }
 

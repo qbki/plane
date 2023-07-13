@@ -4,7 +4,9 @@
 #include "./camera.h"
 
 
-Camera::Camera(glm::vec3 _position, float aspect_ratio) {
+Camera::Camera(
+  glm::vec3 _position, float aspect_ratio
+) : position(_position) {
   this->set_aspect_ratio(aspect_ratio);
 }
 
@@ -20,9 +22,8 @@ void Camera::set_aspect_ratio(float aspect_ratio) {
 
 
 glm::mat4 Camera::pv() const {
-  const auto camera_pos = glm::vec3(0.0, 0.0, 2.0);
-  const auto view_matrix = glm::lookAt(
-    camera_pos,
+  auto view_matrix = glm::lookAt(
+    this->position,
     glm::vec3(0.0, 0.0, 0.0),
     glm::vec3(0.0, 1.0, 0.0)
   );

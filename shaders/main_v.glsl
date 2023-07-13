@@ -1,6 +1,16 @@
-#version 330 core
-layout (location = 0) in vec3 aPos;
+#version 450 core
+precision highp float;
+
+layout (location = 0) in vec3 aPosition;
+layout (location = 1) in vec3 aNormal;
+
+out InterfaceData  {
+  vec3 position;
+  vec3 normal;
+} interface_data;
 
 void main() {
-  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+  interface_data.position = aPosition;
+  interface_data.normal = aNormal;
+  gl_Position = vec4(aPosition, 1.0);
 }

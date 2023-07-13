@@ -1,6 +1,7 @@
 #include "./mesh.h"
 
-const int POSITION_LOCATION = 0;
+const int VERTEX_LOCATION = 0;
+const int NORMAL_LOCATION = 1;
 
 
 void create_buffer(GLuint &buffer_handle, const tinygltf::Model &model, int accessor_idx) {
@@ -31,15 +32,21 @@ Mesh::Mesh(tinygltf::Model &model) {
     auto vbo_accessor_id = primitive.attributes.at("POSITION");
     create_buffer(vbo, model, vbo_accessor_id);
 
-    create_buffer(ebo, model, primitive.indices);
-
     auto accessor = model.accessors.at(primitive.indices);
     auto stride = accessor.ByteStride(model.bufferViews.at(accessor.bufferView));
     this->count = accessor.count;
     this->componentType = accessor.componentType;
 
-    glVertexAttribPointer(POSITION_LOCATION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
-    glEnableVertexAttribArray(POSITION_LOCATION);
+    glVertexAttribPointer(VERTEX_LOCATION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
+    glEnableVertexAttribArray(VERTEX_LOCATION);
+
+    auto nbo_accessor_id = primitive.attributes.at("NORMAL");
+    create_buffer(nbo, model, nbo_accessor_id);
+
+    glVertexAttribPointer(NORMAL_LOCATION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
+    glEnableVertexAttribArray(NORMAL_LOCATION);
+
+    create_buffer(ebo, model, primitive.indices);
   } catch (...) {
     free();
     throw;
@@ -52,6 +59,7 @@ void Mesh::free() {
   glDeleteVertexArrays(1, &vao);
   glDeleteBuffers(1, &vbo);
   glDeleteBuffers(1, &ebo);
+  glDeleteBuffers(1, &nbo);
 }
 
 

@@ -7,6 +7,7 @@ class Mesh {
 private:
   GLuint vao = 0; // vertex array object
   GLuint vbo = 0; // vertex buffer object
+  GLuint nbo = 0; // normal buffer object
   GLuint ebo = 0; // element buffer object
 
   int mode;

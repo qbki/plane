@@ -2,8 +2,10 @@ cmake_minimum_required(VERSION 3.15)
 project(plane)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(MODELS_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/models/)
-set(SHADERS_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/shaders/)
+set(SRC_MODELS_DIRECTORY ${CMAKE_SOURCE_DIR}/models)
+set(SRC_SHADERS_DIRECTORY ${CMAKE_SOURCE_DIR}/shaders)
+set(MODELS_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/models)
+set(SHADERS_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/shaders)
 
 find_package(GLM REQUIRED)
 find_package(SDL2 REQUIRED)
@@ -18,28 +20,13 @@ target_link_libraries(${PROJECT_NAME} SDL2::SDL2main)
 target_link_libraries(${PROJECT_NAME} GLEW::GLEW)
 target_link_libraries(${PROJECT_NAME} TinyGLTF::TinyGLTF)
 
+message(STATUS ${SRC_MODELS_DIRECTORY})
 add_custom_command(
   TARGET ${PROJECT_NAME} POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${MODELS_DIRECTORY})
+  COMMAND ${CMAKE_COMMAND} -E create_symlink ${SRC_MODELS_DIRECTORY} ${MODELS_DIRECTORY})
 
 add_custom_command(
   TARGET ${PROJECT_NAME} POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${SHADERS_DIRECTORY})
-
-file(GLOB GLB_FILES ./models/*.glb)
-foreach(file IN LISTS GLB_FILES)
-  add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${file} ${MODELS_DIRECTORY}
-    COMMENT "Copying: ${file}")
-endforeach()
-
-file(GLOB GLSL_FILES ./shaders/*.glsl)
-foreach(file IN LISTS GLSL_FILES)
-  add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${file} ${SHADERS_DIRECTORY}
-    COMMENT "Copying: ${file}")
-endforeach()
+  COMMAND ${CMAKE_COMMAND} -E create_symlink ${SRC_SHADERS_DIRECTORY} ${SHADERS_DIRECTORY})
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)

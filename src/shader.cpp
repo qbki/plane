@@ -91,48 +91,43 @@ void Shader::load(std::string& vertext, std::string& fragment) {
 }
 
 
-//void ShaderProgram::bindAttribLocation(const GLuint location, const std::string name) {
-  //glBindAttribLocation(handle, location, name.c_str());
-//}
+void Shader::setUniform(const std::string &name, const int value) {
+  GLuint location = glGetUniformLocation(program, name.c_str());
+  glUniform1i(location, value);
+}
 
 
-//void ShaderProgram::setUniform(const std::string &name, const int value) {
-  //GLuint location = glGetUniformLocation(handle, name.c_str());
-  //glUniform1i(location, value);
-//}
+void Shader::setUniform(const std::string &name, const float value) {
+  GLuint location = glGetUniformLocation(program, name.c_str());
+  glUniform1f(location, value);
+}
 
 
-//void ShaderProgram::setUniform(const std::string &name, const float value) {
-  //GLuint location = glGetUniformLocation(handle, name.c_str());
-  //glUniform1f(location, value);
-//}
+void Shader::setUniform(const std::string &name, const glm::mat3 &value) {
+  GLuint location = glGetUniformLocation(program, name.c_str());
+  glUniformMatrix3fv(location, 1, GL_FALSE, &value[0][0]);
+}
 
 
-//void ShaderProgram::setUniform(const std::string &name, const glm::mat3 &value) {
-  //GLuint location = glGetUniformLocation(handle, name.c_str());
-  //glUniformMatrix3fv(location, 1, GL_FALSE, &value[0][0]);
-//}
+void Shader::setUniform(const std::string &name, const glm::mat4 &value) {
+  GLuint location = glGetUniformLocation(program, name.c_str());
+  glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
+}
 
 
-//void ShaderProgram::setUniform(const std::string &name, const glm::mat4 &value) {
-  //GLuint location = glGetUniformLocation(handle, name.c_str());
-  //glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
-//}
+void Shader::setUniform(const std::string &name, const glm::vec2 &value) {
+  GLuint location = glGetUniformLocation(program, name.c_str());
+  glUniform2f(location, value.x, value.y);
+}
 
 
-//void ShaderProgram::setUniform(const std::string &name, const glm::vec2 &value) {
-  //GLuint location = glGetUniformLocation(handle, name.c_str());
-  //glUniform2f(location, value.x, value.y);
-//}
+void Shader::setUniform(const std::string &name, const glm::vec3 &value) {
+  GLuint location = glGetUniformLocation(program, name.c_str());
+  glUniform3f(location, value.x, value.y, value.z);
+}
 
 
-//void ShaderProgram::setUniform(const std::string &name, const glm::vec3 &value) {
-  //GLuint location = glGetUniformLocation(handle, name.c_str());
-  //glUniform3f(location, value.x, value.y, value.z);
-//}
-
-
-//void ShaderProgram::setUniform(const std::string &name, const glm::vec4 &value) {
-  //GLuint location = glGetUniformLocation(handle, name.c_str());
-  //glUniform4f(location, value.x, value.y, value.z, value.w);
-//}
+void Shader::setUniform(const std::string &name, const glm::vec4 &value) {
+  GLuint location = glGetUniformLocation(program, name.c_str());
+  glUniform4f(location, value.x, value.y, value.z, value.w);
+}

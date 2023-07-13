@@ -6,15 +6,20 @@
 #include <GL/gl.h>
 #include <SDL2/SDL.h>
 #include <glm/vec2.hpp>
+#include <glm/matrix.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 
 #include "./shader.h"
 #include "./mesh.h"
 #include "./utils.h"
 #include "./model.h"
+#include "./camera.h"
 
 
 GLuint POSITION_LOCATION = 0;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 
 int main() {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -32,7 +37,7 @@ int main() {
   auto window = SDL_CreateWindow(
     "Plane",
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-    800, 600,
+    SCREEN_WIDTH, SCREEN_HEIGHT,
     SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   if (window == nullptr) {
     auto err_sdl = std::unique_ptr<const char>(SDL_GetError());
@@ -66,6 +71,11 @@ int main() {
 
   // SDL_SetRelativeMouseMode(SDL_TRUE);
 
+  std::unique_ptr<Camera> camera(new Camera(
+    glm::vec3(0.0, 0.0, 2.0),
+    static_cast<float>(SCREEN_WIDTH) / SCREEN_WIDTH
+  ));
+
   auto model(Model::load(
     "./models/plane.glb",
     "./shaders/main_v.glsl",
@@ -85,7 +95,7 @@ int main() {
       }
     }
 
-    model->draw();
+    model->draw(*camera);
     SDL_GL_SwapWindow(window);
   }
 

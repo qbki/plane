@@ -8,6 +8,8 @@ in InterfaceData  {
 
 out vec4 frag_color;
 
+uniform vec3 camera_pos;
+
 struct Material {
   vec3 ambient;
   vec3 diffuse;

@@ -3,9 +3,8 @@
 #include <memory>
 
 #include "./model.h"
-#include "mesh.h"
-#include "shader.h"
-#include "utils.h"
+#include "./utils.h"
+#include "./camera.h"
 
 
 Model::Model(
@@ -15,8 +14,10 @@ Model::Model(
     shader(_shader) {}
 
 
-void Model::draw() {
+void Model::draw(const Camera& camera) {
   shader->use();
+  shader->setUniform("PV", camera.pv());
+  shader->setUniform("camera_pos", camera.get_position());
   mesh->draw();
 }
 

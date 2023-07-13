@@ -3,6 +3,7 @@
 
 #include "mesh.h"
 #include "shader.h"
+#include "camera.h"
 
 class Model {
 private:
@@ -11,7 +12,9 @@ private:
 
 public:
   Model(std::shared_ptr<Mesh> mesh, std::shared_ptr<Shader> shader);
-  void draw();
+
+  void draw(const Camera& camera);
+
   static std::unique_ptr<Model> load(
     const std::string& mesh_file_name,
     const std::string& vertex_shader_file_name,

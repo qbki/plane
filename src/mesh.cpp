@@ -29,13 +29,12 @@ Mesh::Mesh(tinygltf::Model &model) {
     auto primitive = model.meshes.at(0).primitives.at(0);
     this->mode = primitive.mode;
 
-    auto vbo_accessor_id = primitive.attributes.at("POSITION");
-    create_buffer(vbo, model, vbo_accessor_id);
-
     auto accessor = model.accessors.at(primitive.indices);
-    auto stride = accessor.ByteStride(model.bufferViews.at(accessor.bufferView));
     this->count = accessor.count;
     this->componentType = accessor.componentType;
+
+    auto vbo_accessor_id = primitive.attributes.at("POSITION");
+    create_buffer(vbo, model, vbo_accessor_id);
 
     glVertexAttribPointer(VERTEX_LOCATION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
     glEnableVertexAttribArray(VERTEX_LOCATION);

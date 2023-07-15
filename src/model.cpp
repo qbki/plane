@@ -6,13 +6,24 @@
 #include "./model.h"
 #include "./utils.h"
 #include "./camera.h"
+#include "material.h"
+
+
+glm::vec3 exctract_material_color(tinygltf::Model& model) {
+  auto material_id = model.meshes.at(0).primitives.at(0).material;
+  auto material = model.materials.at(material_id);
+  auto color = material.pbrMetallicRoughness.baseColorFactor;
+  return glm::vec3(color.at(0), color.at(1), color.at(2));
+}
 
 
 Model::Model(
   std::shared_ptr<Mesh> _mesh,
-  std::shared_ptr<Shader> _shader
+  std::shared_ptr<Shader> _shader,
+  std::shared_ptr<Material> _material
 ) : mesh(_mesh),
-    shader(_shader) {}
+    shader(_shader),
+    material(_material) {}
 
 
 void Model::draw(const Camera& camera, const SunLight& light) {
@@ -22,6 +33,10 @@ void Model::draw(const Camera& camera, const SunLight& light) {
   shader->setUniform("u_camera_pos", camera.get_position());
   shader->setUniform("u_light.color", light.get_color());
   shader->setUniform("u_light.direction", light.get_direction());
+  shader->setUniform("u_material.ambient", this->material->get_ambient());
+  shader->setUniform("u_material.diffuse", this->material->get_diffuse());
+  shader->setUniform("u_material.specular", this->material->get_specular());
+  shader->setUniform("u_material.shininess", this->material->get_shininess());
   mesh->draw();
 }
 
@@ -37,8 +52,11 @@ std::unique_ptr<Model> Model::load(
   std::shared_ptr<Shader> shader(new Shader);
   shader->load(vertex_shader, fragment_shader);
 
-  auto raw_mesh = load_mesh(mesh_file_name);
-  std::shared_ptr<Mesh> mesh(new Mesh(raw_mesh));
+  auto gltf_model = load_gltf_model(mesh_file_name);
+  std::shared_ptr<Mesh> mesh(new Mesh(gltf_model));
 
-  return std::unique_ptr<Model>(new Model(mesh, shader));
+  auto color = exctract_material_color(gltf_model);
+  std::shared_ptr<Material> material(new Material(color));
+
+  return std::unique_ptr<Model>(new Model(mesh, shader, material));
 }

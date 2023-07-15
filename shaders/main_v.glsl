@@ -7,7 +7,7 @@ layout (location = 1) in vec3 a_normal;
 uniform mat4 u_PVM;
 uniform mat3 u_normal_matrix;
 
-out InterfaceData  {
+out InterfaceData {
   vec3 position;
   vec3 normal;
 } interface_data;

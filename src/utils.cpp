@@ -20,7 +20,7 @@ void print(T& value) {
 }
 
 
-tinygltf::Model load_mesh(const std::string& filename) {
+tinygltf::Model load_gltf_model(const std::string& filename) {
   tinygltf::Model model;
   tinygltf::TinyGLTF loader;
   std::string err;

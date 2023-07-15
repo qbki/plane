@@ -11,7 +11,6 @@
 #include "./camera.h"
 
 
-GLuint POSITION_LOCATION = 0;
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 

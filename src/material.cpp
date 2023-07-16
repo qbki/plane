@@ -4,7 +4,7 @@
 Material::Material(glm::vec3& color) {
   this->ambient = color * 0.1f;
   this->diffuse = color;
-  this->specular = glm::vec3(0.1, 0.1, 0.1);
+  this->specular = glm::vec3(0.5, 0.5, 0.5);
   this->shininess = 30;
 }
 

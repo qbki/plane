@@ -1,3 +1,4 @@
+#include "graphic.h"
 #include "sun_light.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <iostream>
@@ -64,6 +65,8 @@ int main() {
 
   // SDL_SetRelativeMouseMode(SDL_TRUE);
 
+  std::unique_ptr<Graphic> root(new Graphic());
+
   std::unique_ptr<Camera> camera(new Camera(
     {0.0, 0.0, 2.0},
     static_cast<float>(SCREEN_WIDTH) / SCREEN_HEIGHT
@@ -74,13 +77,29 @@ int main() {
     {0.2, 0.2, 1.0}
   ));
 
-  auto model(Model::load(
-    "./models/plane.glb",
-    "./shaders/main_v.glsl",
-    "./shaders/main_f.glsl"
-  ));
+  {
+    auto model(Model::load(
+      "./models/plane.glb",
+      "./shaders/main_v.glsl",
+      "./shaders/main_f.glsl"
+    ));
 
-  model->set_position({0.0, 0.0, 0.0});
+    model->set_position({-0.5, 0.0, 0.0});
+
+    root->add_child(model);
+  }
+
+  {
+    auto model(Model::load(
+      "./models/plane.glb",
+      "./shaders/main_v.glsl",
+      "./shaders/main_f.glsl"
+    ));
+
+    model->set_position({0.5, 0.0, 0.0});
+
+    root->add_child(model);
+  }
 
   bool is_running = true;
   SDL_Event event;
@@ -95,7 +114,7 @@ int main() {
       }
     }
 
-    model->draw(*camera, *light);
+    root->draw(*camera, *light);
     SDL_GL_SwapWindow(window);
   }
 

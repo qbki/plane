@@ -24,9 +24,11 @@ public:
     std::shared_ptr<Material> material
   );
 
-  void draw(const Camera& camera, const SunLight& light);
+  ~Model() {};
 
-  static std::unique_ptr<Model> load(
+  void draw(const Camera& camera, const SunLight& light) const override;
+
+  static std::shared_ptr<Model> load(
     const std::string& mesh_file_name,
     const std::string& vertex_shader_file_name,
     const std::string& fragment_shader_file_name);

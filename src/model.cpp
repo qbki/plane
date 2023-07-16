@@ -1,11 +1,13 @@
 #include <algorithm>
 #include <filesystem>
 #include <glm/matrix.hpp>
+#include <iostream>
 #include <memory>
 
 #include "./model.h"
 #include "./utils.h"
 #include "./camera.h"
+#include "graphic.h"
 #include "material.h"
 
 
@@ -26,7 +28,7 @@ Model::Model(
     material(_material) {}
 
 
-void Model::draw(const Camera& camera, const SunLight& light) {
+void Model::draw(const Camera& camera, const SunLight& light) const {
   shader->use();
   shader->setUniform("u_PVM", camera.pv() * this->transform);
   shader->setUniform("u_normal_matrix", glm::transpose(glm::inverse(glm::mat3(this->transform))));
@@ -38,10 +40,12 @@ void Model::draw(const Camera& camera, const SunLight& light) {
   shader->setUniform("u_material.specular", this->material->get_specular());
   shader->setUniform("u_material.shininess", this->material->get_shininess());
   mesh->draw();
+
+  Graphic::draw(camera, light);
 }
 
 
-std::unique_ptr<Model> Model::load(
+std::shared_ptr<Model> Model::load(
   const std::string& mesh_file_name,
   const std::string& vertex_shader_file_name,
   const std::string& fragment_shader_file_name
@@ -58,5 +62,5 @@ std::unique_ptr<Model> Model::load(
   auto color = exctract_material_color(gltf_model);
   std::shared_ptr<Material> material(new Material(color));
 
-  return std::unique_ptr<Model>(new Model(mesh, shader, material));
+  return std::shared_ptr<Model>(new Model(mesh, shader, material));
 }

@@ -22,3 +22,15 @@ const glm::mat4& Graphic::get_transform() const {
 void Graphic::set_transform(const glm::mat4& transform) {
   this->transform = transform;
 }
+
+
+void Graphic::add_child(std::shared_ptr<Graphic> child) {
+  children.push_back(child);
+}
+
+
+void Graphic::draw(const Camera& camera, const SunLight& light) const {
+  for (auto& child : children) {
+    child->draw(camera, light);
+  }
+}

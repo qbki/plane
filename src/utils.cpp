@@ -58,3 +58,14 @@ std::string load_text(const std::string &file_name) {
   );
   return content;
 }
+
+
+void resize_window(
+  const SDL_WindowEvent& window_event,
+  Camera& camera
+) {
+  auto width = window_event.data1;
+  auto height = window_event.data2;
+  camera.set_aspect_ratio(static_cast<float>(width) / height);
+  glViewport(0, 0, width, height);
+}

@@ -1,5 +1,3 @@
-#include "graphic.h"
-#include "sun_light.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <iostream>
 #include <vector>
@@ -10,6 +8,9 @@
 
 #include "./model.h"
 #include "./camera.h"
+#include "./graphic.h"
+#include "./sun_light.h"
+#include "./utils.h"
 
 
 const int SCREEN_WIDTH = 800;
@@ -68,7 +69,7 @@ int main() {
   std::unique_ptr<Graphic> root(new Graphic());
 
   std::unique_ptr<Camera> camera(new Camera(
-    {0.0, 0.0, 2.0},
+    {0.0, 0.0, 10.0},
     static_cast<float>(SCREEN_WIDTH) / SCREEN_HEIGHT
   ));
 
@@ -112,8 +113,15 @@ int main() {
           break;
         }
       }
+      switch (event.window.event) {
+        case SDL_WINDOWEVENT_RESIZED: {
+          resize_window(event.window, *camera);
+          break;
+        }
+      }
     }
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     root->draw(*camera, *light);
     SDL_GL_SwapWindow(window);
   }

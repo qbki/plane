@@ -3,8 +3,8 @@
 #include <vector>
 #include <glm/ext/matrix_transform.hpp>
 
-#include "camera.h"
-#include "sun_light.h"
+#include "./camera.h"
+#include "./sun_light.h"
 
 class Graphic {
 protected:

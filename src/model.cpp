@@ -7,8 +7,8 @@
 #include "./model.h"
 #include "./utils.h"
 #include "./camera.h"
-#include "graphic.h"
-#include "material.h"
+#include "./graphic.h"
+#include "./material.h"
 
 
 glm::vec3 exctract_material_color(tinygltf::Model& model) {

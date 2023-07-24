@@ -2,12 +2,12 @@
 #include <memory>
 #include <string>
 
-#include "graphic.h"
-#include "material.h"
-#include "mesh.h"
-#include "shader.h"
-#include "camera.h"
-#include "sun_light.h"
+#include "./graphic.h"
+#include "./material.h"
+#include "./mesh.h"
+#include "./shader.h"
+#include "./camera.h"
+#include "./sun_light.h"
 
 class Model : public Graphic {
 private:

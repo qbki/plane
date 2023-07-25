@@ -13,14 +13,15 @@ protected:
   std::vector<std::shared_ptr<Graphic>> children = std::vector<std::shared_ptr<Graphic>>();
 
 public:
+  virtual ~Graphic() {};
+
+  void add_child(std::shared_ptr<Graphic> child);
+
+  virtual void draw(const Camera& camera, const SunLight& light) const;
+
   glm::vec3 get_position() const;
   void set_position(glm::vec3 position);
 
   const glm::mat4& get_transform() const;
   void set_transform(const glm::mat4& transform);
-
-  void add_child(std::shared_ptr<Graphic> child);
-
-  virtual void draw(const Camera& camera, const SunLight& light) const;
-  virtual ~Graphic() {};
 };

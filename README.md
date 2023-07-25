@@ -4,7 +4,13 @@ conan - package manager
 
 # Install
 
-conan install . --output-folder=build --build=missing
-cd build
-cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
-cmake --build .
+```sh
+$ make init
+$ make run
+```
+
+# Static analysis
+
+```sh
+$ make static-check
+```

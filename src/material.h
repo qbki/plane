@@ -10,7 +10,7 @@ private:
   float shininess;
 
 public:
-  Material(glm::vec3& color);
+  explicit Material(const glm::vec3& color);
 
   glm::vec3 get_ambient() const;
   void set_ambient(const glm::vec3& value);

@@ -12,12 +12,12 @@
 
 
 Model::Model(
-  std::shared_ptr<Mesh> _mesh,
-  std::shared_ptr<Shader> _shader,
-  std::shared_ptr<Material> _material
-) : mesh(_mesh),
-    shader(_shader),
-    material(_material) {}
+  std::shared_ptr<Mesh> mesh,
+  std::shared_ptr<Shader> shader,
+  std::shared_ptr<Material> material
+) : mesh(mesh),
+    shader(shader),
+    material(material) {}
 
 
 void Model::draw(const Camera& camera, const SunLight& light) const {

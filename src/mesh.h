@@ -16,7 +16,7 @@ private:
   void free();
 
 public:
-  Mesh(tinygltf::Model &model);
+  explicit Mesh(tinygltf::Model &model);
   ~Mesh();
   void draw();
 };

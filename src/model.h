@@ -6,8 +6,6 @@
 #include "./material.h"
 #include "./mesh.h"
 #include "./shader.h"
-#include "./camera.h"
-#include "./sun_light.h"
 
 class Model : public Graphic {
 private:
@@ -27,9 +25,4 @@ public:
   ~Model() {};
 
   void draw(const Camera& camera, const SunLight& light) const override;
-
-  static std::shared_ptr<Model> load(
-    const std::string& mesh_file_name,
-    const std::string& vertex_shader_file_name,
-    const std::string& fragment_shader_file_name);
 };

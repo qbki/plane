@@ -69,3 +69,11 @@ void resize_window(
   camera.set_aspect_ratio(static_cast<float>(width) / height);
   glViewport(0, 0, width, height);
 }
+
+
+glm::vec3 exctract_material_color(tinygltf::Model& model) {
+  auto material_id = model.meshes.at(0).primitives.at(0).material;
+  auto material = model.materials.at(material_id);
+  auto color = material.pbrMetallicRoughness.baseColorFactor;
+  return glm::vec3(color.at(0), color.at(1), color.at(2));
+}

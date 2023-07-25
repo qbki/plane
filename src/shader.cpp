@@ -6,14 +6,6 @@
 #include "./shader.h"
 
 
-Shader::Shader() {}
-
-
-Shader::~Shader() {
-  glDeleteProgram(program);
-}
-
-
 void throw_on_shader_error(GLuint shader, GLenum status) {
   GLint result;
   glGetShaderiv(shader, status, &result);
@@ -44,15 +36,23 @@ void throw_on_program_error(GLuint program, GLenum status) {
 }
 
 
+Shader::Shader() {}
+
+
+Shader::~Shader() {
+  glDeleteProgram(program);
+}
+
+
 void Shader::createProgram() {
-  program = glCreateProgram();
-  if (program == 0) {
+  this->program = glCreateProgram();
+  if (this->program == 0) {
     throw std::runtime_error("Can't create a program.");
   }
 }
 
 
-GLuint Shader::compile(std::string& text, GLuint shader_type) {
+GLuint Shader::compile_shader(std::string& text, GLuint shader_type) {
   auto shader = glCreateShader(shader_type);
   if (shader == 0) {
     throw std::runtime_error("Can't create a shader.");
@@ -81,10 +81,10 @@ void Shader::use() {
 }
 
 
-void Shader::load(std::string& vertext, std::string& fragment) {
+void Shader::compile(std::string& vertext, std::string& fragment) {
   createProgram();
-  auto vertex_shader = compile(vertext, GL_VERTEX_SHADER);
-  auto fragment_shader = compile(fragment, GL_FRAGMENT_SHADER);
+  auto vertex_shader = compile_shader(vertext, GL_VERTEX_SHADER);
+  auto fragment_shader = compile_shader(fragment, GL_FRAGMENT_SHADER);
   link();
   glDeleteShader(vertex_shader);
   glDeleteShader(fragment_shader);

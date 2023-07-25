@@ -6,15 +6,15 @@
 class Shader {
 private:
   GLuint program = 0;
+  GLuint compile_shader(std::string& text, GLuint shader_type);
+  void createProgram();
+  void link();
 
 public:
   Shader();
   ~Shader();
-  GLuint compile(std::string& text, GLuint shader_type);
-  void link();
   void use();
-  void createProgram();
-  void load(std::string& vertext, std::string& fragment);
+  void compile(std::string& vertext, std::string& fragment);
 
   void setUniform(const std::string &name, const int value);
   void setUniform(const std::string &name, const float value);

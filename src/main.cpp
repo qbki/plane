@@ -7,6 +7,7 @@
 #include <SDL2/SDL.h>
 
 #include "./model.h"
+#include "./cache.h"
 #include "./camera.h"
 #include "./graphic.h"
 #include "./sun_light.h"
@@ -78,27 +79,25 @@ int main() {
     {0.2, 0.2, 1.0}
   ));
 
+  std::unique_ptr<Cache> cache(new Cache());
+
   {
-    auto model(Model::load(
+    auto model(cache->load(
       "./models/plane.glb",
       "./shaders/main_v.glsl",
       "./shaders/main_f.glsl"
     ));
-
     model->set_position({-0.5, 0.0, 0.0});
-
     root->add_child(model);
   }
 
   {
-    auto model(Model::load(
+    auto model(cache->load(
       "./models/plane.glb",
       "./shaders/main_v.glsl",
       "./shaders/main_f.glsl"
     ));
-
     model->set_position({0.5, 0.0, 0.0});
-
     root->add_child(model);
   }
 

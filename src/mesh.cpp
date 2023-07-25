@@ -1,3 +1,5 @@
+#include <GL/glew.h>
+
 #include "./mesh.h"
 
 const int VERTEX_LOCATION = 0;

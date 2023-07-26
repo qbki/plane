@@ -24,5 +24,9 @@ public:
 
   ~Model() {};
 
-  void draw(const Camera& camera, const SunLight& light) const override;
+  void draw(
+    const Camera& camera,
+    const SunLight& light,
+    float elapsed_seconds
+  ) const override;
 };

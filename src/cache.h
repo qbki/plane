@@ -8,10 +8,12 @@
 #include "./mesh.h"
 #include "./model.h"
 
+const int MESH_IDX = 0;
+const int MATERIAL_IDX = 1;
+
 class Cache {
 private:
-  std::unordered_map<std::string, std::shared_ptr<Material>> materials;
-  std::unordered_map<std::string, std::shared_ptr<Mesh>> meshes;
+  std::unordered_map<std::string, std::tuple<std::shared_ptr<Mesh>, std::shared_ptr<Material>>> meshes;
   std::unordered_map<std::string, std::shared_ptr<Shader>> shaders;
 public:
   Cache();

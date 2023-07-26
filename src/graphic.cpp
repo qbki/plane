@@ -29,8 +29,8 @@ void Graphic::add_child(std::shared_ptr<Graphic> child) {
 }
 
 
-void Graphic::draw(const Camera& camera, const SunLight& light) const {
+void Graphic::draw(const Camera& camera, const SunLight& light, float elapsed_seconds) const {
   for (auto& child : children) {
-    child->draw(camera, light);
+    child->draw(camera, light, elapsed_seconds);
   }
 }

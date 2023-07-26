@@ -3,6 +3,7 @@
 
 class Camera {
 private:
+  glm::mat4 view_matrix;
   glm::mat4 projection;
   glm::vec3 position;
 public:
@@ -11,6 +12,8 @@ public:
 
   void set_aspect_ratio(float aspect_ratio);
 
+  void look_at(const glm::vec3& value);
+
   glm::vec3 get_position() const;
-  void set_position(glm::vec3 value);
+  void set_position(const glm::vec3& value);
 };

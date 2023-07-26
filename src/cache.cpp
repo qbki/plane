@@ -1,13 +1,17 @@
 #include <memory>
+#include <tuple>
 
 #include "./cache.h"
 #include "./utils.h"
+#include "material.h"
 #include "shader.h"
 
 
 Cache::Cache() {
-  this->materials = std::unordered_map<std::string, std::shared_ptr<Material>>();
-  this->meshes = std::unordered_map<std::string, std::shared_ptr<Mesh>>();
+  this->meshes = std::unordered_map<
+    std::string,
+    std::tuple<std::shared_ptr<Mesh>, std::shared_ptr<Material>>
+  >();
   this->shaders = std::unordered_map<std::string, std::shared_ptr<Shader>>();
 }
 
@@ -29,22 +33,20 @@ std::shared_ptr<Model> Cache::load(
     this->shaders[shader_file_names] = shader;
   }
 
-  auto gltf_model = load_gltf_model(mesh_file_name);
   auto has_mesh = has_key(this->meshes, mesh_file_name);
-  std::shared_ptr<Mesh> mesh = has_shader
-    ? this->meshes.at(mesh_file_name)
-    : std::shared_ptr<Mesh>(new Mesh(gltf_model));
-  if (!has_mesh) {
-    this->meshes[mesh_file_name] = mesh;
-  }
 
-  auto color = exctract_material_color(gltf_model);
-  auto has_material = has_key(this->materials, mesh_file_name);
-  auto material = has_material
-    ? this->materials.at(mesh_file_name)
-    : std::shared_ptr<Material>(new Material(color));
-  if (!has_material) {
-    this->materials[mesh_file_name] = material;
+  std::shared_ptr<Mesh> mesh;
+  std::shared_ptr<Material> material;
+
+  if (has_mesh) {
+    mesh = std::get<MESH_IDX>(this->meshes.at(mesh_file_name));
+    material = std::get<MATERIAL_IDX>(this->meshes.at(mesh_file_name));
+  } else {
+    auto gltf_model = load_gltf_model(mesh_file_name);
+    auto color = exctract_material_color(gltf_model);
+    mesh = std::shared_ptr<Mesh>(new Mesh(gltf_model));
+    material = std::shared_ptr<Material>(new Material(color));
+    this->meshes[mesh_file_name] = std::make_tuple(mesh, material);
   }
 
   return std::shared_ptr<Model>(new Model(mesh, shader, material));

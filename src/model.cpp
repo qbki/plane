@@ -20,9 +20,11 @@ Model::Model(
     material(material) {}
 
 
-void Model::draw(const Camera& camera, const SunLight& light) const {
+void Model::draw(const Camera& camera, const SunLight& light, float elapsed_seconds) const {
   shader->use();
-  shader->setUniform("u_PVM", camera.pv() * this->transform);
+  shader->setUniform("u_PV", camera.pv());
+  shader->setUniform("u_elapsed_seconds", elapsed_seconds);
+  shader->setUniform("u_M", this->transform);
   shader->setUniform("u_normal_matrix", glm::transpose(glm::inverse(glm::mat3(this->transform))));
   shader->setUniform("u_camera_pos", camera.get_position());
   shader->setUniform("u_light.color", light.get_color());
@@ -33,5 +35,5 @@ void Model::draw(const Camera& camera, const SunLight& light) const {
   shader->setUniform("u_material.shininess", this->material->get_shininess());
   mesh->draw();
 
-  Graphic::draw(camera, light);
+  Graphic::draw(camera, light, elapsed_seconds);
 }

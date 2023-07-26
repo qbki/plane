@@ -69,11 +69,6 @@ int main() {
 
   std::unique_ptr<Graphic> root(new Graphic());
 
-  std::unique_ptr<Camera> camera(new Camera(
-    {0.0, 0.0, 10.0},
-    static_cast<float>(SCREEN_WIDTH) / SCREEN_HEIGHT
-  ));
-
   std::unique_ptr<SunLight> light(new SunLight(
     {1.0, 1.0, 1.0},
     {0.2, 0.2, 1.0}
@@ -81,15 +76,10 @@ int main() {
 
   std::unique_ptr<Cache> cache(new Cache());
 
-  {
-    auto model(cache->load(
-      "./models/plane.glb",
-      "./shaders/main_v.glsl",
-      "./shaders/main_f.glsl"
-    ));
-    model->set_position({-0.5, 0.0, 0.0});
-    root->add_child(model);
-  }
+  std::unique_ptr<Camera> camera(new Camera(
+    {0.0, -4.0, 15.0},
+    static_cast<float>(SCREEN_WIDTH) / SCREEN_HEIGHT
+  ));
 
   {
     auto model(cache->load(
@@ -97,8 +87,20 @@ int main() {
       "./shaders/main_v.glsl",
       "./shaders/main_f.glsl"
     ));
-    model->set_position({0.5, 0.0, 0.0});
+    model->set_position({0.0, -5.0, 2.0});
     root->add_child(model);
+  }
+
+  for (int x = -15; x <= 15; x++) {
+    for (int y = -15; y <= 15; y++) {
+      auto model(cache->load(
+        "./models/water-surface.glb",
+        "./shaders/water_v.glsl",
+        "./shaders/main_f.glsl"
+      ));
+      model->set_position({static_cast<float>(x), static_cast<float>(y), 0.0});
+      root->add_child(model);
+    }
   }
 
   bool is_running = true;
@@ -119,9 +121,10 @@ int main() {
         }
       }
     }
+    auto seconds = SDL_GetTicks64() * 0.001f;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    root->draw(*camera, *light);
+    root->draw(*camera, *light, seconds);
     SDL_GL_SwapWindow(window);
   }
 

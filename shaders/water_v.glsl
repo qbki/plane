@@ -20,8 +20,9 @@ vec3 sin_fn(vec3 value) {
   float x = value.x;
   float y = value.y;
   float speed = u_elapsed_seconds * 3.0;
-  float height = 0.2 * sin(x * 0.3 + speed)
-               + 0.2 * sin(x * 3.0 + speed) / (2.0 + speed);
+  float height = 0.2 * (sin(x * 0.3 + speed)
+                      + sin(x * 3.0 + speed) / (3.0 + y + speed)
+                      + 0.2 * cos(y * 1.5 + x));
   return vec3(value.x, value.y, height);
 }
 

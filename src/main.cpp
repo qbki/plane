@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <SDL2/SDL.h>
+#include <cstdlib>
 
 #include "./model.h"
 #include "./cache.h"
@@ -71,7 +72,7 @@ int main() {
 
   std::unique_ptr<SunLight> light(new SunLight(
     {1.0, 1.0, 1.0},
-    {0.2, 0.2, 1.0}
+    {0.5, 0.5, 1.0}
   ));
 
   std::unique_ptr<Cache> cache(new Cache());
@@ -93,13 +94,23 @@ int main() {
 
   for (int x = -15; x <= 15; x++) {
     for (int y = -15; y <= 15; y++) {
-      auto model(cache->load(
-        "./models/water-surface.glb",
-        "./shaders/water_v.glsl",
-        "./shaders/main_f.glsl"
-      ));
-      model->set_position({static_cast<float>(x), static_cast<float>(y), 0.0});
-      root->add_child(model);
+      if (rand() % 2 == 0) {
+        auto model(cache->load(
+          "./models/water-surface.glb",
+          "./shaders/water_v.glsl",
+          "./shaders/main_f.glsl"
+        ));
+        model->set_position({static_cast<float>(x), static_cast<float>(y), 0.0});
+        root->add_child(model);
+      } else {
+        auto model(cache->load(
+          "./models/center-block.glb",
+          "./shaders/main_v.glsl",
+          "./shaders/main_f.glsl"
+        ));
+        model->set_position({static_cast<float>(x), static_cast<float>(y), 0.0});
+        root->add_child(model);
+      }
     }
   }
 

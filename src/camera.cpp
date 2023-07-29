@@ -1,5 +1,6 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/geometric.hpp>
 #include <glm/matrix.hpp>
 
 #include "./camera.h"
@@ -9,6 +10,7 @@ Camera::Camera(
   glm::vec3 _position, float aspect_ratio
 ) : position(_position) {
   auto zero = glm::vec3(0.0, 0.0, 0.0);
+  this->forward_norm = glm::normalize(zero - this->position);
   this->look_at(zero);
   this->set_aspect_ratio(aspect_ratio);
 }
@@ -36,6 +38,7 @@ glm::vec3 Camera::get_position() const {
 
 void Camera::set_position(const glm::vec3& value) {
   this->position = value;
+  this->look_at(value + this->forward_norm);
 }
 
 

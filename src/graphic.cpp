@@ -5,7 +5,7 @@
 
 void Graphic::set_position(glm::vec3 position) {
   this->position = position;
-  this->transform = glm::translate(this->transform, position);
+  this->transform = glm::translate(glm::mat4(1.0), position);
 }
 
 

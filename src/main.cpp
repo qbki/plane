@@ -82,6 +82,7 @@ int main() {
     static_cast<float>(SCREEN_WIDTH) / SCREEN_HEIGHT
   ));
 
+  std::shared_ptr<Graphic> player;
   {
     auto model(cache->load(
       "./models/plane.glb",
@@ -90,10 +91,11 @@ int main() {
     ));
     model->set_position({0.0, -5.0, 2.0});
     root->add_child(model);
+    player = model;
   }
 
   for (int x = -15; x <= 15; x++) {
-    for (int y = -15; y <= 15; y++) {
+    for (int y = -15; y <= 45; y++) {
       if (rand() % 2 == 0) {
         auto model(cache->load(
           "./models/water-surface.glb",
@@ -133,6 +135,9 @@ int main() {
       }
     }
     auto seconds = SDL_GetTicks64() * 0.001f;
+
+    player->set_position(player->get_position() + glm::vec3(0.0, 0.01, 0.0));
+    camera->set_position(camera->get_position() + glm::vec3(0.0, 0.01, 0.0));
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     root->draw(*camera, *light, seconds);

@@ -6,6 +6,7 @@ private:
   glm::mat4 view_matrix;
   glm::mat4 projection;
   glm::vec3 position;
+  glm::vec3 forward_norm;
 public:
   Camera(glm::vec3 _position, float aspect_ratio);
   glm::mat4 pv() const;

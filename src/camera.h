@@ -3,7 +3,7 @@
 
 class Camera {
 private:
-  glm::mat4 view_matrix;
+  glm::mat4 view;
   glm::mat4 projection;
   glm::vec3 position;
   glm::vec3 forward_norm;
@@ -17,4 +17,8 @@ public:
 
   glm::vec3 get_position() const;
   void set_position(const glm::vec3& value);
+
+  const glm::mat4& get_projection() const;
+
+  const glm::mat4& get_view() const;
 };

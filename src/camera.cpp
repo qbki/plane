@@ -27,7 +27,7 @@ void Camera::set_aspect_ratio(float aspect_ratio) {
 
 
 glm::mat4 Camera::pv() const {
-  return this->projection * this->view_matrix;
+  return this->projection * this->view;
 }
 
 
@@ -42,8 +42,18 @@ void Camera::set_position(const glm::vec3& value) {
 }
 
 
+const glm::mat4& Camera::get_projection() const {
+  return this->projection;
+}
+
+
+const glm::mat4& Camera::get_view() const {
+  return this->view;
+}
+
+
 void Camera::look_at(const glm::vec3& value) {
-  this->view_matrix = glm::lookAt(
+  this->view = glm::lookAt(
     this->position,
     value,
     glm::vec3(0.0, 1.0, 0.0)

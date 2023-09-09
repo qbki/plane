@@ -1,3 +1,5 @@
+#include <cmath>
+#include <ostream>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <iostream>
 #include <vector>
@@ -6,6 +8,9 @@
 #include <GL/gl.h>
 #include <SDL2/SDL.h>
 #include <cstdlib>
+#include <glm/ext/matrix_projection.hpp>
+#include <glm/gtx/intersect.hpp>
+#include <glm/ext.hpp>
 
 #include "./model.h"
 #include "./cache.h"
@@ -17,6 +22,29 @@
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
+
+glm::vec3 get_top_line_coordinates(Camera& camera) {
+  glm::vec4 viewport{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+
+  auto top_ray = glm::normalize(glm::unProject(
+    {400.0, 600.0, 1.0},
+    camera.get_view(),
+    camera.get_projection(),
+    viewport
+  ));
+
+  float intersection_distance = 0;
+  auto has_intersection = glm::intersectRayPlane(
+    camera.get_position(),
+    top_ray,
+    {0.0, 0.0, 0.0},
+    {0.0, 0.0, 1.0},
+    intersection_distance
+  );
+
+  return camera.get_position() + top_ray * intersection_distance;
+}
+
 
 int main() {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -94,8 +122,8 @@ int main() {
     player = model;
   }
 
-  for (int x = -15; x <= 15; x++) {
-    for (int y = -15; y <= 45; y++) {
+  auto generate_line = [&](float y) {
+    for (int x = -15; x <= 15; x++) {
       if (rand() % 2 == 0) {
         auto model(cache->load(
           "./models/water-surface.glb",
@@ -114,6 +142,12 @@ int main() {
         root->add_child(model);
       }
     }
+  };
+
+  auto top_line = get_top_line_coordinates(*camera);
+
+  for (int y = -10; y < top_line.y; y++) {
+    generate_line(y);
   }
 
   bool is_running = true;
@@ -138,6 +172,12 @@ int main() {
 
     player->set_position(player->get_position() + glm::vec3(0.0, 0.01, 0.0));
     camera->set_position(camera->get_position() + glm::vec3(0.0, 0.01, 0.0));
+
+    auto new_top_line = get_top_line_coordinates(*camera);
+    if (std::floor(new_top_line.y) > std::floor(top_line.y)) {
+      generate_line(std::floor(new_top_line.y));
+      top_line = new_top_line;
+    }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     root->draw(*camera, *light, seconds);

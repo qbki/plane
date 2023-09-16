@@ -34,3 +34,8 @@ void Graphic::draw(const Camera& camera, const SunLight& light, float elapsed_se
     child->draw(camera, light, elapsed_seconds);
   }
 }
+
+
+void Graphic::move_in(glm::vec3 direction_normal, float length) {
+  set_position(position + direction_normal * length);
+}

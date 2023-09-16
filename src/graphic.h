@@ -28,4 +28,6 @@ public:
 
   const glm::mat4& get_transform() const;
   void set_transform(const glm::mat4& transform);
+
+  void move_in(glm::vec3 direction_normal, float length);
 };

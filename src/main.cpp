@@ -1,3 +1,5 @@
+#include <SDL_events.h>
+#include <glm/geometric.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <iostream>
 #include <vector>
@@ -22,32 +24,23 @@
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 
-glm::vec3 get_top_line_coordinates(Camera& camera) {
-  glm::vec4 viewport{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+struct Control {
+  bool up;
+  bool down;
+  bool left;
+  bool right;
 
-  auto top_ray = glm::normalize(glm::unProject(
-    {400.0, 600.0, 1.0},
-    camera.get_view(),
-    camera.get_projection(),
-    viewport
-  ));
-
-  float intersection_distance = 0;
-  auto has_intersection = glm::intersectRayPlane(
-    camera.get_position(),
-    top_ray,
-    {0.0, 0.0, 0.0},
-    {0.0, 0.0, 1.0},
-    intersection_distance
-  );
-
-  return camera.get_position() + top_ray * intersection_distance;
-}
-
+  Control() :
+    up(false),
+    down(false),
+    left(false),
+    right(false) {}
+};
 
 int main() {
   auto window = init_window(SCREEN_WIDTH, SCREEN_HEIGHT);
   auto context = init_context(window.get());
+  Control control;
 
   // SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -99,13 +92,12 @@ int main() {
     }
   };
 
-  auto top_line = get_top_line_coordinates(*camera);
-
-  for (int y = -10; y < top_line.y; y++) {
+  for (int y = -10; y < 10; y++) {
     generate_line(y);
   }
 
-  bool is_running = true;
+  auto is_running = true;
+  auto last_time_point = SDL_GetTicks64();
   SDL_Event event;
 
   while (is_running) {
@@ -113,6 +105,36 @@ int main() {
       switch (event.type) {
         case SDL_QUIT: {
           is_running = false;
+          break;
+        }
+        case SDL_KEYDOWN: {
+          if (event.key.keysym.sym == SDLK_a) {
+            control.left = true;
+          }
+          if (event.key.keysym.sym == SDLK_d) {
+            control.right = true;
+          }
+          if (event.key.keysym.sym == SDLK_w) {
+            control.up = true;
+          }
+          if (event.key.keysym.sym == SDLK_s) {
+            control.down = true;
+          }
+          break;
+        }
+        case SDL_KEYUP: {
+          if (event.key.keysym.sym == SDLK_a) {
+            control.left = false;
+          }
+          if (event.key.keysym.sym == SDLK_d) {
+            control.right = false;
+          }
+          if (event.key.keysym.sym == SDLK_w) {
+            control.up = false;
+          }
+          if (event.key.keysym.sym == SDLK_s) {
+            control.down = false;
+          }
           break;
         }
       }
@@ -124,18 +146,30 @@ int main() {
       }
     }
 
-    player->set_position(player->get_position() + glm::vec3(0.0, 0.01, 0.0));
-    camera->set_position(camera->get_position() + glm::vec3(0.0, 0.01, 0.0));
+    auto now = SDL_GetTicks64();
+    auto seconds_since_last_frame = (now - last_time_point) * 0.001;
+    last_time_point = now;
 
-    auto new_top_line = get_top_line_coordinates(*camera);
-    if (std::floor(new_top_line.y) > std::floor(top_line.y)) {
-      generate_line(std::floor(new_top_line.y));
-      top_line = new_top_line;
+    glm::vec3 move_normal {0, 0, 0};
+    if (control.left) {
+      move_normal.x -= 1;
     }
+    if (control.right) {
+      move_normal.x += 1;
+    }
+    if (control.up) {
+      move_normal.y += 1;
+    }
+    if (control.down) {
+      move_normal.y -= 1;
+    }
+    if (move_normal.x != 0.0 || move_normal.y != 0.0) {
+      move_normal = glm::normalize(move_normal);
+    }
+    player->move_in(move_normal, 5.0 * seconds_since_last_frame);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    auto seconds_since_last_frame = SDL_GetTicks64() * 0.001f;
-    root->draw(*camera, *light, seconds_since_last_frame);
+    root->draw(*camera, *light, now * 0.001);
 
     SDL_GL_SwapWindow(window.get());
   }

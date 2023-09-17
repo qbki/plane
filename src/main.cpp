@@ -1,5 +1,3 @@
-#include <SDL_events.h>
-#include <glm/geometric.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <iostream>
 #include <vector>
@@ -163,7 +161,7 @@ int main() {
     if (control.down) {
       move_normal.y -= 1;
     }
-    if (move_normal.x != 0.0 || move_normal.y != 0.0) {
+    if (!is_approx_equal(glm::length2(move_normal), 0.0f)) {
       move_normal = glm::normalize(move_normal);
     }
     player->move_in(move_normal, 5.0 * seconds_since_last_frame);

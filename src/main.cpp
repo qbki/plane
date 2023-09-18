@@ -52,7 +52,7 @@ int main() {
       "./shaders/main_v.glsl",
       "./shaders/main_f.glsl"
     ));
-    model->set_position({0.0, -5.0, 2.0});
+    model->position({0.0, -5.0, 2.0});
     root->add_child(model);
     player = model;
   }
@@ -67,7 +67,7 @@ int main() {
           "./shaders/main_v.glsl",
           "./shaders/main_f.glsl"
         ));
-        model->set_position({x, y, 2.0});
+        model->position({x, y, 2.0});
         root->add_child(model);
         enemies.push_back(model);
       }
@@ -82,7 +82,7 @@ int main() {
           "./shaders/water_v.glsl",
           "./shaders/main_f.glsl"
         ));
-        model->set_position({static_cast<float>(x), static_cast<float>(y), 0.0});
+        model->position({static_cast<float>(x), static_cast<float>(y), 0.0});
         root->add_child(model);
       } else {
         auto model(cache->load(
@@ -90,7 +90,7 @@ int main() {
           "./shaders/main_v.glsl",
           "./shaders/main_f.glsl"
         ));
-        model->set_position({static_cast<float>(x), static_cast<float>(y), 0.0});
+        model->position({static_cast<float>(x), static_cast<float>(y), 0.0});
         root->add_child(model);
       }
     }
@@ -157,45 +157,45 @@ int main() {
     glm::vec4 viewport{0, 0, screen_width, screen_height};
     auto projection_point = glm::unProject(
       {mouse_x, screen_height - mouse_y, 1.0},
-      camera->get_view(),
-      camera->get_projection(),
+      camera->view(),
+      camera->projection(),
       viewport
     );
 
-    auto ray = glm::normalize(projection_point - camera->get_position());
+    auto ray = glm::normalize(projection_point - camera->position());
 
     float intersection_distance = 0;
     auto has_intersection = glm::intersectRayPlane(
-      camera->get_position(),
+      camera->position(),
       ray,
       {0.0, 0.0, 2.0},
       {0.0, 0.0, 1.0},
       intersection_distance
     );
     if (has_intersection) {
-      auto point = (camera->get_position() + ray * intersection_distance) - player->get_position();
+      auto point = (camera->position() + ray * intersection_distance) - player->position();
       auto angle = glm::atan2(point.y, point.x) - glm::half_pi<float>();
-      player->set_rotation_z(angle);
+      player->rotation_z(angle);
     }
 
     for (auto& enemy : enemies) {
-      auto pos_a {enemy->get_position()};
+      auto pos_a {enemy->position()};
       glm::vec3 sum {0, 0, 0};
       for (auto& near_enemy : enemies) {
         if (enemy == near_enemy) {
           continue;
         }
-        auto pos_b {near_enemy->get_position()};
+        auto pos_b {near_enemy->position()};
         if (glm::distance(pos_a, pos_b) < 0.7) {
           sum = glm::normalize(sum + glm::normalize(pos_a - pos_b));
         }
       }
-      sum = glm::normalize(sum + glm::normalize(player->get_position() - pos_a) * 0.05);
+      sum = glm::normalize(sum + glm::normalize(player->position() - pos_a) * 0.05);
       enemy->move_in(sum, 1.0 * seconds_since_last_frame);
 
-      auto direction_vector = player->get_position() - enemy->get_position();
+      auto direction_vector = player->position() - enemy->position();
       auto rotation = glm::atan2(direction_vector.y, direction_vector.x) - glm::half_pi<float>();
-      enemy->set_rotation_z(rotation);
+      enemy->rotation_z(rotation);
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

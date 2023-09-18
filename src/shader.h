@@ -7,7 +7,7 @@ class Shader {
 private:
   GLuint program = 0;
   GLuint compile_shader(std::string& text, GLuint shader_type);
-  void createProgram();
+  void create_program();
   void link();
 
 public:
@@ -16,11 +16,11 @@ public:
   void use();
   void compile(std::string& vertext, std::string& fragment);
 
-  void setUniform(const std::string &name, const int value);
-  void setUniform(const std::string &name, const float value);
-  void setUniform(const std::string &name, const glm::mat3 &value);
-  void setUniform(const std::string &name, const glm::mat4 &value);
-  void setUniform(const std::string &name, const glm::vec2 &value);
-  void setUniform(const std::string &name, const glm::vec3 &value);
-  void setUniform(const std::string &name, const glm::vec4 &value);
+  void uniform(const std::string &name, const int value);
+  void uniform(const std::string &name, const float value);
+  void uniform(const std::string &name, const glm::mat3 &value);
+  void uniform(const std::string &name, const glm::mat4 &value);
+  void uniform(const std::string &name, const glm::vec2 &value);
+  void uniform(const std::string &name, const glm::vec3 &value);
+  void uniform(const std::string &name, const glm::vec4 &value);
 };

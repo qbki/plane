@@ -66,7 +66,7 @@ void resize_window(
 ) {
   auto width = window_event.data1;
   auto height = window_event.data2;
-  camera.set_aspect_ratio(static_cast<float>(width) / height);
+  camera.aspect_ratio(static_cast<float>(width) / height);
   glViewport(0, 0, width, height);
 }
 

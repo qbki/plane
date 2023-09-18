@@ -2,48 +2,48 @@
 
 
 Material::Material(const glm::vec3& color) {
-  this->ambient = color * 0.1f;
-  this->diffuse = color;
-  this->specular = glm::vec3(0.5, 0.5, 0.5);
-  this->shininess = 30;
+  this->_ambient = color * 0.1f;
+  this->_diffuse = color;
+  this->_specular = glm::vec3(0.5, 0.5, 0.5);
+  this->_shininess = 30;
 }
 
 
-glm::vec3 Material::get_ambient() const {
-  return this->ambient;
+glm::vec3 Material::ambient() const {
+  return this->_ambient;
 }
 
 
-void Material::set_ambient(const glm::vec3& value) {
-  this->ambient = value;
+void Material::ambient(const glm::vec3& value) {
+  this->_ambient = value;
 }
 
 
-glm::vec3 Material::get_diffuse() const {
-  return this->diffuse;
+glm::vec3 Material::diffuse() const {
+  return this->_diffuse;
 }
 
 
-void Material::set_diffuse(const glm::vec3& value) {
-  this->diffuse = value;
+void Material::diffuse(const glm::vec3& value) {
+  this->_diffuse = value;
 }
 
 
-glm::vec3 Material::get_specular() const {
-  return this->specular;
+glm::vec3 Material::specular() const {
+  return this->_specular;
 }
 
 
-void Material::set_specular(const glm::vec3& value) {
-  this->specular = value;
+void Material::specular(const glm::vec3& value) {
+  this->_specular = value;
 }
 
 
-float Material::get_shininess() const {
-  return this->shininess;
+float Material::shininess() const {
+  return this->_shininess;
 }
 
 
-void Material::set_shininess(float value) {
-  this->shininess = value;
+void Material::shininess(float value) {
+  this->_shininess = value;
 }

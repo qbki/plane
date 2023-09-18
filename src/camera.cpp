@@ -8,16 +8,16 @@
 
 Camera::Camera(
   glm::vec3 _position, float aspect_ratio
-) : position(_position) {
+) : _position(_position) {
   auto zero = glm::vec3(0.0, 0.0, 0.0);
-  this->forward_norm = glm::normalize(zero - this->position);
+  this->_forward_norm = glm::normalize(zero - this->_position);
   this->look_at(zero);
-  this->set_aspect_ratio(aspect_ratio);
+  this->aspect_ratio(aspect_ratio);
 }
 
 
-void Camera::set_aspect_ratio(float aspect_ratio) {
-  this->projection = glm::perspective(
+void Camera::aspect_ratio(float aspect_ratio) {
+  this->_projection = glm::perspective(
     glm::radians(45.0f),
     aspect_ratio,
     0.1f,
@@ -27,34 +27,34 @@ void Camera::set_aspect_ratio(float aspect_ratio) {
 
 
 glm::mat4 Camera::pv() const {
-  return this->projection * this->view;
+  return this->_projection * this->_view;
 }
 
 
-glm::vec3 Camera::get_position() const {
-  return this->position;
+glm::vec3 Camera::position() const {
+  return this->_position;
 }
 
 
-void Camera::set_position(const glm::vec3& value) {
-  this->position = value;
-  this->look_at(value + this->forward_norm);
+void Camera::position(const glm::vec3& value) {
+  this->_position = value;
+  this->look_at(value + this->_forward_norm);
 }
 
 
-const glm::mat4& Camera::get_projection() const {
-  return this->projection;
+const glm::mat4& Camera::projection() const {
+  return this->_projection;
 }
 
 
-const glm::mat4& Camera::get_view() const {
-  return this->view;
+const glm::mat4& Camera::view() const {
+  return this->_view;
 }
 
 
 void Camera::look_at(const glm::vec3& value) {
-  this->view = glm::lookAt(
-    this->position,
+  this->_view = glm::lookAt(
+    this->_position,
     value,
     glm::vec3(0.0, 1.0, 0.0)
   );

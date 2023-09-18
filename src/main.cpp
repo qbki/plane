@@ -1,3 +1,6 @@
+#include <glm/geometric.hpp>
+#include <glm/gtc/constants.hpp>
+#include <glm/gtx/compatibility.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <iostream>
 #include <vector>
@@ -36,7 +39,9 @@ struct Control {
 };
 
 int main() {
-  auto window = init_window(SCREEN_WIDTH, SCREEN_HEIGHT);
+  int screen_width = SCREEN_WIDTH;
+  int screen_height = SCREEN_HEIGHT;
+  auto window = init_window(screen_width, screen_height);
   auto context = init_context(window.get());
   Control control;
 
@@ -66,6 +71,23 @@ int main() {
     model->set_position({0.0, -5.0, 2.0});
     root->add_child(model);
     player = model;
+  }
+
+
+  std::vector<std::shared_ptr<Graphic>> enemies;
+  {
+    for (int x = -10; x < 10; x++) {
+      for (int y = -10; y < 10; y++) {
+        auto model(cache->load(
+          "./models/plane.glb",
+          "./shaders/main_v.glsl",
+          "./shaders/main_f.glsl"
+        ));
+        model->set_position({x, y, 2.0});
+        root->add_child(model);
+        enemies.push_back(model);
+      }
+    }
   }
 
   auto generate_line = [&](float y) {
@@ -106,6 +128,9 @@ int main() {
           break;
         }
         case SDL_KEYDOWN: {
+          if (event.key.keysym.sym == SDLK_q) {
+            is_running = false;
+          }
           if (event.key.keysym.sym == SDLK_a) {
             control.left = true;
           }
@@ -138,6 +163,8 @@ int main() {
       }
       switch (event.window.event) {
         case SDL_WINDOWEVENT_RESIZED: {
+          screen_width = event.window.data1;
+          screen_height = event.window.data2;
           resize_window(event.window, *camera);
           break;
         }
@@ -147,6 +174,10 @@ int main() {
     auto now = SDL_GetTicks64();
     auto seconds_since_last_frame = (now - last_time_point) * 0.001;
     last_time_point = now;
+
+    int mouse_x = 0;
+    int mouse_y = 0;
+    SDL_GetMouseState(&mouse_x, &mouse_y);
 
     glm::vec3 move_normal {0, 0, 0};
     if (control.left) {
@@ -165,6 +196,52 @@ int main() {
       move_normal = glm::normalize(move_normal);
     }
     player->move_in(move_normal, 5.0 * seconds_since_last_frame);
+
+    glm::vec4 viewport{0, 0, screen_width, screen_height};
+    auto projection_point = glm::unProject(
+      {mouse_x, screen_height - mouse_y, 1.0},
+      camera->get_view(),
+      camera->get_projection(),
+      viewport
+    );
+
+    auto ray = glm::normalize(projection_point - camera->get_position());
+
+    float intersection_distance = 0;
+    auto has_intersection = glm::intersectRayPlane(
+      camera->get_position(),
+      ray,
+      {0.0, 0.0, 2.0},
+      {0.0, 0.0, 1.0},
+      intersection_distance
+    );
+    if (has_intersection) {
+      auto point = (camera->get_position() + ray * intersection_distance) - player->get_position();
+      auto angle = glm::atan2(point.y, point.x) - glm::half_pi<float>();
+      player->set_rotation_z(angle);
+    }
+
+    for (auto& enemyA : enemies) {
+      auto saved_position = enemyA->get_position();
+      {
+        auto direction = glm::normalize(player->get_position() - enemyA->get_position());
+        enemyA->move_in(direction, 0.7 * seconds_since_last_frame);
+      }
+
+      auto direction_vector = player->get_position() - enemyA->get_position();
+      auto rotation = glm::atan2(direction_vector.y, direction_vector.x) - glm::half_pi<float>();
+      enemyA->set_rotation_z(rotation);
+
+      for (auto& enemyB : enemies) {
+        if (enemyA == enemyB) {
+          continue;
+        }
+        if (glm::distance(enemyA->get_position(), enemyB->get_position()) < 0.7) {
+          auto direction = glm::normalize(enemyA->get_position() - enemyB->get_position());
+          enemyA->move_in(direction, 0.7 * seconds_since_last_frame);
+        }
+      }
+    }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     root->draw(*camera, *light, now * 0.001);

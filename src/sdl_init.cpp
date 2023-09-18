@@ -24,7 +24,7 @@ std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> init_window(uint screen_width,
   auto window = SDL_CreateWindow(
     "Plane", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width,
     screen_height,
-    SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
   if (window == nullptr) {
     auto err_sdl = std::unique_ptr<const char>(SDL_GetError());
     auto err_text = std::string("Unable to create window: ") + *err_sdl;

@@ -9,8 +9,11 @@
 class Graphic {
 protected:
   glm::vec3 position = glm::vec3(0.0, 0.0, 0.0);
+  float rotation_z = 0.0;
   glm::mat4 transform = glm::identity<glm::mat4>();
   std::vector<std::shared_ptr<Graphic>> children = std::vector<std::shared_ptr<Graphic>>();
+
+  void update_transform();
 
 public:
   virtual ~Graphic() {};
@@ -24,7 +27,10 @@ public:
   ) const;
 
   glm::vec3 get_position() const;
-  void set_position(glm::vec3 position);
+  void set_position(const glm::vec3& position);
+
+  float get_rotation_z() const;
+  void set_rotation_z(float rotation);
 
   const glm::mat4& get_transform() const;
   void set_transform(const glm::mat4& transform);

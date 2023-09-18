@@ -13,6 +13,13 @@
 
 int buffer_size();
 
+template<typename T>
+T zero();
+
+template<>
+inline glm::vec3 zero<glm::vec3>() {
+  return glm::vec3(0.0, 0.0, 0.0);
+}
 
 template<typename T>
 void print(T& value);

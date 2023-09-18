@@ -7,6 +7,7 @@ public:
   bool down = false;
   bool left = false;
   bool right = false;
+  bool is_player_shooting = false;
 
   void update(SDL_Event& event);
 };

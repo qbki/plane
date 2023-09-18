@@ -21,19 +21,21 @@ Model::Model(
 
 
 void Model::draw(const Camera& camera, const SunLight& light, float elapsed_seconds) const {
-  shader->use();
-  shader->uniform("u_PV", camera.pv());
-  shader->uniform("u_elapsed_seconds", elapsed_seconds);
-  shader->uniform("u_M", this->_transform);
-  shader->uniform("u_normal_matrix", glm::transpose(glm::inverse(glm::mat3(this->_transform))));
-  shader->uniform("u_camera_pos", camera.position());
-  shader->uniform("u_light.color", light.color());
-  shader->uniform("u_light.direction", light.direction());
-  shader->uniform("u_material.ambient", this->material->ambient());
-  shader->uniform("u_material.diffuse", this->material->diffuse());
-  shader->uniform("u_material.specular", this->material->specular());
-  shader->uniform("u_material.shininess", this->material->shininess());
-  mesh->draw();
+  if (this->is_active()) {
+    shader->use();
+    shader->uniform("u_PV", camera.pv());
+    shader->uniform("u_elapsed_seconds", elapsed_seconds);
+    shader->uniform("u_M", this->_transform);
+    shader->uniform("u_normal_matrix", glm::transpose(glm::inverse(glm::mat3(this->_transform))));
+    shader->uniform("u_camera_pos", camera.position());
+    shader->uniform("u_light.color", light.color());
+    shader->uniform("u_light.direction", light.direction());
+    shader->uniform("u_material.ambient", this->material->ambient());
+    shader->uniform("u_material.diffuse", this->material->diffuse());
+    shader->uniform("u_material.specular", this->material->specular());
+    shader->uniform("u_material.shininess", this->material->shininess());
+    mesh->draw();
 
-  Graphic::draw(camera, light, elapsed_seconds);
+    Graphic::draw(camera, light, elapsed_seconds);
+  }
 }

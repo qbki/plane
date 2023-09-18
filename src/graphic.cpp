@@ -45,6 +45,16 @@ void Graphic::is_active(bool value) {
 }
 
 
+glm::vec3 Graphic::velocity() const {
+  return this->_velocity;
+}
+
+
+void Graphic::velocity(glm::vec3 velocity) {
+  this->_velocity = velocity;
+}
+
+
 void Graphic::add_child(std::shared_ptr<Graphic> child) {
   this->_children.push_back(child);
 }
@@ -52,7 +62,9 @@ void Graphic::add_child(std::shared_ptr<Graphic> child) {
 
 void Graphic::draw(const Camera& camera, const SunLight& light, float elapsed_seconds) const {
   for (auto& child : _children) {
-    child->draw(camera, light, elapsed_seconds);
+    if (this->is_active()) {
+      child->draw(camera, light, elapsed_seconds);
+    }
   }
 }
 

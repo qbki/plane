@@ -1,4 +1,6 @@
+#include <exception>
 #include <memory>
+#include <stdexcept>
 #include <tuple>
 
 #include "./cache.h"
@@ -40,7 +42,11 @@ std::shared_ptr<Model> Cache::load(
 
   if (has_mesh) {
     mesh = std::get<MESH_IDX>(this->meshes.at(mesh_file_name));
-    material = std::get<MATERIAL_IDX>(this->meshes.at(mesh_file_name));
+    try {
+      material = std::get<MATERIAL_IDX>(this->meshes.at(mesh_file_name));
+    } catch (std::out_of_range error) {
+      throw new std::runtime_error("Please ensure that " + mesh_file_name + " has a material");
+    }
   } else {
     auto gltf_model = load_gltf_model(mesh_file_name);
     auto color = exctract_material_color(gltf_model);

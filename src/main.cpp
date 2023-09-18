@@ -1,6 +1,3 @@
-#include <glm/geometric.hpp>
-#include <glm/gtc/constants.hpp>
-#include <glm/gtx/compatibility.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <iostream>
 #include <vector>
@@ -8,35 +5,22 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <SDL2/SDL.h>
-#include <cstdlib>
 #include <glm/ext/matrix_projection.hpp>
 #include <glm/gtx/intersect.hpp>
 #include <glm/ext.hpp>
 
-#include "./sdl_init.h"
-#include "./model.h"
 #include "./cache.h"
 #include "./camera.h"
+#include "./control.h"
 #include "./graphic.h"
+#include "./model.h"
+#include "./sdl_init.h"
 #include "./sun_light.h"
 #include "./utils.h"
 
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
-
-struct Control {
-  bool up;
-  bool down;
-  bool left;
-  bool right;
-
-  Control() :
-    up(false),
-    down(false),
-    left(false),
-    right(false) {}
-};
 
 int main() {
   int screen_width = SCREEN_WIDTH;
@@ -131,34 +115,6 @@ int main() {
           if (event.key.keysym.sym == SDLK_q) {
             is_running = false;
           }
-          if (event.key.keysym.sym == SDLK_a) {
-            control.left = true;
-          }
-          if (event.key.keysym.sym == SDLK_d) {
-            control.right = true;
-          }
-          if (event.key.keysym.sym == SDLK_w) {
-            control.up = true;
-          }
-          if (event.key.keysym.sym == SDLK_s) {
-            control.down = true;
-          }
-          break;
-        }
-        case SDL_KEYUP: {
-          if (event.key.keysym.sym == SDLK_a) {
-            control.left = false;
-          }
-          if (event.key.keysym.sym == SDLK_d) {
-            control.right = false;
-          }
-          if (event.key.keysym.sym == SDLK_w) {
-            control.up = false;
-          }
-          if (event.key.keysym.sym == SDLK_s) {
-            control.down = false;
-          }
-          break;
         }
       }
       switch (event.window.event) {
@@ -169,6 +125,7 @@ int main() {
           break;
         }
       }
+      control.update(event);
     }
 
     auto now = SDL_GetTicks64();
@@ -221,26 +178,24 @@ int main() {
       player->set_rotation_z(angle);
     }
 
-    for (auto& enemyA : enemies) {
-      auto saved_position = enemyA->get_position();
-      {
-        auto direction = glm::normalize(player->get_position() - enemyA->get_position());
-        enemyA->move_in(direction, 0.7 * seconds_since_last_frame);
-      }
-
-      auto direction_vector = player->get_position() - enemyA->get_position();
-      auto rotation = glm::atan2(direction_vector.y, direction_vector.x) - glm::half_pi<float>();
-      enemyA->set_rotation_z(rotation);
-
-      for (auto& enemyB : enemies) {
-        if (enemyA == enemyB) {
+    for (auto& enemy : enemies) {
+      auto pos_a {enemy->get_position()};
+      glm::vec3 sum {0, 0, 0};
+      for (auto& near_enemy : enemies) {
+        if (enemy == near_enemy) {
           continue;
         }
-        if (glm::distance(enemyA->get_position(), enemyB->get_position()) < 0.7) {
-          auto direction = glm::normalize(enemyA->get_position() - enemyB->get_position());
-          enemyA->move_in(direction, 0.7 * seconds_since_last_frame);
+        auto pos_b {near_enemy->get_position()};
+        if (glm::distance(pos_a, pos_b) < 0.7) {
+          sum = glm::normalize(sum + glm::normalize(pos_a - pos_b));
         }
       }
+      sum = glm::normalize(sum + glm::normalize(player->get_position() - pos_a) * 0.05);
+      enemy->move_in(sum, 1.0 * seconds_since_last_frame);
+
+      auto direction_vector = player->get_position() - enemy->get_position();
+      auto rotation = glm::atan2(direction_vector.y, direction_vector.x) - glm::half_pi<float>();
+      enemy->set_rotation_z(rotation);
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-#include "./shader.h"
+#include "shader.h"
 
 
 void throw_on_shader_error(GLuint shader, GLenum status) {

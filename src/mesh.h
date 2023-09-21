@@ -8,6 +8,7 @@ private:
   GLuint vbo = 0; // vertex buffer object
   GLuint nbo = 0; // normal buffer object
   GLuint ebo = 0; // element buffer object
+  GLuint tbo = 0; // texture coordinates buffer object
 
   int mode;
   size_t count;

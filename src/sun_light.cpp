@@ -1,6 +1,6 @@
 #include <glm/ext/quaternion_geometric.hpp>
 
-#include "./sun_light.h"
+#include "sun_light.h"
 
 
 SunLight::SunLight(

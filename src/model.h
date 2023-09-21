@@ -2,16 +2,18 @@
 #include <memory>
 #include <string>
 
-#include "./graphic.h"
-#include "./material.h"
-#include "./mesh.h"
-#include "./shader.h"
+#include "graphic.h"
+#include "material.h"
+#include "mesh.h"
+#include "shader.h"
+#include "texture.h"
 
 class Model : public Graphic {
 private:
   std::shared_ptr<Mesh> mesh;
   std::shared_ptr<Shader> shader;
   std::shared_ptr<Material> material;
+  std::shared_ptr<Texture> texture;
 
 public:
   using Graphic::Graphic;
@@ -19,7 +21,8 @@ public:
   Model(
     std::shared_ptr<Mesh> mesh,
     std::shared_ptr<Shader> shader,
-    std::shared_ptr<Material> material
+    std::shared_ptr<Material> material,
+    std::shared_ptr<Texture> texture
   );
 
   ~Model() {};

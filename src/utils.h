@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <tiny_gltf.h>
 
-#include "./camera.h"
+#include "camera.h"
 
 int buffer_size();
 
@@ -37,11 +37,8 @@ void resize_window(
 );
 
 
-glm::vec3 exctract_material_color(tinygltf::Model& model);
-
-
-template<typename K, typename V>
-bool has_key(const std::unordered_map<K, V>& map, const K& key) {
+template<typename M, typename K>
+bool has_key(const M& map, const K& key) {
   return map.find(key) != map.end();
 }
 

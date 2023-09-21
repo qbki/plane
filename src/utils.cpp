@@ -2,9 +2,10 @@
 #include <GL/gl.h>
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include <stdexcept>
 
-#include "./utils.h"
+#include "utils.h"
 
 
 int buffer_size() {
@@ -26,6 +27,10 @@ tinygltf::Model load_gltf_model(const std::string& filename) {
   std::string err;
   std::string warn;
 
+  if (!std::filesystem::exists(filename)) {
+    throw std::runtime_error("File not found: " + filename);
+  }
+
   bool res = loader.LoadBinaryFromFile(&model, &err, &warn, filename);
   if (!warn.empty()) {
     std::cout << "WARN: " << warn << std::endl;
@@ -36,7 +41,7 @@ tinygltf::Model load_gltf_model(const std::string& filename) {
   }
 
   if (!res) {
-    throw new std::runtime_error("Failed to load glTF: " + filename);
+    throw std::runtime_error("Failed to load glTF: " + filename);
   } else {
     std::cout << "Loaded glTF: " << filename << std::endl;
   }
@@ -49,7 +54,7 @@ std::string load_text(const std::string &file_name) {
   std::ifstream ifs(file_name);
 
   if (ifs.fail()) {
-    throw new std::runtime_error("Cannot read a file: " + file_name);
+    throw std::runtime_error("Cannot read a file: " + file_name);
   }
 
   std::string content(
@@ -68,12 +73,4 @@ void resize_window(
   auto height = window_event.data2;
   camera.aspect_ratio(static_cast<float>(width) / height);
   glViewport(0, 0, width, height);
-}
-
-
-glm::vec3 exctract_material_color(tinygltf::Model& model) {
-  auto material_id = model.meshes.at(0).primitives.at(0).material;
-  auto material = model.materials.at(material_id);
-  auto color = material.pbrMetallicRoughness.baseColorFactor;
-  return glm::vec3(color.at(0), color.at(1), color.at(2));
 }

@@ -1,4 +1,4 @@
-#include "./material.h"
+#include "material.h"
 
 
 Material::Material(const glm::vec3& color) {

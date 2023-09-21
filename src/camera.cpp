@@ -3,7 +3,7 @@
 #include <glm/geometric.hpp>
 #include <glm/matrix.hpp>
 
-#include "./camera.h"
+#include "camera.h"
 
 
 Camera::Camera(

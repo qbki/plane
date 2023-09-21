@@ -11,6 +11,7 @@ uniform float u_elapsed_seconds;
 out InterfaceData {
   flat vec3 position;
   flat vec3 normal;
+  vec2 tex_coord;
 } interface_data;
 
 float OFFSET = 0.001;

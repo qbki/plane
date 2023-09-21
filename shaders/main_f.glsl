@@ -16,6 +16,7 @@ struct SunLight {
 in InterfaceData {
   flat vec3 position;
   flat vec3 normal;
+  vec2 tex_coord;
 } interface_data;
 
 out vec4 frag_color;
@@ -24,6 +25,8 @@ uniform vec3 u_camera_pos;
 uniform SunLight u_light;
 uniform Material u_material;
 
+uniform sampler2D main_texture;
+
 void main() {
   vec3 view_dir = normalize(u_camera_pos - interface_data.position);
   vec3 normal = normalize(interface_data.normal);
@@ -31,7 +34,7 @@ void main() {
   vec3 ambient = u_light.color * u_material.ambient;
 
   float angle = max(dot(normal, u_light.direction), 0.0);
-  vec3 diffuse = u_light.color * (angle * u_material.diffuse);
+  vec3 diffuse = texture(main_texture, interface_data.tex_coord).xyz * (angle * u_material.diffuse);
 
   vec3 reflect_dir = reflect(-u_light.direction, normal);
   float power = pow(max(dot(view_dir, reflect_dir), 0.0), u_material.shininess);

@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "./sdl_init.h"
+#include "sdl_init.h"
 
 std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> init_window(uint screen_width, uint screen_height) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {

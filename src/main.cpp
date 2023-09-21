@@ -9,14 +9,14 @@
 #include <glm/gtx/intersect.hpp>
 #include <glm/ext.hpp>
 
-#include "./cache.h"
-#include "./camera.h"
-#include "./control.h"
-#include "./graphic.h"
-#include "./model.h"
-#include "./sdl_init.h"
-#include "./sun_light.h"
-#include "./utils.h"
+#include "cache.h"
+#include "camera.h"
+#include "control.h"
+#include "graphic.h"
+#include "model.h"
+#include "sdl_init.h"
+#include "sun_light.h"
+#include "utils.h"
 
 
 const int SCREEN_WIDTH = 800;
@@ -62,7 +62,7 @@ int main() {
     for (int x = -10; x < 10; x++) {
       for (int y = -10; y < 10; y++) {
         auto model(cache->load(
-          "./models/plane.glb",
+          "./models/saucer.glb",
           "./shaders/main_v.glsl",
           "./shaders/main_f.glsl"
         ));

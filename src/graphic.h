@@ -4,9 +4,9 @@
 #include <vector>
 #include <glm/ext/matrix_transform.hpp>
 
-#include "./camera.h"
-#include "./sun_light.h"
-#include "./utils.h"
+#include "camera.h"
+#include "sun_light.h"
+#include "utils.h"
 
 class Graphic {
 protected:

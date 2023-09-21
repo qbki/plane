@@ -1,6 +1,6 @@
 #include <glm/ext/matrix_transform.hpp>
 
-#include "./graphic.h"
+#include "graphic.h"
 
 
 glm::vec3 Graphic::position() const {

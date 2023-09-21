@@ -4,20 +4,22 @@
 #include <iostream>
 #include <memory>
 
-#include "./model.h"
-#include "./utils.h"
-#include "./camera.h"
-#include "./graphic.h"
-#include "./material.h"
+#include "model.h"
+#include "utils.h"
+#include "camera.h"
+#include "graphic.h"
+#include "material.h"
 
 
 Model::Model(
   std::shared_ptr<Mesh> mesh,
   std::shared_ptr<Shader> shader,
-  std::shared_ptr<Material> material
+  std::shared_ptr<Material> material,
+  std::shared_ptr<Texture> texture
 ) : mesh(mesh),
     shader(shader),
-    material(material) {}
+    material(material),
+    texture(texture) {}
 
 
 void Model::draw(const Camera& camera, const SunLight& light, float elapsed_seconds) const {
@@ -34,6 +36,10 @@ void Model::draw(const Camera& camera, const SunLight& light, float elapsed_seco
     shader->uniform("u_material.diffuse", this->material->diffuse());
     shader->uniform("u_material.specular", this->material->specular());
     shader->uniform("u_material.shininess", this->material->shininess());
+
+    texture->use(0);
+    shader->uniform("main_texture", 0);
+
     mesh->draw();
 
     Graphic::draw(camera, light, elapsed_seconds);

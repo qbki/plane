@@ -73,7 +73,6 @@ Mesh::Mesh(tinygltf::Model &model) {
       auto triangle_quantity = bufferView.byteLength / (sizeof(float) * 3) / 3;
       std::cout << triangle_quantity << std::endl;
       std::vector<float> data;
-      // data.reserve(triangle_quantity * 3 * 2);
       for (int i = 0; i < triangle_quantity; i++) {
         data.emplace_back(0.0f);
         data.emplace_back(0.0f);

@@ -18,12 +18,12 @@
 #include "utils.h"
 
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
+const int DEFAULT_SCREEN_WIDTH = 800;
+const int DEFAULT_SCREEN_HEIGHT = 600;
 
 int main() {
-  int screen_width = SCREEN_WIDTH;
-  int screen_height = SCREEN_HEIGHT;
+  int screen_width = DEFAULT_SCREEN_WIDTH;
+  int screen_height = DEFAULT_SCREEN_HEIGHT;
   auto window = init_window(screen_width, screen_height);
   auto context = init_context(window.get());
   Control control;
@@ -39,7 +39,7 @@ int main() {
 
   auto camera = std::make_unique<Camera>(
     glm::vec3(0.0, -4.0, 15.0),
-    static_cast<float>(SCREEN_WIDTH) / SCREEN_HEIGHT
+    static_cast<float>(screen_width) / screen_height
   );
 
   auto player = factory->make_player();

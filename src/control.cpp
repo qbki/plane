@@ -1,5 +1,6 @@
 #include "control.h"
 
+
 void Control::update(SDL_Event& event) {
   switch (event.type) {
     case SDL_KEYDOWN: {

@@ -3,11 +3,11 @@
 #include <string>
 #include <unordered_map>
 
-#include "models/index.h"
-#include "material.h"
-#include "mesh.h"
-#include "shader.h"
-#include "texture.h"
+#include "../material.h"
+#include "../mesh.h"
+#include "../shader.h"
+#include "../texture.h"
+#include "model.h"
 
 const int MESH_IDX = 0;
 const int MATERIAL_IDX = 1;

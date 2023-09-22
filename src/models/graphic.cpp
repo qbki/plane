@@ -60,6 +60,11 @@ void Graphic::add_child(std::shared_ptr<Graphic> child) {
 }
 
 
+void Graphic::add_children(std::vector<std::shared_ptr<Graphic>>& children) {
+  std::copy(begin(children), end(children), back_inserter(this->_children));
+}
+
+
 void Graphic::draw(const Camera& camera, const SunLight& light, float elapsed_seconds) const {
   for (auto& child : _children) {
     if (this->is_active()) {

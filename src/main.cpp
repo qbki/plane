@@ -1,18 +1,15 @@
 #define GLM_ENABLE_EXPERIMENTAL
-#include <iostream>
 #include <vector>
 #include <memory>
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <SDL2/SDL.h>
-#include <glm/ext/matrix_projection.hpp>
-#include <glm/gtx/intersect.hpp>
-#include <glm/ext.hpp>
 
-#include "models/index.h"
-#include "cache.h"
 #include "camera.h"
 #include "control.h"
+#include "handlers/index.h"
+#include "models/index.h"
+#include "scene.h"
 #include "sdl_init.h"
 #include "sun_light.h"
 #include "utils.h"
@@ -20,6 +17,7 @@
 
 const int DEFAULT_SCREEN_WIDTH = 800;
 const int DEFAULT_SCREEN_HEIGHT = 600;
+const float ANIMATED_OBJECTS_HEIGHT = 2.0;
 
 int main() {
   int screen_width = DEFAULT_SCREEN_WIDTH;
@@ -30,50 +28,67 @@ int main() {
 
   auto factory = std::make_unique<ModelFactory>();
 
-  auto root = std::make_unique<Graphic>();
+  auto scene = std::make_unique<Scene>();
 
   auto light = std::make_unique<SunLight>(
     glm::vec3(1.0, 1.0, 1.0),
     glm::vec3(0.5, 0.5, 1.0)
   );
 
-  auto camera = std::make_unique<Camera>(
+  scene->camera(std::make_shared<Camera>(
     glm::vec3(0.0, -4.0, 15.0),
     static_cast<float>(screen_width) / screen_height
-  );
+  ));
 
-  auto player = factory->make_player();
-  player->position({0.0, -5.0, 2.0});
-  root->add_child(player);
-
-  std::vector<std::shared_ptr<Graphic>> enemies;
-  for (int x = -10; x < 10; x++) {
-    for (int y = -10; y < 10; y++) {
-      auto model (factory->make_enemy());
-      model->position({x, y, player->position().z});
-      root->add_child(model);
-      enemies.push_back(model);
-    }
-  }
-
-  std::vector<std::shared_ptr<Graphic>> bullets;
   {
-    for (int x = 0; x < 40; x++) {
-      auto model (factory->make_bullet());
-      root->add_child(model);
-      bullets.push_back(model);
-    }
+    auto player = factory->make_player();
+    player->position({0.0, -5.0, ANIMATED_OBJECTS_HEIGHT});
+    scene->player(player);
   }
 
-  for (int y = -10; y < 10; y++) {
-    for (int x = -15; x <= 15; x++) {
-      auto model  = rand() % 2 == 0
-        ? factory->make_water_block()
-        : factory->make_ground_block();
-      model->position({x, y, 0.0});
-      root->add_child(model);
+  {
+    Scene::Entities enemies;
+    for (int x = -10; x < 10; x++) {
+      for (int y = -10; y < 10; y++) {
+        auto model (factory->make_enemy());
+        model->position({x, y, ANIMATED_OBJECTS_HEIGHT});
+        enemies.push_back(model);
+      }
     }
+    scene->add_enemies(enemies);
   }
+
+  {
+    Scene::Entities bullets;
+    {
+      for (int x = 0; x < 40; x++) {
+        auto model (factory->make_bullet());
+        bullets.push_back(model);
+      }
+    }
+    scene->add_bullets(bullets);
+  }
+
+  {
+    Scene::Entities decorations;
+    for (int y = -10; y < 10; y++) {
+      for (int x = -15; x <= 15; x++) {
+        auto model = rand() % 2 == 0
+          ? factory->make_water_block()
+          : factory->make_ground_block();
+        model->position({x, y, 0.0});
+        decorations.push_back(model);
+      }
+    }
+    scene->add_decoration(decorations);
+  }
+
+  scene->add_handler(make_cursor_handler(screen_width, screen_height));
+  scene->add_handler(move_player);
+  scene->add_handler(rotate_player);
+  scene->add_handler(shoot_by_player);
+  scene->add_handler(handle_bullets);
+  scene->add_handler(handle_enemies);
 
   auto is_running = true;
   auto last_time_point = SDL_GetTicks64();
@@ -97,7 +112,7 @@ int main() {
         case SDL_WINDOWEVENT_RESIZED: {
           screen_width = event.window.data1;
           screen_height = event.window.data2;
-          resize_window(event.window, *camera);
+          resize_window(event.window, *scene->camera());
           break;
         }
       }
@@ -108,113 +123,10 @@ int main() {
     auto seconds_since_last_frame = (now - last_time_point) * 0.001;
     last_time_point = now;
 
-    int mouse_x = 0;
-    int mouse_y = 0;
-    SDL_GetMouseState(&mouse_x, &mouse_y);
-
-    glm::vec3 move_normal {0, 0, 0};
-    if (control.left) {
-      move_normal.x -= 1;
-    }
-    if (control.right) {
-      move_normal.x += 1;
-    }
-    if (control.up) {
-      move_normal.y += 1;
-    }
-    if (control.down) {
-      move_normal.y -= 1;
-    }
-    if (!is_approx_equal(glm::length2(move_normal), 0.0f)) {
-      move_normal = glm::normalize(move_normal);
-    }
-    player->move_in(move_normal, 5.0 * seconds_since_last_frame);
-
-    if (control.is_player_shooting) {
-      for (auto& bullet : bullets) {
-        if (!bullet->is_active()) {
-          bullet->is_active(true);
-          bullet->position(player->position());
-          bullet->rotation_z(player->rotation_z());
-          break;
-        }
-      }
-    }
-
-    for (auto& bullet : bullets) {
-      if (!bullet->is_active()) {
-        continue;
-      }
-
-      auto angle = bullet->rotation_z();
-      auto directin = glm::vec3(glm::cos(angle), glm::sin(angle), 0.0);
-      bullet->move_in(directin, 30.0 * seconds_since_last_frame);
-      auto pos = bullet->position();
-      if (pos.x < -12 || pos.x > 12 || pos.y < -6 || pos.y > 6) {
-        bullet->is_active(false);
-      }
-
-      for (auto& enemy : enemies) {
-        if (enemy->is_active() && glm::distance(bullet->position(), enemy->position()) <= 0.5) {
-          enemy->is_active(false);
-          bullet->is_active(false);
-        }
-      }
-    }
-
-    glm::vec4 viewport{0, 0, screen_width, screen_height};
-    auto projection_point = glm::unProject(
-      {mouse_x, screen_height - mouse_y, 1.0},
-      camera->view(),
-      camera->projection(),
-      viewport
-    );
-
-    auto ray = glm::normalize(projection_point - camera->position());
-
-    float intersection_distance = 0;
-    auto has_intersection = glm::intersectRayPlane(
-      camera->position(),
-      ray,
-      {0.0, 0.0, 2.0},
-      {0.0, 0.0, 1.0},
-      intersection_distance
-    );
-    if (has_intersection) {
-      auto point = (camera->position() + ray * intersection_distance) - player->position();
-      auto angle = glm::atan2(point.y, point.x);
-      player->rotation_z(angle);
-    }
-
-    decltype(enemies) filtered_enemies;
-    std::copy_if(
-      begin(enemies),
-      end(enemies),
-      std::back_inserter(filtered_enemies),
-      [](auto v) { return v->is_active();
-    });
-    for (auto& enemy : filtered_enemies) {
-      auto pos_a {enemy->position()};
-      glm::vec3 sum {0, 0, 0};
-      for (auto& near_enemy : filtered_enemies) {
-        if (enemy == near_enemy) {
-          continue;
-        }
-        auto pos_b {near_enemy->position()};
-        if (glm::distance(pos_a, pos_b) < 0.7) {
-          sum = glm::normalize(sum + glm::normalize(pos_a - pos_b));
-        }
-      }
-      sum = glm::normalize(sum + glm::normalize(player->position() - pos_a) * 0.05);
-      enemy->move_in(sum, 1.0 * seconds_since_last_frame);
-
-      auto direction_vector = player->position() - enemy->position();
-      auto rotation = glm::atan2(direction_vector.y, direction_vector.x);
-      enemy->rotation_z(rotation);
-    }
+    scene->update(control, seconds_since_last_frame);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    root->draw(*camera, *light, now * 0.001);
+    scene->draw(*scene->camera(), *light, now * 0.001);
 
     SDL_GL_SwapWindow(window.get());
   }

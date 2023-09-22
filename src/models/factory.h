@@ -1,9 +1,9 @@
 #pragma once
 #include <memory>
 
+#include "cache.h"
 #include "graphic.h"
 
-class Cache;
 class ModelFactory {
 private:
   std::unique_ptr<Cache> cache;

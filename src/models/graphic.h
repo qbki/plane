@@ -23,6 +23,7 @@ public:
   virtual ~Graphic() {};
 
   void add_child(std::shared_ptr<Graphic> child);
+  void add_children(std::vector<std::shared_ptr<Graphic>>& children);
 
   virtual void draw(
     const Camera& camera,

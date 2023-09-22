@@ -5,10 +5,9 @@
 #include <vector>
 
 #include "cache.h"
-#include "material.h"
-#include "shader.h"
-#include "texture.h"
-#include "utils.h"
+#include "../shader.h"
+#include "../texture.h"
+#include "../utils.h"
 
 
 glm::vec3 exctract_material_color(tinygltf::Model& model) {

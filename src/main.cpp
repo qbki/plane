@@ -28,89 +28,51 @@ int main() {
   auto context = init_context(window.get());
   Control control;
 
-  // SDL_SetRelativeMouseMode(SDL_TRUE);
+  auto factory = std::make_unique<ModelFactory>();
 
-  std::unique_ptr<Graphic> root(new Graphic());
+  auto root = std::make_unique<Graphic>();
 
-  std::unique_ptr<SunLight> light(new SunLight(
-    {1.0, 1.0, 1.0},
-    {0.5, 0.5, 1.0}
-  ));
+  auto light = std::make_unique<SunLight>(
+    glm::vec3(1.0, 1.0, 1.0),
+    glm::vec3(0.5, 0.5, 1.0)
+  );
 
-  std::unique_ptr<Cache> cache(new Cache());
-
-  std::unique_ptr<Camera> camera(new Camera(
-    {0.0, -4.0, 15.0},
+  auto camera = std::make_unique<Camera>(
+    glm::vec3(0.0, -4.0, 15.0),
     static_cast<float>(SCREEN_WIDTH) / SCREEN_HEIGHT
-  ));
+  );
 
-  std::shared_ptr<Graphic> player;
-  {
-    auto model(cache->load(
-      "./models/plane.glb",
-      "./shaders/main_v.glsl",
-      "./shaders/main_f.glsl"
-    ));
-    model->position({0.0, -5.0, 2.0});
-    root->add_child(model);
-    player = model;
-  }
+  auto player = factory->make_player();
+  player->position({0.0, -5.0, 2.0});
+  root->add_child(player);
 
   std::vector<std::shared_ptr<Graphic>> enemies;
-  {
-    for (int x = -10; x < 10; x++) {
-      for (int y = -10; y < 10; y++) {
-        auto model(cache->load(
-          "./models/saucer.glb",
-          "./shaders/main_v.glsl",
-          "./shaders/main_f.glsl"
-        ));
-        model->position({x, y, 2.0});
-        root->add_child(model);
-        enemies.push_back(model);
-      }
+  for (int x = -10; x < 10; x++) {
+    for (int y = -10; y < 10; y++) {
+      auto model (factory->make_enemy());
+      model->position({x, y, player->position().z});
+      root->add_child(model);
+      enemies.push_back(model);
     }
   }
 
   std::vector<std::shared_ptr<Graphic>> bullets;
   {
     for (int x = 0; x < 40; x++) {
-      auto model(cache->load(
-        "./models/bullet.glb",
-        "./shaders/main_v.glsl",
-        "./shaders/main_f.glsl"
-      ));
-      model->position({0, 0, 0});
-      model->is_active(false);
+      auto model (factory->make_bullet());
       root->add_child(model);
       bullets.push_back(model);
     }
   }
 
-  auto generate_line = [&](float y) {
-    for (int x = -15; x <= 15; x++) {
-      if (rand() % 2 == 0) {
-        auto model(cache->load(
-          "./models/water-surface.glb",
-          "./shaders/water_v.glsl",
-          "./shaders/main_f.glsl"
-        ));
-        model->position({static_cast<float>(x), static_cast<float>(y), 0.0});
-        root->add_child(model);
-      } else {
-        auto model(cache->load(
-          "./models/center-block.glb",
-          "./shaders/main_v.glsl",
-          "./shaders/main_f.glsl"
-        ));
-        model->position({static_cast<float>(x), static_cast<float>(y), 0.0});
-        root->add_child(model);
-      }
-    }
-  };
-
   for (int y = -10; y < 10; y++) {
-    generate_line(y);
+    for (int x = -15; x <= 15; x++) {
+      auto model  = rand() % 2 == 0
+        ? factory->make_water_block()
+        : factory->make_ground_block();
+      model->position({x, y, 0.0});
+      root->add_child(model);
+    }
   }
 
   auto is_running = true;

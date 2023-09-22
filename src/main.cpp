@@ -9,10 +9,10 @@
 #include <glm/gtx/intersect.hpp>
 #include <glm/ext.hpp>
 
+#include "models/index.h"
 #include "cache.h"
 #include "camera.h"
 #include "control.h"
-#include "models.h"
 #include "sdl_init.h"
 #include "sun_light.h"
 #include "utils.h"

@@ -3,9 +3,9 @@
 #include <string>
 #include <unordered_map>
 
+#include "models/index.h"
 #include "material.h"
 #include "mesh.h"
-#include "models.h"
 #include "shader.h"
 #include "texture.h"
 

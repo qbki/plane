@@ -5,7 +5,7 @@
 
 #include "material.h"
 #include "mesh.h"
-#include "model.h"
+#include "models.h"
 #include "shader.h"
 #include "texture.h"
 

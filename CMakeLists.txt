@@ -12,7 +12,7 @@ find_package(SDL2 REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(TinyGLTF REQUIRED)
 
-file(GLOB SOURCES ./src/*)
+file(GLOB_RECURSE SOURCES ./src/*)
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} glm::glm)

@@ -3,7 +3,6 @@ precision highp float;
 
 struct Material {
   vec3 ambient;
-  vec3 diffuse;
   vec3 specular;
   float shininess;
 };
@@ -34,7 +33,7 @@ void main() {
   vec3 ambient = u_light.color * u_material.ambient;
 
   float angle = max(dot(normal, u_light.direction), 0.0);
-  vec3 diffuse = texture(main_texture, interface_data.tex_coord).xyz * (angle * u_material.diffuse);
+  vec3 diffuse = texture(main_texture, interface_data.tex_coord).xyz * angle;
 
   vec3 reflect_dir = reflect(-u_light.direction, normal);
   float power = pow(max(dot(view_dir, reflect_dir), 0.0), u_material.shininess);

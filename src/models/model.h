@@ -2,11 +2,11 @@
 #include <memory>
 #include <string>
 
+#include "../material.h"
+#include "../mesh.h"
+#include "../shader.h"
+#include "../texture.h"
 #include "graphic.h"
-#include "material.h"
-#include "mesh.h"
-#include "shader.h"
-#include "texture.h"
 
 class Model : public Graphic {
 private:

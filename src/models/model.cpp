@@ -4,11 +4,11 @@
 #include <iostream>
 #include <memory>
 
+#include "../utils.h"
+#include "../camera.h"
+#include "../material.h"
 #include "model.h"
-#include "utils.h"
-#include "camera.h"
 #include "graphic.h"
-#include "material.h"
 
 
 Model::Model(
@@ -33,7 +33,6 @@ void Model::draw(const Camera& camera, const SunLight& light, float elapsed_seco
     shader->uniform("u_light.color", light.color());
     shader->uniform("u_light.direction", light.direction());
     shader->uniform("u_material.ambient", this->material->ambient());
-    shader->uniform("u_material.diffuse", this->material->diffuse());
     shader->uniform("u_material.specular", this->material->specular());
     shader->uniform("u_material.shininess", this->material->shininess());
 

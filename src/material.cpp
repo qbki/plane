@@ -3,7 +3,6 @@
 
 Material::Material(const glm::vec3& color) {
   this->_ambient = color * 0.1f;
-  this->_diffuse = color;
   this->_specular = glm::vec3(0.5, 0.5, 0.5);
   this->_shininess = 30;
 }
@@ -16,16 +15,6 @@ glm::vec3 Material::ambient() const {
 
 void Material::ambient(const glm::vec3& value) {
   this->_ambient = value;
-}
-
-
-glm::vec3 Material::diffuse() const {
-  return this->_diffuse;
-}
-
-
-void Material::diffuse(const glm::vec3& value) {
-  this->_diffuse = value;
 }
 
 

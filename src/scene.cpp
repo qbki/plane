@@ -1,5 +1,6 @@
 #include "scene.h"
 #include "control.h"
+#include <algorithm>
 
 
 void Scene::add_entities(Entities& source, Entities& destination) {
@@ -50,12 +51,18 @@ Scene::Entities& Scene::bullets() {
 
 
 void Scene::add_enemies(Entities& xs) {
-  this->add_entities(xs, this->_enemies);
+  std::transform(
+    begin(xs),
+    end(xs),
+    back_inserter(this->_enemies_state),
+    [](auto item) { return EnemyState(item); }
+  );
+  this->add_children(xs);
 }
 
 
-Scene::Entities& Scene::enemies() {
-  return this->_enemies;
+Scene::EnemiesState& Scene::enemies_state() {
+  return this->_enemies_state;
 }
 
 

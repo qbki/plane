@@ -88,7 +88,9 @@ int main() {
   scene->add_handler(rotate_player);
   scene->add_handler(shoot_by_player);
   scene->add_handler(handle_bullets);
-  scene->add_handler(handle_enemies);
+  scene->add_handler(handle_enemies_hunting);
+  scene->add_handler(handle_enemy_rotation);
+  scene->add_handler(handle_enemy_sinking);
 
   auto is_running = true;
   auto last_time_point = SDL_GetTicks64();

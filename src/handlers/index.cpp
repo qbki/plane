@@ -1,8 +1,22 @@
+#include <functional>
 #include <glm/gtx/intersect.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/trigonometric.hpp>
+#include <vector>
 
 #include "./index.h"
+
+
+template<typename T>
+std::vector<T*> filter_ptr(std::vector<T>& items, std::function<bool(T&)> predicate) {
+  std::vector<EnemyState*> filtered_items;
+  for (auto& item : items) {
+    if (predicate(item)) {
+      filtered_items.push_back(&item);
+    }
+  }
+  return filtered_items;
+}
 
 
 void move_player(Scene::Meta& meta) {
@@ -63,44 +77,66 @@ void handle_bullets (Scene::Meta& meta) {
       bullet->is_active(false);
     }
 
-    for (auto& enemy : meta.scene.enemies()) {
-      if (enemy->is_active() && glm::distance(bullet->position(), enemy->position()) <= 0.5) {
-        enemy->is_active(false);
+    for (auto& enemy_state : meta.scene.enemies_state()) {
+      auto enemy = enemy_state.model;
+      if (glm::distance(bullet->position(), enemy->position()) <= 0.3) {
+        if (enemy_state.state != EnemyState::SINKING) {
+          enemy_state.state = EnemyState::SINKING;
+        }
         bullet->is_active(false);
       }
     }
   }
 }
 
-
-void handle_enemies(Scene::Meta& meta) {
-  auto& enemies = meta.scene.enemies();
+void handle_enemies_hunting(Scene::Meta& meta) {
   auto player = meta.scene.player();
-  Scene::Entities filtered_enemies;
-  std::copy_if(
-    begin(enemies),
-    end(enemies),
-    std::back_inserter(filtered_enemies),
-    [](auto v) { return v->is_active();
-  });
-  for (auto& enemy : filtered_enemies) {
+  auto filtered_enemies_state = filter_ptr<EnemyState>(
+    meta.scene.enemies_state(),
+    [](EnemyState& v) { return v.state == EnemyState::HUNTING; }
+  );
+  for (auto& enemy_state : filtered_enemies_state) {
+    auto enemy = enemy_state->model;
     auto pos_a {enemy->position()};
     glm::vec3 sum {0, 0, 0};
-    for (auto& near_enemy : filtered_enemies) {
-      if (enemy == near_enemy) {
+    for (auto& near_enemy_state : filtered_enemies_state) {
+      if (&enemy_state == &near_enemy_state) {
         continue;
       }
-      auto pos_b {near_enemy->position()};
+      auto pos_b {near_enemy_state->model->position()};
       if (glm::distance(pos_a, pos_b) < 0.7) {
         sum = glm::normalize(sum + glm::normalize(pos_a - pos_b));
       }
     }
     sum = glm::normalize(sum + glm::normalize(player->position() - pos_a) * 0.05f);
     enemy->move_in(sum, 1.0 * meta.seconds_since_last_frame);
+  }
+}
 
-    auto direction_vector = player->position() - enemy->position();
-    auto rotation = glm::atan(direction_vector.y, direction_vector.x);
-    enemy->rotation_z(rotation);
+void handle_enemy_sinking(Scene::Meta& meta) {
+  auto filtered_enemies_state = filter_ptr<EnemyState>(
+    meta.scene.enemies_state(),
+    [](EnemyState& v) { return v.state == EnemyState::SINKING && v.model->is_active(); }
+  );
+  for (auto& enemy_state : filtered_enemies_state) {
+    auto enemy = enemy_state->model;
+    enemy->move_in({0, 0, 1}, -1.5 * meta.seconds_since_last_frame);
+    enemy->rotation_z(enemy->rotation_z() + 0.05);
+    if (enemy->position().z < -2.0) {
+      enemy->is_active(false);
+    }
+  }
+}
+
+void handle_enemy_rotation(Scene::Meta& meta) {
+  auto player_positon = meta.scene.player()->position();
+  for (auto& enemy_state : meta.scene.enemies_state()) {
+    auto enemy = enemy_state.model;
+    if (enemy->is_active() && enemy_state.state == EnemyState::HUNTING) {
+      auto direction_vector = player_positon - enemy->position();
+      auto rotation = glm::atan(direction_vector.y, direction_vector.x);
+      enemy->rotation_z(rotation);
+    }
   }
 }
 

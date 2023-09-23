@@ -60,7 +60,7 @@ void Graphic::add_child(std::shared_ptr<Graphic> child) {
 }
 
 
-void Graphic::add_children(std::vector<std::shared_ptr<Graphic>>& children) {
+void Graphic::add_children(const std::vector<std::shared_ptr<Graphic>>& children) {
   std::copy(begin(children), end(children), back_inserter(this->_children));
 }
 

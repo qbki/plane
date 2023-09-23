@@ -6,6 +6,8 @@
 
 #include "camera.h"
 #include "control.h"
+#include "models/enemy_state.h"
+#include "models/graphic.h"
 #include "models/index.h"
 
 class Scene : public Graphic {
@@ -19,13 +21,14 @@ public:
 
   using Entity = std::shared_ptr<Graphic>;
   using Entities = std::vector<Entity>;
+  using EnemiesState = std::vector<EnemyState>;
   using Handler = std::function<void (Meta& meta)>;
 
 private:
   std::shared_ptr<Camera> _camera;
   Entity _player;
   Entities _bullets;
-  Entities _enemies;
+  EnemiesState _enemies_state;
   Entities _decorations;
   std::vector<Handler> _handlers;
   glm::vec3 _cursor = zero<glm::vec3>();
@@ -51,7 +54,7 @@ public:
   Entities& bullets();
 
   void add_enemies(Entities& enemies);
-  Entities& enemies();
+  EnemiesState& enemies_state();
 
   void add_decoration(Entities& decorations);
   Entities& decorations();

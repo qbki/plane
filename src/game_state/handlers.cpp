@@ -3,6 +3,7 @@
 #include <glm/gtx/intersect.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/trigonometric.hpp>
+#include <iostream>
 #include <vector>
 
 #include "game_state.h"
@@ -99,21 +100,24 @@ void handle_enemies_hunting(GameState::Meta& meta) {
     meta.state.enemies_state(),
     [](EnemyState& v) { return v.state == EnemyState::HUNTING; }
   );
-  for (auto& enemy_state : filtered_enemies_state) {
-    auto enemy = enemy_state->model;
+  for (auto enemy_state : filtered_enemies_state) {
+    auto enemy {enemy_state->model.get()};
     auto pos_a {enemy->position()};
     glm::vec3 sum {0, 0, 0};
-    for (auto& near_enemy_state : filtered_enemies_state) {
-      if (&enemy_state == &near_enemy_state) {
+    for (auto near_enemy_state : filtered_enemies_state) {
+      if (enemy_state == near_enemy_state) {
         continue;
       }
       auto pos_b {near_enemy_state->model->position()};
-      if (glm::distance(pos_a, pos_b) < 0.7) {
-        sum = glm::normalize(sum + glm::normalize(pos_a - pos_b));
+      if (enemy_state->is_sibling_close(pos_b)) {
+        sum += pos_a - pos_b;
       }
     }
-    sum = glm::normalize(sum + glm::normalize(player->position() - pos_a) * 0.05f);
-    enemy->move_in(sum, 1.0 * meta.seconds_since_last_frame);
+    // found by experiments, it reduces force of attraction to the player and
+    // it helps avoiding collapsing enemies during movement
+    auto direction_weight = 0.05f;
+    sum = glm::normalize(sum + glm::normalize(player->position() - pos_a) * direction_weight);
+    enemy->move_in(sum, enemy_state->hunting_speed * meta.seconds_since_last_frame);
   }
 }
 

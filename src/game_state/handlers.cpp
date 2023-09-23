@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "game_state.h"
-#include "index.h"
 
 
 template<typename T>
@@ -93,6 +92,7 @@ void handle_bullets (GameState::Meta& meta) {
   }
 }
 
+
 void handle_enemies_hunting(GameState::Meta& meta) {
   auto player = meta.state.player();
   auto filtered_enemies_state = filter_ptr<EnemyState>(
@@ -117,6 +117,7 @@ void handle_enemies_hunting(GameState::Meta& meta) {
   }
 }
 
+
 void handle_enemy_sinking(GameState::Meta& meta) {
   auto filtered_enemies_state = filter_ptr<EnemyState>(
     meta.state.enemies_state(),
@@ -128,9 +129,11 @@ void handle_enemy_sinking(GameState::Meta& meta) {
     enemy->rotation_z(enemy->rotation_z() + 0.05);
     if (enemy->position().z < -2.0) {
       enemy->is_active(false);
+      enemy_state->state = EnemyState::INACTIVE;
     }
   }
 }
+
 
 void handle_enemy_rotation(GameState::Meta& meta) {
   auto player_positon = meta.state.player()->position();
@@ -143,6 +146,7 @@ void handle_enemy_rotation(GameState::Meta& meta) {
     }
   }
 }
+
 
 GameState::Handler make_cursor_handler(int& screen_width, int& screen_height) {
   return ([&screen_width, &screen_height](GameState::Meta meta) {

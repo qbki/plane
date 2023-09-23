@@ -49,7 +49,7 @@ int main() {
   {
     GameState::Entities enemies;
     for (int x = -10; x < 10; x++) {
-      for (int y = -10; y < 10; y++) {
+      for (int y = 5; y < 30; y++) {
         auto model (factory->make_enemy());
         model->position({x, y, ANIMATED_OBJECTS_HEIGHT});
         enemies.push_back(model);

@@ -1,11 +1,12 @@
 #pragma once
-#include "graphic.h"
+#include "../models/index.h"
 
 class EnemyState {
 public:
   enum State {
     HUNTING,
     SINKING,
+    INACTIVE,
   };
 
   State state = State::HUNTING;

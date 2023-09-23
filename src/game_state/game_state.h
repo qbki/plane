@@ -6,8 +6,8 @@
 
 #include "../camera.h"
 #include "../control.h"
-#include "../models/enemy_state.h"
 #include "../models/index.h"
+#include "enemy_state.h"
 
 class GameState {
 public:

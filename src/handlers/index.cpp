@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <functional>
 #include <glm/gtx/intersect.hpp>
 #include <glm/gtx/norm.hpp>
@@ -55,7 +56,9 @@ void shoot_by_player(Scene::Meta& meta) {
       if (!bullet->is_active()) {
         bullet->is_active(true);
         bullet->position(player->position());
-        bullet->rotation_z(player->rotation_z());
+        auto max_spread = 3.14 / 16.0;
+        auto spread = max_spread * (std::rand() % 100) * 0.01;
+        bullet->rotation_z(player->rotation_z() - max_spread / 2.0 + spread);
         break;
       }
     }
@@ -71,7 +74,7 @@ void handle_bullets (Scene::Meta& meta) {
 
     auto angle = bullet->rotation_z();
     auto directin = glm::vec3(glm::cos(angle), glm::sin(angle), 0.0);
-    bullet->move_in(directin, 30.0 * meta.seconds_since_last_frame);
+    bullet->move_in(directin, 10.0 * meta.seconds_since_last_frame);
     auto pos = bullet->position();
     if (pos.x < -12 || pos.x > 12 || pos.y < -6 || pos.y > 6) {
       bullet->is_active(false);

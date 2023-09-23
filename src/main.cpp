@@ -61,7 +61,7 @@ int main() {
   {
     Scene::Entities bullets;
     {
-      for (int x = 0; x < 40; x++) {
+      for (int x = 0; x < 100; x++) {
         auto model (factory->make_bullet());
         bullets.push_back(model);
       }

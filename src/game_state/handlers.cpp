@@ -5,7 +5,8 @@
 #include <glm/trigonometric.hpp>
 #include <vector>
 
-#include "./index.h"
+#include "game_state.h"
+#include "index.h"
 
 
 template<typename T>
@@ -20,7 +21,7 @@ std::vector<T*> filter_ptr(std::vector<T>& items, std::function<bool(T&)> predic
 }
 
 
-void move_player(Scene::Meta& meta) {
+void move_player(GameState::Meta& meta) {
   glm::vec3 move_normal {0, 0, 0};
   if (meta.control.left) {
     move_normal.x -= 1;
@@ -37,22 +38,22 @@ void move_player(Scene::Meta& meta) {
   auto direction = is_approx_equal(glm::length2(move_normal), 0.0f)
     ? move_normal
     : glm::normalize(move_normal);
-  meta.scene.player()->move_in(direction, 5.0 * meta.seconds_since_last_frame);
+  meta.state.player()->move_in(direction, 5.0 * meta.seconds_since_last_frame);
 }
 
 
-void rotate_player(Scene::Meta& meta) {
-  auto player = meta.scene.player();
-  auto direction = meta.scene.cursor() - player->position();
+void rotate_player(GameState::Meta& meta) {
+  auto player = meta.state.player();
+  auto direction = meta.state.cursor() - player->position();
   auto angle = glm::atan(direction.y, direction.x);
   player->rotation_z(angle);
 }
 
 
-void shoot_by_player(Scene::Meta& meta) {
-  const auto& player = meta.scene.player();
+void shoot_by_player(GameState::Meta& meta) {
+  const auto& player = meta.state.player();
   if (meta.control.is_player_shooting) {
-    for (auto& bullet : meta.scene.bullets()) {
+    for (auto& bullet : meta.state.bullets()) {
       if (!bullet->is_active()) {
         bullet->is_active(true);
         bullet->position(player->position());
@@ -66,8 +67,8 @@ void shoot_by_player(Scene::Meta& meta) {
 };
 
 
-void handle_bullets (Scene::Meta& meta) {
-  for (auto& bullet : meta.scene.bullets()) {
+void handle_bullets (GameState::Meta& meta) {
+  for (auto& bullet : meta.state.bullets()) {
     if (!bullet->is_active()) {
       continue;
     }
@@ -80,7 +81,7 @@ void handle_bullets (Scene::Meta& meta) {
       bullet->is_active(false);
     }
 
-    for (auto& enemy_state : meta.scene.enemies_state()) {
+    for (auto& enemy_state : meta.state.enemies_state()) {
       auto enemy = enemy_state.model;
       if (glm::distance(bullet->position(), enemy->position()) <= 0.3) {
         if (enemy_state.state != EnemyState::SINKING) {
@@ -92,10 +93,10 @@ void handle_bullets (Scene::Meta& meta) {
   }
 }
 
-void handle_enemies_hunting(Scene::Meta& meta) {
-  auto player = meta.scene.player();
+void handle_enemies_hunting(GameState::Meta& meta) {
+  auto player = meta.state.player();
   auto filtered_enemies_state = filter_ptr<EnemyState>(
-    meta.scene.enemies_state(),
+    meta.state.enemies_state(),
     [](EnemyState& v) { return v.state == EnemyState::HUNTING; }
   );
   for (auto& enemy_state : filtered_enemies_state) {
@@ -116,9 +117,9 @@ void handle_enemies_hunting(Scene::Meta& meta) {
   }
 }
 
-void handle_enemy_sinking(Scene::Meta& meta) {
+void handle_enemy_sinking(GameState::Meta& meta) {
   auto filtered_enemies_state = filter_ptr<EnemyState>(
-    meta.scene.enemies_state(),
+    meta.state.enemies_state(),
     [](EnemyState& v) { return v.state == EnemyState::SINKING && v.model->is_active(); }
   );
   for (auto& enemy_state : filtered_enemies_state) {
@@ -131,9 +132,9 @@ void handle_enemy_sinking(Scene::Meta& meta) {
   }
 }
 
-void handle_enemy_rotation(Scene::Meta& meta) {
-  auto player_positon = meta.scene.player()->position();
-  for (auto& enemy_state : meta.scene.enemies_state()) {
+void handle_enemy_rotation(GameState::Meta& meta) {
+  auto player_positon = meta.state.player()->position();
+  for (auto& enemy_state : meta.state.enemies_state()) {
     auto enemy = enemy_state.model;
     if (enemy->is_active() && enemy_state.state == EnemyState::HUNTING) {
       auto direction_vector = player_positon - enemy->position();
@@ -143,8 +144,8 @@ void handle_enemy_rotation(Scene::Meta& meta) {
   }
 }
 
-Scene::Handler make_cursor_handler(int& screen_width, int& screen_height) {
-  return ([&screen_width, &screen_height](Scene::Meta meta) {
+GameState::Handler make_cursor_handler(int& screen_width, int& screen_height) {
+  return ([&screen_width, &screen_height](GameState::Meta meta) {
     int mouse_x = 0;
     int mouse_y = 0;
     SDL_GetMouseState(&mouse_x, &mouse_y);
@@ -160,12 +161,12 @@ Scene::Handler make_cursor_handler(int& screen_width, int& screen_height) {
     auto has_intersection = glm::intersectRayPlane(
       meta.camera.position(),
       ray,
-      {0.0, 0.0, meta.scene.player()->position().z},
+      {0.0, 0.0, meta.state.player()->position().z},
       {0.0, 0.0, 1.0},
       intersection_distance
     );
     if (has_intersection) {
-      meta.scene.cursor(meta.camera.position() + ray * intersection_distance);
+      meta.state.cursor(meta.camera.position() + ray * intersection_distance);
     }
   });
 }

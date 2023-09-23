@@ -4,16 +4,15 @@
 #include <memory>
 #include <vector>
 
-#include "camera.h"
-#include "control.h"
-#include "models/enemy_state.h"
-#include "models/graphic.h"
-#include "models/index.h"
+#include "../camera.h"
+#include "../control.h"
+#include "../models/enemy_state.h"
+#include "../models/index.h"
 
-class Scene : public Graphic {
+class GameState {
 public:
   struct Meta {
-    Scene& scene;
+    GameState& state;
     Control& control;
     Camera& camera;
     float seconds_since_last_frame;
@@ -37,9 +36,9 @@ private:
   void add_entities(Entities& source, Entities& destination);
 
 public:
-  explicit Scene() {};
-  Scene(const Scene&) = delete;
-  Scene& operator=(const Scene&) = delete;
+  GameState() {}
+  GameState(const GameState&) = delete;
+  GameState& operator=(const GameState&) = delete;
 
   void camera(std::shared_ptr<Camera> camera);
   std::shared_ptr<Camera> camera();

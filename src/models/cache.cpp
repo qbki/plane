@@ -5,10 +5,12 @@
 #include <tuple>
 #include <vector>
 
-#include "cache.h"
+#include "../game_state/index.h"
 #include "../shader.h"
 #include "../texture.h"
 #include "../utils.h"
+#include "../utils.h"
+#include "cache.h"
 
 
 glm::vec3 exctract_material_color(tinygltf::Model& model) {
@@ -27,14 +29,16 @@ Cache::Textures generate_texture(tinygltf::Model& model) {
     static_cast<unsigned char>(color.z * 255.0),
     255
   };
-  return {std::make_shared<Texture>(Texture::Type::MAIN, data)};
+  auto texture_type = TextureType::map_to_int(TextureType::DEFAULT_TYPE);
+  return {std::make_shared<Texture>(texture_type, data)};
 }
 
 
 std::vector<std::shared_ptr<Texture>> extract_textures(tinygltf::Model& model) {
   std::vector<std::shared_ptr<Texture>> textures;
   for (auto& image : model.images) {
-    textures.push_back(std::make_shared<Texture>(Texture::map_to_type(image.name), image.image));
+    auto texture_type = TextureType::map_str_to_int(image.name);
+    textures.push_back(std::make_shared<Texture>(texture_type, image.image));
   }
   return textures;
 }

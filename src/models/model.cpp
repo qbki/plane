@@ -23,11 +23,11 @@ Model::Model(
     _material(material),
     _textures(textures)
 {
-  this->use_basecolor_texture(Texture::Type::MAIN);
+  _basecolor_texture_idx = textures.at(0)->type();
 }
 
 
-void Model::use_basecolor_texture(Texture::Type type) {
+void Model::use_basecolor_texture(unsigned int type) {
   auto begin_it = begin(this->_textures);
   auto end_it = end(this->_textures);
   auto found_it = std::find_if(
@@ -36,7 +36,7 @@ void Model::use_basecolor_texture(Texture::Type type) {
       [&type](std::shared_ptr<Texture>v) { return v->type() == type; }
   );
   if (found_it == end_it) {
-    std::cout << "Basecolor '" << Texture::map_to_str(type) << "' was not found" << '\n';
+    std::cout << "Basecolor '" << type << "' was not found" << '\n';
   }
   this->_basecolor_texture_idx = found_it == end_it
     ? 0

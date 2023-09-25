@@ -35,5 +35,5 @@ public:
     float elapsed_seconds
   ) const override;
 
-  void use_basecolor_texture(Texture::Type type);
+  void use_basecolor_texture(unsigned int type);
 };

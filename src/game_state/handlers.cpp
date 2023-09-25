@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "game_state.h"
+#include "texture_type.h"
 
 
 template<typename T>
@@ -86,8 +87,9 @@ void handle_bullets (GameState::Meta& meta) {
       if (glm::distance(bullet->position(), enemy->position()) <= 0.3) {
         if (enemy_state.state != EnemyState::SINKING) {
           enemy_state.state = EnemyState::SINKING;
+          auto texture_type = TextureType::map_to_int(TextureType::Type::DESTROYED);
           auto enemy_model = static_cast<Model*>(enemy_state.model.get());
-          enemy_model->use_basecolor_texture(Texture::Type::DESTROYED);
+          enemy_model->use_basecolor_texture(texture_type);
         }
         bullet->is_active(false);
       }

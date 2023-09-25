@@ -2,6 +2,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "../material.h"
 #include "../mesh.h"
@@ -14,13 +15,16 @@ const int MATERIAL_IDX = 1;
 const int TEXTURE_IDX = 2;
 
 class Cache {
-private:
-  using mesh_ptr = std::shared_ptr<Mesh>;
-  using material_ptr = std::shared_ptr<Material>;
-  using texture_ptr = std::shared_ptr<Texture>;
+public:
+  using MeshPtr = std::shared_ptr<Mesh>;
+  using MaterialPtr = std::shared_ptr<Material>;
+  using Textures = std::vector<std::shared_ptr<Texture>>;
+  using ShaderPtr = std::shared_ptr<Shader>;
 
-  std::unordered_map<std::string, std::tuple<mesh_ptr, material_ptr, texture_ptr>> meshes;
-  std::unordered_map<std::string, std::shared_ptr<Shader>> shaders;
+private:
+  std::unordered_map<std::string, std::tuple<MeshPtr, MaterialPtr, Textures>> _meshes;
+  std::unordered_map<std::string, ShaderPtr> _shaders;
+
 public:
   Cache();
 

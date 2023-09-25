@@ -86,6 +86,8 @@ void handle_bullets (GameState::Meta& meta) {
       if (glm::distance(bullet->position(), enemy->position()) <= 0.3) {
         if (enemy_state.state != EnemyState::SINKING) {
           enemy_state.state = EnemyState::SINKING;
+          auto enemy_model = static_cast<Model*>(enemy_state.model.get());
+          enemy_model->use_basecolor_texture(Texture::Type::DESTROYED);
         }
         bullet->is_active(false);
       }

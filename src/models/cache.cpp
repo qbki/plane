@@ -1,4 +1,5 @@
 #include <exception>
+#include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <tuple>
@@ -18,27 +19,33 @@ glm::vec3 exctract_material_color(tinygltf::Model& model) {
 }
 
 
-std::vector<unsigned char> extract_texture(tinygltf::Model& model) {
-  if (model.images.size() > 0) {
-    return model.images.at(0).image;
-  } else {
-    auto color = exctract_material_color(model);
-    return {
-      static_cast<unsigned char>(color.x * 255.0),
-      static_cast<unsigned char>(color.y * 255.0),
-      static_cast<unsigned char>(color.z * 255.0),
-      255
-    };
+Cache::Textures generate_texture(tinygltf::Model& model) {
+  auto color = exctract_material_color(model);
+  std::vector<unsigned char> data {
+    static_cast<unsigned char>(color.x * 255.0),
+    static_cast<unsigned char>(color.y * 255.0),
+    static_cast<unsigned char>(color.z * 255.0),
+    255
+  };
+  return {std::make_shared<Texture>(Texture::Type::MAIN, data)};
+}
+
+
+std::vector<std::shared_ptr<Texture>> extract_textures(tinygltf::Model& model) {
+  std::vector<std::shared_ptr<Texture>> textures;
+  for (auto& image : model.images) {
+    textures.push_back(std::make_shared<Texture>(Texture::map_to_type(image.name), image.image));
   }
+  return textures;
 }
 
 
 Cache::Cache() {
-  this->meshes = std::unordered_map<
+  this->_meshes = std::unordered_map<
     std::string,
-    std::tuple<mesh_ptr, material_ptr, texture_ptr>
+    std::tuple<MeshPtr, MaterialPtr, Textures>
   >();
-  this->shaders = std::unordered_map<std::string, std::shared_ptr<Shader>>();
+  this->_shaders = std::unordered_map<std::string, ShaderPtr>();
 }
 
 
@@ -48,37 +55,40 @@ std::shared_ptr<Model> Cache::load(
   const std::string& fragment_shader_file_name
 ) {
   auto shader_file_names = vertex_shader_file_name + fragment_shader_file_name;
-  auto has_shader = has_key(this->shaders, shader_file_names);
+  auto has_shader = has_key(this->_shaders, shader_file_names);
   auto shader = has_shader
-    ? this->shaders.at(shader_file_names)
+    ? this->_shaders.at(shader_file_names)
     : std::shared_ptr<Shader>(new Shader());
   if (!has_shader) {
     auto vertex_shader = load_text(vertex_shader_file_name);
     auto fragment_shader = load_text(fragment_shader_file_name);
     shader->compile(vertex_shader, fragment_shader);
-    this->shaders[shader_file_names] = shader;
+    this->_shaders[shader_file_names] = shader;
   }
 
-  auto has_mesh = has_key(this->meshes, mesh_file_name);
+  auto has_mesh = has_key(this->_meshes, mesh_file_name);
 
   std::shared_ptr<Mesh> mesh;
   std::shared_ptr<Material> material;
-  std::shared_ptr<Texture> texture;
+  Textures textures;
 
   if (has_mesh) {
-    auto mesh_data = this->meshes.at(mesh_file_name);
+    auto mesh_data = this->_meshes.at(mesh_file_name);
     mesh = std::get<MESH_IDX>(mesh_data);
     material = std::get<MATERIAL_IDX>(mesh_data);
-    texture = std::get<TEXTURE_IDX>(mesh_data);
+    textures = std::get<TEXTURE_IDX>(mesh_data);
   } else {
     auto gltf_model = load_gltf_model(mesh_file_name);
     auto color = exctract_material_color(gltf_model);
-    auto raw_texture = extract_texture(gltf_model);
-    mesh = std::shared_ptr<Mesh>(new Mesh(gltf_model));
-    material = std::shared_ptr<Material>(new Material(color));
-    texture = std::shared_ptr<Texture>(new Texture(raw_texture));
-    this->meshes[mesh_file_name] = std::make_tuple(mesh, material, texture);
+
+    mesh = std::make_shared<Mesh>(gltf_model);
+    material = std::make_shared<Material>(color);
+    auto extracted_textures = extract_textures(gltf_model);
+    textures = extracted_textures.size() > 0
+      ? extracted_textures
+      : generate_texture(gltf_model);
+    this->_meshes[mesh_file_name] = std::make_tuple(mesh, material, textures);
   }
 
-  return std::shared_ptr<Model>(new Model(mesh, shader, material, texture));
+  return std::make_shared<Model>(mesh, shader, material, textures);
 }

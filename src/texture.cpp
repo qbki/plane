@@ -1,5 +1,6 @@
 #include <GL/gl.h>
 #include <cmath>
+#include <iostream>
 #include <stdexcept>
 
 #include "texture.h"
@@ -21,7 +22,7 @@ GLuint int_to_texture_index(unsigned int idx) {
 /**
  * @param data Expects 4 bytes per pixel (RGBA) and a rectangular texture
  */
-Texture::Texture(const std::vector<unsigned char>& data) {
+Texture::Texture(Type type, const std::vector<unsigned char>& data) : _type(type) {
   size_t size = std::sqrt(data.size() / 4);
   glGenTextures(1, &this->to);
   glBindTexture(GL_TEXTURE_2D, this->to);
@@ -51,4 +52,36 @@ Texture::~Texture() {
 void Texture::use(unsigned int idx) {
   glActiveTexture(int_to_texture_index(idx));
   glBindTexture(GL_TEXTURE_2D, this->to);
+}
+
+
+Texture::Type Texture::type() {
+  return this->_type;
+}
+
+
+void Texture::type(Type value) {
+  this->_type = value;
+}
+
+
+std::string Texture::map_to_str(Type type) {
+  switch (type) {
+    case Texture::Type::MAIN: return "main";
+    case Texture::Type::DESTROYED: return "destroyed";
+    default: return "unknown";
+  }
+}
+
+
+Texture::Type Texture::map_to_type(std::string& type) {
+  auto log_unknown_type ([]() {
+    std::cout << "Unknown type of a texture" << "\n";
+    return Texture::DefaultType;
+  });
+  return (
+      type == "main"      ? Texture::Type::MAIN
+    : type == "destroyed" ? Texture::Type::DESTROYED
+    : log_unknown_type()
+  );
 }

@@ -27,13 +27,19 @@ uniform Material u_material;
 uniform sampler2D main_texture;
 
 void main() {
+  vec4 base_color = texture(main_texture, interface_data.tex_coord);
+
+  if (base_color.a < 0.1) {
+    discard;
+  }
+
   vec3 view_dir = normalize(u_camera_pos - interface_data.position);
   vec3 normal = normalize(interface_data.normal);
 
   vec3 ambient = u_light.color * u_material.ambient;
 
   float angle = max(dot(normal, u_light.direction), 0.0);
-  vec3 diffuse = texture(main_texture, interface_data.tex_coord).xyz * angle;
+  vec3 diffuse = base_color.rgb * angle;
 
   vec3 reflect_dir = reflect(-u_light.direction, normal);
   float power = pow(max(dot(view_dir, reflect_dir), 0.0), u_material.shininess);

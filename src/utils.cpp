@@ -21,6 +21,16 @@ void print(T& value) {
 }
 
 
+glm::vec3 encode_gamma(const glm::vec3& color, float gamma) {
+  return glm::pow(color, glm::vec3(1.0 / gamma));
+}
+
+
+glm::vec3 decode_gamma(const glm::vec3& color, float gamma) {
+  return glm::pow(color, glm::vec3(gamma));
+}
+
+
 tinygltf::Model load_gltf_model(const std::string& filename) {
   tinygltf::Model model;
   tinygltf::TinyGLTF loader;

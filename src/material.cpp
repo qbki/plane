@@ -2,7 +2,7 @@
 
 
 Material::Material(const glm::vec3& color) {
-  this->_ambient = color * 0.1f;
+  this->_ambient = color * 0.03f;
   this->_specular = glm::vec3(0.5, 0.5, 0.5);
   this->_shininess = 30;
 }

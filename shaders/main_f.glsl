@@ -23,13 +23,25 @@ out vec4 frag_color;
 uniform vec3 u_camera_pos;
 uniform SunLight u_light;
 uniform Material u_material;
+uniform float gamma_in;
+uniform float gamma_out;
 
 uniform sampler2D main_texture;
 
-void main() {
-  vec4 base_color = texture(main_texture, interface_data.tex_coord);
+vec3 encode_gamma(vec3 color) {
+  return pow(color, vec3(1.0 / gamma_out));
+}
 
-  if (base_color.a < 0.1) {
+vec3 decode_gamma(vec3 color) {
+  return pow(color, vec3(gamma_in));
+}
+
+void main() {
+  vec4 base_color_sample = texture(main_texture, interface_data.tex_coord);
+  float base_alpha = base_color_sample.a;
+  vec3 base_color = decode_gamma(base_color_sample.rgb);
+
+  if (base_alpha < 0.1) {
     discard;
   }
 
@@ -39,7 +51,7 @@ void main() {
   vec3 ambient = u_light.color * u_material.ambient;
 
   float angle = max(dot(normal, u_light.direction), 0.0);
-  vec3 diffuse = base_color.rgb * angle;
+  vec3 diffuse = base_color * angle;
 
   vec3 reflect_dir = reflect(-u_light.direction, normal);
   float power = pow(max(dot(view_dir, reflect_dir), 0.0), u_material.shininess);
@@ -47,5 +59,5 @@ void main() {
 
   vec3 result = ambient + diffuse + specular;
 
-  frag_color = vec4(result, 1.0f);
+  frag_color = vec4(encode_gamma(result), 1.0);
 }

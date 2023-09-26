@@ -9,7 +9,7 @@
 #include "../shader.h"
 #include "../texture.h"
 #include "../utils.h"
-#include "../utils.h"
+#include "../consts.h"
 #include "cache.h"
 
 
@@ -22,6 +22,7 @@ glm::vec3 exctract_material_color(tinygltf::Model& model) {
 
 
 Cache::Textures generate_texture(tinygltf::Model& model) {
+  // Gamma will be calculated in shader
   auto color = exctract_material_color(model);
   std::vector<unsigned char> data {
     static_cast<unsigned char>(color.x * 255.0),
@@ -83,7 +84,7 @@ std::shared_ptr<Model> Cache::load(
     textures = std::get<TEXTURE_IDX>(mesh_data);
   } else {
     auto gltf_model = load_gltf_model(mesh_file_name);
-    auto color = exctract_material_color(gltf_model);
+    auto color = decode_gamma(exctract_material_color(gltf_model), GAMMA);
 
     mesh = std::make_shared<Mesh>(gltf_model);
     material = std::make_shared<Material>(color);

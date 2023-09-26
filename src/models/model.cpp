@@ -9,6 +9,7 @@
 #include "../utils.h"
 #include "../camera.h"
 #include "../material.h"
+#include "../consts.h"
 #include "model.h"
 #include "graphic.h"
 
@@ -57,6 +58,8 @@ void Model::draw(const Camera& camera, const SunLight& light, float elapsed_seco
     _shader->uniform("u_material.ambient", _material->ambient());
     _shader->uniform("u_material.specular", _material->specular());
     _shader->uniform("u_material.shininess", _material->shininess());
+    _shader->uniform("gamma_in", GAMMA);
+    _shader->uniform("gamma_out", GAMMA);
 
     auto texture = _textures[this->_basecolor_texture_idx];
     texture->use(0);

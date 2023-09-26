@@ -21,6 +21,7 @@ inline glm::vec3 zero<glm::vec3>() {
   return glm::vec3(0.0, 0.0, 0.0);
 }
 
+
 template<typename T>
 void print(T& value);
 
@@ -29,6 +30,12 @@ tinygltf::Model load_gltf_model(const std::string& filename);
 
 
 std::string load_text(const std::string &file_name);
+
+
+glm::vec3 encode_gamma(const glm::vec3& color, float gamma);
+
+
+glm::vec3 decode_gamma(const glm::vec3& color, float gamma);
 
 
 void resize_window(

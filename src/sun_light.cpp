@@ -4,10 +4,11 @@
 
 
 SunLight::SunLight(
-  glm::vec3 _color,
-  glm::vec3 _direction
-) : _color(_color) {
-  this->direction(_direction);
+  glm::vec3 color,
+  glm::vec3 direction,
+  glm::vec3 position
+) : _color(color), _position(position) {
+  this->direction(direction);
 }
 
 
@@ -28,4 +29,14 @@ const glm::vec3 SunLight::direction() const {
 
 void SunLight::direction(const glm::vec3& value) {
   this->_direction = glm::normalize(value);
+}
+
+
+const glm::vec3 SunLight::position() const {
+  return this->_position;
+}
+
+
+void SunLight::position(const glm::vec3& value) {
+  this->_position = value;
 }

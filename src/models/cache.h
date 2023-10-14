@@ -19,17 +19,12 @@ public:
   using MeshPtr = std::shared_ptr<Mesh>;
   using MaterialPtr = std::shared_ptr<Material>;
   using Textures = std::vector<std::shared_ptr<Texture>>;
-  using ShaderPtr = std::shared_ptr<Shader>;
 
 private:
   std::unordered_map<std::string, std::tuple<MeshPtr, MaterialPtr, Textures>> _meshes;
-  std::unordered_map<std::string, ShaderPtr> _shaders;
 
 public:
   Cache();
 
-  std::shared_ptr<Model> load(
-    const std::string& mesh_file_name,
-    const std::string& vertex_shader_file_name,
-    const std::string& fragment_shader_file_name);
+  std::shared_ptr<Model> load(const std::string& mesh_file_name);
 };

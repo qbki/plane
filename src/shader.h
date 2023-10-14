@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <GL/gl.h>
+#include <GL/glew.h>
 #include <glm/matrix.hpp>
 
 class Shader {

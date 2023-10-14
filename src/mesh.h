@@ -1,23 +1,34 @@
 #pragma once
-#include <GL/gl.h>
+#include <GL/glew.h>
 #include <tiny_gltf.h>
+#include <memory>
 
 class Mesh {
 private:
-  GLuint vao = 0; // vertex array object
-  GLuint vbo = 0; // vertex buffer object
-  GLuint nbo = 0; // normal buffer object
-  GLuint ebo = 0; // element buffer object
-  GLuint tbo = 0; // texture coordinates buffer object
+  GLuint _vao = 0; // vertex array object
+  GLuint _vbo = 0; // vertex buffer object
+  GLuint _nbo = 0; // normal buffer object
+  GLuint _ebo = 0; // element buffer object
+  GLuint _tbo = 0; // texture coordinates buffer object
 
-  int mode;
-  size_t count;
-  int componentType;
+  int _mode = GL_TRIANGLES;
+  size_t _count;
+  int _componentType = GL_UNSIGNED_INT;
 
   void free();
 
 public:
   explicit Mesh(tinygltf::Model &model);
+  explicit Mesh(
+    std::vector<float>& vertices,
+    std::vector<float>& normals,
+    std::vector<float>& tex_coords,
+    std::vector<unsigned int>& indices
+  );
+
   ~Mesh();
+
   void draw();
+
+  static std::unique_ptr<Mesh> quad();
 };

@@ -25,11 +25,7 @@ public:
   void add_child(std::shared_ptr<Graphic> child);
   void add_children(const std::vector<std::shared_ptr<Graphic>>& children);
 
-  virtual void draw(
-    const Camera& camera,
-    const SunLight& light,
-    float elapsed_seconds
-  ) const;
+  virtual void draw(std::function<void(Graphic&)>& fn);
 
   glm::vec3 position() const;
   void position(const glm::vec3& position);

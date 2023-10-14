@@ -50,27 +50,10 @@ Cache::Cache() {
     std::string,
     std::tuple<MeshPtr, MaterialPtr, Textures>
   >();
-  this->_shaders = std::unordered_map<std::string, ShaderPtr>();
 }
 
 
-std::shared_ptr<Model> Cache::load(
-  const std::string& mesh_file_name,
-  const std::string& vertex_shader_file_name,
-  const std::string& fragment_shader_file_name
-) {
-  auto shader_file_names = vertex_shader_file_name + fragment_shader_file_name;
-  auto has_shader = has_key(this->_shaders, shader_file_names);
-  auto shader = has_shader
-    ? this->_shaders.at(shader_file_names)
-    : std::shared_ptr<Shader>(new Shader());
-  if (!has_shader) {
-    auto vertex_shader = load_text(vertex_shader_file_name);
-    auto fragment_shader = load_text(fragment_shader_file_name);
-    shader->compile(vertex_shader, fragment_shader);
-    this->_shaders[shader_file_names] = shader;
-  }
-
+std::shared_ptr<Model> Cache::load(const std::string& mesh_file_name) {
   auto has_mesh = has_key(this->_meshes, mesh_file_name);
 
   std::shared_ptr<Mesh> mesh;
@@ -95,5 +78,5 @@ std::shared_ptr<Model> Cache::load(
     this->_meshes[mesh_file_name] = std::make_tuple(mesh, material, textures);
   }
 
-  return std::make_shared<Model>(mesh, shader, material, textures);
+  return std::make_shared<Model>(mesh, textures);
 }

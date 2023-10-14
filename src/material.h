@@ -9,7 +9,8 @@ private:
   float _shininess;
 
 public:
-  explicit Material(const glm::vec3& color);
+  explicit Material(glm::vec3 color);
+  explicit Material(glm::vec3 color, glm::vec3 specular, float _shininess);
 
   glm::vec3 ambient() const;
   void ambient(const glm::vec3& value);

@@ -1,3 +1,7 @@
+#include "material.h"
+#include "mesh.h"
+#include "models/graphic.h"
+#include "models/model.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <vector>
 #include <memory>
@@ -10,13 +14,16 @@
 #include "game_state/index.h"
 #include "models/index.h"
 #include "sdl_init.h"
+#include "shading/index.h"
 #include "sun_light.h"
 #include "utils.h"
+#include "consts.h"
 
 
 const int DEFAULT_SCREEN_WIDTH = 800;
 const int DEFAULT_SCREEN_HEIGHT = 600;
 const float ANIMATED_OBJECTS_HEIGHT = 2.0;
+
 
 int main() {
   int screen_width = DEFAULT_SCREEN_WIDTH;
@@ -28,10 +35,26 @@ int main() {
   auto factory = std::make_unique<ModelFactory>();
   auto scene = std::make_unique<Graphic>();
   auto game_state = std::make_unique<GameState>();
+  auto common_material = std::make_unique<Material>(
+    glm::vec3(0.01, 0.01, 0.01),
+    glm::vec3(1.0, 1.0, 1.0),
+    100
+  );
+
+  auto geometry_pass_shader = std::make_unique<Shader>();
+  auto geometry_pass_vertex_shader = load_text("./shaders/main_v.glsl");
+  auto geometry_pass_fragment_shader = load_text("./shaders/deferred_geometry_pass_f.glsl");
+  geometry_pass_shader->compile(geometry_pass_vertex_shader, geometry_pass_fragment_shader);
+
+  auto light_pass_shader = std::make_unique<Shader>();
+  auto light_pass_vertex_shader = load_text("./shaders/deferred_light_pass_v.glsl");
+  auto light_pass_fragment_shader = load_text("./shaders/deferred_light_pass_f.glsl");
+  light_pass_shader->compile(light_pass_vertex_shader, light_pass_fragment_shader);
 
   auto light = std::make_unique<SunLight>(
     glm::vec3(1.0, 1.0, 1.0),
-    glm::vec3(0.5, 0.5, 1.0)
+    glm::vec3(0.5, 0.5, 1.0),
+    glm::vec3(1000.0, 1000.0, 1000.0)
   );
 
   game_state->camera(std::make_shared<Camera>(
@@ -99,6 +122,14 @@ int main() {
   auto last_time_point = SDL_GetTicks64();
   SDL_Event event;
 
+  auto deferred_shading = std::make_unique<DeferredShading>(
+    std::move(geometry_pass_shader),
+    std::move(light_pass_shader),
+    Mesh::quad(),
+    screen_width,
+    screen_height
+  );
+
   while (is_running) {
     while (SDL_PollEvent(&event)) {
       switch (event.type) {
@@ -118,20 +149,53 @@ int main() {
           screen_width = event.window.data1;
           screen_height = event.window.data2;
           resize_window(event.window, *game_state->camera());
+          deferred_shading->g_buffer().update(screen_width, screen_height);
           break;
         }
       }
       control.update(event);
     }
 
+    auto camera = game_state->camera();
     auto now = SDL_GetTicks64();
     auto seconds_since_last_frame = (now - last_time_point) * 0.001;
     last_time_point = now;
 
     game_state->update(control, seconds_since_last_frame);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    scene->draw(*game_state->camera(), *light, now * 0.001);
+    deferred_shading->use_geometry_pass();
+    auto& geometry_pass_shader = deferred_shading->geometry_pass();
+    geometry_pass_shader.uniform("u_PV", camera->pv());
+    geometry_pass_shader.uniform("u_elapsed_seconds", static_cast<float>(now * 0.001));
+    std::function<void(Graphic&)> fn = [&geometry_pass_shader](Graphic& graphic) {
+      auto model = dynamic_cast<Model*>(&graphic);
+      if (model != nullptr) {
+        geometry_pass_shader.uniform("u_M", model->transform());
+        geometry_pass_shader.uniform(
+          "u_normal_matrix",
+          glm::transpose(glm::inverse(glm::mat3(model->transform()))));
+        auto texture = model->texture();
+        texture->use(0);
+        geometry_pass_shader.uniform("main_texture", 0);
+      }
+    };
+    scene->draw(fn);
+
+    deferred_shading->use_light_pass();
+    auto& light_pass_shader = deferred_shading->light_path();
+    light_pass_shader.uniform("u_camera_pos", camera->position());
+    light_pass_shader.uniform("u_light.color", light->color());
+    light_pass_shader.uniform("u_light.direction", light->direction());
+    light_pass_shader.uniform("u_light.position", light->position());
+    light_pass_shader.uniform("u_material.ambient", common_material->ambient());
+    light_pass_shader.uniform("u_material.specular", common_material->specular());
+    light_pass_shader.uniform("u_material.shininess", common_material->shininess());
+    light_pass_shader.uniform("gamma_in", GAMMA);
+    light_pass_shader.uniform("gamma_out", GAMMA);
+    light_pass_shader.uniform("u_position_texture", 0);
+    light_pass_shader.uniform("u_normal_texture", 1);
+    light_pass_shader.uniform("u_base_color_texture", 2);
+    deferred_shading->draw_quad();
 
     SDL_GL_SwapWindow(window.get());
   }

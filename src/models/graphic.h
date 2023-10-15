@@ -1,11 +1,10 @@
 #pragma once
-#include <glm/ext/vector_float3.hpp>
 #include <memory>
 #include <vector>
+#include <glm/ext/vector_float3.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
 #include "../camera.h"
-#include "../sun_light.h"
 #include "../utils.h"
 
 class Graphic {

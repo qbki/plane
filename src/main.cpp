@@ -2,6 +2,7 @@
 #include "mesh.h"
 #include "models/graphic.h"
 #include "models/model.h"
+#include <glm/geometric.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <vector>
 #include <memory>
@@ -15,7 +16,7 @@
 #include "models/index.h"
 #include "sdl_init.h"
 #include "shading/index.h"
-#include "sun_light.h"
+#include "directional_light.h"
 #include "utils.h"
 #include "consts.h"
 
@@ -38,7 +39,7 @@ int main() {
   auto common_material = std::make_unique<Material>(
     glm::vec3(0.01, 0.01, 0.01),
     glm::vec3(1.0, 1.0, 1.0),
-    100
+    32
   );
 
   auto geometry_pass_shader = std::make_unique<Shader>();
@@ -51,10 +52,9 @@ int main() {
   auto light_pass_fragment_shader = load_text("./shaders/deferred_light_pass_f.glsl");
   light_pass_shader->compile(light_pass_vertex_shader, light_pass_fragment_shader);
 
-  auto light = std::make_unique<SunLight>(
+  auto light = std::make_unique<DirectionalLight>(
     glm::vec3(1.0, 1.0, 1.0),
-    glm::vec3(0.5, 0.5, 1.0),
-    glm::vec3(1000.0, 1000.0, 1000.0)
+    glm::vec3(-0.8, -0.8, -1.0)
   );
 
   game_state->camera(std::make_shared<Camera>(
@@ -186,7 +186,6 @@ int main() {
     light_pass_shader.uniform("u_camera_pos", camera->position());
     light_pass_shader.uniform("u_light.color", light->color());
     light_pass_shader.uniform("u_light.direction", light->direction());
-    light_pass_shader.uniform("u_light.position", light->position());
     light_pass_shader.uniform("u_material.ambient", common_material->ambient());
     light_pass_shader.uniform("u_material.specular", common_material->specular());
     light_pass_shader.uniform("u_material.shininess", common_material->shininess());

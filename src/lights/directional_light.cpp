@@ -1,4 +1,4 @@
-#include <glm/ext/quaternion_geometric.hpp>
+#include <glm/geometric.hpp>
 
 #include "directional_light.h"
 

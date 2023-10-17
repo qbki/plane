@@ -1,24 +1,20 @@
-#include "material.h"
-#include "mesh.h"
-#include "models/graphic.h"
-#include "models/model.h"
-#include <glm/geometric.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <vector>
 #include <memory>
+#include <sstream>
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <SDL2/SDL.h>
 
 #include "camera.h"
+#include "consts.h"
 #include "control.h"
 #include "game_state/index.h"
+#include "lights/index.h"
 #include "models/index.h"
 #include "sdl_init.h"
 #include "shading/index.h"
-#include "directional_light.h"
 #include "utils.h"
-#include "consts.h"
 
 
 const int DEFAULT_SCREEN_WIDTH = 800;
@@ -39,7 +35,7 @@ int main() {
   auto common_material = std::make_unique<Material>(
     glm::vec3(0.01, 0.01, 0.01),
     glm::vec3(1.0, 1.0, 1.0),
-    32
+    22
   );
 
   auto geometry_pass_shader = std::make_unique<Shader>();
@@ -52,10 +48,23 @@ int main() {
   auto light_pass_fragment_shader = load_text("./shaders/deferred_light_pass_f.glsl");
   light_pass_shader->compile(light_pass_vertex_shader, light_pass_fragment_shader);
 
-  auto light = std::make_unique<DirectionalLight>(
+  auto sun = std::make_unique<DirectionalLight>(
     glm::vec3(1.0, 1.0, 1.0),
     glm::vec3(-0.8, -0.8, -1.0)
   );
+
+  std::vector<PointLight> lights {
+    {{1, 0, 0}, {-5,  5, 8}},
+    {{0, 1, 0}, {-5, -5, 8}},
+    {{0, 0, 1}, { 5, -5, 8}},
+    {{1, 0, 1}, {  0, -5, 8}},
+  };
+
+  for (auto& light : lights) {
+    light.constant(1.0);
+    light.linear(0.045);
+    light.quadratic(0.0075);
+  }
 
   game_state->camera(std::make_shared<Camera>(
     glm::vec3(0.0, -4.0, 15.0),
@@ -184,16 +193,30 @@ int main() {
     deferred_shading->use_light_pass();
     auto& light_pass_shader = deferred_shading->light_path();
     light_pass_shader.uniform("u_camera_pos", camera->position());
-    light_pass_shader.uniform("u_light.color", light->color());
-    light_pass_shader.uniform("u_light.direction", light->direction());
+    light_pass_shader.uniform("u_light.color", sun->color());
+    light_pass_shader.uniform("u_light.direction", sun->direction());
     light_pass_shader.uniform("u_material.ambient", common_material->ambient());
     light_pass_shader.uniform("u_material.specular", common_material->specular());
     light_pass_shader.uniform("u_material.shininess", common_material->shininess());
-    light_pass_shader.uniform("gamma_in", GAMMA);
-    light_pass_shader.uniform("gamma_out", GAMMA);
+    light_pass_shader.uniform("u_gamma_in", GAMMA);
+    light_pass_shader.uniform("u_gamma_out", GAMMA);
     light_pass_shader.uniform("u_position_texture", 0);
     light_pass_shader.uniform("u_normal_texture", 1);
     light_pass_shader.uniform("u_base_color_texture", 2);
+
+    int lights_quantity = lights.size();
+    light_pass_shader.uniform("u_point_lights_quantity", lights_quantity);
+    for (auto i = 0; i < lights_quantity; i++) {
+      auto& light = lights[i];
+      std::stringstream prefix;
+      prefix << "u_point_lights[" << i << "].";
+      light_pass_shader.uniform(prefix.str() + "color", light.color());
+      light_pass_shader.uniform(prefix.str() + "position", light.position());
+      light_pass_shader.uniform(prefix.str() + "constant", light.constant());
+      light_pass_shader.uniform(prefix.str() + "linear", light.linear());
+      light_pass_shader.uniform(prefix.str() + "quadratic", light.quadratic());
+    }
+
     deferred_shading->draw_quad();
 
     SDL_GL_SwapWindow(window.get());

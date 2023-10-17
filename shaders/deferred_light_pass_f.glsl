@@ -1,4 +1,5 @@
 #version 450 core
+#define MAX_POINT_LIGHTS_QUANTITY 64
 precision highp float;
 
 struct Material {
@@ -29,7 +30,6 @@ uniform sampler2D u_normal_texture;
 uniform sampler2D u_base_color_texture;
 
 uniform DirectionalLight u_light;
-const int MAX_POINT_LIGHTS_QUANTITY = 64;
 uniform PointLight u_point_lights[MAX_POINT_LIGHTS_QUANTITY];
 uniform int u_point_lights_quantity;
 

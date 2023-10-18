@@ -92,15 +92,18 @@ int main() {
   }
 
   {
-    GameState::Entities bullets;
+    GameState::Projectiles projectiles;
+    GameState::Entities graphics;
     {
       for (int x = 0; x < 100; x++) {
-        auto model (factory->make_bullet());
-        bullets.push_back(model);
+        auto projectile = factory->make_projectile();
+        projectile.distance(8);
+        projectiles.push_back(projectile);
+        graphics.push_back(projectile.model());
       }
     }
-    game_state->add_bullets(bullets);
-    scene->add_children(bullets);
+    game_state->add_projectiles(projectiles);
+    scene->add_children(graphics);
   }
 
   {
@@ -126,6 +129,7 @@ int main() {
   game_state->add_handler(handle_enemies_hunting);
   game_state->add_handler(handle_enemy_rotation);
   game_state->add_handler(handle_enemy_sinking);
+  game_state->add_handler(move_camera);
 
   auto is_running = true;
   auto last_time_point = SDL_GetTicks64();

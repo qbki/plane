@@ -1,11 +1,7 @@
 #include <algorithm>
 
 #include "game_state.h"
-
-
-void GameState::add_entities(Entities& source, Entities& destination) {
-  std::copy(begin(source), end(source), std::back_inserter(destination));
-}
+#include "projectile.h"
 
 
 void GameState::camera(std::shared_ptr<Camera> camera) {
@@ -38,13 +34,13 @@ glm::vec3 GameState::cursor() {
 }
 
 
-void GameState::add_bullets(Entities& xs) {
-  this->add_entities(xs, this->_bullets);
+void GameState::add_projectiles(Projectiles& xs) {
+  this->add_entities(xs, this->_projectiles);
 }
 
 
-GameState::Entities& GameState::bullets() {
-  return this->_bullets;
+GameState::Projectiles& GameState::projectiles() {
+  return this->_projectiles;
 }
 
 

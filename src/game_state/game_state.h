@@ -8,6 +8,7 @@
 #include "../control.h"
 #include "../models/index.h"
 #include "enemy_state.h"
+#include "projectile.h"
 
 class GameState {
 public:
@@ -20,20 +21,24 @@ public:
 
   using Entity = std::shared_ptr<Graphic>;
   using Entities = std::vector<Entity>;
+  using Projectiles = std::vector<Projectile>;
   using EnemiesState = std::vector<EnemyState>;
   using Handler = std::function<void (Meta& meta)>;
 
 private:
   std::shared_ptr<Camera> _camera;
   Entity _player;
-  Entities _bullets;
+  Projectiles _projectiles;
   EnemiesState _enemies_state;
   Entities _decorations;
   std::vector<Handler> _handlers;
   glm::vec3 _cursor = zero<glm::vec3>();
   glm::vec3 _move_direction = zero<glm::vec3>();
 
-  void add_entities(Entities& source, Entities& destination);
+  template<typename T>
+  void add_entities(std::vector<T>& source, std::vector<T>& destination) {
+    std::copy(begin(source), end(source), std::back_inserter(destination));
+  }
 
 public:
   GameState() {}
@@ -49,8 +54,8 @@ public:
   void cursor(glm::vec3 value);
   glm::vec3 cursor();
 
-  void add_bullets(Entities& bullets);
-  Entities& bullets();
+  void add_projectiles(Projectiles& bullets);
+  Projectiles& projectiles();
 
   void add_enemies(Entities& enemies);
   EnemiesState& enemies_state();

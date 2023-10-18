@@ -54,13 +54,17 @@ void rotate_player(GameState::Meta& meta) {
 void shoot_by_player(GameState::Meta& meta) {
   const auto& player = meta.state.player();
   if (meta.control.is_player_shooting) {
-    for (auto& bullet : meta.state.bullets()) {
-      if (!bullet->is_active()) {
-        bullet->is_active(true);
-        bullet->position(player->position());
+    for (auto& projectile : meta.state.projectiles()) {
+      auto model = projectile.model();
+      if (!model->is_active()) {
+        auto start_position = player->position();
+        model->is_active(true);
+        model->position(start_position);
+        // TEMP: It will be moved into Weapon class in the future
         auto max_spread = 3.14 / 16.0;
         auto spread = max_spread * (std::rand() % 100) * 0.01;
-        bullet->rotation_z(player->rotation_z() - max_spread / 2.0 + spread);
+        model->rotation_z(player->rotation_z() - max_spread / 2.0 + spread);
+        projectile.start_point(start_position);
         break;
       }
     }
@@ -69,29 +73,34 @@ void shoot_by_player(GameState::Meta& meta) {
 
 
 void handle_bullets (GameState::Meta& meta) {
-  for (auto& bullet : meta.state.bullets()) {
-    if (!bullet->is_active()) {
+  for (auto& projectile : meta.state.projectiles()) {
+    auto projectile_model = projectile.model();
+    if (!projectile_model->is_active()) {
       continue;
     }
 
-    auto angle = bullet->rotation_z();
-    auto directin = glm::vec3(glm::cos(angle), glm::sin(angle), 0.0);
-    bullet->move_in(directin, 10.0 * meta.seconds_since_last_frame);
-    auto pos = bullet->position();
-    if (pos.x < -12 || pos.x > 12 || pos.y < -6 || pos.y > 6) {
-      bullet->is_active(false);
+    auto angle = projectile_model->rotation_z();
+    auto direction = glm::vec3(glm::cos(angle), glm::sin(angle), 0.0);
+    projectile_model->move_in(direction, 10.0 * meta.seconds_since_last_frame);
+
+    auto projectile_distance = glm::distance(
+        projectile.start_point(),
+        projectile_model->position());
+    if (projectile_distance > projectile.distance()) {
+      projectile_model->is_active(false);
+      continue;
     }
 
     for (auto& enemy_state : meta.state.enemies_state()) {
       auto enemy = enemy_state.model;
-      if (glm::distance(bullet->position(), enemy->position()) <= 0.3) {
+      if (glm::distance(projectile_model->position(), enemy->position()) <= 0.3) {
         if (enemy_state.state != EnemyState::SINKING) {
           enemy_state.state = EnemyState::SINKING;
           auto texture_type = TextureType::map_to_int(TextureType::Type::DESTROYED);
           auto enemy_model = static_cast<Model*>(enemy_state.model.get());
           enemy_model->use_basecolor_texture(texture_type);
         }
-        bullet->is_active(false);
+        projectile_model->is_active(false);
       }
     }
   }
@@ -181,4 +190,11 @@ GameState::Handler make_cursor_handler(int& screen_width, int& screen_height) {
       meta.state.cursor(meta.camera.position() + ray * intersection_distance);
     }
   });
+}
+
+
+void move_camera(GameState::Meta& meta) {
+  auto player_pos = meta.state.player()->position();
+  auto camera_pos = meta.state.camera()->position();
+  meta.state.camera()->position({player_pos.x, player_pos.y, camera_pos.z});
 }

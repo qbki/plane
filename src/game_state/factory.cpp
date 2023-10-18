@@ -1,8 +1,7 @@
 #include <memory>
 
 #include "factory.h"
-#include "graphic.h"
-#include "model.h"
+#include "projectile.h"
 
 
 ModelFactory::ModelFactory() : cache(new Cache()) {};
@@ -18,10 +17,10 @@ std::shared_ptr<Graphic> ModelFactory::make_enemy() {
 }
 
 
-std::shared_ptr<Graphic> ModelFactory::make_bullet() {
+Projectile ModelFactory::make_projectile() {
   auto model = cache->load("./models/bullet.glb");
   model->is_active(false);
-  return model;
+  return Projectile(model);
 }
 
 

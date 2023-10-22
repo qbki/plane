@@ -97,8 +97,11 @@ void handle_bullets (GameState::Meta& meta) {
         if (enemy_state.state != EnemyState::SINKING) {
           enemy_state.state = EnemyState::SINKING;
           auto texture_type = TextureType::map_to_int(TextureType::Type::DESTROYED);
-          auto enemy_model = static_cast<Model*>(enemy_state.model.get());
-          enemy_model->use_basecolor_texture(texture_type);
+          enemy_state.model->use_basecolor_texture(texture_type);
+          meta.state.particle_emitter().emit(
+              20,
+              projectile_model->position(),
+              {0.0, 0.0, 1.0});
         }
         projectile_model->is_active(false);
       }
@@ -161,6 +164,23 @@ void handle_enemy_rotation(GameState::Meta& meta) {
       auto rotation = glm::atan(direction_vector.y, direction_vector.x);
       enemy->rotation_z(rotation);
     }
+  }
+}
+
+
+void handle_particles(GameState::Meta& meta) {
+  for (auto& particle : meta.state.particle_emitter().particles()) {
+    auto& model = *particle.model;
+    if (particle.current_live_time <= 0.0) {
+      model.is_active(false);
+      continue;
+    }
+    if (model.is_active()) {
+      auto angle = model.rotation_z();
+      auto direction = glm::vec3(glm::cos(angle), glm::sin(angle), 0.0);
+      model.move_in(direction, 10.0 * meta.seconds_since_last_frame);
+    }
+    particle.current_live_time -= meta.seconds_since_last_frame;
   }
 }
 

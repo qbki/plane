@@ -11,4 +11,5 @@ void handle_enemies_hunting(GameState::Meta& meta);
 void handle_enemy_rotation(GameState::Meta& meta);
 void handle_enemy_sinking(GameState::Meta& meta);
 void move_camera(GameState::Meta& meta);
+void handle_particles(GameState::Meta& meta);
 GameState::Handler make_cursor_handler(int& screen_width, int& screen_height);

@@ -10,10 +10,10 @@ public:
   };
 
   State state = State::HUNTING;
-  std::shared_ptr<Graphic> model;
+  std::shared_ptr<Model> model;
   float hunting_speed = 1.0;
 
-  EnemyState(std::shared_ptr<Graphic> m) : model(m) {}
+  EnemyState(std::shared_ptr<Model> m) : model(m) {}
 
   bool is_sibling_close(glm::vec3 sibling_position) {
     return glm::distance(this->model->position(), sibling_position) < 0.7;

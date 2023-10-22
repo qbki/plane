@@ -163,10 +163,10 @@ void Mesh::draw() {
 }
 
 
-std::unique_ptr<Mesh> Mesh::quad() {
+std::unique_ptr<Mesh> Mesh::quad(float z) {
   std::vector<float> vertices = {
-    -1.0,  1.0, 0.0, 1.0,  1.0, 0.0,
-    -1.0, -1.0, 0.0, 1.0, -1.0, 0.0,
+    -1.0,  1.0, z, 1.0,  1.0, z,
+    -1.0, -1.0, z, 1.0, -1.0, z,
   };
   std::vector<float> normals = {
     0.0, 0.0, 1.0, 0.0, 0.0, 1.0,

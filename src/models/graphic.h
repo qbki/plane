@@ -13,7 +13,6 @@ protected:
   glm::vec3 _velocity = zero<glm::vec3>();
   float _rotation_z = 0.0;
   glm::mat4 _transform = glm::identity<glm::mat4>();
-  std::vector<std::shared_ptr<Graphic>> _children = std::vector<std::shared_ptr<Graphic>>();
   bool _is_active = true;
 
   void update_transform();
@@ -21,10 +20,7 @@ protected:
 public:
   virtual ~Graphic() {};
 
-  void add_child(std::shared_ptr<Graphic> child);
-  void add_children(const std::vector<std::shared_ptr<Graphic>>& children);
-
-  virtual void draw(std::function<void(Graphic&)>& fn);
+  virtual void draw() {};
 
   glm::vec3 position() const;
   void position(const glm::vec3& position);

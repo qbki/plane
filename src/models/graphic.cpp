@@ -55,25 +55,6 @@ void Graphic::velocity(glm::vec3 velocity) {
 }
 
 
-void Graphic::add_child(std::shared_ptr<Graphic> child) {
-  this->_children.push_back(child);
-}
-
-
-void Graphic::add_children(const std::vector<std::shared_ptr<Graphic>>& children) {
-  std::copy(begin(children), end(children), back_inserter(this->_children));
-}
-
-
-void Graphic::draw(std::function<void(Graphic&)>& fn) {
-  if (this->is_active()) {
-    for (auto& child : _children) {
-      child->draw(fn);
-    }
-  }
-}
-
-
 void Graphic::move_in(glm::vec3 direction_normal, float length) {
   position(_position + direction_normal * length);
 }

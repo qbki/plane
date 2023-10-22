@@ -1,6 +1,5 @@
 #pragma once
 #include <functional>
-#include <glm/ext/vector_float3.hpp>
 #include <memory>
 #include <vector>
 
@@ -8,6 +7,7 @@
 #include "../control.h"
 #include "../models/index.h"
 #include "enemy_state.h"
+#include "particle_emitter.h"
 #include "projectile.h"
 
 class GameState {
@@ -19,7 +19,7 @@ public:
     float seconds_since_last_frame;
   };
 
-  using Entity = std::shared_ptr<Graphic>;
+  using Entity = std::shared_ptr<Model>;
   using Entities = std::vector<Entity>;
   using Projectiles = std::vector<Projectile>;
   using EnemiesState = std::vector<EnemyState>;
@@ -31,6 +31,7 @@ private:
   Projectiles _projectiles;
   EnemiesState _enemies_state;
   Entities _decorations;
+  std::unique_ptr<ParticleEmitter> _particle_emitter;
   std::vector<Handler> _handlers;
   glm::vec3 _cursor = zero<glm::vec3>();
   glm::vec3 _move_direction = zero<glm::vec3>();
@@ -65,4 +66,7 @@ public:
 
   void add_handler(Handler handler);
   void update(Control& control, float seconds);
+
+  ParticleEmitter& particle_emitter() const;
+  void particle_emitter(std::unique_ptr<ParticleEmitter> value);
 };

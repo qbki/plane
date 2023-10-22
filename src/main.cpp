@@ -30,13 +30,18 @@ int main() {
   Control control;
 
   auto factory = std::make_unique<ModelFactory>();
-  auto scene = std::make_unique<Graphic>();
+  auto scene = std::vector<std::shared_ptr<Graphic>>();
   auto game_state = std::make_unique<GameState>();
   auto common_material = std::make_unique<Material>(
     glm::vec3(0.01, 0.01, 0.01),
     glm::vec3(1.0, 1.0, 1.0),
     22
   );
+
+  auto particle_emitter = std::make_unique<ParticleEmitter>([&]() {
+    return factory->make_particle();
+  });
+  game_state->particle_emitter(move(particle_emitter));
 
   auto geometry_pass_shader = std::make_unique<Shader>();
   auto geometry_pass_vertex_shader = load_text("./shaders/main_v.glsl");
@@ -47,6 +52,11 @@ int main() {
   auto light_pass_vertex_shader = load_text("./shaders/deferred_light_pass_v.glsl");
   auto light_pass_fragment_shader = load_text("./shaders/deferred_light_pass_f.glsl");
   light_pass_shader->compile(light_pass_vertex_shader, light_pass_fragment_shader);
+
+  auto particle_shader = std::make_unique<Shader>();
+  auto particle_vertex_shader = load_text("./shaders/main_v.glsl");
+  auto particle_fragment_shader = load_text("./shaders/particle_f.glsl");
+  particle_shader->compile(particle_vertex_shader, particle_fragment_shader);
 
   auto sun = std::make_unique<DirectionalLight>(
     glm::vec3(1.0, 1.0, 1.0),
@@ -75,7 +85,7 @@ int main() {
     auto player = factory->make_player();
     player->position({0.0, -5.0, ANIMATED_OBJECTS_HEIGHT});
     game_state->player(player);
-    scene->add_child(player);
+    scene.push_back(player);
   }
 
   {
@@ -88,7 +98,7 @@ int main() {
       }
     }
     game_state->add_enemies(enemies);
-    scene->add_children(enemies);
+    std::copy(begin(enemies), end(enemies), std::back_inserter(scene));
   }
 
   {
@@ -103,7 +113,7 @@ int main() {
       }
     }
     game_state->add_projectiles(projectiles);
-    scene->add_children(graphics);
+    std::copy(begin(graphics), end(graphics), std::back_inserter(scene));
   }
 
   {
@@ -118,18 +128,19 @@ int main() {
       }
     }
     game_state->add_decoration(decorations);
-    scene->add_children(decorations);
+    std::copy(begin(decorations), end(decorations), std::back_inserter(scene));
   }
 
   game_state->add_handler(make_cursor_handler(screen_width, screen_height));
-  game_state->add_handler(move_player);
-  game_state->add_handler(rotate_player);
-  game_state->add_handler(shoot_by_player);
   game_state->add_handler(handle_bullets);
   game_state->add_handler(handle_enemies_hunting);
   game_state->add_handler(handle_enemy_rotation);
   game_state->add_handler(handle_enemy_sinking);
+  game_state->add_handler(handle_particles);
   game_state->add_handler(move_camera);
+  game_state->add_handler(move_player);
+  game_state->add_handler(rotate_player);
+  game_state->add_handler(shoot_by_player);
 
   auto is_running = true;
   auto last_time_point = SDL_GetTicks64();
@@ -138,7 +149,7 @@ int main() {
   auto deferred_shading = std::make_unique<DeferredShading>(
     std::move(geometry_pass_shader),
     std::move(light_pass_shader),
-    Mesh::quad(),
+    Mesh::quad(0.99999),
     screen_width,
     screen_height
   );
@@ -176,12 +187,13 @@ int main() {
 
     game_state->update(control, seconds_since_last_frame);
 
+    glDisable(GL_BLEND);
     deferred_shading->use_geometry_pass();
     auto& geometry_pass_shader = deferred_shading->geometry_pass();
     geometry_pass_shader.uniform("u_PV", camera->pv());
     geometry_pass_shader.uniform("u_elapsed_seconds", static_cast<float>(now * 0.001));
-    std::function<void(Graphic&)> fn = [&geometry_pass_shader](Graphic& graphic) {
-      auto model = dynamic_cast<Model*>(&graphic);
+    for (auto& _model : scene) {
+      auto model = dynamic_cast<Model*>(_model.get());
       if (model != nullptr) {
         geometry_pass_shader.uniform("u_M", model->transform());
         geometry_pass_shader.uniform(
@@ -191,8 +203,8 @@ int main() {
         texture->use(0);
         geometry_pass_shader.uniform("main_texture", 0);
       }
-    };
-    scene->draw(fn);
+      model->draw();
+    }
 
     deferred_shading->use_light_pass();
     auto& light_pass_shader = deferred_shading->light_path();
@@ -220,8 +232,36 @@ int main() {
       light_pass_shader.uniform(prefix.str() + "linear", light.linear());
       light_pass_shader.uniform(prefix.str() + "quadratic", light.quadratic());
     }
-
     deferred_shading->draw_quad();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, deferred_shading->g_buffer().g_buffer_handle());
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBlitFramebuffer(
+      0, 0,
+      screen_width, screen_height,
+      0, 0,
+      screen_width, screen_height,
+      GL_DEPTH_BUFFER_BIT, GL_NEAREST
+    );
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    particle_shader->use();
+    particle_shader->uniform("u_gamma_in", GAMMA);
+    particle_shader->uniform("u_gamma_out", GAMMA);
+    particle_shader->uniform("u_PV", camera->pv());
+    particle_shader->uniform("u_elapsed_seconds", static_cast<float>(now * 0.001));
+    for (auto& particle : game_state->particle_emitter().particles()) {
+      auto& model = particle.model;
+      particle_shader->uniform("u_M", model->transform());
+      particle_shader->uniform(
+        "u_normal_matrix",
+        glm::transpose(glm::inverse(glm::mat3(model->transform()))));
+      model->texture()->use(0);
+      particle_shader->uniform("main_texture", 0);
+      model->draw();
+    }
 
     SDL_GL_SwapWindow(window.get());
   }

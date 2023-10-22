@@ -30,5 +30,5 @@ public:
 
   void draw();
 
-  static std::unique_ptr<Mesh> quad();
+  static std::unique_ptr<Mesh> quad(float z = 0.0);
 };

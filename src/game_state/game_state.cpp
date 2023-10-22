@@ -1,6 +1,7 @@
 #include <algorithm>
 
 #include "game_state.h"
+#include "particle_emitter.h"
 #include "projectile.h"
 
 
@@ -79,4 +80,14 @@ void GameState::update(Control& control, float seconds) {
   for (auto& handler : this->_handlers) {
     handler(meta);
   }
+}
+
+
+ParticleEmitter& GameState::particle_emitter() const {
+  return *_particle_emitter;
+}
+
+
+void GameState::particle_emitter(std::unique_ptr<ParticleEmitter> value) {
+  _particle_emitter = move(value);
 }

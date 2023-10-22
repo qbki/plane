@@ -10,9 +10,10 @@ private:
 
 public:
   ModelFactory();
-  std::shared_ptr<Graphic> make_player();
-  std::shared_ptr<Graphic> make_enemy();
-  std::shared_ptr<Graphic> make_water_block();
-  std::shared_ptr<Graphic> make_ground_block();
+  std::shared_ptr<Model> make_player();
+  std::shared_ptr<Model> make_enemy();
+  std::shared_ptr<Model> make_water_block();
+  std::shared_ptr<Model> make_ground_block();
+  std::shared_ptr<Model> make_particle();
   Projectile make_projectile();
 };

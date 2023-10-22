@@ -46,10 +46,8 @@ std::shared_ptr<Texture> Model::texture() {
 }
 
 
-void Model::draw(std::function<void(Graphic&)>& fn) {
+void Model::draw() {
   if (this->is_active()) {
-    fn(*this);
     _mesh->draw();
   }
-  Graphic::draw(fn);
 }

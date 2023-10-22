@@ -24,7 +24,7 @@ public:
 
   ~Model() {};
 
-  void draw(std::function<void(Graphic&)>& fn) override;
+  void draw() override;
 
   void use_basecolor_texture(unsigned int type);
   std::shared_ptr<Texture> texture();

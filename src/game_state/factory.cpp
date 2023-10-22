@@ -7,12 +7,12 @@
 ModelFactory::ModelFactory() : cache(new Cache()) {};
 
 
-std::shared_ptr<Graphic> ModelFactory::make_player() {
+std::shared_ptr<Model> ModelFactory::make_player() {
   return cache->load("./models/plane.glb");
 }
 
 
-std::shared_ptr<Graphic> ModelFactory::make_enemy() {
+std::shared_ptr<Model> ModelFactory::make_enemy() {
   return cache->load("./models/saucer.glb");
 }
 
@@ -24,11 +24,16 @@ Projectile ModelFactory::make_projectile() {
 }
 
 
-std::shared_ptr<Graphic> ModelFactory::make_water_block() {
+std::shared_ptr<Model> ModelFactory::make_water_block() {
   return cache->load("./models/water-surface.glb");
 }
 
 
-std::shared_ptr<Graphic> ModelFactory::make_ground_block() {
+std::shared_ptr<Model> ModelFactory::make_ground_block() {
   return cache->load("./models/center-block.glb");
+}
+
+
+std::shared_ptr<Model> ModelFactory::make_particle() {
+  return cache->load("./models/particle.glb");
 }

@@ -7,18 +7,22 @@ set(SRC_SHADERS_DIRECTORY ${CMAKE_SOURCE_DIR}/shaders)
 set(MODELS_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/models)
 set(SHADERS_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/shaders)
 
+find_package(EnTT REQUIRED)
+find_package(GLEW REQUIRED)
 find_package(GLM REQUIRED)
 find_package(SDL2 REQUIRED)
-find_package(GLEW REQUIRED)
 find_package(TinyGLTF REQUIRED)
+find_package(range-v3 REQUIRED)
 
 file(GLOB_RECURSE SOURCES ./src/*)
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} glm::glm)
-target_link_libraries(${PROJECT_NAME} SDL2::SDL2main)
+target_link_libraries(${PROJECT_NAME} EnTT::EnTT)
 target_link_libraries(${PROJECT_NAME} GLEW::GLEW)
+target_link_libraries(${PROJECT_NAME} SDL2::SDL2main)
 target_link_libraries(${PROJECT_NAME} TinyGLTF::TinyGLTF)
+target_link_libraries(${PROJECT_NAME} glm::glm)
+target_link_libraries(${PROJECT_NAME} range-v3::range-v3)
 
 message(STATUS ${SRC_MODELS_DIRECTORY})
 add_custom_command(

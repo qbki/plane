@@ -53,7 +53,8 @@ Cache::Cache() {
 }
 
 
-std::shared_ptr<Model> Cache::load(const std::string& mesh_file_name) {
+std::tuple<std::shared_ptr<Mesh>, std::shared_ptr<Texture>>
+Cache::load(const std::string& mesh_file_name) {
   auto has_mesh = has_key(this->_meshes, mesh_file_name);
 
   std::shared_ptr<Mesh> mesh;
@@ -78,5 +79,5 @@ std::shared_ptr<Model> Cache::load(const std::string& mesh_file_name) {
     this->_meshes[mesh_file_name] = std::make_tuple(mesh, material, textures);
   }
 
-  return std::make_shared<Model>(mesh, textures);
+  return {mesh, textures[0]};
 }

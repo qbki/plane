@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
+#include <glm/ext/vector_float3.hpp>
 #include <iostream>
 #include <fstream>
 #include <filesystem>
@@ -12,12 +13,6 @@ int buffer_size() {
   GLint size = 0;
   glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
   return size;
-}
-
-
-template<typename T>
-void print(T& value) {
-  std::cout << value << std::endl;
 }
 
 
@@ -83,4 +78,16 @@ void resize_window(
   auto height = window_event.data2;
   camera.aspect_ratio(static_cast<float>(width) / height);
   glViewport(0, 0, width, height);
+}
+
+
+glm::vec3 move_in(glm::vec3 position, glm::vec3 direction_normal, float length) {
+  return position + direction_normal * length;
+}
+
+
+glm::mat4 make_transform_matrix(glm::vec3 position, glm::vec3 rotation) {
+  auto rotation_matrix = glm::rotate(glm::mat4(1.0), rotation.z, {0.0, 0.0, 1.0});
+  auto transform_matrix = glm::translate(glm::mat4(1.0), position);
+  return transform_matrix * rotation_matrix;
 }

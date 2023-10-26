@@ -5,22 +5,27 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <SDL2/SDL.h>
+#include <entt/entt.hpp>
+#include <glm/ext/vector_float3.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
 #include "camera.h"
+#include "components.h"
 #include "consts.h"
 #include "control.h"
 #include "game_state/index.h"
 #include "lights/index.h"
+#include "mesh.h"
 #include "models/index.h"
 #include "sdl_init.h"
 #include "shading/index.h"
+#include "texture.h"
 #include "utils.h"
 
 
 const int DEFAULT_SCREEN_WIDTH = 800;
 const int DEFAULT_SCREEN_HEIGHT = 600;
 const float ANIMATED_OBJECTS_HEIGHT = 2.0;
-
 
 int main() {
   int screen_width = DEFAULT_SCREEN_WIDTH;
@@ -29,19 +34,12 @@ int main() {
   auto context = init_context(window.get());
   Control control;
 
-  auto factory = std::make_unique<ModelFactory>();
-  auto scene = std::vector<std::shared_ptr<Graphic>>();
   auto game_state = std::make_unique<GameState>();
   auto common_material = std::make_unique<Material>(
     glm::vec3(0.01, 0.01, 0.01),
     glm::vec3(1.0, 1.0, 1.0),
     22
   );
-
-  auto particle_emitter = std::make_unique<ParticleEmitter>([&]() {
-    return factory->make_particle();
-  });
-  game_state->particle_emitter(move(particle_emitter));
 
   auto geometry_pass_shader = std::make_unique<Shader>();
   auto geometry_pass_vertex_shader = load_text("./shaders/main_v.glsl");
@@ -81,54 +79,30 @@ int main() {
     static_cast<float>(screen_width) / screen_height
   ));
 
-  {
-    auto player = factory->make_player();
-    player->position({0.0, -5.0, ANIMATED_OBJECTS_HEIGHT});
-    game_state->player(player);
-    scene.push_back(player);
+  game_state->factory().make_player(
+    game_state->registry(),
+    {0.0, -5.0, ANIMATED_OBJECTS_HEIGHT}
+  );
+
+  for (int x = -10; x < 10; x++) {
+    for (int y = 0; y < 30; y++) {
+      game_state->factory().make_enemy(
+        game_state->registry(),
+        {x, y, ANIMATED_OBJECTS_HEIGHT}
+      );
+    }
   }
 
-  {
-    GameState::Entities enemies;
-    for (int x = -10; x < 10; x++) {
-      for (int y = 0; y < 30; y++) {
-        auto model (factory->make_enemy());
-        model->position({x, y, ANIMATED_OBJECTS_HEIGHT});
-        enemies.push_back(model);
+  for (int y = -10; y < 10; y++) {
+    for (int x = -15; x <= 15; x++) {
+      auto& registry = game_state->registry();
+      glm::vec3 position {x, y, 0.0};
+      if (rand() % 2 == 0) {
+        game_state->factory().make_water_block(registry, position);
+      } else {
+        game_state->factory().make_ground_block(registry, position);
       }
     }
-    game_state->add_enemies(enemies);
-    std::copy(begin(enemies), end(enemies), std::back_inserter(scene));
-  }
-
-  {
-    GameState::Projectiles projectiles;
-    GameState::Entities graphics;
-    {
-      for (int x = 0; x < 100; x++) {
-        auto projectile = factory->make_projectile();
-        projectile.distance(8);
-        projectiles.push_back(projectile);
-        graphics.push_back(projectile.model());
-      }
-    }
-    game_state->add_projectiles(projectiles);
-    std::copy(begin(graphics), end(graphics), std::back_inserter(scene));
-  }
-
-  {
-    GameState::Entities decorations;
-    for (int y = -10; y < 10; y++) {
-      for (int x = -15; x <= 15; x++) {
-        auto model = rand() % 2 == 0
-          ? factory->make_water_block()
-          : factory->make_ground_block();
-        model->position({x, y, 0.0});
-        decorations.push_back(model);
-      }
-    }
-    game_state->add_decoration(decorations);
-    std::copy(begin(decorations), end(decorations), std::back_inserter(scene));
   }
 
   game_state->add_handler(make_cursor_handler(screen_width, screen_height));
@@ -137,8 +111,8 @@ int main() {
   game_state->add_handler(handle_enemy_rotation);
   game_state->add_handler(handle_enemy_sinking);
   game_state->add_handler(handle_particles);
-  game_state->add_handler(move_camera);
   game_state->add_handler(move_player);
+  game_state->add_handler(move_camera);
   game_state->add_handler(rotate_player);
   game_state->add_handler(shoot_by_player);
 
@@ -180,10 +154,12 @@ int main() {
       control.update(event);
     }
 
+    auto& registry = game_state->registry();
     auto camera = game_state->camera();
     auto now = SDL_GetTicks64();
     auto seconds_since_last_frame = (now - last_time_point) * 0.001;
     last_time_point = now;
+
 
     game_state->update(control, seconds_since_last_frame);
 
@@ -192,19 +168,31 @@ int main() {
     auto& geometry_pass_shader = deferred_shading->geometry_pass();
     geometry_pass_shader.uniform("u_PV", camera->pv());
     geometry_pass_shader.uniform("u_elapsed_seconds", static_cast<float>(now * 0.001));
-    for (auto& _model : scene) {
-      auto model = dynamic_cast<Model*>(_model.get());
-      if (model != nullptr) {
-        geometry_pass_shader.uniform("u_M", model->transform());
-        geometry_pass_shader.uniform(
-          "u_normal_matrix",
-          glm::transpose(glm::inverse(glm::mat3(model->transform()))));
-        auto texture = model->texture();
-        texture->use(0);
-        geometry_pass_shader.uniform("main_texture", 0);
-      }
-      model->draw();
-    }
+
+    registry.view<
+      const Position,
+      const Rotation,
+      const MeshPointer,
+      const TexturePointer,
+      const Opaque,
+      const Available
+    >().each([&geometry_pass_shader](
+      const Position& position,
+      const Rotation& rotation,
+      const MeshPointer& mesh,
+      const TexturePointer& texture
+    ) {
+      auto rotation_matrix = glm::rotate(glm::mat4(1.0), rotation.value.z, {0.0, 0.0, 1.0});
+      auto transform_matrix = glm::translate(glm::mat4(1.0), position.value);
+      auto transform = transform_matrix * rotation_matrix;
+      geometry_pass_shader.uniform("u_M", transform);
+      geometry_pass_shader.uniform(
+        "u_normal_matrix",
+        glm::transpose(glm::inverse(glm::mat3(transform))));
+      texture->use(0);
+      geometry_pass_shader.uniform("main_texture", 0);
+      mesh->draw();
+    });
 
     deferred_shading->use_light_pass();
     auto& light_pass_shader = deferred_shading->light_path();
@@ -252,16 +240,29 @@ int main() {
     particle_shader->uniform("u_gamma_out", GAMMA);
     particle_shader->uniform("u_PV", camera->pv());
     particle_shader->uniform("u_elapsed_seconds", static_cast<float>(now * 0.001));
-    for (auto& particle : game_state->particle_emitter().particles()) {
-      auto& model = particle.model;
-      particle_shader->uniform("u_M", model->transform());
+
+    registry.view<
+      const Position,
+      const Rotation,
+      const MeshPointer,
+      const TexturePointer,
+      const Available,
+      const ParticleKind
+    >(entt::exclude<Opaque>).each([&particle_shader](
+      const Position& position,
+      const Rotation& rotation,
+      const MeshPointer& mesh,
+      const TexturePointer& texture
+    ) {
+      auto transform = make_transform_matrix(position.value, rotation.value);
+      particle_shader->uniform("u_M", transform);
       particle_shader->uniform(
         "u_normal_matrix",
-        glm::transpose(glm::inverse(glm::mat3(model->transform()))));
-      model->texture()->use(0);
+        glm::transpose(glm::inverse(glm::mat3(transform))));
+      texture->use(0);
       particle_shader->uniform("main_texture", 0);
-      model->draw();
-    }
+      mesh->draw();
+    });
 
     SDL_GL_SwapWindow(window.get());
   }

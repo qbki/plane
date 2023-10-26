@@ -1,8 +1,10 @@
 #pragma once
 #include <SDL_events.h>
 #include <cmath>
+#include <entt/entity/fwd.hpp>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <iostream>
 #include <limits>
 #include <ostream>
 #include <string>
@@ -11,10 +13,13 @@
 
 #include "camera.h"
 
+
 int buffer_size();
+
 
 template<typename T>
 T zero();
+
 
 template<>
 inline glm::vec3 zero<glm::vec3>() {
@@ -23,7 +28,14 @@ inline glm::vec3 zero<glm::vec3>() {
 
 
 template<typename T>
-void print(T& value);
+void print(T value) {
+  std::cout << value << std::endl;
+}
+
+
+inline void print(entt::entity value) {
+  std::cout << static_cast<unsigned long>(value) << std::endl;
+}
 
 
 tinygltf::Model load_gltf_model(const std::string& filename);
@@ -59,3 +71,23 @@ bool is_approx_equal(T a, T b) {
 inline std::ostream& operator<<(std::ostream& os, const glm::vec3& vec) {
   return os << glm::to_string(vec);
 }
+
+
+glm::vec3 move_in(glm::vec3 position, glm::vec3 direction_normal, float length);
+
+
+glm::mat4 make_transform_matrix(glm::vec3 position, glm::vec3 rotation);
+
+
+template<typename T, typename TAG>
+struct NewType {
+  T value;
+  explicit NewType(T v) : value(v) {};
+};
+
+
+template<typename TAG>
+struct EmptyType {
+  char value = 'e';
+  explicit EmptyType() {};
+};

@@ -1,25 +1,29 @@
-#include <cstdlib>
+#include <entt/entity/fwd.hpp>
+#include <entt/entt.hpp>
 #include <functional>
 #include <glm/gtx/intersect.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/trigonometric.hpp>
 #include <iostream>
+#include <tuple>
 #include <vector>
+#include <range/v3/all.hpp>
+#include <range/v3/view/subrange.hpp>
 
+#include "../components.h"
+#include "../utils.h"
+#include "factory.h"
 #include "game_state.h"
 #include "texture_type.h"
+#include "handlers.h"
 
 
-template<typename T>
-std::vector<T*> filter_ptr(std::vector<T>& items, std::function<bool(T&)> predicate) {
-  std::vector<EnemyState*> filtered_items;
-  for (auto& item : items) {
-    if (predicate(item)) {
-      filtered_items.push_back(&item);
-    }
-  }
-  return filtered_items;
-}
+void emit_particles(
+  GameState::Meta& meta,
+  unsigned int quantity,
+  glm::vec3 initial_position
+);
+bool are_siblings_close(glm::vec3 a, glm::vec3 b);
 
 
 void move_player(GameState::Meta& meta) {
@@ -39,149 +43,205 @@ void move_player(GameState::Meta& meta) {
   auto direction = is_approx_equal(glm::length2(move_normal), 0.0f)
     ? move_normal
     : glm::normalize(move_normal);
-  meta.state.player()->move_in(direction, 5.0 * meta.seconds_since_last_frame);
+  auto& position = meta.state.player<Position>();
+  position.value = move_in(
+    position.value,
+    direction,
+    5.0 * meta.seconds_since_last_frame
+  );
 }
 
 
 void rotate_player(GameState::Meta& meta) {
-  auto player = meta.state.player();
-  auto direction = meta.state.cursor() - player->position();
+  auto [position, rotation] = meta.state.player<Position, Rotation>();
+  auto direction = meta.state.cursor() - position.value;
   auto angle = glm::atan(direction.y, direction.x);
-  player->rotation_z(angle);
+  rotation.value = {0.0, 0.0, angle};
 }
 
 
 void shoot_by_player(GameState::Meta& meta) {
-  const auto& player = meta.state.player();
-  if (meta.control.is_player_shooting) {
-    for (auto& projectile : meta.state.projectiles()) {
-      auto model = projectile.model();
-      if (!model->is_active()) {
-        auto start_position = player->position();
-        model->is_active(true);
-        model->position(start_position);
-        // TEMP: It will be moved into Weapon class in the future
-        auto max_spread = 3.14 / 16.0;
-        auto spread = max_spread * (std::rand() % 100) * 0.01;
-        model->rotation_z(player->rotation_z() - max_spread / 2.0 + spread);
-        projectile.start_point(start_position);
-        break;
-      }
-    }
+  if (!meta.control.is_player_shooting) {
+    return;
+  }
+
+  auto player_position = meta.state.player<Position>().value;
+  auto player_rotation = meta.state.player<Rotation>().value;
+  auto projectiles_view = meta.state.registry().view<Position, ProjectileKind>(entt::exclude<Available>);
+  auto max_spread = 3.14 / 16.0;
+  auto spread = max_spread * (std::rand() % 100) * 0.01;
+  auto rotation = glm::vec3(
+    0.0,
+    0.0,
+    player_rotation.z - max_spread / 2.0 + spread
+  );
+  auto projectile_id = projectiles_view.front();
+  if (projectile_id == entt::null) {
+    meta.state.factory().make_projectile(meta.state.registry(), player_position, rotation);
+  } else {
+    meta.state.registry().emplace_or_replace<Position>(projectile_id, player_position);
+    meta.state.registry().emplace_or_replace<InitialPosition>(projectile_id, player_position);
+    meta.state.registry().emplace_or_replace<Rotation>(projectile_id, rotation);
+    meta.state.registry().emplace_or_replace<Available>(projectile_id);
   }
 };
 
 
 void handle_bullets (GameState::Meta& meta) {
-  for (auto& projectile : meta.state.projectiles()) {
-    auto projectile_model = projectile.model();
-    if (!projectile_model->is_active()) {
-      continue;
-    }
-
-    auto angle = projectile_model->rotation_z();
-    auto direction = glm::vec3(glm::cos(angle), glm::sin(angle), 0.0);
-    projectile_model->move_in(direction, 10.0 * meta.seconds_since_last_frame);
-
+  auto enemies_view = meta.state.registry().view<
+    Position,
+    EnemyStateEnum,
+    EnemyKind,
+    Available
+  >();
+  auto projectiles_view = meta.state.registry().view<
+    Position,
+    InitialPosition,
+    Rotation,
+    Range,
+    Available,
+    ProjectileKind
+  >();
+  projectiles_view.each([&](
+    entt::entity projectile_id,
+    Position& projectile_position,
+    InitialPosition& projectile_initial_position,
+    Rotation& projectile_rotation,
+    Range& projectile_range
+  ) {
     auto projectile_distance = glm::distance(
-        projectile.start_point(),
-        projectile_model->position());
-    if (projectile_distance > projectile.distance()) {
-      projectile_model->is_active(false);
-      continue;
+      projectile_initial_position.value,
+      projectile_position.value
+    );
+    if (projectile_distance > projectile_range.value) {
+      meta.state.registry().remove<Available>(projectile_id);
+      return;
     }
 
-    for (auto& enemy_state : meta.state.enemies_state()) {
-      auto enemy = enemy_state.model;
-      if (glm::distance(projectile_model->position(), enemy->position()) <= 0.3) {
-        if (enemy_state.state != EnemyState::SINKING) {
-          enemy_state.state = EnemyState::SINKING;
-          auto texture_type = TextureType::map_to_int(TextureType::Type::DESTROYED);
-          enemy_state.model->use_basecolor_texture(texture_type);
-          meta.state.particle_emitter().emit(
-              20,
-              projectile_model->position(),
-              {0.0, 0.0, 1.0});
+    auto angle = projectile_rotation.value.z;
+    auto direction = glm::vec3(glm::cos(angle), glm::sin(angle), 0.0);
+    projectile_position.value = move_in(
+      projectile_position.value,
+      direction,
+      10.0 * meta.seconds_since_last_frame
+    );
+
+    enemies_view.each([&](Position& enemy_position, EnemyStateEnum& enemy_state) {
+      if (glm::distance(projectile_position.value, enemy_position.value) <= 0.3) {
+        if (enemy_state != EnemyStateEnum::SINKING) {
+          enemy_state = EnemyStateEnum::SINKING;
+          // auto texture_type = TextureType::map_to_int(TextureType::Type::DESTROYED);
+          // enemy_state.model->use_basecolor_texture(texture_type);
+          emit_particles(meta, 20, projectile_position.value);
         }
-        projectile_model->is_active(false);
+        meta.state.registry().remove<Available>(projectile_id);
       }
-    }
-  }
+    });
+  });
 }
 
 
 void handle_enemies_hunting(GameState::Meta& meta) {
-  auto player = meta.state.player();
-  auto filtered_enemies_state = filter_ptr<EnemyState>(
-    meta.state.enemies_state(),
-    [](EnemyState& v) { return v.state == EnemyState::HUNTING; }
-  );
-  for (auto enemy_state : filtered_enemies_state) {
-    auto enemy {enemy_state->model.get()};
-    auto pos_a {enemy->position()};
+  // TODO Will be replaced by a real AI
+  auto player_pos = meta.state.player<Position>().value;
+  auto enemies_view = meta.state.registry().view<
+    Position,
+    EnemyStateEnum,
+    EnemyKind,
+    Available
+  >().each();
+  auto enemies = ranges::subrange(enemies_view)
+    | ranges::views::filter([](const auto& tuple) {
+        return std::get<2>(tuple) == EnemyStateEnum::HUNTING;
+      });
+  for (auto [id_a, pos_a, _] : enemies) {
     glm::vec3 sum {0, 0, 0};
-    for (auto near_enemy_state : filtered_enemies_state) {
-      if (enemy_state == near_enemy_state) {
-        continue;
-      }
-      auto pos_b {near_enemy_state->model->position()};
-      if (enemy_state->is_sibling_close(pos_b)) {
-        sum += pos_a - pos_b;
+    for (auto [id_b, pos_b, _] : enemies) {
+      if (are_siblings_close(pos_a.value, pos_b.value)) {
+        sum += pos_a.value - pos_b.value;
       }
     }
     // found by experiments, it reduces force of attraction to the player and
     // it helps avoiding collapsing enemies during movement
     auto direction_weight = 0.05f;
-    sum = glm::normalize(sum + glm::normalize(player->position() - pos_a) * direction_weight);
-    enemy->move_in(sum, enemy_state->hunting_speed * meta.seconds_since_last_frame);
+    sum = glm::normalize(sum + glm::normalize(player_pos - pos_a.value) * direction_weight);
+    pos_a.value = move_in(pos_a.value, sum, meta.seconds_since_last_frame);
   }
 }
 
 
 void handle_enemy_sinking(GameState::Meta& meta) {
-  auto filtered_enemies_state = filter_ptr<EnemyState>(
-    meta.state.enemies_state(),
-    [](EnemyState& v) { return v.state == EnemyState::SINKING && v.model->is_active(); }
-  );
-  for (auto& enemy_state : filtered_enemies_state) {
-    auto enemy = enemy_state->model;
-    enemy->move_in({0, 0, 1}, -1.5 * meta.seconds_since_last_frame);
-    enemy->rotation_z(enemy->rotation_z() + 0.05);
-    if (enemy->position().z < -2.0) {
-      enemy->is_active(false);
-      enemy_state->state = EnemyState::INACTIVE;
+  meta.state.registry().view<
+    Position,
+    Rotation,
+    EnemyStateEnum,
+    EnemyKind,
+    Available
+  >().each([&](
+    entt::entity id,
+    Position& position,
+    Rotation& rotation,
+    EnemyStateEnum& state
+  ) {
+    if (state == EnemyStateEnum::SINKING) {
+      position.value = move_in(position.value, {0, 0, 1}, -1.5 * meta.seconds_since_last_frame);
+      rotation.value = {0.0, 0.0, rotation.value.z + 0.05};
+      if (position.value.z < -2.0) {
+        meta.state.registry().remove<Available>(id);
+        state = EnemyStateEnum::INACTIVE;
+      }
     }
-  }
+  });
 }
 
 
 void handle_enemy_rotation(GameState::Meta& meta) {
-  auto player_positon = meta.state.player()->position();
-  for (auto& enemy_state : meta.state.enemies_state()) {
-    auto enemy = enemy_state.model;
-    if (enemy->is_active() && enemy_state.state == EnemyState::HUNTING) {
-      auto direction_vector = player_positon - enemy->position();
-      auto rotation = glm::atan(direction_vector.y, direction_vector.x);
-      enemy->rotation_z(rotation);
-    }
-  }
+  auto& player_positon = meta.state.player<Position>().value;
+  meta.state.registry()
+    .view<
+      Position,
+      Rotation,
+      EnemyStateEnum,
+      EnemyKind,
+      Available
+    >()
+    .each([&player_positon](
+        Position& enemy_position,
+        Rotation& enemy_rotation,
+        EnemyStateEnum& enemy_state
+    ) {
+      if (enemy_state == EnemyStateEnum::HUNTING) {
+        auto dir_vector = player_positon - enemy_position.value;
+        enemy_rotation.value = {0.0, 0.0, glm::atan(dir_vector.y, dir_vector.x)};
+      }
+    });
 }
 
 
 void handle_particles(GameState::Meta& meta) {
-  for (auto& particle : meta.state.particle_emitter().particles()) {
-    auto& model = *particle.model;
-    if (particle.current_live_time <= 0.0) {
-      model.is_active(false);
-      continue;
+  auto& registry = meta.state.registry();
+  auto particles = registry.view<
+    Position,
+    Rotation,
+    Lifetime,
+    Available,
+    ParticleKind
+  >();
+  particles.each([&](
+    entt::entity id,
+    Position& position,
+    Rotation& rotation,
+    Lifetime& lifetime
+  ) {
+    if (lifetime.value <= 0.0) {
+      registry.remove<Available>(id);
+      return;
     }
-    if (model.is_active()) {
-      auto angle = model.rotation_z();
-      auto direction = glm::vec3(glm::cos(angle), glm::sin(angle), 0.0);
-      model.move_in(direction, 10.0 * meta.seconds_since_last_frame);
-    }
-    particle.current_live_time -= meta.seconds_since_last_frame;
-  }
+    auto angle = rotation.value.z;
+    auto direction = glm::vec3(glm::cos(angle), glm::sin(angle), 0.0);
+    position.value = move_in(position.value, direction, 10.0 * meta.seconds_since_last_frame);
+    lifetime.value -= meta.seconds_since_last_frame;
+  });
 }
 
 
@@ -199,10 +259,12 @@ GameState::Handler make_cursor_handler(int& screen_width, int& screen_height) {
     );
     auto ray = glm::normalize(projection_point - meta.camera.position());
     float intersection_distance = 0;
+    auto [player_position] = meta.state.player<Position>();
+
     auto has_intersection = glm::intersectRayPlane(
       meta.camera.position(),
       ray,
-      {0.0, 0.0, meta.state.player()->position().z},
+      {0.0, 0.0, player_position.z},
       {0.0, 0.0, 1.0},
       intersection_distance
     );
@@ -214,7 +276,46 @@ GameState::Handler make_cursor_handler(int& screen_width, int& screen_height) {
 
 
 void move_camera(GameState::Meta& meta) {
-  auto player_pos = meta.state.player()->position();
+  auto [player_pos] = meta.state.player<Position>();
   auto camera_pos = meta.state.camera()->position();
   meta.state.camera()->position({player_pos.x, player_pos.y, camera_pos.z});
+}
+
+
+void emit_particles(
+  GameState::Meta& meta,
+  unsigned int quantity,
+  glm::vec3 initial_position
+) {
+  auto& registry = meta.state.registry();
+  auto idx = 0;
+  auto step = glm::two_pi<float>() / static_cast<float>(quantity);
+
+  auto particles = registry.view<
+    Position,
+    Rotation,
+    Lifetime,
+    LifetimeMax,
+    ParticleKind
+  >(entt::exclude<Available>);
+  for (auto [id, position, rotation, lifetime, lifetime_max] : particles.each()) {
+    position.value = initial_position;
+    rotation.value = {0.0, 0.0, idx * step};
+    registry.emplace<Available>(id);
+    lifetime.value = lifetime_max.value;
+    idx += 1;
+  }
+
+  for(;idx < (quantity - 1); idx += 1) {
+    meta.state.factory().make_particle(
+      registry,
+      initial_position,
+      {0.0, 0.0, idx * step}
+    );
+  }
+}
+
+
+bool are_siblings_close(glm::vec3 a, glm::vec3 b) {
+  return glm::distance(a, b) < 0.7;
 }

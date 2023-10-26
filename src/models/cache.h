@@ -8,11 +8,11 @@
 #include "../mesh.h"
 #include "../shader.h"
 #include "../texture.h"
-#include "model.h"
 
 const int MESH_IDX = 0;
 const int MATERIAL_IDX = 1;
 const int TEXTURE_IDX = 2;
+
 
 class Cache {
 public:
@@ -26,5 +26,6 @@ private:
 public:
   Cache();
 
-  std::shared_ptr<Model> load(const std::string& mesh_file_name);
+  std::tuple<std::shared_ptr<Mesh>, std::shared_ptr<Texture>>
+  load(const std::string& mesh_file_name);
 };

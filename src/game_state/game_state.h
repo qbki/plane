@@ -1,14 +1,15 @@
 #pragma once
+#include <entt/entt.hpp>
 #include <functional>
 #include <memory>
 #include <vector>
 
 #include "../camera.h"
+#include "../components.h"
 #include "../control.h"
 #include "../models/index.h"
-#include "enemy_state.h"
-#include "particle_emitter.h"
-#include "projectile.h"
+#include "factory.h"
+
 
 class GameState {
 public:
@@ -19,22 +20,16 @@ public:
     float seconds_since_last_frame;
   };
 
-  using Entity = std::shared_ptr<Model>;
-  using Entities = std::vector<Entity>;
-  using Projectiles = std::vector<Projectile>;
-  using EnemiesState = std::vector<EnemyState>;
   using Handler = std::function<void (Meta& meta)>;
 
 private:
   std::shared_ptr<Camera> _camera;
-  Entity _player;
-  Projectiles _projectiles;
-  EnemiesState _enemies_state;
-  Entities _decorations;
-  std::unique_ptr<ParticleEmitter> _particle_emitter;
   std::vector<Handler> _handlers;
   glm::vec3 _cursor = zero<glm::vec3>();
   glm::vec3 _move_direction = zero<glm::vec3>();
+  entt::registry _registry;
+  entt::entity _player_id;
+  ModelFactory _factory;
 
   template<typename T>
   void add_entities(std::vector<T>& source, std::vector<T>& destination) {
@@ -49,24 +44,20 @@ public:
   void camera(std::shared_ptr<Camera> camera);
   std::shared_ptr<Camera> camera();
 
-  void player(Entity player);
-  Entity player();
-
   void cursor(glm::vec3 value);
   glm::vec3 cursor();
-
-  void add_projectiles(Projectiles& bullets);
-  Projectiles& projectiles();
-
-  void add_enemies(Entities& enemies);
-  EnemiesState& enemies_state();
-
-  void add_decoration(Entities& decorations);
-  Entities& decorations();
 
   void add_handler(Handler handler);
   void update(Control& control, float seconds);
 
-  ParticleEmitter& particle_emitter() const;
-  void particle_emitter(std::unique_ptr<ParticleEmitter> value);
+  void player_id(entt::entity value);
+  entt::entity player_id();
+
+  entt::registry& registry();
+  ModelFactory& factory();
+
+  template<typename ...Components>
+  decltype(auto) player() {
+    return _registry.get<Components...>(_player_id);
+  }
 };

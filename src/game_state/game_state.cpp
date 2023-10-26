@@ -1,8 +1,6 @@
 #include <algorithm>
 
 #include "game_state.h"
-#include "particle_emitter.h"
-#include "projectile.h"
 
 
 void GameState::camera(std::shared_ptr<Camera> camera) {
@@ -12,16 +10,6 @@ void GameState::camera(std::shared_ptr<Camera> camera) {
 
 std::shared_ptr<Camera> GameState::camera() {
   return this->_camera;
-}
-
-
-void GameState::player(Entity player) {
-  this->_player = player;
-}
-
-
-GameState::Entity GameState::player() {
-  return this->_player;
 }
 
 
@@ -35,38 +23,23 @@ glm::vec3 GameState::cursor() {
 }
 
 
-void GameState::add_projectiles(Projectiles& xs) {
-  this->add_entities(xs, this->_projectiles);
+void GameState::player_id(entt::entity value) {
+  _player_id = value;
 }
 
 
-GameState::Projectiles& GameState::projectiles() {
-  return this->_projectiles;
+entt::entity GameState::player_id() {
+  return _player_id;
 }
 
 
-void GameState::add_enemies(Entities& xs) {
-  std::transform(
-    begin(xs),
-    end(xs),
-    back_inserter(this->_enemies_state),
-    [](auto item) { return EnemyState(item); }
-  );
+entt::registry& GameState::registry() {
+  return _registry;
 }
 
 
-GameState::EnemiesState& GameState::enemies_state() {
-  return this->_enemies_state;
-}
-
-
-void GameState::add_decoration(Entities& xs) {
-  this->add_entities(xs, this->_decorations);
-}
-
-
-GameState::Entities& GameState::decorations() {
-  return this->_decorations;
+ModelFactory& GameState::factory() {
+  return _factory;
 }
 
 
@@ -80,14 +53,4 @@ void GameState::update(Control& control, float seconds) {
   for (auto& handler : this->_handlers) {
     handler(meta);
   }
-}
-
-
-ParticleEmitter& GameState::particle_emitter() const {
-  return *_particle_emitter;
-}
-
-
-void GameState::particle_emitter(std::unique_ptr<ParticleEmitter> value) {
-  _particle_emitter = move(value);
 }

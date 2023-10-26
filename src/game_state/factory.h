@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
+#include <entt/entt.hpp>
 
 #include "../models/index.h"
-#include "projectile.h"
 
 class ModelFactory {
 private:
@@ -10,10 +10,18 @@ private:
 
 public:
   ModelFactory();
-  std::shared_ptr<Model> make_player();
-  std::shared_ptr<Model> make_enemy();
-  std::shared_ptr<Model> make_water_block();
-  std::shared_ptr<Model> make_ground_block();
-  std::shared_ptr<Model> make_particle();
-  Projectile make_projectile();
+  entt::entity make_player(entt::registry& registry, glm::vec3 position);
+  entt::entity make_water_block(entt::registry& registry, glm::vec3 position);
+  entt::entity make_ground_block(entt::registry& registry, glm::vec3 position);
+  entt::entity make_enemy(entt::registry& registry, glm::vec3 position);
+  entt::entity make_particle(
+    entt::registry& registry,
+    glm::vec3 position,
+    glm::vec3 rotation
+  );
+  entt::entity make_projectile(
+    entt::registry& registry,
+    glm::vec3 position,
+    glm::vec3 rotation
+  );
 };

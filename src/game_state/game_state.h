@@ -18,6 +18,7 @@ public:
     Control& control;
     Camera& camera;
     float seconds_since_last_frame;
+    float seconds_since_start_of_program;
   };
 
   using Handler = std::function<void (Meta& meta)>;
@@ -30,6 +31,7 @@ private:
   entt::registry _registry;
   entt::entity _player_id;
   ModelFactory _factory;
+  unsigned long _last_time_point;
 
   template<typename T>
   void add_entities(std::vector<T>& source, std::vector<T>& destination) {
@@ -37,7 +39,7 @@ private:
   }
 
 public:
-  GameState() {}
+  GameState();
   GameState(const GameState&) = delete;
   GameState& operator=(const GameState&) = delete;
 
@@ -48,7 +50,7 @@ public:
   glm::vec3 cursor();
 
   void add_handler(Handler handler);
-  void update(Control& control, float seconds);
+  void update(Control& control, unsigned long time_since_start_of_program);
 
   void player_id(entt::entity value);
   entt::entity player_id();

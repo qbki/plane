@@ -19,6 +19,7 @@
 #include "models/index.h"
 #include "sdl_init.h"
 #include "shading/index.h"
+#include "systems/index.h"
 #include "texture.h"
 #include "utils.h"
 
@@ -65,7 +66,7 @@ int main() {
     {{1, 0, 0}, {-5,  5, 8}},
     {{0, 1, 0}, {-5, -5, 8}},
     {{0, 0, 1}, { 5, -5, 8}},
-    {{1, 0, 1}, {  0, -5, 8}},
+    {{1, 0, 1}, { 0, -5, 8}},
   };
 
   for (auto& light : lights) {
@@ -105,21 +106,6 @@ int main() {
     }
   }
 
-  game_state->add_handler(make_cursor_handler(screen_width, screen_height));
-  game_state->add_handler(handle_bullets);
-  game_state->add_handler(handle_enemies_hunting);
-  game_state->add_handler(handle_enemy_rotation);
-  game_state->add_handler(handle_enemy_sinking);
-  game_state->add_handler(handle_particles);
-  game_state->add_handler(move_player);
-  game_state->add_handler(move_camera);
-  game_state->add_handler(rotate_player);
-  game_state->add_handler(shoot_by_player);
-
-  auto is_running = true;
-  auto last_time_point = SDL_GetTicks64();
-  SDL_Event event;
-
   auto deferred_shading = std::make_unique<DeferredShading>(
     std::move(geometry_pass_shader),
     std::move(light_pass_shader),
@@ -127,6 +113,29 @@ int main() {
     screen_width,
     screen_height
   );
+
+  game_state->add_handler(make_cursor_handler_system(screen_width, screen_height));
+  game_state->add_handler(projectile_handler_system);
+  game_state->add_handler(enemy_hunting_system);
+  game_state->add_handler(enemy_rotation_system);
+  game_state->add_handler(enemy_sinking_system);
+  game_state->add_handler(particle_handler_system);
+  game_state->add_handler(camera_move_system);
+  game_state->add_handler(player_moving_system);
+  game_state->add_handler(player_rotation_system);
+  game_state->add_handler(player_shooting_system);
+  game_state->add_handler(make_render_system(
+    *deferred_shading,
+    *particle_shader,
+    *common_material,
+    *sun,
+    lights,
+    screen_width,
+    screen_height
+  ));
+
+  auto is_running = true;
+  SDL_Event event;
 
   while (is_running) {
     while (SDL_PollEvent(&event)) {
@@ -154,115 +163,7 @@ int main() {
       control.update(event);
     }
 
-    auto& registry = game_state->registry();
-    auto camera = game_state->camera();
-    auto now = SDL_GetTicks64();
-    auto seconds_since_last_frame = (now - last_time_point) * 0.001;
-    last_time_point = now;
-
-
-    game_state->update(control, seconds_since_last_frame);
-
-    glDisable(GL_BLEND);
-    deferred_shading->use_geometry_pass();
-    auto& geometry_pass_shader = deferred_shading->geometry_pass();
-    geometry_pass_shader.uniform("u_PV", camera->pv());
-    geometry_pass_shader.uniform("u_elapsed_seconds", static_cast<float>(now * 0.001));
-
-    registry.view<
-      const Position,
-      const Rotation,
-      const MeshPointer,
-      const TexturePointer,
-      const Opaque,
-      const Available
-    >().each([&geometry_pass_shader](
-      const Position& position,
-      const Rotation& rotation,
-      const MeshPointer& mesh,
-      const TexturePointer& texture
-    ) {
-      auto rotation_matrix = glm::rotate(glm::mat4(1.0), rotation.value.z, {0.0, 0.0, 1.0});
-      auto transform_matrix = glm::translate(glm::mat4(1.0), position.value);
-      auto transform = transform_matrix * rotation_matrix;
-      geometry_pass_shader.uniform("u_M", transform);
-      geometry_pass_shader.uniform(
-        "u_normal_matrix",
-        glm::transpose(glm::inverse(glm::mat3(transform))));
-      texture->use(0);
-      geometry_pass_shader.uniform("main_texture", 0);
-      mesh->draw();
-    });
-
-    deferred_shading->use_light_pass();
-    auto& light_pass_shader = deferred_shading->light_path();
-    light_pass_shader.uniform("u_camera_pos", camera->position());
-    light_pass_shader.uniform("u_light.color", sun->color());
-    light_pass_shader.uniform("u_light.direction", sun->direction());
-    light_pass_shader.uniform("u_material.ambient", common_material->ambient());
-    light_pass_shader.uniform("u_material.specular", common_material->specular());
-    light_pass_shader.uniform("u_material.shininess", common_material->shininess());
-    light_pass_shader.uniform("u_gamma_in", GAMMA);
-    light_pass_shader.uniform("u_gamma_out", GAMMA);
-    light_pass_shader.uniform("u_position_texture", 0);
-    light_pass_shader.uniform("u_normal_texture", 1);
-    light_pass_shader.uniform("u_base_color_texture", 2);
-
-    int lights_quantity = lights.size();
-    light_pass_shader.uniform("u_point_lights_quantity", lights_quantity);
-    for (auto i = 0; i < lights_quantity; i++) {
-      auto& light = lights[i];
-      std::stringstream prefix;
-      prefix << "u_point_lights[" << i << "].";
-      light_pass_shader.uniform(prefix.str() + "color", light.color());
-      light_pass_shader.uniform(prefix.str() + "position", light.position());
-      light_pass_shader.uniform(prefix.str() + "constant", light.constant());
-      light_pass_shader.uniform(prefix.str() + "linear", light.linear());
-      light_pass_shader.uniform(prefix.str() + "quadratic", light.quadratic());
-    }
-    deferred_shading->draw_quad();
-
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, deferred_shading->g_buffer().g_buffer_handle());
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glBlitFramebuffer(
-      0, 0,
-      screen_width, screen_height,
-      0, 0,
-      screen_width, screen_height,
-      GL_DEPTH_BUFFER_BIT, GL_NEAREST
-    );
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    particle_shader->use();
-    particle_shader->uniform("u_gamma_in", GAMMA);
-    particle_shader->uniform("u_gamma_out", GAMMA);
-    particle_shader->uniform("u_PV", camera->pv());
-    particle_shader->uniform("u_elapsed_seconds", static_cast<float>(now * 0.001));
-
-    registry.view<
-      const Position,
-      const Rotation,
-      const MeshPointer,
-      const TexturePointer,
-      const Available,
-      const ParticleKind
-    >(entt::exclude<Opaque>).each([&particle_shader](
-      const Position& position,
-      const Rotation& rotation,
-      const MeshPointer& mesh,
-      const TexturePointer& texture
-    ) {
-      auto transform = make_transform_matrix(position.value, rotation.value);
-      particle_shader->uniform("u_M", transform);
-      particle_shader->uniform(
-        "u_normal_matrix",
-        glm::transpose(glm::inverse(glm::mat3(transform))));
-      texture->use(0);
-      particle_shader->uniform("main_texture", 0);
-      mesh->draw();
-    });
+    game_state->update(control, SDL_GetTicks64());
 
     SDL_GL_SwapWindow(window.get());
   }

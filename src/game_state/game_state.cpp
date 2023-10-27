@@ -1,6 +1,9 @@
-#include <algorithm>
-
 #include "game_state.h"
+
+
+GameState::GameState() {
+  _last_time_point = SDL_GetTicks64();
+}
 
 
 void GameState::camera(std::shared_ptr<Camera> camera) {
@@ -48,8 +51,15 @@ void GameState::add_handler(Handler handler) {
 }
 
 
-void GameState::update(Control& control, float seconds) {
-  Meta meta {*this, control, *this->_camera, seconds};
+void GameState::update(Control& control, unsigned long time_since_start_of_program) {
+  Meta meta {
+    *this,
+    control,
+    *this->_camera,
+    static_cast<float>(time_since_start_of_program - _last_time_point) * 0.001f,
+    _last_time_point * 0.001f
+  };
+  _last_time_point = time_since_start_of_program;
   for (auto& handler : this->_handlers) {
     handler(meta);
   }

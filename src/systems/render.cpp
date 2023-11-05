@@ -21,7 +21,7 @@ GameState::Handler make_render_system(
     deferred_shading.use_geometry_pass();
     auto& geometry_pass_shader = deferred_shading.geometry_pass();
     geometry_pass_shader.uniform("u_PV", camera.pv());
-    geometry_pass_shader.uniform("u_elapsed_seconds", meta.seconds_since_start_of_program);
+    geometry_pass_shader.uniform("u_elapsed_seconds", meta.time);
 
     registry.view<
       const Position,
@@ -93,7 +93,7 @@ GameState::Handler make_render_system(
     particle_shader.uniform("u_gamma_in", GAMMA);
     particle_shader.uniform("u_gamma_out", GAMMA);
     particle_shader.uniform("u_PV", camera.pv());
-    geometry_pass_shader.uniform("u_elapsed_seconds", meta.seconds_since_start_of_program);
+    geometry_pass_shader.uniform("u_elapsed_seconds", meta.time);
 
     registry.view<
       const Position,

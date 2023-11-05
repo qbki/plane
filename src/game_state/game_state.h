@@ -17,8 +17,8 @@ public:
     GameState& state;
     Control& control;
     Camera& camera;
-    float seconds_since_last_frame;
-    float seconds_since_start_of_program;
+    float delta_time;
+    float time;
   };
 
   using Handler = std::function<void (Meta& meta)>;

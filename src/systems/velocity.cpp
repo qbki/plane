@@ -10,14 +10,14 @@ void velocity_system(GameState::Meta& meta) {
   meta.state.registry()
     .view<Position, Velocity>()
     .each([&](Position& position, Velocity& velocity) {
-      velocity.velocity += velocity.acceleration * meta.seconds_since_last_frame;
+      velocity.velocity += velocity.acceleration * meta.delta_time;
       velocity.velocity = damp(
         velocity.velocity,
         {0.0, 0.0, 0.0},
         velocity.damping,
-        meta.seconds_since_last_frame
+        meta.delta_time
       );
-      position.value += velocity.velocity * meta.seconds_since_last_frame;
+      position.value += velocity.velocity * meta.delta_time;
       velocity.acceleration = glm::vec3(0.0);
     });
 }

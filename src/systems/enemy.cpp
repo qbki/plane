@@ -57,7 +57,7 @@ void enemy_sinking_system(GameState::Meta& meta) {
       rotation.value = {
         0.0,
         0.0,
-        rotation.value.z + glm::length(velocity.velocity) * meta.seconds_since_last_frame * 2.0
+        rotation.value.z + glm::length(velocity.velocity) * meta.delta_time * 2.0
       };
       if (position.value.z < -2.0) {
         meta.state.registry().remove<Available>(id);

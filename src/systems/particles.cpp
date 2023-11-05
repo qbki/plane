@@ -20,6 +20,6 @@ void particle_handler_system(GameState::Meta& meta) {
       registry.remove<Available>(id);
       return;
     }
-    lifetime.value -= meta.seconds_since_last_frame;
+    lifetime.value -= meta.delta_time;
   });
 }

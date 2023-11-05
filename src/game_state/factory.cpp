@@ -22,6 +22,7 @@ entt::entity ModelFactory::make_player(
   registry.emplace<Position>(entity, position);
   registry.emplace<Rotation>(entity, glm::vec3(0.0, 0.0, 0.0));
   registry.emplace<TexturePointer>(entity, texture);
+  registry.emplace<Velocity>(entity, 30.0, 0.1);
   return entity;
 }
 
@@ -40,6 +41,7 @@ entt::entity ModelFactory::make_enemy(
   registry.emplace<Position>(entity, position);
   registry.emplace<Rotation>(entity, glm::vec3(0.0, 0.0, 0.0));
   registry.emplace<TexturePointer>(entity, texture);
+  registry.emplace<Velocity>(entity, 10.0, 0.1);
   return entity;
 }
 
@@ -49,6 +51,8 @@ entt::entity ModelFactory::make_projectile(
   glm::vec3 position,
   glm::vec3 rotation
 ) {
+  auto move_direction = calc_z_direction(rotation);
+  auto speed = 30.0f;
   auto [mesh, texture] = cache->load("./models/bullet.glb");
   auto entity = registry.create();
   registry.emplace<Available>(entity);
@@ -59,7 +63,9 @@ entt::entity ModelFactory::make_projectile(
   registry.emplace<ProjectileKind>(entity);
   registry.emplace<Range>(entity, 8.0);
   registry.emplace<Rotation>(entity, rotation);
+  registry.emplace<Speed>(entity, speed);
   registry.emplace<TexturePointer>(entity, texture);
+  registry.emplace<Velocity>(entity, move_direction * speed, 1.0);
   return entity;
 }
 
@@ -101,15 +107,19 @@ entt::entity ModelFactory::make_particle(
   glm::vec3 position,
   glm::vec3 rotation
 ) {
+  auto speed = 15.0f;
+  auto move_direction = calc_z_direction(rotation);
   auto [mesh, texture] = cache->load("./models/particle.glb");
   auto entity = registry.create();
   registry.emplace<Available>(entity);
-  registry.emplace<Lifetime>(entity, 0.2);
-  registry.emplace<LifetimeMax>(entity, 0.2);
+  registry.emplace<Lifetime>(entity, 0.4);
+  registry.emplace<LifetimeMax>(entity, 0.4);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<ParticleKind>(entity);
   registry.emplace<Position>(entity, position);
   registry.emplace<Rotation>(entity, rotation);
+  registry.emplace<Speed>(entity, speed);
   registry.emplace<TexturePointer>(entity, texture);
+  registry.emplace<Velocity>(entity, move_direction * speed, 0.001);
   return entity;
 }

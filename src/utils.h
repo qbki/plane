@@ -38,6 +38,9 @@ inline void print(entt::entity value) {
 }
 
 
+glm::vec3 calc_z_direction(const glm::vec3& rotation);
+
+
 tinygltf::Model load_gltf_model(const std::string& filename);
 
 
@@ -73,9 +76,6 @@ inline std::ostream& operator<<(std::ostream& os, const glm::vec3& vec) {
 }
 
 
-glm::vec3 move_in(glm::vec3 position, glm::vec3 direction_normal, float length);
-
-
 glm::mat4 make_transform_matrix(glm::vec3 position, glm::vec3 rotation);
 
 
@@ -91,3 +91,20 @@ struct EmptyType {
   char value = 'e';
   explicit EmptyType() {};
 };
+
+
+/**
+ * y = value * smoothing ^ dt
+ * value - interpolated value
+ * smoothing - rate of decay
+ * example:
+ *   dt | value = 10 and smoothing = 0.5
+ *   ---|-------------------------------
+ *   0  | 10
+ *   1  | 10 / 2
+ *   2  | 10 / 4
+ */
+template<typename T>
+T damp(T from, T to, float smoothing, float dt) {
+  return to + (from - to) * std::pow(smoothing, dt);
+}

@@ -20,9 +20,6 @@ void particle_handler_system(GameState::Meta& meta) {
       registry.remove<Available>(id);
       return;
     }
-    auto angle = rotation.value.z;
-    auto direction = glm::vec3(glm::cos(angle), glm::sin(angle), 0.0);
-    position.value = move_in(position.value, direction, 10.0 * meta.seconds_since_last_frame);
     lifetime.value -= meta.seconds_since_last_frame;
   });
 }

@@ -20,7 +20,6 @@
 #include "sdl_init.h"
 #include "shading/index.h"
 #include "systems/index.h"
-#include "texture.h"
 #include "utils.h"
 
 
@@ -115,15 +114,17 @@ int main() {
   );
 
   game_state->add_handler(make_cursor_handler_system(screen_width, screen_height));
-  game_state->add_handler(projectile_handler_system);
   game_state->add_handler(enemy_hunting_system);
   game_state->add_handler(enemy_rotation_system);
   game_state->add_handler(enemy_sinking_system);
   game_state->add_handler(particle_handler_system);
-  game_state->add_handler(camera_move_system);
   game_state->add_handler(player_moving_system);
   game_state->add_handler(player_rotation_system);
   game_state->add_handler(player_shooting_system);
+  game_state->add_handler(velocity_gravity_system);
+  game_state->add_handler(velocity_system);
+  game_state->add_handler(projectile_handler_system);
+  game_state->add_handler(camera_move_system);
   game_state->add_handler(make_render_system(
     *deferred_shading,
     *particle_shader,

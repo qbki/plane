@@ -16,6 +16,11 @@ int buffer_size() {
 }
 
 
+glm::vec3 calc_z_direction(const glm::vec3& rotation) {
+  return glm::vec3(glm::cos(rotation.z), glm::sin(rotation.z), 0.0);
+}
+
+
 glm::vec3 encode_gamma(const glm::vec3& color, float gamma) {
   return glm::pow(color, glm::vec3(1.0 / gamma));
 }
@@ -78,11 +83,6 @@ void resize_window(
   auto height = window_event.data2;
   camera.aspect_ratio(static_cast<float>(width) / height);
   glViewport(0, 0, width, height);
-}
-
-
-glm::vec3 move_in(glm::vec3 position, glm::vec3 direction_normal, float length) {
-  return position + direction_normal * length;
 }
 
 

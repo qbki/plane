@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "texture.h"
+#include "utils.h"
 
 
 GLuint int_to_texture_index(unsigned int idx) {

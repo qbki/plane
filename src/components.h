@@ -1,9 +1,13 @@
 #pragma once
+#include <algorithm>
 #include <entt/core/type_traits.hpp>
 #include <glm/detail/qualifier.hpp>
 #include <glm/vec3.hpp>
+#include <iterator>
 #include <memory>
+#include <vector>
 
+#include "game_state/texture_type.h"
 #include "mesh.h"
 #include "texture.h"
 #include "utils.h"
@@ -33,6 +37,30 @@ struct EnemyKind {};
 struct ParticleKind {};
 struct PlayerKind {};
 struct ProjectileKind {};
+
+class Textures {
+private:
+  using TextureList = std::shared_ptr<std::vector<Texture>>;
+  TextureList _textures;
+  size_t _current_texture_idx = 0;
+public:
+  explicit Textures(TextureList textures)
+    : _textures(textures)
+  {
+    change_type(TextureType::Type::MAIN);
+  }
+  void change_type(TextureType::Type type) {
+    auto found_it = std::ranges::find_if(*_textures, [&](Texture& value) {
+        return value.type() == static_cast<unsigned int>(type);
+    });
+    if (found_it != end(*_textures)) {
+      _current_texture_idx = std::distance(begin(*_textures), found_it);
+    }
+  }
+  Texture& texture() const {
+    return (*_textures)[_current_texture_idx];
+  }
+};
 
 struct Velocity {
   float scalar_acceleration;

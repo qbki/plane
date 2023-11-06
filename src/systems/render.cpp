@@ -27,14 +27,14 @@ GameState::Handler make_render_system(
       const Position,
       const Rotation,
       const MeshPointer,
-      const TexturePointer,
+      const Textures,
       const Opaque,
       const Available
     >().each([&geometry_pass_shader](
       const Position& position,
       const Rotation& rotation,
       const MeshPointer& mesh,
-      const TexturePointer& texture
+      const Textures& textures
     ) {
       auto rotation_matrix = glm::rotate(glm::mat4(1.0), rotation.value.z, {0.0, 0.0, 1.0});
       auto transform_matrix = glm::translate(glm::mat4(1.0), position.value);
@@ -43,7 +43,7 @@ GameState::Handler make_render_system(
       geometry_pass_shader.uniform(
         "u_normal_matrix",
         glm::transpose(glm::inverse(glm::mat3(transform))));
-      texture->use(0);
+      textures.texture().use(0);
       geometry_pass_shader.uniform("main_texture", 0);
       mesh->draw();
     });
@@ -99,21 +99,21 @@ GameState::Handler make_render_system(
       const Position,
       const Rotation,
       const MeshPointer,
-      const TexturePointer,
+      const Textures,
       const Available,
       const ParticleKind
     >(entt::exclude<Opaque>).each([&particle_shader](
       const Position& position,
       const Rotation& rotation,
       const MeshPointer& mesh,
-      const TexturePointer& texture
+      const Textures& textures
     ) {
       auto transform = make_transform_matrix(position.value, rotation.value);
       particle_shader.uniform("u_M", transform);
       particle_shader.uniform(
         "u_normal_matrix",
         glm::transpose(glm::inverse(glm::mat3(transform))));
-      texture->use(0);
+      textures.texture().use(0);
       particle_shader.uniform("main_texture", 0);
       mesh->draw();
     });

@@ -21,7 +21,7 @@ glm::vec3 exctract_material_color(tinygltf::Model& model) {
 }
 
 
-Cache::Textures generate_texture(tinygltf::Model& model) {
+Cache::TexturesPtr generate_texture(tinygltf::Model& model) {
   // Gamma will be calculated in shader
   auto color = exctract_material_color(model);
   std::vector<unsigned char> data {
@@ -31,35 +31,37 @@ Cache::Textures generate_texture(tinygltf::Model& model) {
     255
   };
   auto texture_type = TextureType::map_to_int(TextureType::DEFAULT_TYPE);
-  return {std::make_shared<Texture>(texture_type, data)};
+  Cache::TexturesPtr textures = std::make_shared<std::vector<Texture>>(std::vector<Texture>());
+  textures->emplace_back(texture_type, data);
+  return textures;
 }
 
 
-std::vector<std::shared_ptr<Texture>> extract_textures(tinygltf::Model& model) {
-  std::vector<std::shared_ptr<Texture>> textures;
+Cache::TexturesPtr extract_textures(tinygltf::Model& model) {
+  auto textures = std::vector<Texture>();
+  textures.reserve(model.images.size());
   for (auto& image : model.images) {
-    auto texture_type = TextureType::map_str_to_int(image.name);
-    textures.push_back(std::make_shared<Texture>(texture_type, image.image));
+    textures.emplace_back(TextureType::map_str_to_int(image.name), image.image);
   }
-  return textures;
+  return std::make_shared<std::vector<Texture>>(std::move(textures));
 }
 
 
 Cache::Cache() {
   this->_meshes = std::unordered_map<
     std::string,
-    std::tuple<MeshPtr, MaterialPtr, Textures>
+    std::tuple<MeshPtr, MaterialPtr, TexturesPtr>
   >();
 }
 
 
-std::tuple<std::shared_ptr<Mesh>, std::shared_ptr<Texture>>
+std::tuple<Cache::MeshPtr, Cache::TexturesPtr>
 Cache::load(const std::string& mesh_file_name) {
   auto has_mesh = has_key(this->_meshes, mesh_file_name);
 
-  std::shared_ptr<Mesh> mesh;
-  std::shared_ptr<Material> material;
-  Textures textures;
+  Cache::MeshPtr mesh;
+  Cache::MaterialPtr material;
+  TexturesPtr textures;
 
   if (has_mesh) {
     auto mesh_data = this->_meshes.at(mesh_file_name);
@@ -73,11 +75,11 @@ Cache::load(const std::string& mesh_file_name) {
     mesh = std::make_shared<Mesh>(gltf_model);
     material = std::make_shared<Material>(color);
     auto extracted_textures = extract_textures(gltf_model);
-    textures = extracted_textures.size() > 0
+    textures = extracted_textures->size() > 0
       ? extracted_textures
       : generate_texture(gltf_model);
     this->_meshes[mesh_file_name] = std::make_tuple(mesh, material, textures);
   }
 
-  return {mesh, textures[0]};
+  return {mesh, textures};
 }

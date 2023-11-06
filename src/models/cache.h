@@ -18,14 +18,13 @@ class Cache {
 public:
   using MeshPtr = std::shared_ptr<Mesh>;
   using MaterialPtr = std::shared_ptr<Material>;
-  using Textures = std::vector<std::shared_ptr<Texture>>;
+  using TexturesPtr = std::shared_ptr<std::vector<Texture>>;
 
 private:
-  std::unordered_map<std::string, std::tuple<MeshPtr, MaterialPtr, Textures>> _meshes;
+  std::unordered_map<std::string, std::tuple<MeshPtr, MaterialPtr, TexturesPtr>> _meshes;
 
 public:
   Cache();
 
-  std::tuple<std::shared_ptr<Mesh>, std::shared_ptr<Texture>>
-  load(const std::string& mesh_file_name);
+  std::tuple<MeshPtr, TexturesPtr> load(const std::string& mesh_file_name);
 };

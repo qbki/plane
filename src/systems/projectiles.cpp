@@ -50,6 +50,7 @@ void projectile_handler_system (GameState::Meta& meta) {
     Position,
     Velocity,
     EnemyStateEnum,
+    Textures,
     EnemyKind,
     Available
   >();
@@ -84,7 +85,8 @@ void projectile_handler_system (GameState::Meta& meta) {
       entt::entity enemy_id,
       Position& enemy_position,
       Velocity& enemy_velocity,
-      EnemyStateEnum& enemy_state
+      EnemyStateEnum& enemy_state,
+      Textures& textures
     ) {
       if (glm::distance(prj_position.value, enemy_position.value) <= 0.3) {
         if (enemy_state != EnemyStateEnum::SINKING) {
@@ -93,6 +95,7 @@ void projectile_handler_system (GameState::Meta& meta) {
           );
           enemy_state = EnemyStateEnum::SINKING;
           emit_particles(meta, 20, prj_position.value);
+          textures.change_type(TextureType::Type::DESTROYED);
           registry.emplace<Gravity>(enemy_id);
         }
         registry.remove<Available>(prj_id);

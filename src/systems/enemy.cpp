@@ -8,10 +8,10 @@ bool are_siblings_close(glm::vec3 a, glm::vec3 b) {
 }
 
 
-void enemy_hunting_system(GameState::Meta& meta) {
+void enemy_hunting_system(App::Meta& meta) {
   // TODO Replace by a real AI
-  auto player_pos = meta.state.player<Position>().value;
-  auto enemies_view = meta.state.registry().view<
+  auto player_pos = meta.app.game_state->player<Position>().value;
+  auto enemies_view = meta.app.game_state->registry().view<
     Position,
     Velocity,
     EnemyStateEnum,
@@ -38,8 +38,9 @@ void enemy_hunting_system(GameState::Meta& meta) {
 }
 
 
-void enemy_sinking_system(GameState::Meta& meta) {
-  meta.state.registry().view<
+void enemy_sinking_system(App::Meta& meta) {
+  auto& registry = meta.app.game_state->registry();
+  meta.app.game_state->registry().view<
     Position,
     Rotation,
     Velocity,
@@ -60,7 +61,7 @@ void enemy_sinking_system(GameState::Meta& meta) {
         rotation.value.z + glm::length(velocity.velocity) * meta.delta_time * 2.0
       };
       if (position.value.z < -2.0) {
-        meta.state.registry().remove<Available>(id);
+        registry.remove<Available>(id);
         state = EnemyStateEnum::INACTIVE;
       }
     }
@@ -68,9 +69,9 @@ void enemy_sinking_system(GameState::Meta& meta) {
 }
 
 
-void enemy_rotation_system(GameState::Meta& meta) {
-  auto& player_positon = meta.state.player<Position>().value;
-  meta.state.registry()
+void enemy_rotation_system(App::Meta& meta) {
+  auto& player_positon = meta.app.game_state->player<Position>().value;
+  meta.app.game_state->registry()
     .view<
       Position,
       Rotation,

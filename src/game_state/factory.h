@@ -19,6 +19,16 @@ public:
     glm::vec3 position,
     glm::vec3 rotation
   );
+  entt::entity make_point_light(
+    entt::registry& registry,
+    glm::vec3 position,
+    glm::vec3 color
+  );
+  entt::entity make_directional_light(
+    entt::registry& registry,
+    glm::vec3 direction,
+    glm::vec3 color
+  );
   entt::entity make_projectile(
     entt::registry& registry,
     glm::vec3 position,

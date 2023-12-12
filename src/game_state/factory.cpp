@@ -123,3 +123,35 @@ entt::entity ModelFactory::make_particle(
   registry.emplace<Velocity>(entity, move_direction * speed, 0.001);
   return entity;
 }
+
+
+entt::entity ModelFactory::make_point_light(
+  entt::registry& registry,
+  glm::vec3 position,
+  glm::vec3 color
+) {
+  PointLightParams point_light_params {
+    .constant = 1.0,
+    .linear = 0.045,
+    .quadratic = 0.0075,
+  };
+  auto entity = registry.create();
+  registry.emplace<Position>(entity, position);
+  registry.emplace<Color>(entity, color);
+  registry.emplace<PointLightParams>(entity, point_light_params);
+  registry.emplace<PointLightKind>(entity);
+  return entity;
+}
+
+
+entt::entity ModelFactory::make_directional_light(
+  entt::registry& registry,
+  glm::vec3 direction,
+  glm::vec3 color
+) {
+  auto entity = registry.create();
+  registry.emplace<Direction>(entity, direction);
+  registry.emplace<Color>(entity, color);
+  registry.emplace<DirectionalLightKind>(entity);
+  return entity;
+}

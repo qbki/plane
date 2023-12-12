@@ -1,11 +1,9 @@
-#version 450 core
+#version 300 es
 precision highp float;
 
-in InterfaceData {
-  flat vec3 position;
-  flat vec3 normal;
-  vec2 tex_coord;
-} interface_data;
+in vec3 i_position;
+in vec3 i_normal;
+vec2 i_tex_coord;
 
 out vec4 frag_color;
 
@@ -23,7 +21,7 @@ vec3 decode_gamma(vec3 color) {
 }
 
 void main() {
-  vec4 base_color_sample = texture(main_texture, interface_data.tex_coord);
+  vec4 base_color_sample = texture(main_texture, i_tex_coord);
   float base_alpha = base_color_sample.a;
   vec3 base_color = decode_gamma(base_color_sample.rgb);
   frag_color = vec4(encode_gamma(base_color), base_alpha);

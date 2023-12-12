@@ -1,5 +1,5 @@
 #pragma once
-#include "../game_state/index.h"
+#include "../app.h"
 
 
-void projectile_handler_system(GameState::Meta& meta);
+void projectile_handler_system(App::Meta& meta);

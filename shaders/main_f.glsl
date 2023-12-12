@@ -1,4 +1,4 @@
-#version 450 core
+#version 300 es
 precision highp float;
 
 struct Material {
@@ -12,11 +12,9 @@ struct SunLight {
   vec3 direction;
 };
 
-in InterfaceData {
-  flat vec3 position;
-  flat vec3 normal;
-  vec2 tex_coord;
-} interface_data;
+in vec3 position;
+in vec3 normal;
+in vec2 tex_coord;
 
 out vec4 frag_color;
 
@@ -37,7 +35,7 @@ vec3 decode_gamma(vec3 color) {
 }
 
 void main() {
-  vec4 base_color_sample = texture(main_texture, interface_data.tex_coord);
+  vec4 base_color_sample = texture(main_texture, i_tex_coord);
   float base_alpha = base_color_sample.a;
   vec3 base_color = decode_gamma(base_color_sample.rgb);
 
@@ -45,8 +43,8 @@ void main() {
     discard;
   }
 
-  vec3 view_dir = normalize(u_camera_pos - interface_data.position);
-  vec3 normal = normalize(interface_data.normal);
+  vec3 view_dir = normalize(u_camera_pos - i_position);
+  vec3 normal = normalize(i_normal);
 
   vec3 ambient = u_light.color * u_material.ambient;
 

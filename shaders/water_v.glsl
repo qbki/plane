@@ -1,4 +1,4 @@
-#version 450 core
+#version 300 es
 precision highp float;
 
 layout (location = 0) in vec3 a_position;
@@ -8,11 +8,9 @@ uniform mat4 u_M;
 uniform mat3 u_normal_matrix;
 uniform float u_elapsed_seconds;
 
-out InterfaceData {
-  flat vec3 position;
-  flat vec3 normal;
-  vec2 tex_coord;
-} interface_data;
+out vec3 i_position;
+out vec3 i_normal;
+out vec2 i_tex_coord;
 
 float OFFSET = 0.001;
 
@@ -33,8 +31,8 @@ void main() {
   vec3 offset_b = sin_fn(vec3(position.x, position.y + OFFSET, position.z));
   vec3 normal = normalize(cross(offset_a - position, offset_b - position));
 
-  interface_data.position = position;
-  interface_data.normal = u_normal_matrix * normal;
+  i_position = position;
+  i_normal = u_normal_matrix * normal;
 
   gl_Position = u_PV * vec4(position, 1.0);
 }

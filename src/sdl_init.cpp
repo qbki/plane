@@ -6,19 +6,30 @@
 #include <stdexcept>
 #include <string>
 
-#include "sdl_init.h"
+#ifdef __EMSCRIPTEN__
+#include <emscripten/html5.h>
+#endif
 
-std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> init_window(uint screen_width, uint screen_height) {
+#include "sdl_init.h"
+#include "utils.h"
+
+
+void throw_sdl_error(std::string message) {
+  auto err_text = message + ": " + SDL_GetError();
+  print_error(err_text);
+  throw new std::runtime_error(err_text);
+}
+
+
+WindowPtr init_window(uint screen_width, uint screen_height) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    auto err_text = std::string("Unable to init SDL: ") + SDL_GetError();
-    throw new std::runtime_error(err_text);
+    throw_sdl_error("Unable to init SDL");
   }
   std::cout << "SDL has been initialized." << std::endl;
 
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
   auto window = SDL_CreateWindow(
@@ -26,9 +37,7 @@ std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> init_window(uint screen_width,
     screen_height,
     SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
   if (window == nullptr) {
-    auto err_sdl = std::unique_ptr<const char>(SDL_GetError());
-    auto err_text = std::string("Unable to create window: ") + *err_sdl;
-    throw new std::runtime_error(err_text);
+    throw_sdl_error("Unable to create window");
   }
   std::cout << "Window has been created." << std::endl;
 
@@ -42,24 +51,23 @@ std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> init_window(uint screen_width,
 }
 
 
-std::unique_ptr<void, void(*)(SDL_GLContext)> init_context(SDL_Window* window) {
+ContextPtr init_context(SDL_Window* window) {
   auto ctx = SDL_GL_CreateContext(window);
   if (ctx == nullptr) {
-    auto err_sdl = std::unique_ptr<const char>(SDL_GetError());
-    auto err_text = std::string("Unable to create GL Context: ") + *err_sdl;
-    throw new std::runtime_error(err_text);
+    throw_sdl_error("Unable to create GL Context");
   }
   std::cout << "Context has been created." << std::endl;
 
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
   if (GLEW_OK != err) {
-    auto err_glew = std::unique_ptr<const char>(reinterpret_cast<const char*>(glewGetErrorString(err)));
-    auto err_text = std::string("Unable to initialize GLEW: ") + *err_glew;
+    auto err_glew = reinterpret_cast<const char*>(glewGetErrorString(err));
+    auto err_text = std::string("Unable to initialize GLEW: ") + err_glew;
     throw new std::runtime_error(err_text);
   }
   std::cout << "GLEW has been inited." << std::endl;
 
+  print_opengl_info();
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);

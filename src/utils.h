@@ -6,6 +6,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <limits>
+#include <optional>
 #include <ostream>
 #include <string>
 #include <unordered_map>
@@ -35,6 +36,12 @@ void print(T value) {
 
 inline void print(entt::entity value) {
   std::cout << static_cast<unsigned long>(value) << std::endl;
+}
+
+
+template<typename T>
+void print_error(T value) {
+  std::cerr << value << std::endl;
 }
 
 
@@ -93,6 +100,10 @@ struct EmptyType {
 };
 
 
+template<typename T>
+using OptionalPtr = std::optional<std::unique_ptr<T>>;
+
+
 /**
  * y = value * smoothing ^ dt
  * value - interpolated value
@@ -108,3 +119,12 @@ template<typename T>
 T damp(T from, T to, float smoothing, float dt) {
   return to + (from - to) * std::pow(smoothing, dt);
 }
+
+
+void print_opengl_errors();
+
+
+void print_opengl_info();
+
+
+void print_extension_support(std::string extension_name);

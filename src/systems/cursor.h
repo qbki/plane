@@ -1,5 +1,5 @@
 #pragma once
-#include "../game_state/index.h"
+#include "../app.h"
 
 
-GameState::Handler make_cursor_handler_system(int& screen_width, int& screen_height);
+void cursor_handler_system(App::Meta& meta);

@@ -1,7 +1,10 @@
-#include "g_buffer.h"
-#include <GL/gl.h>
 #include <iostream>
 #include <iterator>
+#include <sstream>
+#include <stdexcept>
+
+#include "../utils.h"
+#include "g_buffer.h"
 
 
 void gen_color_attachment(
@@ -29,7 +32,9 @@ void gen_color_attachment(
   glTexImage2D(GL_TEXTURE_2D, 0, internal_color_format, width, height, 0, GL_RGBA, date_type, NULL);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture_handle, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture_handle, 0);
 }
 
 
@@ -61,19 +66,28 @@ void GBuffer::update(unsigned int width, unsigned int height) {
   glDeleteRenderbuffers(1, &_render_buffer);
 
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _g_frame_buffer);
-  gen_color_attachment(_position_texture, GL_RGB16F, 0, _width, _height, GL_FLOAT);
-  gen_color_attachment(_normal_texture, GL_RGB16F, 1, _width, _height, GL_FLOAT);
-  gen_color_attachment(_base_color_texture, GL_RGB, 2, _width, _height, GL_UNSIGNED_BYTE);
+  gen_color_attachment(_position_texture, GL_RGBA32F, 0, _width, _height, GL_FLOAT);
+  gen_color_attachment(_normal_texture, GL_RGBA32F, 1, _width, _height, GL_FLOAT);
+  gen_color_attachment(_base_color_texture, GL_RGBA8, 2, _width, _height, GL_UNSIGNED_BYTE);
   glDrawBuffers(3, GBuffer::COLOR_ATTACHMENTS);
 
   glGenRenderbuffers(1, &_render_buffer);
   glBindRenderbuffer(GL_RENDERBUFFER, _render_buffer);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, _width, _height);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _render_buffer);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, _width, _height);
+  glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _render_buffer);
 
-  auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  auto status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
   if (status != GL_FRAMEBUFFER_COMPLETE) {
-    std::cout << "Framebuffer status: " << status << std::endl;
+    GLint dims[4] = {0};
+    glGetIntegerv(GL_VIEWPORT, dims);
+    std::cout << "width: " << dims[2] << std::endl;
+    std::cout << "height: " << dims[3] << std::endl;
+
+    std::stringstream ss;
+    ss << "Framebuffer status ("
+       << _width << "x" << _height << "): "
+       << status;
+    throw std::runtime_error(ss.str());
   }
 
   glViewport(0, 0, width, height);

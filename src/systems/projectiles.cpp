@@ -3,11 +3,11 @@
 
 
 void emit_particles(
-  GameState::Meta& meta,
+  App::Meta& meta,
   unsigned int quantity,
   glm::vec3 initial_position
 ) {
-  auto& registry = meta.state.registry();
+  auto& registry = meta.app.game_state->registry();
   auto idx = 0;
   auto step = glm::two_pi<float>() / static_cast<float>(quantity);
   auto particles = registry.view<
@@ -35,17 +35,19 @@ void emit_particles(
   }
 
   for(;idx < (quantity - 1); idx += 1) {
-    meta.state.factory().make_particle(
-      registry,
-      initial_position,
-      {0.0, 0.0, idx * step}
-    );
+    meta.app.game_state
+      ->factory()
+      .make_particle(
+        registry,
+        initial_position,
+        {0.0, 0.0, idx * step}
+      );
   }
 }
 
 
-void projectile_handler_system (GameState::Meta& meta) {
-  auto& registry = meta.state.registry();
+void projectile_handler_system(App::Meta& meta) {
+  auto& registry = meta.app.game_state->registry();
   auto enemies_view = registry.view<
     Position,
     Velocity,

@@ -6,8 +6,8 @@
 #include "velocity.h"
 
 
-void velocity_system(GameState::Meta& meta) {
-  meta.state.registry()
+void velocity_system(App::Meta& meta) {
+  meta.app.game_state->registry()
     .view<Position, Velocity>()
     .each([&](Position& position, Velocity& velocity) {
       velocity.velocity += velocity.acceleration * meta.delta_time;
@@ -22,8 +22,8 @@ void velocity_system(GameState::Meta& meta) {
     });
 }
 
-void velocity_gravity_system(GameState::Meta& meta) {
-  meta.state.registry()
+void velocity_gravity_system(App::Meta& meta) {
+  meta.app.game_state->registry()
     .view<Velocity, Gravity>()
     .each([&](Velocity& velocity) {
       velocity.acceleration += glm::vec3(0.0, 0.0, -GRAVITY);

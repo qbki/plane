@@ -1,28 +1,33 @@
 #include "game_state.h"
 
 
-GameState::GameState() {
-  _last_time_point = SDL_GetTicks64();
-}
-
-
 void GameState::camera(std::shared_ptr<Camera> camera) {
-  this->_camera = camera;
+  _camera = camera;
 }
 
 
 std::shared_ptr<Camera> GameState::camera() {
-  return this->_camera;
+  return _camera;
 }
 
 
 void GameState::cursor(glm::vec3 value) {
-  this->_cursor = value;
+  _cursor = value;
 }
 
 
 glm::vec3 GameState::cursor() {
-  return this->_cursor;
+  return _cursor;
+}
+
+
+void GameState::is_running(bool value) {
+  _is_game_running = value;
+}
+
+
+bool GameState::is_running() {
+  return _is_game_running;
 }
 
 
@@ -43,24 +48,4 @@ entt::registry& GameState::registry() {
 
 ModelFactory& GameState::factory() {
   return _factory;
-}
-
-
-void GameState::add_handler(Handler handler) {
-  this->_handlers.push_back(handler);
-}
-
-
-void GameState::update(Control& control, unsigned long time_since_start_of_program) {
-  Meta meta {
-    *this,
-    control,
-    *this->_camera,
-    static_cast<float>(time_since_start_of_program - _last_time_point) * 0.001f,
-    _last_time_point * 0.001f
-  };
-  _last_time_point = time_since_start_of_program;
-  for (auto& handler : this->_handlers) {
-    handler(meta);
-  }
 }

@@ -19,6 +19,8 @@ enum class EnemyStateEnum {
   INACTIVE,
 };
 
+using Color = NewType<glm::vec3, struct ColorTag>;
+using Direction = NewType<glm::vec3, struct DirectionTag>;
 using InitialPosition = NewType<glm::vec3, struct InitialPositionTag>;
 using Lifetime = NewType<float, struct LifeTimeTag>;
 using LifetimeMax = NewType<float, struct LifeTimeMaxTag>;
@@ -33,9 +35,11 @@ struct Available {};
 struct Gravity {};
 struct Opaque {};
 
+struct DirectionalLightKind {};
 struct EnemyKind {};
 struct ParticleKind {};
 struct PlayerKind {};
+struct PointLightKind {};
 struct ProjectileKind {};
 
 class Textures {
@@ -77,4 +81,10 @@ struct Velocity {
       velocity(_initial_velocity),
       scalar_acceleration(0),
       damping(_damping) {}
+};
+
+struct PointLightParams {
+  float constant = 1.0;
+  float linear = 1.0;
+  float quadratic = 1.0;
 };

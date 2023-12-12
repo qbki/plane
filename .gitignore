@@ -1,5 +1,6 @@
 CMakeUserPresets.json
 /build
+/wasm
 /debug
 /.cache
 *.blend1

@@ -1,8 +1,8 @@
 #include "./particles.h"
 
 
-void particle_handler_system(GameState::Meta& meta) {
-  auto& registry = meta.state.registry();
+void particle_handler_system(App::Meta& meta) {
+  auto& registry = meta.app.game_state->registry();
   auto particles = registry.view<
     Position,
     Rotation,

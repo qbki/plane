@@ -1,4 +1,4 @@
-#version 450 core
+#version 300 es
 #define MAX_POINT_LIGHTS_QUANTITY 64
 precision highp float;
 
@@ -104,7 +104,7 @@ void main() {
   for (int i = 0; i < lights_quantity; i++) {
     vec3 light_pos = u_point_lights[i].position;
     vec3 light_color = u_point_lights[i].color;
-    vec3 point_light_direction = normalize(light_pos - pixel_position);
+    vec3 point_light_direction = normalize(pixel_position - light_pos);
     float ray_distance = length(light_pos - pixel_position);
     float attenuation = calc_attenuation(u_point_lights[i], ray_distance);
 
@@ -117,7 +117,7 @@ void main() {
     specular += calc_specular(
       light_color,
       normal,
-      -point_light_direction,
+      point_light_direction,
       view_direction,
       u_material.shininess
     ) * u_material.specular * attenuation;

@@ -1,7 +1,7 @@
 #pragma once
-#include "../game_state/index.h"
+#include "../app.h"
 
 
-void enemy_hunting_system(GameState::Meta& meta);
-void enemy_sinking_system(GameState::Meta& meta);
-void enemy_rotation_system(GameState::Meta& meta);
+void enemy_hunting_system(App::Meta& meta);
+void enemy_sinking_system(App::Meta& meta);
+void enemy_rotation_system(App::Meta& meta);

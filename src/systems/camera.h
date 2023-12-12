@@ -1,5 +1,5 @@
 #pragma once
-#include "../game_state/index.h"
+#include "../app.h"
 
 
-void camera_move_system(GameState::Meta& meta);
+void camera_move_system(App::Meta& meta);

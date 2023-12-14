@@ -1,4 +1,4 @@
-#include <GL/gl.h>
+#include <GL/glew.h>
 #include <GL/glext.h>
 #include <cmath>
 #include <stdexcept>

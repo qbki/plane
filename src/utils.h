@@ -1,7 +1,9 @@
 #pragma once
+#include <GL/glew.h>
 #include <SDL_events.h>
 #include <cmath>
 #include <entt/entity/fwd.hpp>
+#include <format>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
@@ -9,10 +11,13 @@
 #include <optional>
 #include <ostream>
 #include <string>
-#include <unordered_map>
 #include <tiny_gltf.h>
+#include <unordered_map>
 
 #include "camera.h"
+
+
+inline void noop() {};
 
 
 int buffer_size();
@@ -28,21 +33,16 @@ inline glm::vec3 zero<glm::vec3>() {
 }
 
 
-template<typename T>
-void print(T value) {
-  std::cout << value << std::endl;
-}
-
-
-inline void print(entt::entity value) {
-  std::cout << static_cast<unsigned long>(value) << std::endl;
-}
-
-
-template<typename T>
-void print_error(T value) {
-  std::cerr << value << std::endl;
-}
+template <>
+struct std::formatter<const GLubyte*> : std::formatter<std::string> {
+  auto format(const GLubyte* text, format_context& ctx) const {
+    auto reinterpreted_text = reinterpret_cast<const char*>(text);
+    return formatter<string>::format(
+      std::format("{}", reinterpreted_text),
+      ctx
+    );
+  }
+};
 
 
 glm::vec3 calc_z_direction(const glm::vec3& rotation);
@@ -128,3 +128,6 @@ void print_opengl_info();
 
 
 void print_extension_support(std::string extension_name);
+
+
+std::string demangle_name(const std::type_info& info);

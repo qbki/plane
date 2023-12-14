@@ -1,12 +1,12 @@
 #pragma once
 #include <string>
-#include <GL/glew.h>
 #include <glm/matrix.hpp>
+
 
 class Shader {
 private:
-  GLuint program = 0;
-  GLuint compile_shader(std::string& text, GLuint shader_type);
+  unsigned int _program = 0;
+  unsigned int compile_shader(std::string& text, unsigned int shader_type);
   void create_program();
   void link();
 

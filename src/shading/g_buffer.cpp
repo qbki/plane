@@ -1,3 +1,5 @@
+#include <GL/glew.h>
+#include <format>
 #include <iostream>
 #include <iterator>
 #include <sstream>
@@ -5,6 +7,7 @@
 
 #include "../utils.h"
 #include "g_buffer.h"
+#include "../services.h"
 
 
 void gen_color_attachment(
@@ -80,14 +83,9 @@ void GBuffer::update(unsigned int width, unsigned int height) {
   if (status != GL_FRAMEBUFFER_COMPLETE) {
     GLint dims[4] = {0};
     glGetIntegerv(GL_VIEWPORT, dims);
-    std::cout << "width: " << dims[2] << std::endl;
-    std::cout << "height: " << dims[3] << std::endl;
-
-    std::stringstream ss;
-    ss << "Framebuffer status ("
-       << _width << "x" << _height << "): "
-       << status;
-    throw std::runtime_error(ss.str());
+    logger().error(std::format("Viewport dimentions: {}x{}", dims[2], dims[3]));
+    auto status_text = std::format("Framebuffer status ({}x{}): {}", _width, _height, status);
+    throw std::runtime_error(status_text);
   }
 
   glViewport(0, 0, width, height);

@@ -1,12 +1,12 @@
-#include <iostream>
 #include <stdexcept>
 
+#include "../services.h"
 #include "texture_type.h"
 
 
 namespace TextureType {
   Type handle_unknown_type() {
-    std::cout << "Unknown type of a texture" << "\n";
+    logger().warn("Unknown type of a texture");
     return DEFAULT_TYPE;
   }
 
@@ -41,6 +41,7 @@ namespace TextureType {
       default: return handle_unknown_type();
     }
   }
+
 
   unsigned int map_str_to_int(std::string& type) {
     return map_to_int(map_to_type(type));

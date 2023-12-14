@@ -1,7 +1,8 @@
 #pragma once
 #include <GL/glew.h>
-#include <tiny_gltf.h>
 #include <memory>
+#include <tiny_gltf.h>
+
 
 class Mesh {
 private:

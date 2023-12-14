@@ -1,13 +1,12 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <GL/gl.h>
 
 
 class Texture {
 private:
   unsigned int _type;
-  GLuint to = 0; // texture object
+  unsigned int to = 0; // texture object
 
 public:
   explicit Texture(unsigned int type, const std::vector<unsigned char>& data);

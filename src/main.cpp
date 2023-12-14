@@ -1,9 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
-#include <vector>
 #include <memory>
-#include <sstream>
-#include <GL/glew.h>
-#include <GL/gl.h>
 #include <SDL2/SDL.h>
 #include <entt/entt.hpp>
 #include <glm/ext/vector_float3.hpp>
@@ -21,14 +17,18 @@
 #include "sdl_init.h"
 #include "shading/index.h"
 #include "systems/index.h"
-#include "utils.h"
+#include "service.h"
+#include "logger/index.h"
 
 
 const int DEFAULT_SCREEN_WIDTH = 800;
 const int DEFAULT_SCREEN_HEIGHT = 600;
 const float ANIMATED_OBJECTS_HEIGHT = 2.0;
 
+
 int main() {
+  Service<AbstractLogger>::install(new Logger());
+
   auto window = init_window(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
   auto context = init_context(window.get());
   auto control = std::make_unique<Control>();

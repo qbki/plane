@@ -1,12 +1,11 @@
-#include <GL/glew.h>
-#include <GL/gl.h>
-#include <glm/ext/vector_float3.hpp>
-#include <iostream>
+#include <cxxabi.h>
+#include <filesystem>
 #include <fstream>
 #include <sstream>
-#include <filesystem>
 #include <stdexcept>
+#include <string>
 
+#include "services.h"
 #include "utils.h"
 
 
@@ -39,22 +38,22 @@ tinygltf::Model load_gltf_model(const std::string& filename) {
   std::string warn;
 
   if (!std::filesystem::exists(filename)) {
-    throw std::runtime_error("File not found: " + filename);
+    throw std::runtime_error(std::format("File not found: {}", filename));
   }
 
   bool res = loader.LoadBinaryFromFile(&model, &err, &warn, filename);
   if (!warn.empty()) {
-    std::cout << "WARN: " << warn << std::endl;
+    logger().warn(warn);
   }
 
   if (!err.empty()) {
-    std::cout << "ERR: " << err << std::endl;
+    logger().error(err);
   }
 
   if (!res) {
-    throw std::runtime_error("Failed to load glTF: " + filename);
+    throw std::runtime_error(std::format("Failed to load glTF: {}", filename));
   } else {
-    std::cout << "Loaded glTF: " << filename << std::endl;
+    logger().info(std::format("Loaded glTF: {}", filename));
   }
 
   return model;
@@ -65,8 +64,7 @@ std::string load_text(const std::string &file_name) {
   std::ifstream ifs(file_name);
 
   if (ifs.fail()) {
-    auto message = "Cannot read a file: " + file_name;
-    throw std::runtime_error(message);
+    throw std::runtime_error(std::format("Cannot read a file: {}", file_name));
   }
 
   std::string content(
@@ -140,15 +138,15 @@ void print_opengl_errors() {
         break;
       }
     }
-    print_error(ss.str());
+    logger().error(ss.str());
   }
 }
 
 
 void print_opengl_info() {
-  std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl
-    << "Vendor: " << glGetString(GL_VENDOR) << std::endl
-    << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
+  logger().info(std::format("OpenGL version: {}", glGetString(GL_VERSION)));
+  logger().info(std::format("Vendor: {}", glGetString(GL_VENDOR)));
+  logger().info(std::format("Renderer: {}", glGetString(GL_RENDERER)));
 }
 
 
@@ -159,10 +157,32 @@ void print_extension_support(std::string extension_name) {
   {
     std::string extension(reinterpret_cast<const char *>(glGetStringi(GL_EXTENSIONS, i)));
     if (extension_name == extension) {
-      print(extension_name + ": is supported");
+      logger().info(std::format("{}: is supported", extension_name));
       return;
     }
   }
-  print(extension_name + ": is not supported");
+  logger().info(std::format("{}: is not supported", extension_name));
   return;
+}
+
+
+std::string demangle_name(const std::type_info& info) {
+  int status;
+  auto name = abi::__cxa_demangle(info.name(), nullptr, nullptr, &status);
+  std::string result{name};
+  std::free(name);
+  switch (status) {
+    case 0:
+      noop();
+      break;
+    case -1:
+      throw std::runtime_error("Demangle. A memory allocation failure occurred.");
+    case -2:
+      throw std::runtime_error("Demangle. A mangled_name is not a valid name under the C++ ABI mangling rules.");
+    case -3:
+      throw std::runtime_error("Demangle. One of the arguments is invalid.");
+    default:
+      throw std::runtime_error("Demangle. Unknown error.");
+  }
+  return result;
 }

@@ -1,8 +1,7 @@
 #include <GL/glew.h>
-#include <GL/gl.h>
 #include <SDL.h>
 #include <SDL_video.h>
-#include <iostream>
+#include <format>
 #include <stdexcept>
 #include <string>
 
@@ -11,13 +10,11 @@
 #endif
 
 #include "sdl_init.h"
-#include "utils.h"
+#include "services.h"
 
 
 void throw_sdl_error(std::string message) {
-  auto err_text = message + ": " + SDL_GetError();
-  print_error(err_text);
-  throw new std::runtime_error(err_text);
+  throw new std::runtime_error(std::format("{}: {}", message, SDL_GetError()));
 }
 
 
@@ -25,7 +22,7 @@ WindowPtr init_window(uint screen_width, uint screen_height) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     throw_sdl_error("Unable to init SDL");
   }
-  std::cout << "SDL has been initialized." << std::endl;
+  logger().info("SDL has been initialized.");
 
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -39,7 +36,7 @@ WindowPtr init_window(uint screen_width, uint screen_height) {
   if (window == nullptr) {
     throw_sdl_error("Unable to create window");
   }
-  std::cout << "Window has been created." << std::endl;
+  logger().info("Window has been created." );
 
   return {
     window,
@@ -56,16 +53,17 @@ ContextPtr init_context(SDL_Window* window) {
   if (ctx == nullptr) {
     throw_sdl_error("Unable to create GL Context");
   }
-  std::cout << "Context has been created." << std::endl;
+  logger().info("Context has been created." );
 
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
   if (GLEW_OK != err) {
     auto err_glew = reinterpret_cast<const char*>(glewGetErrorString(err));
-    auto err_text = std::string("Unable to initialize GLEW: ") + err_glew;
-    throw new std::runtime_error(err_text);
+    throw new std::runtime_error(
+      std::format("Unable to initialize GLEW: {}", err_glew)
+    );
   }
-  std::cout << "GLEW has been inited." << std::endl;
+  logger().info("GLEW has been inited." );
 
   print_opengl_info();
   glEnable(GL_DEPTH_TEST);

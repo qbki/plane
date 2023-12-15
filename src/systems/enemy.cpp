@@ -1,4 +1,4 @@
-#include <range/v3/view/filter.hpp>
+#include <ranges>
 
 #include "enemy.h"
 
@@ -18,8 +18,8 @@ void enemy_hunting_system(App::Meta& meta) {
     EnemyKind,
     Available
   >().each();
-  auto enemies = ranges::subrange(enemies_view)
-    | ranges::views::filter([](const auto& tuple) {
+  auto enemies = std::ranges::subrange(enemies_view)
+    | std::ranges::views::filter([](const auto& tuple) {
         return std::get<3>(tuple) == EnemyStateEnum::HUNTING;
       });
   for (auto [id_a, pos_a, velocity_a, _state_a] : enemies) {

@@ -1,64 +1,71 @@
 init:
 	@conan install . \
-		--output-folder=build \
-		--build=missing
+		--output-folder=build/linux \
+		--build=missing \
+		--settings=build_type=Release \
 		-pr ./configs/profiles/linux
-	@cd build && cmake .. \
-		-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
-		-DCMAKE_BUILD_TYPE=Release
+	@cd build/linux \
+		&& cmake ../.. \
+			-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
+			-DCMAKE_BUILD_TYPE=Release \
+		&& cd .. \
+		&& ((ls compile_commands.json 2> /dev/null && echo "A link to compile_commands.json already exists") \
+			|| ln -s linux/compile_commands.json)
 .PHONY: init
 
 
 init-wasm:
 	@conan install . \
-		--output-folder=wasm \
+		--output-folder=build/wasm \
 		--build=missing \
-		--profile:host=wasm \
-		--profile:build=default
-	@cd wasm && \
-		cmake cmake .. \
-			-DCMAKE_TOOLCHAIN_FILE=wasm/conan_toolchain.cmake \
+		--settings=build_type=Release \
+		--profile:build=./configs/profiles/linux \
+		--profile:host=./configs/profiles/wasm
+	@cd build/wasm && \
+		cmake cmake ../.. \
+			-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
 			-DCMAKE_BUILD_TYPE=Release
 .PHONY: init-wasm
 
 
 init-debug:
 	@conan install . \
-		--output-folder=debug \
-		--build=missing
+		--output-folder=build/linux-debug \
+		--settings=build_type=Debug \
+		--build=missing \
 		-pr ./configs/profiles/linux
-	@cd debug && cmake .. \
+	@cd build/linux-debug && cmake ../.. \
 		-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
 		-DCMAKE_BUILD_TYPE=Debug
 .PHONY: init-debug
 
 
 build:
-	@cd ./build && cmake .. && cmake --build .
+	@cd ./build/linux && cmake ../.. && cmake --build .
 .PHONY: build
 
 
 build-wasm:
-	@cd ./wasm && \
-		cmake cmake .. && \
+	@cd ./build/wasm && \
+		cmake cmake ../.. && \
 		cmake --build .
 .PHONY: build-wasm
 
 
 build-debug:
-	@cd ./debug && \
-		cmake .. -DCMAKE_CXX_FLAGS="-O0 -g3" && \
+	@cd ./build/linux-debug && \
+		cmake ../.. -DCMAKE_CXX_FLAGS="-O0 -g3" && \
 		cmake --build .
 .PHONY: build-debug
 
 
 run: build
-	@./build/plane
+	@./build/linux/bin/plane
 .PHONY: run
 
 
 run-debug: build-debug
-	@gdb ./debug/plane
+	@gdb ./build/linux-debug/bin/plane
 .PHONY: run-debug
 
 

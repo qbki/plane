@@ -8,4 +8,5 @@ public:
   virtual void warn(const std::string&) = 0;
   virtual void error(const std::string&) = 0;
   virtual void debug(const std::string&) = 0;
+  virtual ~AbstractLogger() {};
 };

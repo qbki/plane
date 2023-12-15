@@ -16,6 +16,11 @@ int buffer_size() {
 }
 
 
+std::string glubyte_to_string(const GLubyte* value) {
+  return {reinterpret_cast<const char*>(value)};
+}
+
+
 glm::vec3 calc_z_direction(const glm::vec3& rotation) {
   return glm::vec3(glm::cos(rotation.z), glm::sin(rotation.z), 0.0);
 }
@@ -144,9 +149,9 @@ void print_opengl_errors() {
 
 
 void print_opengl_info() {
-  logger().info(std::format("OpenGL version: {}", glGetString(GL_VERSION)));
-  logger().info(std::format("Vendor: {}", glGetString(GL_VENDOR)));
-  logger().info(std::format("Renderer: {}", glGetString(GL_RENDERER)));
+  logger().info(std::format("OpenGL version: {}", glubyte_to_string(glGetString(GL_VERSION))));
+  logger().info(std::format("Vendor: {}", glubyte_to_string(glGetString(GL_VENDOR))));
+  logger().info(std::format("Renderer: {}", glubyte_to_string(glGetString(GL_RENDERER))));
 }
 
 

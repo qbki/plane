@@ -1,18 +1,16 @@
 #pragma once
 #include <GL/glew.h>
 #include <SDL_events.h>
-#include <cmath>
-#include <entt/entity/fwd.hpp>
 #include <format>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <optional>
 #include <ostream>
 #include <string>
 #include <tiny_gltf.h>
-#include <unordered_map>
 
 #include "camera.h"
 
@@ -33,16 +31,23 @@ inline glm::vec3 zero<glm::vec3>() {
 }
 
 
-template <>
-struct std::formatter<const GLubyte*> : std::formatter<std::string> {
-  auto format(const GLubyte* text, format_context& ctx) const {
-    auto reinterpreted_text = reinterpret_cast<const char*>(text);
-    return formatter<string>::format(
-      std::format("{}", reinterpreted_text),
-      ctx
-    );
-  }
-};
+/**
+ * HACK: emscripten's libc++ doesn't support custom types for std::format
+ * well. Therefore, you should use this function for the GLubyte* type.
+ * Use this after emscripten updates libc++:
+ *
+ * template <>
+ * struct std::formatter<const GLubyte*> : std::formatter<std::string> {
+ *   auto format(const GLubyte* text, format_context& ctx) const {
+ *     auto reinterpreted_text = reinterpret_cast<const char*>(text);
+ *     return formatter<string>::format(
+ *       std::format("{}", reinterpreted_text),
+ *       ctx
+ *     );
+ *   }
+ * };
+ */
+std::string glubyte_to_string(const GLubyte* value);
 
 
 glm::vec3 calc_z_direction(const glm::vec3& rotation);

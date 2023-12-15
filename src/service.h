@@ -17,8 +17,8 @@ public:
   static std::unique_ptr<T> _instance;
 
 
-  static void install(T* instance) {
-    Service<T>::_instance.reset(instance);
+  static void install(std::unique_ptr<T> instance) {
+    Service<T>::_instance = std::move(instance);
   }
 
 
@@ -26,7 +26,7 @@ public:
     if (!_instance) {
       throw std::runtime_error(std::format(
         "An instance of {} was not found, you should call the 'install' method first",
-        demangle_name(typeid(T))
+        demangled_name<T>()
       ));
     }
     return *Service<T>::_instance.get();

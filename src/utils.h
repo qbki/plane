@@ -1,6 +1,7 @@
 #pragma once
 #include <GL/glew.h>
 #include <SDL_events.h>
+#include <cxxabi.h>
 #include <format>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -135,4 +136,24 @@ void print_opengl_info();
 void print_extension_support(std::string extension_name);
 
 
-std::string demangle_name(const std::type_info& info);
+template<typename T>
+std::string demangled_name() {
+  int status;
+  auto name = abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status);
+  std::string result{name};
+  std::free(name);
+  switch (status) {
+    case 0:
+      noop();
+      break;
+    case -1:
+      throw std::runtime_error("Demangle. A memory allocation failure occurred.");
+    case -2:
+      throw std::runtime_error("Demangle. A mangled_name is not a valid name under the C++ ABI mangling rules.");
+    case -3:
+      throw std::runtime_error("Demangle. One of the arguments is invalid.");
+    default:
+      throw std::runtime_error("Demangle. Unknown error.");
+  }
+  return result;
+}

@@ -1,3 +1,4 @@
+#include "logger/logger.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <memory>
 #include <SDL2/SDL.h>
@@ -27,7 +28,7 @@ const float ANIMATED_OBJECTS_HEIGHT = 2.0;
 
 
 int main() {
-  Service<AbstractLogger>::install(new Logger());
+  Service<AbstractLogger>::install(std::make_unique<Logger>());
 
   auto window = init_window(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
   auto context = init_context(window.get());

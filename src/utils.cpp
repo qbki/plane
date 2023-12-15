@@ -1,4 +1,3 @@
-#include <cxxabi.h>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -168,26 +167,4 @@ void print_extension_support(std::string extension_name) {
   }
   logger().info(std::format("{}: is not supported", extension_name));
   return;
-}
-
-
-std::string demangle_name(const std::type_info& info) {
-  int status;
-  auto name = abi::__cxa_demangle(info.name(), nullptr, nullptr, &status);
-  std::string result{name};
-  std::free(name);
-  switch (status) {
-    case 0:
-      noop();
-      break;
-    case -1:
-      throw std::runtime_error("Demangle. A memory allocation failure occurred.");
-    case -2:
-      throw std::runtime_error("Demangle. A mangled_name is not a valid name under the C++ ABI mangling rules.");
-    case -3:
-      throw std::runtime_error("Demangle. One of the arguments is invalid.");
-    default:
-      throw std::runtime_error("Demangle. Unknown error.");
-  }
-  return result;
 }

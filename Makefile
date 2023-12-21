@@ -1,3 +1,6 @@
+CPP_SOURCE_FILES_LIST=$(shell git ls-files | egrep '(h|cpp)$$')
+
+
 init:
 	@conan install . \
 		--output-folder=build/linux \
@@ -69,7 +72,7 @@ run-debug: build-debug
 .PHONY: run-debug
 
 
-static-check:
+cppcheck:
 	@cppcheck \
 		--enable=all \
 		--inconclusive \
@@ -78,4 +81,19 @@ static-check:
 		--suppress=unusedFunction \
 		--suppress=missingIncludeSystem \
 		./src
-.PHONY: static-check
+.PHONY: cppcheck
+
+
+clang-tidy:
+	@clang-tidy $(CPP_SOURCE_FILES_LIST) -p ./build/
+.PHONY: clang-tidy
+
+
+check-code-style:
+	@clang-format --dry-run $(CPP_SOURCE_FILES_LIST)
+.PHONY: format-check
+
+
+format-code:
+	@clang-format -i $(CPP_SOURCE_FILES_LIST)
+.PHONY: format-check

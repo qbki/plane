@@ -1,7 +1,9 @@
 #pragma once
 #include <GL/glew.h>
+#include <array>
 
-class GBuffer {
+class GBuffer
+{
 private:
   GLuint _g_frame_buffer = 0;
   GLuint _position_texture = 0;
@@ -11,17 +13,17 @@ private:
   unsigned int _width = 0;
   unsigned int _height = 0;
 
-  constexpr static GLuint COLOR_ATTACHMENTS[3] = {
-    GL_COLOR_ATTACHMENT0,
-    GL_COLOR_ATTACHMENT1,
-    GL_COLOR_ATTACHMENT2,
-  };
-
 public:
+  static const std::array<GLuint, 3> COLOR_ATTACHMENTS;
+
   GBuffer();
+  GBuffer(const GBuffer&) = delete;
+  GBuffer& operator=(const GBuffer&) = delete;
+  GBuffer(GBuffer&&) = delete;
+  GBuffer& operator=(GBuffer&&) = delete;
   ~GBuffer();
 
   void update(unsigned int width, unsigned int height);
   void use();
-  GLuint g_buffer_handle() const;
+  [[nodiscard]] GLuint g_buffer_handle() const;
 };

@@ -15,6 +15,14 @@ function(print_variables)
   endforeach()
 endfunction()
 
+function(add_flag flag)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE)
+endfunction()
+
+function(add_exe_flag flag)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${flag}" PARENT_SCOPE)
+endfunction()
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(SRC_MODELS_DIRECTORY ${CMAKE_SOURCE_DIR}/models)
@@ -25,14 +33,14 @@ set(SHADERS_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders)
 find_package(EnTT REQUIRED)
 find_package(GLM REQUIRED)
 find_package(TinyGLTF REQUIRED)
+find_package(Microsoft.GSL REQUIRED)
 
+
+add_flag("-Wall")
+add_flag("-Wextra")
+add_flag("-Wpedantic")
+add_flag("-pedantic-errors")
 if(DEFINED EMSCRIPTEN)
-  function(add_flag flag)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE)
-  endfunction()
-  function(add_exe_flag flag)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${flag}" PARENT_SCOPE)
-  endfunction()
   add_flag("-fexceptions")
   add_flag("-fwasm-exceptions")
   add_flag("-std=c++20")
@@ -66,6 +74,7 @@ endif()
 target_link_libraries(${PROJECT_NAME} EnTT::EnTT)
 target_link_libraries(${PROJECT_NAME} TinyGLTF::TinyGLTF)
 target_link_libraries(${PROJECT_NAME} glm::glm)
+target_link_libraries(${PROJECT_NAME} Microsoft.GSL::GSL)
 
 add_custom_command(
   TARGET ${PROJECT_NAME} PRE_LINK

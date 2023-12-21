@@ -15,22 +15,22 @@
 
 #include "camera.h"
 
+inline void
+noop(){};
 
-inline void noop() {};
-
-
-int buffer_size();
-
+int
+buffer_size();
 
 template<typename T>
-T zero();
-
+T
+zero();
 
 template<>
-inline glm::vec3 zero<glm::vec3>() {
-  return glm::vec3(0.0, 0.0, 0.0);
+inline glm::vec3
+zero<glm::vec3>()
+{
+  return { 0.0, 0.0, 0.0 };
 }
-
 
 /**
  * HACK: emscripten's libc++ doesn't support custom types for std::format
@@ -48,67 +48,60 @@ inline glm::vec3 zero<glm::vec3>() {
  *   }
  * };
  */
-std::string glubyte_to_string(const GLubyte* value);
+std::string
+glubyte_to_string(const GLubyte* value);
 
+glm::vec3
+calc_z_direction(const glm::vec3& rotation);
 
-glm::vec3 calc_z_direction(const glm::vec3& rotation);
+tinygltf::Model
+load_gltf_model(const std::string& filename);
 
+std::string
+load_text(const std::string& file_name);
 
-tinygltf::Model load_gltf_model(const std::string& filename);
+glm::vec3
+encode_gamma(const glm::vec3& color, float gamma);
 
+glm::vec3
+decode_gamma(const glm::vec3& color, float gamma);
 
-std::string load_text(const std::string &file_name);
-
-
-glm::vec3 encode_gamma(const glm::vec3& color, float gamma);
-
-
-glm::vec3 decode_gamma(const glm::vec3& color, float gamma);
-
-
-void resize_window(
-  const SDL_WindowEvent& window_event,
-  Camera& camera
-);
-
+void
+resize_window(const SDL_WindowEvent& window_event, Camera& camera);
 
 template<typename M, typename K>
-bool has_key(const M& map, const K& key) {
+bool
+has_key(const M& map, const K& key)
+{
   return map.find(key) != map.end();
 }
 
-
 template<typename T>
-bool is_approx_equal(T a, T b) {
+bool
+is_approx_equal(T a, T b)
+{
   return std::fabs(b - a) < std::numeric_limits<T>::epsilon();
 }
 
-
-inline std::ostream& operator<<(std::ostream& os, const glm::vec3& vec) {
+inline std::ostream&
+operator<<(std::ostream& os, const glm::vec3& vec)
+{
   return os << glm::to_string(vec);
 }
 
-
-glm::mat4 make_transform_matrix(glm::vec3 position, glm::vec3 rotation);
-
+glm::mat4
+make_transform_matrix(glm::vec3 position, glm::vec3 rotation);
 
 template<typename T, typename TAG>
-struct NewType {
+struct NewType
+{
   T value;
-  explicit NewType(T v) : value(v) {};
+  explicit NewType(T v)
+    : value(v){};
 };
-
-
-template<typename TAG>
-struct EmptyType {
-  char value = 'e';
-  explicit EmptyType() {};
-};
-
 
 template<typename T>
 using OptionalPtr = std::optional<std::unique_ptr<T>>;
-
 
 /**
  * y = value * smoothing ^ dt
@@ -122,34 +115,39 @@ using OptionalPtr = std::optional<std::unique_ptr<T>>;
  *   2  | 10 / 4
  */
 template<typename T>
-T damp(T from, T to, float smoothing, float dt) {
+T
+damp(T from, T to, float smoothing, float dt)
+{
   return to + (from - to) * std::pow(smoothing, dt);
 }
 
+void
+print_opengl_errors();
 
-void print_opengl_errors();
+void
+print_opengl_info();
 
-
-void print_opengl_info();
-
-
-void print_extension_support(std::string extension_name);
-
+void
+print_extension_support(std::string extension_name);
 
 template<typename T>
-std::string demangled_name() {
-  int status;
-  auto name = abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status);
-  std::string result{name};
-  std::free(name);
+std::string
+demangled_name()
+{
+  int status = 0;
+  auto name = std::make_unique<char*>(
+    abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status));
+  std::string result{ *name };
   switch (status) {
     case 0:
       noop();
       break;
     case -1:
-      throw std::runtime_error("Demangle. A memory allocation failure occurred.");
+      throw std::runtime_error(
+        "Demangle. A memory allocation failure occurred.");
     case -2:
-      throw std::runtime_error("Demangle. A mangled_name is not a valid name under the C++ ABI mangling rules.");
+      throw std::runtime_error("Demangle. A mangled_name is not a valid name "
+                               "under the C++ ABI mangling rules.");
     case -3:
       throw std::runtime_error("Demangle. One of the arguments is invalid.");
     default:

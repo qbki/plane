@@ -1,6 +1,9 @@
 #pragma once
 
-struct RectSize {
+struct RectSize
+{
   unsigned int width;
   unsigned int height;
+
+  RectSize(int _width, int _height);
 };

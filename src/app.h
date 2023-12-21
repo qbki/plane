@@ -10,10 +10,12 @@
 #include "shapes.h"
 #include "utils.h"
 
-class App {
+class App
+{
 public:
-  struct Meta {
-    App& app;
+  struct Meta
+  {
+    App* app;
     float delta_time;
     float time;
   };
@@ -28,28 +30,30 @@ public:
   WindowPtr window;
   ContextPtr gl_context;
 
-  using Handler = std::function<void (Meta& meta)>;
+  using Handler = std::function<void(Meta& meta)>;
   std::vector<Handler> _handlers = std::vector<Handler>();
 
-  App(
-    std::unique_ptr<GameState> _game_state,
-    std::unique_ptr<Control> _control,
-    std::unique_ptr<RectSize> _screen_size,
-    std::unique_ptr<DeferredShading> _deferred_shading,
-    std::unique_ptr<Shader> _particle_shader,
-    WindowPtr _window,
-    ContextPtr _gl_context
-  );
+  App(std::unique_ptr<GameState> _game_state,
+      std::unique_ptr<Control> _control,
+      std::unique_ptr<RectSize> _screen_size,
+      std::unique_ptr<DeferredShading> _deferred_shading,
+      std::unique_ptr<Shader> _particle_shader,
+      WindowPtr _window,
+      ContextPtr _gl_context);
+  App(const App&) = delete;
+  App& operator=(const App&) = delete;
+  App(App&&) = delete;
+  App& operator=(App&&) = delete;
+  ~App() = default;
 
   void add_handler(Handler handler);
-  void update(App& app, unsigned long time_since_start_of_program);
+  void update(unsigned long time_since_start_of_program);
 
-  glm::vec2 mouse_position();
-
-  App(const App&) = delete;
+  static glm::vec2 mouse_position();
 };
 
-class AppBuilder {
+class AppBuilder
+{
 public:
   OptionalPtr<GameState> _game_state;
   OptionalPtr<Control> _control;
@@ -62,7 +66,8 @@ public:
   AppBuilder& game_state(std::unique_ptr<GameState> game_state);
   AppBuilder& control(std::unique_ptr<Control> control);
   AppBuilder& screen_size(int width, int height);
-  AppBuilder& deferred_shading(std::unique_ptr<DeferredShading> deferred_shading);
+  AppBuilder& deferred_shading(
+    std::unique_ptr<DeferredShading> deferred_shading);
   AppBuilder& particle_shader(std::unique_ptr<Shader> particle_shader);
   AppBuilder& window(WindowPtr window);
   AppBuilder& context(ContextPtr context);

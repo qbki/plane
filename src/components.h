@@ -5,6 +5,7 @@
 #include <glm/vec3.hpp>
 #include <iterator>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "game_state/texture_type.h"
@@ -12,8 +13,8 @@
 #include "texture.h"
 #include "utils.h"
 
-
-enum class EnemyStateEnum {
+enum class EnemyStateEnum
+{
   HUNTING = 0,
   SINKING,
   INACTIVE,
@@ -31,59 +32,80 @@ using Rotation = NewType<glm::vec3, struct RotationTag>;
 using Speed = NewType<float, struct SpeedTag>;
 using TexturePointer = std::shared_ptr<Texture>;
 
-struct Available {};
-struct Gravity {};
-struct Opaque {};
+struct Available
+{};
+struct Gravity
+{};
+struct Opaque
+{};
 
-struct DirectionalLightKind {};
-struct EnemyKind {};
-struct ParticleKind {};
-struct PlayerKind {};
-struct PointLightKind {};
-struct ProjectileKind {};
+struct DirectionalLightKind
+{};
+struct EnemyKind
+{};
+struct ParticleKind
+{};
+struct PlayerKind
+{};
+struct PointLightKind
+{};
+struct ProjectileKind
+{};
 
-class Textures {
+class Textures
+{
 private:
   using TextureList = std::shared_ptr<std::vector<Texture>>;
   TextureList _textures;
   size_t _current_texture_idx = 0;
+
 public:
   explicit Textures(TextureList textures)
-    : _textures(textures)
+    : _textures(std::move(textures))
   {
     change_type(TextureType::Type::MAIN);
   }
-  void change_type(TextureType::Type type) {
+
+  void change_type(TextureType::Type type)
+  {
     auto found_it = std::ranges::find_if(*_textures, [&](Texture& value) {
-        return value.type() == static_cast<unsigned int>(type);
+      return value.type() == static_cast<unsigned int>(type);
     });
     if (found_it != end(*_textures)) {
       _current_texture_idx = std::distance(begin(*_textures), found_it);
     }
   }
-  Texture& texture() const {
+
+  [[nodiscard]] Texture& texture() const
+  {
     return (*_textures)[_current_texture_idx];
   }
 };
 
-struct Velocity {
+struct Velocity
+{
   float scalar_acceleration;
   float damping;
   glm::vec3 acceleration;
   glm::vec3 velocity;
   Velocity(float _acceleration, float _damping)
-    : acceleration(glm::vec3(0.0)),
-      velocity(glm::vec3(0.0)),
-      scalar_acceleration(_acceleration),
-      damping(_damping) {}
+    : scalar_acceleration(_acceleration)
+    , damping(_damping)
+    , acceleration(glm::vec3(0.0))
+    , velocity(glm::vec3(0.0))
+  {
+  }
   Velocity(glm::vec3 _initial_velocity, float _damping)
-    : acceleration(glm::vec3(0.0)),
-      velocity(_initial_velocity),
-      scalar_acceleration(0),
-      damping(_damping) {}
+    : scalar_acceleration(0)
+    , damping(_damping)
+    , acceleration(glm::vec3(0.0))
+    , velocity(_initial_velocity)
+  {
+  }
 };
 
-struct PointLightParams {
+struct PointLightParams
+{
   float constant = 1.0;
   float linear = 1.0;
   float quadratic = 1.0;

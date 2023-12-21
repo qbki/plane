@@ -6,5 +6,5 @@
 #include "shading/deferred_shading.h"
 #include "shapes.h"
 
-
-void game_loop(App* app_state);
+void
+game_loop(App* app);

@@ -1,7 +1,8 @@
 #pragma once
 #include <SDL2/SDL.h>
 
-class Control {
+class Control
+{
 public:
   bool up = false;
   bool down = false;
@@ -9,5 +10,5 @@ public:
   bool right = false;
   bool is_player_shooting = false;
 
-  void update(SDL_Event& event);
+  void update(const SDL_Event& event);
 };

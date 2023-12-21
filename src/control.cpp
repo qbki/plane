@@ -1,7 +1,8 @@
 #include "control.h"
 
-
-void Control::update(SDL_Event& event) {
+void
+Control::update(const SDL_Event& event)
+{
   switch (event.type) {
     case SDL_KEYDOWN: {
       if (event.key.keysym.sym == SDLK_a) {

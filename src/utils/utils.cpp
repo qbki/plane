@@ -1,11 +1,8 @@
-#include <filesystem>
-#include <fstream>
 #include <sstream>
-#include <stdexcept>
 #include <string>
 
-#include "services.h"
-#include "utils.h"
+#include "../services.h"
+#include "index.h"
 
 int
 buffer_size()
@@ -42,50 +39,6 @@ glm::vec3
 decode_gamma(const glm::vec3& color, float gamma)
 {
   return glm::pow(color, glm::vec3(gamma));
-}
-
-tinygltf::Model
-load_gltf_model(const std::string& filename)
-{
-  tinygltf::Model model;
-  tinygltf::TinyGLTF loader;
-  std::string err;
-  std::string warn;
-
-  if (!std::filesystem::exists(filename)) {
-    throw std::runtime_error(std::format("File not found: {}", filename));
-  }
-
-  bool res = loader.LoadBinaryFromFile(&model, &err, &warn, filename);
-  if (!warn.empty()) {
-    logger().warn(warn);
-  }
-
-  if (!err.empty()) {
-    logger().error(err);
-  }
-
-  if (!res) {
-    throw std::runtime_error(std::format("Failed to load glTF: {}", filename));
-  } else {
-    logger().info(std::format("Loaded glTF: {}", filename));
-  }
-
-  return model;
-}
-
-std::string
-load_text(const std::string& file_name)
-{
-  std::ifstream ifs(file_name);
-
-  if (ifs.fail()) {
-    throw std::runtime_error(std::format("Cannot read a file: {}", file_name));
-  }
-
-  std::string content((std::istreambuf_iterator<char>(ifs)),
-                      (std::istreambuf_iterator<char>()));
-  return content;
 }
 
 void

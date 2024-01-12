@@ -1,8 +1,7 @@
 #pragma once
 #include <GL/glew.h>
 #include <SDL_events.h>
-#include <cxxabi.h>
-#include <format>
+#include <functional>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
@@ -10,13 +9,10 @@
 #include <memory>
 #include <optional>
 #include <ostream>
+#include <random>
 #include <string>
-#include <tiny_gltf.h>
 
-#include "camera.h"
-
-inline void
-noop(){};
+#include "../camera.h"
 
 int
 buffer_size();
@@ -53,12 +49,6 @@ glubyte_to_string(const GLubyte* value);
 
 glm::vec3
 calc_z_direction(const glm::vec3& rotation);
-
-tinygltf::Model
-load_gltf_model(const std::string& filename);
-
-std::string
-load_text(const std::string& file_name);
 
 glm::vec3
 encode_gamma(const glm::vec3& color, float gamma);
@@ -131,27 +121,11 @@ void
 print_extension_support(std::string extension_name);
 
 template<typename T>
-std::string
-demangled_name()
+std::function<T()>
+make_random_fn(T start, T end)
 {
-  int status = 0;
-  auto name = std::make_unique<char*>(
-    abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status));
-  std::string result{ *name };
-  switch (status) {
-    case 0:
-      noop();
-      break;
-    case -1:
-      throw std::runtime_error(
-        "Demangle. A memory allocation failure occurred.");
-    case -2:
-      throw std::runtime_error("Demangle. A mangled_name is not a valid name "
-                               "under the C++ ABI mangling rules.");
-    case -3:
-      throw std::runtime_error("Demangle. One of the arguments is invalid.");
-    default:
-      throw std::runtime_error("Demangle. Unknown error.");
-  }
-  return result;
+  using Distribution = std::uniform_int_distribution<T>;
+  auto random_device = std::make_shared<std::random_device>();
+  auto distribution = std::make_shared<Distribution>(start, end);
+  return [=]() { return (*distribution)(*random_device); };
 }

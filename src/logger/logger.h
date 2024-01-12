@@ -1,6 +1,5 @@
 #pragma once
 #include "abstract_logger.h"
-#include <iostream>
 
 class Logger : public AbstractLogger
 {

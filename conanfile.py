@@ -11,6 +11,7 @@ class App(ConanFile):
     self.requires("entt/3.12.2"),
     self.requires("glm/cci.20230113"),
     self.requires("ms-gsl/4.0.0"),
+    self.requires("nlohmann_json/3.11.2"),
     self.requires("tinygltf/2.5.0"),
     if self.settings.os == "Linux":
       self.requires("glew/2.2.0")

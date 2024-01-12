@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 #include "logger/abstract_logger.h"
-#include "utils.h"
+#include "utils/demangled_name.h"
 
 template<typename T>
 class Service

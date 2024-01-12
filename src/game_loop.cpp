@@ -43,16 +43,21 @@ inner_game_loop(App& app)
 };
 
 #ifdef __EMSCRIPTEN__
-EM_BOOL
-emscripten_game_loop(double _, void* data)
+void
+emscripten_game_loop(void* data)
 {
   inner_game_loop(*static_cast<App*>(data));
-  return EM_TRUE;
 }
 void
 game_loop(App* app)
 {
-  emscripten_request_animation_frame_loop(emscripten_game_loop, app);
+  // The simulate_infinite_loop argument should be false. It is because I have
+  // nothing on the stack what should be kept. And it helps me avoid
+  // unnecessary exception that is thrown intentionally by emscripten. More
+  // details in the documentation below.
+  // @doc
+  // https://emscripten.org/docs/api_reference/emscripten.h.html?highlight=set_main_loop#c.emscripten_set_main_loop
+  emscripten_set_main_loop_arg(emscripten_game_loop, app, 0, false);
 }
 #else
 void

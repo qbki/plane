@@ -1,5 +1,6 @@
 #include <sstream>
 
+#include "../components.h"
 #include "../consts.h"
 #include "render.h"
 
@@ -105,7 +106,6 @@ render_system(App::Meta& meta)
   particle_shader.uniform("u_gamma_in", GAMMA);
   particle_shader.uniform("u_gamma_out", GAMMA);
   particle_shader.uniform("u_PV", camera.pv());
-  geometry_pass_shader.uniform("u_elapsed_seconds", meta.time);
 
   registry
     .view<const Position,
@@ -123,7 +123,7 @@ render_system(App::Meta& meta)
       particle_shader.uniform(
         "u_normal_matrix", glm::transpose(glm::inverse(glm::mat3(transform))));
       textures.texture().use(0);
-      particle_shader.uniform("main_texture", 0);
+      particle_shader.uniform("u_main_texture", 0);
       mesh->draw();
     });
 }

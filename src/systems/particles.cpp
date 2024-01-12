@@ -1,4 +1,5 @@
-#include "./particles.h"
+#include "particles.h"
+#include "../components.h"
 
 void
 particle_handler_system(const App::Meta& meta)

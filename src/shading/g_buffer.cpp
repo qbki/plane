@@ -1,13 +1,10 @@
 #include <GL/glew.h>
 #include <array>
 #include <format>
-#include <iostream>
-#include <iterator>
-#include <sstream>
 #include <stdexcept>
 
 #include "../services.h"
-#include "../utils.h"
+#include "../utils/index.h"
 #include "g_buffer.h"
 
 const std::array<GLuint, 3> GBuffer::COLOR_ATTACHMENTS = {

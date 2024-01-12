@@ -1,0 +1,2 @@
+inline void
+noop(){};

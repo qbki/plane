@@ -132,7 +132,12 @@
       };
       Module.setStatus('Downloading...');
       window.onerror = (_1, _2, _3, _4, error) => {
-        if (error != null && error.constructor === WebAssembly.Exception) {
+        const isEmscriptenError = (
+          error != null
+          && (error.constructor === Number
+              || error.constructor === WebAssembly.Exception)
+        );
+        if (isEmscriptenError) {
           console.error(getExceptionMessage(error)[1]);
         }
         Module.setStatus('Exception thrown, see JavaScript console');

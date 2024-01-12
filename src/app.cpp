@@ -5,7 +5,7 @@
 #include "app.h"
 #include "shader.h"
 #include "shapes.h"
-#include "utils.h"
+#include "utils/index.h"
 
 App::App(std::unique_ptr<GameState> _game_state,
          std::unique_ptr<Control> _control,

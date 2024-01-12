@@ -1,6 +1,8 @@
 #pragma once
 #include <algorithm>
 #include <entt/core/type_traits.hpp>
+#include <entt/entity/fwd.hpp>
+#include <functional>
 #include <glm/detail/qualifier.hpp>
 #include <glm/vec3.hpp>
 #include <iterator>
@@ -11,7 +13,7 @@
 #include "game_state/texture_type.h"
 #include "mesh.h"
 #include "texture.h"
-#include "utils.h"
+#include "utils/index.h"
 
 enum class EnemyStateEnum
 {
@@ -52,6 +54,9 @@ struct PointLightKind
 struct ProjectileKind
 {};
 
+using ParticlesEmitter = std::function<void(glm::vec3 position)>;
+using ProjectileEmitter = std::function<void()>;
+
 class Textures
 {
 private:
@@ -88,6 +93,13 @@ struct Velocity
   float damping;
   glm::vec3 acceleration;
   glm::vec3 velocity;
+  Velocity()
+    : scalar_acceleration(0)
+    , damping(0)
+    , acceleration(zero<glm::vec3>())
+    , velocity(zero<glm::vec3>())
+  {
+  }
   Velocity(float _acceleration, float _damping)
     : scalar_acceleration(_acceleration)
     , damping(_damping)

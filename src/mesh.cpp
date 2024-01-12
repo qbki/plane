@@ -5,12 +5,11 @@
 #include <iostream>
 #include <memory>
 #include <span>
-#include <stdexcept>
 #include <tiny_gltf.h>
 #include <tuple>
 
 #include "mesh.h"
-#include "utils.h"
+#include "utils/index.h"
 
 const int VERTEX_LOCATION = 0;
 const int NORMAL_LOCATION = 1;

@@ -1,23 +1,20 @@
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/geometric.hpp>
 #include <glm/matrix.hpp>
+#include <glm/vec3.hpp>
 
 #include "camera.h"
+#include "utils/index.h"
 
 const float Camera::DEFAULT_FOVY = 45.0f;
 const float Camera::DEFAULT_Z_NEAR = 0.1f;
 const float Camera::DEFAULT_Z_FAR = 100.0f;
 
-Camera::Camera(glm::vec3 _position, float aspect_ratio)
+Camera::Camera(float aspect_ratio)
   : _view(glm::mat4(1.0))
   , _projection(glm::mat4(1.0))
-  , _position(_position)
-  , _forward_norm({ 0.0, 0.0, 1.0 })
+  , _position(zero<glm::vec3>())
+  , _forward_norm({ 0.0, 0.0, -1.0 })
 {
-  auto zero = glm::vec3(0.0, 0.0, 0.0);
-  this->_forward_norm = glm::normalize(zero - this->_position);
-  this->look_at(zero);
+  this->look_at(zero<glm::vec3>() + _forward_norm);
   this->aspect_ratio(aspect_ratio);
 }
 

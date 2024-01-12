@@ -1,5 +1,6 @@
 #include <ranges>
 
+#include "../components.h"
 #include "enemy.h"
 
 bool

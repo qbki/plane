@@ -1,5 +1,6 @@
 #include <glm/gtx/intersect.hpp>
 
+#include "../components.h"
 #include "./cursor.h"
 
 void

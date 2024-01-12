@@ -11,7 +11,7 @@
 
 #include "sdl_init.h"
 #include "services.h"
-#include "utils.h"
+#include "utils/index.h"
 
 void
 throw_sdl_error(std::string message)

@@ -1,13 +1,9 @@
 #pragma once
 #include <entt/entt.hpp>
-#include <functional>
 #include <memory>
-#include <vector>
 
 #include "../camera.h"
-#include "../components.h"
-#include "../control.h"
-#include "../models/index.h"
+#include "../utils/index.h"
 #include "factory.h"
 
 class GameState
@@ -15,7 +11,6 @@ class GameState
 private:
   std::shared_ptr<Camera> _camera;
   glm::vec3 _cursor = zero<glm::vec3>();
-  glm::vec3 _move_direction = zero<glm::vec3>();
   entt::registry _registry;
   entt::entity _player_id = entt::null;
   ModelFactory _factory;

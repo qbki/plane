@@ -1,8 +1,8 @@
-#include <cmath>
 #include <glm/geometric.hpp>
 
+#include "../components.h"
 #include "../consts.h"
-#include "../utils.h"
+#include "../utils/index.h"
 #include "velocity.h"
 
 void

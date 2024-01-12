@@ -1,5 +1,5 @@
 #include <entt/entity/fwd.hpp>
-#include <iostream>
+#include <glm/ext/vector_float3.hpp>
 #include <memory>
 
 #include "../components.h"
@@ -9,146 +9,115 @@ ModelFactory::ModelFactory()
   : cache(new Cache()){};
 
 entt::entity
-ModelFactory::make_player(entt::registry& registry, glm::vec3 position)
+ModelFactory::make_player(entt::registry& registry,
+                          const std::string& file_path)
 {
-  auto [mesh, textures] = cache->load("./models/plane.glb");
   auto entity = registry.create();
+  auto [mesh, textures] = cache->load(file_path);
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
-  registry.emplace<Opaque>(entity);
   registry.emplace<PlayerKind>(entity);
-  registry.emplace<Position>(entity, position);
-  registry.emplace<Rotation>(entity, glm::vec3(0.0, 0.0, 0.0));
+  registry.emplace<Position>(entity, zero<glm::vec3>());
+  registry.emplace<Rotation>(entity, zero<glm::vec3>());
   registry.emplace<Textures>(entity, textures);
-  // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-  registry.emplace<Velocity>(entity, 30.0, 0.1);
+  registry.emplace<Velocity>(entity);
   return entity;
 }
 
 entt::entity
-ModelFactory::make_enemy(entt::registry& registry, glm::vec3 position)
+ModelFactory::make_enemy(entt::registry& registry, const std::string& file_path)
 {
-  auto [mesh, textures] = cache->load("./models/saucer.glb");
+  auto [mesh, textures] = cache->load(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<EnemyKind>(entity);
   registry.emplace<EnemyStateEnum>(entity, EnemyStateEnum::HUNTING);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<Opaque>(entity);
-  registry.emplace<Position>(entity, position);
-  registry.emplace<Rotation>(entity, glm::vec3(0.0, 0.0, 0.0));
+  registry.emplace<Position>(entity, zero<glm::vec3>());
+  registry.emplace<Rotation>(entity, zero<glm::vec3>());
   registry.emplace<Textures>(entity, textures);
-  // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-  registry.emplace<Velocity>(entity, 10.0, 0.1);
+  registry.emplace<Velocity>(entity);
   return entity;
 }
 
 entt::entity
 ModelFactory::make_projectile(entt::registry& registry,
-                              glm::vec3 position,
-                              glm::vec3 rotation)
+                              const std::string& file_path)
 {
-  auto move_direction = calc_z_direction(rotation);
-  // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-  auto speed = 30.0f;
-  auto [mesh, textures] = cache->load("./models/bullet.glb");
+  auto [mesh, textures] = cache->load(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
-  registry.emplace<InitialPosition>(entity, position);
+  registry.emplace<InitialPosition>(entity, zero<glm::vec3>());
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<Opaque>(entity);
-  registry.emplace<Position>(entity, position);
+  registry.emplace<Position>(entity, zero<glm::vec3>());
   registry.emplace<ProjectileKind>(entity);
-  // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-  registry.emplace<Range>(entity, 8.0);
-  registry.emplace<Rotation>(entity, rotation);
-  registry.emplace<Speed>(entity, speed);
+  registry.emplace<Range>(entity, 0);
+  registry.emplace<Rotation>(entity, zero<glm::vec3>());
+  registry.emplace<Speed>(entity, 0);
   registry.emplace<Textures>(entity, textures);
-  registry.emplace<Velocity>(entity, move_direction * speed, 1.0);
+  registry.emplace<Velocity>(entity);
   return entity;
 }
 
 entt::entity
-ModelFactory::make_water_block(entt::registry& registry, glm::vec3 position)
+ModelFactory::make_static(entt::registry& registry,
+                          const std::string& file_path)
 {
-  auto [mesh, textures] = cache->load("./models/water-surface.glb");
+  auto [mesh, textures] = cache->load(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<Opaque>(entity);
-  registry.emplace<Position>(entity, position);
-  registry.emplace<Rotation>(entity, glm::vec3(0.0, 0.0, 0.0));
-  registry.emplace<Textures>(entity, textures);
-  return entity;
-}
-
-entt::entity
-ModelFactory::make_ground_block(entt::registry& registry, glm::vec3 position)
-{
-  auto [mesh, textures] = cache->load("./models/center-block.glb");
-  auto entity = registry.create();
-  registry.emplace<Available>(entity);
-  registry.emplace<MeshPointer>(entity, mesh);
-  registry.emplace<Opaque>(entity);
-  registry.emplace<Position>(entity, position);
-  registry.emplace<Rotation>(entity, glm::vec3(0.0, 0.0, 0.0));
+  registry.emplace<Position>(entity, zero<glm::vec3>());
+  registry.emplace<Rotation>(entity, zero<glm::vec3>());
   registry.emplace<Textures>(entity, textures);
   return entity;
 }
 
 entt::entity
 ModelFactory::make_particle(entt::registry& registry,
-                            glm::vec3 position,
-                            glm::vec3 rotation)
+                            const std::string& file_path)
 {
-  const auto speed = 15.0f;
-  auto move_direction = calc_z_direction(rotation);
-  auto [mesh, textures] = cache->load("./models/particle.glb");
+  auto [mesh, textures] = cache->load(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
-  // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-  registry.emplace<Lifetime>(entity, 0.4);
-  // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-  registry.emplace<LifetimeMax>(entity, 0.4);
+  registry.emplace<Lifetime>(entity, 0);
+  registry.emplace<LifetimeMax>(entity, 0);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<ParticleKind>(entity);
-  registry.emplace<Position>(entity, position);
-  registry.emplace<Rotation>(entity, rotation);
-  registry.emplace<Speed>(entity, speed);
+  registry.emplace<Position>(entity, zero<glm::vec3>());
+  registry.emplace<Rotation>(entity, zero<glm::vec3>());
+  registry.emplace<Color>(entity, zero<glm::vec3>());
+  registry.emplace<Speed>(entity, 0);
   registry.emplace<Textures>(entity, textures);
-  // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-  registry.emplace<Velocity>(entity, move_direction * speed, 0.001);
+  registry.emplace<Velocity>(entity);
   return entity;
 }
 
 entt::entity
-ModelFactory::make_point_light(entt::registry& registry,
-                               glm::vec3 position,
-                               glm::vec3 color)
+ModelFactory::make_point_light(entt::registry& registry)
 {
-  PointLightParams point_light_params{
+  const PointLightParams point_light_params{
     .constant = 1.0,
-    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
     .linear = 0.045,
-    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
     .quadratic = 0.0075,
   };
   auto entity = registry.create();
-  registry.emplace<Position>(entity, position);
-  registry.emplace<Color>(entity, color);
+  registry.emplace<Position>(entity, zero<glm::vec3>());
+  registry.emplace<Color>(entity, zero<glm::vec3>());
   registry.emplace<PointLightParams>(entity, point_light_params);
   registry.emplace<PointLightKind>(entity);
   return entity;
 }
 
 entt::entity
-ModelFactory::make_directional_light(entt::registry& registry,
-                                     glm::vec3 direction,
-                                     glm::vec3 color)
+ModelFactory::make_directional_light(entt::registry& registry)
 {
   auto entity = registry.create();
-  registry.emplace<Direction>(entity, direction);
-  registry.emplace<Color>(entity, color);
+  registry.emplace<Direction>(entity, zero<glm::vec3>());
+  registry.emplace<Color>(entity, zero<glm::vec3>());
   registry.emplace<DirectionalLightKind>(entity);
   return entity;
 }

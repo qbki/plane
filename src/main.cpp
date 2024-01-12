@@ -1,29 +1,28 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <SDL2/SDL.h>
 #include <entt/entt.hpp>
-#include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/vector_float3.hpp>
 #include <gsl/pointers>
 #include <memory>
+#include <nlohmann/json.hpp>
 
 #include "app.h"
 #include "camera.h"
-#include "components.h"
 #include "consts.h"
 #include "control.h"
 #include "game_loop.h"
 #include "game_state/index.h"
+#include "loader/index.h"
 #include "logger/index.h"
 #include "mesh.h"
-#include "models/index.h"
 #include "sdl_init.h"
 #include "service.h"
 #include "shading/index.h"
 #include "systems/index.h"
+#include "utils/file_loaders.h"
 
 const int DEFAULT_SCREEN_WIDTH = 800;
 const int DEFAULT_SCREEN_HEIGHT = 600;
-const float ANIMATED_OBJECTS_HEIGHT = 2.0;
 
 int
 main()
@@ -35,8 +34,6 @@ main()
   auto control = std::make_unique<Control>();
 
   auto game_state = std::make_unique<GameState>();
-  auto& factory = game_state->factory();
-  auto& registry = game_state->registry();
 
   auto geometry_pass_shader = std::make_unique<Shader>();
   auto geometry_pass_vertex_shader = load_text("./shaders/main_v.glsl");
@@ -58,37 +55,8 @@ main()
   auto particle_fragment_shader = load_text("./shaders/particle_f.glsl");
   particle_shader->compile(particle_vertex_shader, particle_fragment_shader);
 
-  factory.make_directional_light(
-    registry, { -0.8, -0.8, -1.0 }, { 1.0, 1.0, 1.0 });           // NOLINT
-  factory.make_point_light(registry, { -5, 5, 5 }, { 1, 0, 0 });  // NOLINT
-  factory.make_point_light(registry, { -5, -5, 5 }, { 0, 1, 0 }); // NOLINT
-  factory.make_point_light(registry, { 5, -5, 5 }, { 0, 0, 1 });  // NOLINT
-  factory.make_point_light(registry, { 0, -5, 5 }, { 1, 0, 1 });  // NOLINT
-
   game_state->camera(std::make_shared<Camera>(
-    glm::vec3(0.0, -4.0, 15.0), // NOLINT
     static_cast<float>(DEFAULT_SCREEN_WIDTH) / DEFAULT_SCREEN_HEIGHT));
-
-  auto player_id = factory.make_player(
-    registry, { 0.0, -5.0, ANIMATED_OBJECTS_HEIGHT }); // NOLINT
-  game_state->player_id(player_id);
-
-  for (int x = -10; x < 10; x++) { // NOLINT
-    for (int y = 0; y < 30; y++) { // NOLINT
-      factory.make_enemy(registry, { x, y, ANIMATED_OBJECTS_HEIGHT });
-    }
-  }
-
-  for (int y = -10; y < 10; y++) {    // NOLINT
-    for (int x = -15; x <= 15; x++) { // NOLINT
-      glm::vec3 position{ x, y, 0.0 };
-      if (rand() % 2 == 0) {
-        factory.make_water_block(registry, position);
-      } else {
-        factory.make_ground_block(registry, position);
-      }
-    }
-  }
 
   auto deferred_shading =
     std::make_unique<DeferredShading>(std::move(geometry_pass_shader),
@@ -105,8 +73,8 @@ main()
   app_builder.game_state(std::move(game_state));
   app_builder.particle_shader(std::move(particle_shader));
   app_builder.window(std::move(window));
-  // This app variable must overlive the main function because of
-  // async nature of requestAnimationFrame in Browser API (emscripten)
+  // The app variable must overlive the main function because of
+  // async nature of requestanimationframe in browser api (emscripten)
   gsl::owner<App*> app{ app_builder.build() };
 
   app->add_handler(cursor_handler_system);
@@ -122,6 +90,9 @@ main()
   app->add_handler(projectile_handler_system);
   app->add_handler(camera_move_system);
   app->add_handler(render_system);
+
+  load_level(
+    "./assets/levels/entities.json", "./assets/levels/level_1.json", *app);
 
   game_loop(app);
 

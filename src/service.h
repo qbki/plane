@@ -3,8 +3,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include "logger/abstract_logger.h"
-#include "utils/demangled_name.h"
+#include "utils/types.h"
 
 template<typename T>
 class Service

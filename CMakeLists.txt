@@ -31,6 +31,7 @@ set(SHADERS_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders)
 set(ASSETS_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets)
 
 set(JSON_ImplicitConversions, OFF)
+include_directories(${CMAKE_SOURCE_DIR})
 
 find_package(EnTT REQUIRED)
 find_package(GLM REQUIRED)

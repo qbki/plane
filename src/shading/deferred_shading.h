@@ -2,8 +2,9 @@
 #include <memory>
 #include <sys/types.h>
 
-#include "../models/index.h"
-#include "../shader.h"
+#include "src/mesh.h"
+#include "src/shader.h"
+
 #include "g_buffer.h"
 
 class DeferredShading

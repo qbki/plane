@@ -3,7 +3,7 @@
 #include <entt/core/type_traits.hpp>
 #include <entt/entity/fwd.hpp>
 #include <functional>
-#include <glm/detail/qualifier.hpp>
+#include <glm/gtc/constants.hpp>
 #include <glm/vec3.hpp>
 #include <iterator>
 #include <memory>
@@ -13,7 +13,7 @@
 #include "game_state/texture_type.h"
 #include "mesh.h"
 #include "texture.h"
-#include "utils/index.h"
+#include "utils/types.h"
 
 enum class EnemyStateEnum
 {
@@ -96,8 +96,8 @@ struct Velocity
   Velocity()
     : scalar_acceleration(0)
     , damping(0)
-    , acceleration(zero<glm::vec3>())
-    , velocity(zero<glm::vec3>())
+    , acceleration(glm::zero<glm::vec3>())
+    , velocity(glm::zero<glm::vec3>())
   {
   }
   Velocity(float _acceleration, float _damping)

@@ -1,15 +1,14 @@
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <SDL_rwops.h>
-#include <exception>
-#include <iostream>
 #include <memory>
 #include <span>
 #include <tiny_gltf.h>
 #include <tuple>
 
+#include "src/utils/common.h"
+
 #include "mesh.h"
-#include "utils/index.h"
 
 const int VERTEX_LOCATION = 0;
 const int NORMAL_LOCATION = 1;

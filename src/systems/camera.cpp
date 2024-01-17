@@ -1,5 +1,6 @@
-#include "./camera.h"
-#include "../components.h"
+#include "src/components.h"
+
+#include "camera.h"
 
 void
 camera_move_system(const App::Meta& meta)

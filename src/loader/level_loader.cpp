@@ -6,8 +6,11 @@
 #include <ranges>
 #include <string>
 
-#include "../components.h"
-#include "../utils/file_loaders.h"
+#include "src/components.h"
+#include "src/utils/common.h"
+#include "src/utils/file_loaders.h"
+#include "src/utils/random.h"
+
 #include "level_loader.h"
 
 glm::vec3
@@ -399,13 +402,13 @@ load_level(const std::string& entities_file_path,
   auto json_entities = load_json(entities_file_path).at("entities");
   auto json_level = load_json(level_file_path);
 
-  auto player_maker = [&app](auto& registry, auto& file_path) -> auto {
+  auto player_maker = [&app](auto& registry, const auto& file_path) -> auto {
     return app.game_state->factory().make_player(registry, file_path);
   };
-  auto static_maker = [&app](auto& registry, auto& file_path) -> auto {
+  auto static_maker = [&app](auto& registry, const auto& file_path) -> auto {
     return app.game_state->factory().make_static(registry, file_path);
   };
-  auto enemy_maker = [&app](auto& registry, auto& file_path) -> auto {
+  auto enemy_maker = [&app](auto& registry, const auto & file_path) -> auto {
     return app.game_state->factory().make_enemy(registry, file_path);
   };
   auto directional_light_maker = [&app](auto& registry) -> auto {

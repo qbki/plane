@@ -3,8 +3,8 @@
 #include <format>
 #include <stdexcept>
 
-#include "../services.h"
-#include "../utils/index.h"
+#include "src/services.h"
+
 #include "g_buffer.h"
 
 const std::array<GLuint, 3> GBuffer::COLOR_ATTACHMENTS = {

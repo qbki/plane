@@ -1,7 +1,8 @@
 #include <glm/gtx/norm.hpp>
 
-#include "../components.h"
-#include "./index.h"
+#include "src/app.h"
+#include "src/components.h"
+#include "src/utils/common.h"
 
 void
 player_rotation_system(const App::Meta& meta)

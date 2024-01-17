@@ -1,11 +1,11 @@
 #include <algorithm>
+#include <gsl/pointers>
 #include <memory>
 #include <stdexcept>
 
 #include "app.h"
 #include "shader.h"
 #include "shapes.h"
-#include "utils/index.h"
 
 App::App(std::unique_ptr<GameState> _game_state,
          std::unique_ptr<Control> _control,
@@ -84,7 +84,7 @@ AppBuilder::context(ContextPtr context)
   return *this;
 }
 
-App*
+gsl::owner<App*>
 AppBuilder::build()
 {
   auto game_state_obj = or_throw(_game_state, "Game State");

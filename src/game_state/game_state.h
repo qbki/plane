@@ -1,16 +1,17 @@
 #pragma once
 #include <entt/entt.hpp>
+#include <glm/gtc/constants.hpp>
 #include <memory>
 
-#include "../camera.h"
-#include "../utils/index.h"
+#include "src/camera.h"
+
 #include "factory.h"
 
 class GameState
 {
 private:
   std::shared_ptr<Camera> _camera;
-  glm::vec3 _cursor = zero<glm::vec3>();
+  glm::vec3 _cursor = glm::zero<glm::vec3>();
   entt::registry _registry;
   entt::entity _player_id = entt::null;
   ModelFactory _factory;

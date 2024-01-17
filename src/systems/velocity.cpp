@@ -1,8 +1,9 @@
 #include <glm/geometric.hpp>
 
-#include "../components.h"
-#include "../consts.h"
-#include "../utils/index.h"
+#include "src/components.h"
+#include "src/consts.h"
+#include "src/utils/interpolations.h"
+
 #include "velocity.h"
 
 void

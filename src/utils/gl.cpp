@@ -1,8 +1,10 @@
+#include <format>
 #include <sstream>
 #include <string>
 
-#include "../services.h"
-#include "index.h"
+#include "src/services.h"
+
+#include "gl.h"
 
 int
 buffer_size()
@@ -21,42 +23,6 @@ glubyte_to_string(const GLubyte* value)
 {
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
   return { reinterpret_cast<const char*>(value) };
-}
-
-glm::vec3
-calc_z_direction(const glm::vec3& rotation)
-{
-  return { glm::cos(rotation.z), glm::sin(rotation.z), 0.0 };
-}
-
-glm::vec3
-encode_gamma(const glm::vec3& color, float gamma)
-{
-  return glm::pow(color, glm::vec3(1.0f / gamma));
-}
-
-glm::vec3
-decode_gamma(const glm::vec3& color, float gamma)
-{
-  return glm::pow(color, glm::vec3(gamma));
-}
-
-void
-resize_window(const SDL_WindowEvent& window_event, Camera& camera)
-{
-  auto width = window_event.data1;
-  auto height = window_event.data2;
-  camera.aspect_ratio(static_cast<float>(width) / static_cast<float>(height));
-  glViewport(0, 0, width, height);
-}
-
-glm::mat4
-make_transform_matrix(glm::vec3 position, glm::vec3 rotation)
-{
-  auto rotation_matrix =
-    glm::rotate(glm::mat4(1.0), rotation.z, { 0.0, 0.0, 1.0 });
-  auto transform_matrix = glm::translate(glm::mat4(1.0), position);
-  return transform_matrix * rotation_matrix;
 }
 
 /**

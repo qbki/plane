@@ -4,10 +4,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../material.h"
-#include "../mesh.h"
-#include "../shader.h"
-#include "../texture.h"
+#include "src/material.h"
+#include "src/mesh.h"
+#include "src/texture.h"
 
 const int MESH_IDX = 0;
 const int MATERIAL_IDX = 1;

@@ -11,18 +11,21 @@
 #include "consts.h"
 #include "control.h"
 #include "game_loop.h"
-#include "game_state/index.h"
-#include "loader/index.h"
-#include "logger/index.h"
 #include "mesh.h"
 #include "sdl_init.h"
-#include "service.h"
-#include "shading/index.h"
-#include "systems/index.h"
+#include "src/loader/level_loader.h"
+#include "src/logger/abstract_logger.h"
+#include "src/logger/logger.h"
+#include "src/service.h"
+#include "src/systems/camera.h"
+#include "src/systems/cursor.h"
+#include "src/systems/enemy.h"
+#include "src/systems/particles.h"
+#include "src/systems/player.h"
+#include "src/systems/projectiles.h"
+#include "src/systems/render.h"
+#include "src/systems/velocity.h"
 #include "utils/file_loaders.h"
-
-const int DEFAULT_SCREEN_WIDTH = 800;
-const int DEFAULT_SCREEN_HEIGHT = 600;
 
 int
 main()

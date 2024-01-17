@@ -1,5 +1,6 @@
-#include "./projectiles.h"
-#include "../components.h"
+#include "src/components.h"
+
+#include "projectiles.h"
 
 void
 projectile_handler_system(const App::Meta& meta)
@@ -36,7 +37,7 @@ projectile_handler_system(const App::Meta& meta)
                           Velocity& enemy_velocity,
                           EnemyStateEnum& enemy_state,
                           Textures& textures,
-                          ParticlesEmitter& particles_emitter) {
+                          const ParticlesEmitter& particles_emitter) {
       const float hit_registration_distance = 0.3;
       const float impact_velocity_damping = 0.3;
       if (glm::distance(prj_position.value, enemy_position.value) <=

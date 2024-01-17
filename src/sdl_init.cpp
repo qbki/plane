@@ -4,14 +4,14 @@
 #include <format>
 #include <stdexcept>
 #include <string>
-
 #ifdef __EMSCRIPTEN__
 #include <emscripten/html5.h>
 #endif
 
+#include "src/utils/gl.h"
+
 #include "sdl_init.h"
 #include "services.h"
-#include "utils/index.h"
 
 void
 throw_sdl_error(std::string message)

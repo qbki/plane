@@ -1,8 +1,21 @@
+#pragma once
 #include <cxxabi.h>
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "noop.h"
+
+template<typename T>
+using OptionalPtr = std::optional<std::unique_ptr<T>>;
+
+template<typename T, typename TAG>
+struct NewType
+{
+  T value;
+  explicit NewType(T v)
+    : value(v){};
+};
 
 template<typename T>
 std::string

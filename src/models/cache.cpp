@@ -1,14 +1,15 @@
 #include <algorithm>
 #include <memory>
-#include <ranges>
 #include <tuple>
 #include <vector>
 
-#include "../consts.h"
-#include "../game_state/index.h"
-#include "../texture.h"
-#include "../utils/file_loaders.h"
-#include "../utils/index.h"
+#include "src/consts.h"
+#include "src/game_state/texture_type.h"
+#include "src/texture.h"
+#include "src/utils/color.h"
+#include "src/utils/common.h"
+#include "src/utils/file_loaders.h"
+
 #include "cache.h"
 
 glm::vec3

@@ -5,7 +5,6 @@
 #include <utility>
 
 #include "texture.h"
-#include "utils/index.h"
 
 const unsigned int Texture::DEFAULT_TEXTURE_TYPE = 0;
 const GLuint Texture::DEFAULT_TEXTURE_OBJECT = 0;

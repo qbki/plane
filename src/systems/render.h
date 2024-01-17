@@ -1,8 +1,5 @@
 #pragma once
-#include <functional>
-
-#include "../app.h"
-#include "../shading/index.h"
+#include "src/app.h"
 
 void
 render_system(App::Meta& meta);

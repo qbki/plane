@@ -7,6 +7,15 @@
 #include "game_loop.h"
 
 void
+resize_window(const SDL_WindowEvent& window_event, Camera& camera)
+{
+  auto width = window_event.data1;
+  auto height = window_event.data2;
+  camera.aspect_ratio(static_cast<float>(width) / static_cast<float>(height));
+  glViewport(0, 0, width, height);
+}
+
+void
 inner_game_loop(App& app)
 {
   SDL_Event event;

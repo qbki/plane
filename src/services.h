@@ -1,4 +1,5 @@
-#include "logger/index.h"
+#pragma once
+#include "logger/abstract_logger.h"
 #include "service.h"
 
 inline AbstractLogger&

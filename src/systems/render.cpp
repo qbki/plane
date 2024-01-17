@@ -1,7 +1,9 @@
 #include <sstream>
 
-#include "../components.h"
-#include "../consts.h"
+#include "src/components.h"
+#include "src/consts.h"
+#include "src/utils/common.h"
+
 #include "render.h"
 
 static const Material COMMON_MATERIAL(glm::vec3(0.01, 0.01, 0.01),

@@ -8,7 +8,8 @@
 #include <sstream>
 #endif
 
-#include "../services.h"
+#include "src/services.h"
+
 #include "file_loaders.h"
 
 void

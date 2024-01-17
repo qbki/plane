@@ -8,7 +8,7 @@
 #include "shader.h"
 #include "shading/deferred_shading.h"
 #include "shapes.h"
-#include "utils/index.h"
+#include "utils/types.h"
 
 class App
 {

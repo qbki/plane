@@ -78,6 +78,7 @@ cppcheck:
 		--inconclusive \
 		--verbose \
 		--quiet \
+		-I ./ \
 		--suppress=unusedFunction \
 		--suppress=missingIncludeSystem \
 		./src

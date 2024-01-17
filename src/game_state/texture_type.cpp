@@ -1,6 +1,7 @@
 #include <stdexcept>
 
-#include "../services.h"
+#include "src/services.h"
+
 #include "texture_type.h"
 
 namespace TextureType {

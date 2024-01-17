@@ -14,7 +14,8 @@ public:
   static const float DEFAULT_Z_NEAR;
   static const float DEFAULT_Z_FAR;
 
-  Camera(float aspect_ratio);
+  explicit Camera(float aspect_ratio);
+
   [[nodiscard]] glm::mat4 pv() const;
 
   void aspect_ratio(float aspect_ratio);

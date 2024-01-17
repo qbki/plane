@@ -2,7 +2,8 @@
 #include <glm/ext/vector_float3.hpp>
 #include <memory>
 
-#include "../components.h"
+#include "src/components.h"
+
 #include "factory.h"
 
 ModelFactory::ModelFactory()
@@ -17,8 +18,8 @@ ModelFactory::make_player(entt::registry& registry,
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<PlayerKind>(entity);
-  registry.emplace<Position>(entity, zero<glm::vec3>());
-  registry.emplace<Rotation>(entity, zero<glm::vec3>());
+  registry.emplace<Position>(entity, glm::zero<glm::vec3>());
+  registry.emplace<Rotation>(entity, glm::zero<glm::vec3>());
   registry.emplace<Textures>(entity, textures);
   registry.emplace<Velocity>(entity);
   return entity;
@@ -34,8 +35,8 @@ ModelFactory::make_enemy(entt::registry& registry, const std::string& file_path)
   registry.emplace<EnemyStateEnum>(entity, EnemyStateEnum::HUNTING);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<Opaque>(entity);
-  registry.emplace<Position>(entity, zero<glm::vec3>());
-  registry.emplace<Rotation>(entity, zero<glm::vec3>());
+  registry.emplace<Position>(entity, glm::zero<glm::vec3>());
+  registry.emplace<Rotation>(entity, glm::zero<glm::vec3>());
   registry.emplace<Textures>(entity, textures);
   registry.emplace<Velocity>(entity);
   return entity;
@@ -48,13 +49,13 @@ ModelFactory::make_projectile(entt::registry& registry,
   auto [mesh, textures] = cache->load(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
-  registry.emplace<InitialPosition>(entity, zero<glm::vec3>());
+  registry.emplace<InitialPosition>(entity, glm::zero<glm::vec3>());
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<Opaque>(entity);
-  registry.emplace<Position>(entity, zero<glm::vec3>());
+  registry.emplace<Position>(entity, glm::zero<glm::vec3>());
   registry.emplace<ProjectileKind>(entity);
   registry.emplace<Range>(entity, 0);
-  registry.emplace<Rotation>(entity, zero<glm::vec3>());
+  registry.emplace<Rotation>(entity, glm::zero<glm::vec3>());
   registry.emplace<Speed>(entity, 0);
   registry.emplace<Textures>(entity, textures);
   registry.emplace<Velocity>(entity);
@@ -70,8 +71,8 @@ ModelFactory::make_static(entt::registry& registry,
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<Opaque>(entity);
-  registry.emplace<Position>(entity, zero<glm::vec3>());
-  registry.emplace<Rotation>(entity, zero<glm::vec3>());
+  registry.emplace<Position>(entity, glm::zero<glm::vec3>());
+  registry.emplace<Rotation>(entity, glm::zero<glm::vec3>());
   registry.emplace<Textures>(entity, textures);
   return entity;
 }
@@ -87,9 +88,9 @@ ModelFactory::make_particle(entt::registry& registry,
   registry.emplace<LifetimeMax>(entity, 0);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<ParticleKind>(entity);
-  registry.emplace<Position>(entity, zero<glm::vec3>());
-  registry.emplace<Rotation>(entity, zero<glm::vec3>());
-  registry.emplace<Color>(entity, zero<glm::vec3>());
+  registry.emplace<Position>(entity, glm::zero<glm::vec3>());
+  registry.emplace<Rotation>(entity, glm::zero<glm::vec3>());
+  registry.emplace<Color>(entity, glm::zero<glm::vec3>());
   registry.emplace<Speed>(entity, 0);
   registry.emplace<Textures>(entity, textures);
   registry.emplace<Velocity>(entity);
@@ -105,8 +106,8 @@ ModelFactory::make_point_light(entt::registry& registry)
     .quadratic = 0.0075,
   };
   auto entity = registry.create();
-  registry.emplace<Position>(entity, zero<glm::vec3>());
-  registry.emplace<Color>(entity, zero<glm::vec3>());
+  registry.emplace<Position>(entity, glm::zero<glm::vec3>());
+  registry.emplace<Color>(entity, glm::zero<glm::vec3>());
   registry.emplace<PointLightParams>(entity, point_light_params);
   registry.emplace<PointLightKind>(entity);
   return entity;
@@ -116,8 +117,8 @@ entt::entity
 ModelFactory::make_directional_light(entt::registry& registry)
 {
   auto entity = registry.create();
-  registry.emplace<Direction>(entity, zero<glm::vec3>());
-  registry.emplace<Color>(entity, zero<glm::vec3>());
+  registry.emplace<Direction>(entity, glm::zero<glm::vec3>());
+  registry.emplace<Color>(entity, glm::zero<glm::vec3>());
   registry.emplace<DirectionalLightKind>(entity);
   return entity;
 }

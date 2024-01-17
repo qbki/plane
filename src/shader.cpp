@@ -1,8 +1,6 @@
 #include <GL/glew.h>
-#include <memory>
 #include <stdexcept>
 #include <string>
-#include <vector>
 
 #include "shader.h"
 

@@ -1,6 +1,6 @@
-#include <algorithm>
 #include <memory>
 #include <tuple>
+#include <unordered_map>
 #include <vector>
 
 #include "src/consts.h"
@@ -34,24 +34,24 @@ generate_texture(tinygltf::Model& model)
                                    to_integer_value(color.y),
                                    to_integer_value(color.z),
                                    to_integer_value(1.0) };
-  auto texture_type = TextureType::map_to_int(TextureType::DEFAULT_TYPE);
-  Cache::TexturesPtr textures =
-    std::make_shared<std::vector<Texture>>(std::vector<Texture>());
-  textures->emplace_back(texture_type, data);
+  auto texture_id = TextureType::map_to_id(TextureType::DEFAULT_TYPE);
+  auto textures =
+    std::make_shared<std::unordered_map<TextureType::Type, Texture>>();
+  textures->emplace(TextureType::DEFAULT_TYPE, Texture{ texture_id, data });
   return textures;
 }
 
 Cache::TexturesPtr
 extract_textures(tinygltf::Model& model)
 {
-  auto textures = std::vector<Texture>();
-  std::ranges::transform(
-    model.images,
-    std::back_inserter(textures),
-    [](const tinygltf::Image& image) {
-      return Texture{ TextureType::map_str_to_int(image.name), image.image };
-    });
-  return std::make_shared<std::vector<Texture>>(std::move(textures));
+  auto textures =
+    std::make_shared<std::unordered_map<TextureType::Type, Texture>>();
+  for (const auto& image : model.images) {
+    auto texture_type = TextureType::map_to_type(image.name);
+    auto texture_id = TextureType::map_str_to_id(image.name);
+    textures->emplace(texture_type, Texture{ texture_id, image.image });
+  }
+  return textures;
 }
 
 Cache::Cache()

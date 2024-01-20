@@ -1,6 +1,7 @@
 #include <sstream>
 
-#include "src/components.h"
+#include "src/components/common.h"
+#include "src/components/textures.h"
 #include "src/consts.h"
 #include "src/utils/common.h"
 

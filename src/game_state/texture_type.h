@@ -4,7 +4,7 @@
 namespace TextureType {
 enum class Type : unsigned int
 {
-  MAIN,
+  MAIN = 0,
   DESTROYED,
 };
 
@@ -16,10 +16,10 @@ Type
 map_to_type(const std::string& type);
 
 unsigned int
-map_to_int(Type type);
+map_to_id(Type type);
 Type
 map_to_type(int type);
 
 unsigned int
-map_str_to_int(const std::string& type);
+map_str_to_id(const std::string& type);
 };

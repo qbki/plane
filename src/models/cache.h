@@ -2,8 +2,8 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <vector>
 
+#include "src/game_state/texture_type.h"
 #include "src/material.h"
 #include "src/mesh.h"
 #include "src/texture.h"
@@ -17,7 +17,8 @@ class Cache
 public:
   using MeshPtr = std::shared_ptr<Mesh>;
   using MaterialPtr = std::shared_ptr<Material>;
-  using TexturesPtr = std::shared_ptr<std::vector<Texture>>;
+  using TexturesPtr =
+    std::shared_ptr<const std::unordered_map<TextureType::Type, Texture>>;
 
 private:
   std::unordered_map<std::string, std::tuple<MeshPtr, MaterialPtr, TexturesPtr>>

@@ -1,4 +1,4 @@
-#include "src/components.h"
+#include "src/components/common.h"
 
 #include "particles.h"
 

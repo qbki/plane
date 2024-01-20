@@ -34,7 +34,7 @@ int_to_texture_index(unsigned int idx)
  * @param data Expects 4 bytes per pixel (RGBA) and a rectangular texture
  */
 Texture::Texture(unsigned int type, const std::vector<unsigned char>& data)
-  : _type(type)
+  : _id(type)
 {
   auto size = static_cast<int>(std::sqrt(data.size() / 4));
   glGenTextures(1, &_texture_object);
@@ -55,7 +55,7 @@ Texture::Texture(unsigned int type, const std::vector<unsigned char>& data)
 }
 
 Texture::Texture(Texture&& other) noexcept
-  : _type(std::exchange(other._type, DEFAULT_TEXTURE_TYPE))
+  : _id(std::exchange(other._id, DEFAULT_TEXTURE_TYPE))
   , _texture_object(
       std::exchange(other._texture_object, DEFAULT_TEXTURE_OBJECT))
 {
@@ -67,7 +67,7 @@ Texture::operator=(Texture&& other) noexcept
   if (this == &other) {
     return *this;
   }
-  _type = std::exchange(other._type, DEFAULT_TEXTURE_TYPE);
+  _id = std::exchange(other._id, DEFAULT_TEXTURE_TYPE);
   _texture_object =
     std::exchange(other._texture_object, DEFAULT_TEXTURE_OBJECT);
   return *this;
@@ -81,20 +81,20 @@ Texture::~Texture() noexcept
 }
 
 void
-Texture::use(unsigned int idx)
+Texture::use(unsigned int idx) const
 {
   glActiveTexture(int_to_texture_index(idx));
   glBindTexture(GL_TEXTURE_2D, _texture_object);
 }
 
 GLuint
-Texture::type() const
+Texture::id() const
 {
-  return _type;
+  return _id;
 }
 
 void
-Texture::type(unsigned int type_id)
+Texture::id(unsigned int id)
 {
-  _type = type_id;
+  _id = id;
 }

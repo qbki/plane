@@ -1,7 +1,8 @@
 #include <glm/trigonometric.hpp>
 #include <ranges>
 
-#include "src/components.h"
+#include "src/components/common.h"
+#include "src/components/velocity.h"
 
 #include "enemy.h"
 

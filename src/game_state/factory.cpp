@@ -2,7 +2,9 @@
 #include <glm/ext/vector_float3.hpp>
 #include <memory>
 
-#include "src/components.h"
+#include "src/components/common.h"
+#include "src/components/textures.h"
+#include "src/components/velocity.h"
 
 #include "factory.h"
 

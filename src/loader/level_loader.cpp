@@ -6,7 +6,8 @@
 #include <ranges>
 #include <string>
 
-#include "src/components.h"
+#include "src/components/common.h"
+#include "src/components/velocity.h"
 #include "src/utils/common.h"
 #include "src/utils/file_loaders.h"
 #include "src/utils/random.h"
@@ -408,7 +409,7 @@ load_level(const std::string& entities_file_path,
   auto static_maker = [&app](auto& registry, const auto& file_path) -> auto {
     return app.game_state->factory().make_static(registry, file_path);
   };
-  auto enemy_maker = [&app](auto& registry, const auto & file_path) -> auto {
+  auto enemy_maker = [&app](auto& registry, const auto& file_path) -> auto {
     return app.game_state->factory().make_enemy(registry, file_path);
   };
   auto directional_light_maker = [&app](auto& registry) -> auto {

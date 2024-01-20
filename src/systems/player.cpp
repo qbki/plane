@@ -1,7 +1,8 @@
 #include <glm/gtx/norm.hpp>
 
 #include "src/app.h"
-#include "src/components.h"
+#include "src/components/common.h"
+#include "src/components/velocity.h"
 #include "src/utils/common.h"
 
 void

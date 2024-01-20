@@ -35,7 +35,7 @@ map_to_type(const std::string& type)
 }
 
 unsigned int
-map_to_int(Type type)
+map_to_id(Type type)
 {
   return static_cast<unsigned int>(type);
 }
@@ -54,8 +54,8 @@ map_to_type(int type)
 }
 
 unsigned int
-map_str_to_int(const std::string& type)
+map_str_to_id(const std::string& type)
 {
-  return map_to_int(map_to_type(type));
+  return map_to_id(map_to_type(type));
 }
 }

@@ -11,9 +11,8 @@ private:
   std::unique_ptr<Cache> cache;
 
 public:
-  using ModelMakerFn =
+  using MakerFn =
     std::function<entt::entity(entt::registry&, const std::string&)>;
-  using MakerFn = std::function<entt::entity(entt::registry&)>;
 
   ModelFactory();
 
@@ -28,6 +27,7 @@ public:
   entt::entity make_static(entt::registry& registry,
                            const std::string& file_path);
 
-  entt::entity make_directional_light(entt::registry& registry);
-  entt::entity make_point_light(entt::registry& registry);
+  entt::entity make_directional_light(entt::registry& registry,
+                                      const std::string& _);
+  entt::entity make_point_light(entt::registry& registry, const std::string& _);
 };

@@ -100,7 +100,7 @@ ModelFactory::make_particle(entt::registry& registry,
 }
 
 entt::entity
-ModelFactory::make_point_light(entt::registry& registry)
+ModelFactory::make_point_light(entt::registry& registry, const std::string&)
 {
   const PointLightParams point_light_params{
     .constant = 1.0,
@@ -116,7 +116,8 @@ ModelFactory::make_point_light(entt::registry& registry)
 }
 
 entt::entity
-ModelFactory::make_directional_light(entt::registry& registry)
+ModelFactory::make_directional_light(entt::registry& registry,
+                                     const std::string&)
 {
   auto entity = registry.create();
   registry.emplace<Direction>(entity, glm::zero<glm::vec3>());

@@ -98,3 +98,8 @@ check-code-style:
 format-code:
 	@clang-format -i $(CPP_SOURCE_FILES_LIST)
 .PHONY: format-check
+
+tests: build
+	@cd build/linux && \
+		ctest --output-on-failure
+.PHONY: tests

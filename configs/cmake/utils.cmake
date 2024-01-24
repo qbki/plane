@@ -1,0 +1,22 @@
+function(print_variables)
+  get_cmake_property(names VARIABLES)
+  list(SORT names)
+  foreach (name ${names})
+    message(STATUS "${name}=${${name}}")
+  endforeach()
+endfunction()
+
+function(print_list items)
+  message("HERE")
+  foreach (item ${items})
+    message(STATUS "${item}")
+  endforeach()
+endfunction()
+
+function(add_flag flag)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE)
+endfunction()
+
+function(add_exe_flag flag)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${flag}" PARENT_SCOPE)
+endfunction()

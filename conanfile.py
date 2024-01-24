@@ -8,6 +8,7 @@ class App(ConanFile):
   settings = "os", "compiler", "build_type", "arch"
 
   def requirements(self):
+    self.requires("catch2/3.5.2"),
     self.requires("entt/3.12.2"),
     self.requires("glm/cci.20230113"),
     self.requires("ms-gsl/4.0.0"),

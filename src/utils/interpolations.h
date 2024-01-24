@@ -14,7 +14,7 @@
  */
 template<typename T>
 T
-damp(T from, T to, float smoothing, float dt)
+damp(T from, float smoothing, float dt)
 {
-  return to + (from - to) * std::pow(smoothing, dt);
+  return from * std::pow(smoothing, dt);
 }

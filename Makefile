@@ -44,8 +44,16 @@ init-debug:
 
 
 build:
-	@cd ./build/linux && cmake ../.. && cmake --build .
+	@cd ./build/linux && \
+		cmake ../.. -DBUILD_TESTS=OFF && \
+		cmake --build .
 .PHONY: build
+
+build-with-tests:
+	@cd ./build/linux && \
+		cmake ../.. -DBUILD_TESTS=ON && \
+		cmake --build .
+.PHONY: build-with-tests
 
 
 build-wasm:
@@ -99,7 +107,7 @@ format-code:
 	@clang-format -i $(CPP_SOURCE_FILES_LIST)
 .PHONY: format-check
 
-tests: build
+tests: build-with-tests
 	@cd build/linux && \
 		ctest --output-on-failure
 .PHONY: tests

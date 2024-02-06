@@ -99,3 +99,8 @@ _conan_ dependencies, compiles the project itself
 and creates a zip archive. Artifacts will be
 placed in the _./build/docker_build/pack/_
 directory.
+
+
+## License
+
+Plane Engine is [MIT licensed](./LICENSE).

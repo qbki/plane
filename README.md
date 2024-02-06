@@ -2,9 +2,9 @@
 
 ## About
 
-Plane Engine or just plane is a game engine that
-have a main goal to create a constructor of
-top-down shooters.
+Plane Engine or just plane is a game engine that's
+main goal is to create a constructor of top-down
+shooters.
 
 High level pipeline:
 
@@ -49,8 +49,8 @@ these constraints:
 | cmake | yes | |
 | make | yes | |
 | zip | yes | |
-| gcc | no | if you want compile a Linux build |
-| docker | no | if you want try this project and keep your system clean, it could be the only dependency |
+| gcc | no | if you want to compile a Linux build |
+| docker | no | if you want to try this project and keep your system clean, it could be the only dependency |
 
 
 ## Linux build
@@ -63,8 +63,9 @@ $ make init && make build
 ```
 
 In case of debian based distributives. System
-dependencies are dependencies that require using
-_apt-get_ command with super user privileges.
+dependencies are the dependencies that require
+using _apt-get_ command with super user
+privileges.
 
 An executable will be located in the
 _./build/linux/bin/_ directory.

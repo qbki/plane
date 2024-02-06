@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  build-wasm:
+    image: plane-wasm
+    build: .
+    user: "${USER_ID}:${GROUP_ID}"
+    volumes:
+      - type: bind
+        source: ./
+        target: /home/ubuntu/project
+      - type: bind
+        source: ./build/docker_build
+        target: /home/ubuntu/project/build
+      - type: bind
+        source: ./build/docker_conan
+        target: /home/ubuntu/.conan2

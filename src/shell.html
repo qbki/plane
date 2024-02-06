@@ -138,7 +138,8 @@
               || error.constructor === WebAssembly.Exception)
         );
         if (isEmscriptenError) {
-          console.error(getExceptionMessage(error)[1]);
+          const [errorType, errorMessage] = getExceptionMessage(error);
+          console.error(`${errorType}: ${errorMessage}`);
         }
         Module.setStatus('Exception thrown, see JavaScript console');
         spinnerElement.style.display = 'none';

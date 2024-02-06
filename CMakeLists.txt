@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.15)
 include(${CMAKE_SOURCE_DIR}/configs/cmake/utils.cmake)
 
+set(APP_VERSION 0.1.1)
 if(DEFINED EMSCRIPTEN)
-  project(index)
+  project(index VERSION ${APP_VERSION})
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
 else()
-  project(plane)
+  project(plane VERSION ${APP_VERSION})
 endif()
 
 function(setup_link_libraries target_name)
-  target_link_libraries(${target_name} Catch2::Catch2WithMain)
   target_link_libraries(${target_name} EnTT::EnTT)
   target_link_libraries(${target_name} Microsoft.GSL::GSL)
   target_link_libraries(${target_name} TinyGLTF::TinyGLTF)
@@ -33,6 +33,7 @@ set(SHADERS_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders)
 set(ASSETS_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets)
 
 option(BUILD_TESTS "Turn this ON to compile tests" OFF)
+option(BUILD_EXECUTABLE "Turn this ON to compile an executable file" OFF)
 
 include_directories(${CMAKE_SOURCE_DIR})
 
@@ -71,8 +72,18 @@ set(TEST_SOURCES ${SOURCES})
 list(FILTER SOURCES EXCLUDE REGEX ".tests.cpp$")
 list(FILTER TEST_SOURCES INCLUDE REGEX ".tests.cpp$")
 
-add_executable(${PROJECT_NAME} ${SOURCES})
-setup_link_libraries(${PROJECT_NAME})
+if(BUILD_EXECUTABLE)
+  add_executable(${PROJECT_NAME} ${SOURCES})
+  setup_link_libraries(${PROJECT_NAME})
+  if(NOT DEFINED EMSCRIPTEN)
+    add_custom_command(
+      TARGET ${PROJECT_NAME} PRE_LINK
+      COMMAND ${CMAKE_COMMAND} -E create_symlink ${SRC_SHADERS_DIRECTORY} ${SHADERS_DIRECTORY})
+  endif()
+  add_custom_command(
+    TARGET ${PROJECT_NAME} PRE_LINK
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${SRC_ASSETS_DIRECTORY} ${ASSETS_DIRECTORY})
+endif()
 
 if(BUILD_TESTS)
   enable_testing()
@@ -86,17 +97,12 @@ if(BUILD_TESTS)
     set_target_properties(
       ${target_name}
       PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests)
-    add_test(NAME ${src_relative_path} COMMAND tests/${target_name})
+    if (DEFINED EMSCRIPTEN)
+      add_test(NAME ${src_relative_path} COMMAND node "tests/${target_name}.js")
+    else()
+      add_test(NAME ${src_relative_path} COMMAND tests/${target_name})
+    endif()
     setup_link_libraries(${target_name})
+    target_link_libraries(${target_name} Catch2::Catch2WithMain)
   endforeach()
 endif()
-
-if(DEFINED EMSCRIPTEN)
-  add_custom_command(
-    TARGET ${PROJECT_NAME} PRE_LINK
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${SRC_SHADERS_DIRECTORY} ${SHADERS_DIRECTORY})
-endif()
-
-add_custom_command(
-  TARGET ${PROJECT_NAME} PRE_LINK
-  COMMAND ${CMAKE_COMMAND} -E create_symlink ${SRC_ASSETS_DIRECTORY} ${ASSETS_DIRECTORY})

@@ -1,13 +1,23 @@
 CPP_SOURCE_FILES_LIST=$(shell git ls-files | egrep '(h|cpp)$$')
+PROJECT_NAME=plane
+BUILD_DIR=$(shell pwd)/build
+PACK_DIR=$(BUILD_DIR)/pack
+LINUX_BUILD_DIR=$(BUILD_DIR)/linux
+LINUX_BIN_DIR=$(LINUX_BUILD_DIR)/bin
+LINUX_DEBUG_BUILD_DIR=$(BUILD_DIR)/linux-debug
+LINUX_DEBUG_BIN_DIR=$(LINUX_DEBUG_BUILD_DIR)/bin
+WASM_BUILD_DIR=$(BUILD_DIR)/wasm
+WASM_BIN_DIR=$(WASM_BUILD_DIR)/bin
 
 
 init:
 	@conan install . \
-		--output-folder=build/linux \
+		--output-folder=$(LINUX_BUILD_DIR) \
 		--build=missing \
-		--settings=build_type=Release \
-		-pr ./configs/profiles/linux
-	@cd build/linux \
+		--lockfile=./linux.lock \
+		--profile:build=./configs/profiles/linux \
+		--profile:host=./configs/profiles/linux
+	@cd $(LINUX_BUILD_DIR) \
 		&& cmake ../.. \
 			-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
 			-DCMAKE_BUILD_TYPE=Release \
@@ -19,12 +29,12 @@ init:
 
 init-wasm:
 	@conan install . \
-		--output-folder=build/wasm \
+		--output-folder=$(WASM_BUILD_DIR) \
 		--build=missing \
-		--settings=build_type=Release \
+		--lockfile=./wasm.lock \
 		--profile:build=./configs/profiles/linux \
 		--profile:host=./configs/profiles/wasm
-	@cd build/wasm && \
+	@cd $(WASM_BUILD_DIR) && \
 		cmake cmake ../.. \
 			-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
 			-DCMAKE_BUILD_TYPE=Release
@@ -33,51 +43,74 @@ init-wasm:
 
 init-debug:
 	@conan install . \
-		--output-folder=build/linux-debug \
+		--output-folder=$(LINUX_DEBUG_BUILD_DIR) \
 		--settings=build_type=Debug \
 		--build=missing \
 		-pr ./configs/profiles/linux
-	@cd build/linux-debug && cmake ../.. \
-		-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
-		-DCMAKE_BUILD_TYPE=Debug
+	@cd $(LINUX_DEBUG_BUILD_DIR) && \
+		cmake ../.. \
+			-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
+			-DCMAKE_BUILD_TYPE=Debug
 .PHONY: init-debug
 
 
 build:
-	@cd ./build/linux && \
-		cmake ../.. -DBUILD_TESTS=OFF && \
+	@cd $(LINUX_BUILD_DIR) && \
+		cmake ../.. \
+			-DBUILD_TESTS=OFF \
+			-DBUILD_EXECUTABLE=ON && \
 		cmake --build .
 .PHONY: build
 
-build-with-tests:
-	@cd ./build/linux && \
-		cmake ../.. -DBUILD_TESTS=ON && \
+
+build-tests:
+	@cd $(LINUX_BUILD_DIR) && \
+		cmake ../.. \
+			-DBUILD_TESTS=ON \
+			-DBUILD_EXECUTABLE=OFF && \
 		cmake --build .
-.PHONY: build-with-tests
+.PHONY: build-tests
 
 
 build-wasm:
-	@cd ./build/wasm && \
-		cmake cmake ../.. && \
+	@cd $(WASM_BUILD_DIR) && \
+		cmake ../.. \
+			-DBUILD_TESTS=OFF \
+			-DBUILD_EXECUTABLE=ON && \
 		cmake --build .
 .PHONY: build-wasm
 
 
+build-wasm-tests:
+	@cd $(WASM_BUILD_DIR) && \
+		cmake ../.. \
+			-DBUILD_TESTS=ON \
+			-DBUILD_EXECUTABLE=OFF && \
+		cmake --build .
+.PHONY: build-wasm-tests
+
+
 build-debug:
-	@cd ./build/linux-debug && \
+	@cd $(LINUX_DEBUG_BUILD_DIR) && \
 		cmake ../.. -DCMAKE_CXX_FLAGS="-O0 -g3" && \
 		cmake --build .
 .PHONY: build-debug
 
 
 run: build
-	@./build/linux/bin/plane
+	@$(LINUX_BIN_DIR)/$(PROJECT_NAME)
 .PHONY: run
 
 
 run-debug: build-debug
-	@gdb ./build/linux-debug/bin/plane
+	@gdb $(LINUX_DEBUG_BIN_DIR)/$(PROJECT_NAME)
 .PHONY: run-debug
+
+
+run-wasm: build-wasm
+	@cd $(WASM_BIN_DIR) && \
+		python3 -m http.server -b 127.0.0.1
+.PHONY: run-wasm
 
 
 cppcheck:
@@ -94,7 +127,7 @@ cppcheck:
 
 
 clang-tidy:
-	@clang-tidy $(CPP_SOURCE_FILES_LIST) -p ./build/
+	@clang-tidy $(CPP_SOURCE_FILES_LIST) -p $(BUILD_DIR)
 .PHONY: clang-tidy
 
 
@@ -107,7 +140,50 @@ format-code:
 	@clang-format -i $(CPP_SOURCE_FILES_LIST)
 .PHONY: format-check
 
-tests: build-with-tests
-	@cd build/linux && \
+
+tests: build-tests
+	@cd $(LINUX_BUILD_DIR) && \
 		ctest --output-on-failure
 .PHONY: tests
+
+
+tests-wasm: build-wasm-tests
+	@cd $(WASM_BUILD_DIR) && \
+		ctest --output-on-failure
+.PHONY: tests-wasm
+
+
+pack-wasm:
+	@\
+		VERSION=$(shell grep -Po '(?<=APP_VERSION )[.\d]+' CMakeLists.txt); \
+	  FILENAME=$(PROJECT_NAME)-wasm-v$${VERSION}.zip; \
+	  echo $$FILENAME && \
+		cd $(WASM_BIN_DIR) && \
+		mkdir -p $(PACK_DIR) && \
+		zip --recurse-paths $(PACK_DIR)/$${FILENAME} \
+			. \
+		  --exclude assets/\*
+.PHONY: pack-wasm
+
+
+init-build-pack-wasm: init-wasm build-wasm pack-wasm
+.PHONY: init-build-pack-wasm
+
+
+docker-build-wasm:
+	@mkdir -p $(BUILD_DIR)/docker_build && \
+	  mkdir -p $(BUILD_DIR)/docker_conan && \
+		docker compose run --rm build-wasm make init-build-pack-wasm
+.PHONY: docker-build-wasm
+
+
+lock-files:
+	@conan lock create . -s os=Linux \
+		--lockfile-out=linux.lock \
+		--profile=./configs/profiles/linux \
+		--lockfile-clean
+	@conan lock create . -s os=Emscripten \
+		--lockfile-out=wasm.lock \
+		--profile=./configs/profiles/wasm \
+		--lockfile-clean
+.PHONY: lock-files

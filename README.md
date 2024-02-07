@@ -88,7 +88,25 @@ Artifacts will be placed in the _./build/pack/_ directory.
 
 ## Using Docker
 
-Run this command:
+Copy the _.env.default_ file in the project's root
+directory as _.env_.
+
+```sh
+$ cp .env.default .env
+```
+
+Setup your USER_ID and GROUP_ID in the _.env_
+file. To get them you can use _id_ utility.
+
+```sh
+$ id -u
+1000
+$ id -g
+1000
+```
+
+To build a zip archive with an executable file run
+this command:
 
 ```sh
 $ make docker-build-wasm

@@ -48,7 +48,6 @@ these constraints:
 | conan | yes | |
 | cmake | yes | |
 | make | yes | |
-| zip | yes | |
 | gcc | no | if you want to compile a Linux build |
 | docker | no | if you want to try this project and keep your system clean, it could be the only dependency |
 

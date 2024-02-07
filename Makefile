@@ -154,16 +154,13 @@ tests-wasm: build-wasm-tests
 
 
 pack-wasm:
-	@\
-		VERSION=$(shell grep -Po '(?<=APP_VERSION )[.\d]+' CMakeLists.txt); \
-	  FILENAME=$(PROJECT_NAME)-wasm-v$${VERSION}.zip; \
-	  echo $$FILENAME && \
-		cd $(WASM_BIN_DIR) && \
-		mkdir -p $(PACK_DIR) && \
-		zip --recurse-paths $(PACK_DIR)/$${FILENAME} \
-			. \
-		  --exclude assets/\*
+	@cd $(WASM_BUILD_DIR) && cpack
 .PHONY: pack-wasm
+
+
+pack-linux:
+	@cd $(LINUX_BUILD_DIR) && cpack
+.PHONY: pack-linux
 
 
 init-build-pack-wasm: init-wasm build-wasm pack-wasm

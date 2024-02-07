@@ -7,7 +7,6 @@ RUN apt-get update \
     nodejs \
     pipx \
     sudo \
-    zip \
   && sudo --user=ubuntu pipx ensurepath \
   && sudo --user=ubuntu pipx install conan \
   && sudo --user=ubuntu mkdir /home/ubuntu/project

@@ -1,10 +1,10 @@
-# Plane Engine
+# Plane Game Engine
 
 ## About
 
-Plane Engine or just plane is a game engine that's
-main goal is to create a constructor of top-down
-shooters.
+Plane Game Engine or just plane is a game engine
+that's main goal is to create a constructor of
+top-down shooters.
 
 High level pipeline:
 

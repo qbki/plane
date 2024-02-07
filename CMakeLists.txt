@@ -1,13 +1,8 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.27)
 include(${CMAKE_SOURCE_DIR}/configs/cmake/utils.cmake)
+include(${CMAKE_SOURCE_DIR}/configs/cmake/license.cmake)
 
-set(APP_VERSION 0.1.1)
-if(DEFINED EMSCRIPTEN)
-  project(index VERSION ${APP_VERSION})
-  set(CMAKE_EXECUTABLE_SUFFIX ".html")
-else()
-  project(plane VERSION ${APP_VERSION})
-endif()
+project(plane VERSION 0.1.1)
 
 function(setup_link_libraries target_name)
   target_link_libraries(${target_name} EnTT::EnTT)
@@ -24,6 +19,34 @@ function(setup_link_libraries target_name)
   endif()
 endfunction()
 
+function(generate_licenses_file)
+  set(licenses "")
+  string(APPEND licenses
+    "This file was generated semiautomatically and it\n"
+    "might contain errors or lack information. Please\n"
+    "check the official sites of these libraries to get\n"
+    "current legal information.\n\n"
+    "This software is distributed with further described\n"
+    "libraries but is not limited. If your library\n"
+    "or/and license is missing in the file, please\n"
+    "address it to the maintainers of Plane Game Engine.\n\n")
+  append_license(licenses "EnTT" "EnTT" "entt")
+  append_license(licenses "Microsoft.GSL" "Microsoft.GSL" "ms-gsl")
+  append_license(licenses "glm" "glm" "glm")
+  append_license(licenses "nlohmann/json" "nlohmann_json" "nlohmann_json")
+  append_license(licenses "TinyGLTF" "TinyGLTF" "tinygltf")
+  if(DEFINED EMSCRIPTEN)
+    # Emscripten is a tool dependency and it doesn't have
+    # generated constants like other dependencies.
+    append_license_title(licenses "Emscripten" ${EMSCRIPTEN_VERSION})
+    append_license_file(licenses "${EMSCRIPTEN_ROOT_PATH}/../../..")
+  else()
+    append_license(licenses "SDL2" "SDL2" "sdl")
+    append_license(licenses "GLEW" "glew" "glew")
+  endif()
+  file(WRITE ${THIRD_PARTY_LICENSES_FILE} ${licenses})
+endfunction()
+
 set(JSON_ImplicitConversions, OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
@@ -31,6 +54,8 @@ set(SRC_SHADERS_DIRECTORY ${CMAKE_SOURCE_DIR}/shaders)
 set(SRC_ASSETS_DIRECTORY ${CMAKE_SOURCE_DIR}/assets)
 set(SHADERS_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders)
 set(ASSETS_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets)
+set(THIRD_PARTY_LICENSES_FILE
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/THIRD_PARTY_LICENSES)
 
 option(BUILD_TESTS "Turn this ON to compile tests" OFF)
 option(BUILD_EXECUTABLE "Turn this ON to compile an executable file" OFF)
@@ -75,14 +100,20 @@ list(FILTER TEST_SOURCES INCLUDE REGEX ".tests.cpp$")
 if(BUILD_EXECUTABLE)
   add_executable(${PROJECT_NAME} ${SOURCES})
   setup_link_libraries(${PROJECT_NAME})
-  if(NOT DEFINED EMSCRIPTEN)
+  if(DEFINED EMSCRIPTEN)
+    set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "index")
+    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
+  else()
     add_custom_command(
       TARGET ${PROJECT_NAME} PRE_LINK
-      COMMAND ${CMAKE_COMMAND} -E create_symlink ${SRC_SHADERS_DIRECTORY} ${SHADERS_DIRECTORY})
+      COMMAND ${CMAKE_COMMAND} -E
+      create_symlink ${SRC_SHADERS_DIRECTORY} ${SHADERS_DIRECTORY})
   endif()
   add_custom_command(
     TARGET ${PROJECT_NAME} PRE_LINK
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${SRC_ASSETS_DIRECTORY} ${ASSETS_DIRECTORY})
+    COMMAND ${CMAKE_COMMAND} -E
+    create_symlink ${SRC_ASSETS_DIRECTORY} ${ASSETS_DIRECTORY})
+  generate_licenses_file()
 endif()
 
 if(BUILD_TESTS)
@@ -97,7 +128,7 @@ if(BUILD_TESTS)
     set_target_properties(
       ${target_name}
       PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests)
-    if (DEFINED EMSCRIPTEN)
+    if(DEFINED EMSCRIPTEN)
       add_test(NAME ${src_relative_path} COMMAND node "tests/${target_name}.js")
     else()
       add_test(NAME ${src_relative_path} COMMAND tests/${target_name})
@@ -106,3 +137,18 @@ if(BUILD_TESTS)
     target_link_libraries(${target_name} Catch2::Catch2WithMain)
   endforeach()
 endif()
+
+install(FILES ${CMAKE_SOURCE_DIR}/LICENSE DESTINATION .)
+install(FILES ${THIRD_PARTY_LICENSES_FILE} DESTINATION .)
+if(DEFINED EMSCRIPTEN)
+  install(FILES
+          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.data
+          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.js
+          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.wasm
+          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html
+          DESTINATION .)
+else()
+  install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
+  install(DIRECTORY ${SRC_SHADERS_DIRECTORY} DESTINATION .)
+endif()
+include(${CMAKE_SOURCE_DIR}/configs/cmake/pack.cmake)

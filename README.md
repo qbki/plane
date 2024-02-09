@@ -24,6 +24,7 @@ Sources of inspiration are games like
 "Crimsonland", "Alien Shooter", "Earth Defence
 Force".
 
+
 ## From the author
 
 It's my first attempt to create a game engine, so
@@ -41,6 +42,7 @@ these constraints:
 * No multiplayer;
 * No touch devices support;
 
+
 ## Requirements
 
 | Name | Required | Comment |
@@ -50,6 +52,14 @@ these constraints:
 | make | yes | |
 | gcc | yes | if you want to compile a Linux build |
 | docker | no | if you want to try this project and keep your system clean, it could be the only dependency |
+
+
+## Examples
+
+Examples were moved into [a sepatare repository](https://github.com/qbki/plane-assets).
+The main idea behind this decision is that you
+fork this project and populate it with your assets
+and code.
 
 
 ## Linux build

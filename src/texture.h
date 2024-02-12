@@ -23,5 +23,5 @@ public:
   void use(unsigned int idx) const;
 
   [[nodiscard]] GLuint id() const;
-  void id(unsigned int type_id);
+  void id(unsigned int id);
 };

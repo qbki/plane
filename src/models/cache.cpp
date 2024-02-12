@@ -24,7 +24,6 @@ exctract_material_color(tinygltf::Model& model)
 Cache::TexturesPtr
 generate_texture(tinygltf::Model& model)
 {
-  // Gamma will be calculated in shader
   auto color = exctract_material_color(model);
   auto to_integer_value = [&](float value) {
     const float max_color_value{ 255.0 };
@@ -42,7 +41,7 @@ generate_texture(tinygltf::Model& model)
 }
 
 Cache::TexturesPtr
-extract_textures(tinygltf::Model& model)
+extract_textures(const tinygltf::Model& model)
 {
   auto textures =
     std::make_shared<std::unordered_map<TextureType::Type, Texture>>();

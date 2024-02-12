@@ -33,8 +33,8 @@ int_to_texture_index(unsigned int idx)
 /**
  * @param data Expects 4 bytes per pixel (RGBA) and a rectangular texture
  */
-Texture::Texture(unsigned int type, const std::vector<unsigned char>& data)
-  : _id(type)
+Texture::Texture(unsigned int id, const std::vector<unsigned char>& data)
+  : _id(id)
 {
   auto size = static_cast<int>(std::sqrt(data.size() / 4));
   glGenTextures(1, &_texture_object);

@@ -2,14 +2,18 @@
 #include <GL/glew.h>
 #include <glm/matrix.hpp>
 #include <string>
+#include <unordered_map>
 
 class Shader
 {
 private:
   GLuint _program = 0;
+  std::unordered_map<std::string, GLint> _cached_locations;
+
   GLuint compile_shader(std::string& text, unsigned int shader_type);
   void create_program();
   void link();
+  GLint get_location(const std::string& location_name);
 
 public:
   Shader() = default;

@@ -60,8 +60,6 @@ set(THIRD_PARTY_LICENSES_FILE
 option(BUILD_TESTS "Turn this ON to compile tests" OFF)
 option(BUILD_EXECUTABLE "Turn this ON to compile an executable file" OFF)
 
-include_directories(${CMAKE_SOURCE_DIR})
-
 find_package(Catch2 3 REQUIRED)
 find_package(EnTT REQUIRED)
 find_package(GLM REQUIRED)
@@ -72,6 +70,9 @@ if(NOT DEFINED EMSCRIPTEN)
   find_package(GLEW REQUIRED)
   find_package(SDL2 REQUIRED)
 endif()
+
+include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${catch2_INCLUDE_DIRS_RELEASE})
 
 add_flag("-Wall")
 add_flag("-Wextra")
@@ -138,17 +139,19 @@ if(BUILD_TESTS)
   endforeach()
 endif()
 
-install(FILES ${CMAKE_SOURCE_DIR}/LICENSE DESTINATION .)
-install(FILES ${THIRD_PARTY_LICENSES_FILE} DESTINATION .)
-if(DEFINED EMSCRIPTEN)
-  install(FILES
-          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.data
-          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.js
-          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.wasm
-          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html
-          DESTINATION .)
-else()
-  install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
-  install(DIRECTORY ${SRC_SHADERS_DIRECTORY} DESTINATION .)
+if(BUILD_EXECUTABLE)
+  install(FILES ${CMAKE_SOURCE_DIR}/LICENSE DESTINATION .)
+  install(FILES ${THIRD_PARTY_LICENSES_FILE} DESTINATION .)
+  if(DEFINED EMSCRIPTEN)
+    install(FILES
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.data
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.js
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.wasm
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html
+            DESTINATION .)
+  else()
+    install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
+    install(DIRECTORY ${SRC_SHADERS_DIRECTORY} DESTINATION .)
+  endif()
+  include(${CMAKE_SOURCE_DIR}/configs/cmake/pack.cmake)
 endif()
-include(${CMAKE_SOURCE_DIR}/configs/cmake/pack.cmake)

@@ -1,4 +1,5 @@
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers)
+// NOLINTBEGIN(cppcoreguidelines-avoid-do-while)
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
@@ -39,4 +40,5 @@ TEST_CASE("should increase over time")
   REQUIRE_THAT(damp(from, HALF_SMOOTH, 1), WithinRel(-5.0));
   REQUIRE_THAT(damp(from, HALF_SMOOTH, 2), WithinRel(-2.5));
 }
+// NOLINTEND(cppcoreguidelines-avoid-do-while)
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers)

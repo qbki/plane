@@ -74,6 +74,17 @@ Shader::link()
   throw_on_program_error(_program, GL_LINK_STATUS);
 }
 
+GLint
+Shader::get_location(const std::string& location_name)
+{
+  if (_cached_locations.contains(location_name)) {
+    return _cached_locations[location_name];
+  }
+  auto location = glGetUniformLocation(_program, location_name.c_str());
+  _cached_locations[location_name] = location;
+  return location;
+}
+
 void
 Shader::use()
 {
@@ -94,48 +105,41 @@ Shader::compile(std::string& vertext, std::string& fragment)
 void
 Shader::uniform(const std::string& name, const int value)
 {
-  auto location = glGetUniformLocation(_program, name.c_str());
-  glUniform1i(location, value);
+  glUniform1i(get_location(name), value);
 }
 
 void
 Shader::uniform(const std::string& name, const float value)
 {
-  auto location = glGetUniformLocation(_program, name.c_str());
-  glUniform1f(location, value);
+  glUniform1f(get_location(name), value);
 }
 
 void
 Shader::uniform(const std::string& name, const glm::mat3& value)
 {
-  auto location = glGetUniformLocation(_program, name.c_str());
-  glUniformMatrix3fv(location, 1, GL_FALSE, &value[0][0]);
+  glUniformMatrix3fv(get_location(name), 1, GL_FALSE, &value[0][0]);
 }
 
 void
 Shader::uniform(const std::string& name, const glm::mat4& value)
 {
-  auto location = glGetUniformLocation(_program, name.c_str());
-  glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
+  glUniformMatrix4fv(get_location(name), 1, GL_FALSE, &value[0][0]);
 }
 
 void
 Shader::uniform(const std::string& name, const glm::vec2& value)
 {
-  auto location = glGetUniformLocation(_program, name.c_str());
-  glUniform2f(location, value.x, value.y);
+  glUniform2f(get_location(name), value.x, value.y);
 }
 
 void
 Shader::uniform(const std::string& name, const glm::vec3& value)
 {
-  auto location = glGetUniformLocation(_program, name.c_str());
-  glUniform3f(location, value.x, value.y, value.z);
+  glUniform3f(get_location(name), value.x, value.y, value.z);
 }
 
 void
 Shader::uniform(const std::string& name, const glm::vec4& value)
 {
-  auto location = glGetUniformLocation(_program, name.c_str());
-  glUniform4f(location, value.x, value.y, value.z, value.w);
+  glUniform4f(get_location(name), value.x, value.y, value.z, value.w);
 }

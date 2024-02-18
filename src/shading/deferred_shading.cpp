@@ -1,3 +1,5 @@
+#include "src/game_state/texture_type.h"
+
 #include "deferred_shading.h"
 
 DeferredShading::DeferredShading(std::unique_ptr<Shader> geometry_pass,
@@ -45,7 +47,11 @@ DeferredShading::light_path()
 void
 DeferredShading::draw_quad()
 {
-  _quad->draw();
+  Mesh::DrawParams draw_params{
+    .transforms{ glm::mat4(1) },
+    .texture_indices{ TextureType::Type::MAIN },
+  };
+  _quad->draw(draw_params);
 }
 
 GBuffer&

@@ -13,10 +13,11 @@ ModelFactory::ModelFactory()
 
 entt::entity
 ModelFactory::make_player(entt::registry& registry,
-                          const std::string& file_path)
+                          const std::string& file_path,
+                          size_t instance_quantity_hint)
 {
   auto entity = registry.create();
-  auto [mesh, textures] = cache->load(file_path);
+  auto [mesh, textures] = cache->load(file_path, instance_quantity_hint);
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<PlayerKind>(entity);
@@ -28,9 +29,11 @@ ModelFactory::make_player(entt::registry& registry,
 }
 
 entt::entity
-ModelFactory::make_enemy(entt::registry& registry, const std::string& file_path)
+ModelFactory::make_enemy(entt::registry& registry,
+                         const std::string& file_path,
+                         size_t instance_quantity_hint)
 {
-  auto [mesh, textures] = cache->load(file_path);
+  auto [mesh, textures] = cache->load(file_path, instance_quantity_hint);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<EnemyKind>(entity);
@@ -46,9 +49,10 @@ ModelFactory::make_enemy(entt::registry& registry, const std::string& file_path)
 
 entt::entity
 ModelFactory::make_projectile(entt::registry& registry,
-                              const std::string& file_path)
+                              const std::string& file_path,
+                              size_t instance_quantity_hint)
 {
-  auto [mesh, textures] = cache->load(file_path);
+  auto [mesh, textures] = cache->load(file_path, instance_quantity_hint);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<InitialPosition>(entity, glm::zero<glm::vec3>());
@@ -66,9 +70,10 @@ ModelFactory::make_projectile(entt::registry& registry,
 
 entt::entity
 ModelFactory::make_static(entt::registry& registry,
-                          const std::string& file_path)
+                          const std::string& file_path,
+                          size_t instance_quantity_hint)
 {
-  auto [mesh, textures] = cache->load(file_path);
+  auto [mesh, textures] = cache->load(file_path, instance_quantity_hint);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
@@ -81,9 +86,10 @@ ModelFactory::make_static(entt::registry& registry,
 
 entt::entity
 ModelFactory::make_particle(entt::registry& registry,
-                            const std::string& file_path)
+                            const std::string& file_path,
+                            size_t instance_quantity_hint)
 {
-  auto [mesh, textures] = cache->load(file_path);
+  auto [mesh, textures] = cache->load(file_path, instance_quantity_hint);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<Lifetime>(entity, 0);
@@ -100,7 +106,9 @@ ModelFactory::make_particle(entt::registry& registry,
 }
 
 entt::entity
-ModelFactory::make_point_light(entt::registry& registry, const std::string&)
+ModelFactory::make_point_light(entt::registry& registry,
+                               const std::string&,
+                               size_t)
 {
   const PointLightParams point_light_params{
     .constant = 1.0,
@@ -117,7 +125,8 @@ ModelFactory::make_point_light(entt::registry& registry, const std::string&)
 
 entt::entity
 ModelFactory::make_directional_light(entt::registry& registry,
-                                     const std::string&)
+                                     const std::string&,
+                                     size_t)
 {
   auto entity = registry.create();
   registry.emplace<Direction>(entity, glm::zero<glm::vec3>());

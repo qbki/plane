@@ -6,6 +6,9 @@
 #include "extractors.h"
 #include "setups.h"
 #include "strategies.h"
+#include <cmath>
+#include <glm/ext/vector_int3.hpp>
+#include <vector>
 
 void
 single_strategy(const nlohmann::basic_json<>& json_entities,
@@ -18,7 +21,7 @@ single_strategy(const nlohmann::basic_json<>& json_entities,
   auto json_entity = json_entities.at(json_entity_id);
   auto model_path =
     json_entity.value<std::string>("model", "[path not defined]");
-  auto entity = maker_fn(registry, model_path);
+  auto entity = maker_fn(registry, model_path, 1);
   attach_color(json_entity, registry, entity);
   attach_direction(json_entity, registry, entity);
   attach_opaque(json_entity, registry, entity);
@@ -50,7 +53,7 @@ square_strategy(const nlohmann::basic_json<>& json_entities,
       auto entity_id = entity_ids.at(entity_index);
       auto json_entity = json_entities.at(entity_id);
       auto model_path = json_entity.at("model").get<std::string>();
-      auto entity = maker_fn(registry, model_path);
+      auto entity = maker_fn(registry, model_path, width * height);
       registry.replace<Position>(entity,
                                  glm::vec3(start_x + static_cast<float>(x),
                                            start_y + static_cast<float>(y),
@@ -77,25 +80,31 @@ round_strategy(const nlohmann::basic_json<>& json_entities,
   auto radius = json_strategy.at("radius").get<int>();
   auto center = extract_vec3(json_strategy.at("center"));
   auto radius_float = static_cast<float>(radius);
+
+  std::vector<glm::ivec2> coords;
   for (int x = -radius; x < radius; x++) {
     for (int y = -radius; y < radius; y++) {
       auto distance = glm::length(glm::vec2(x, y));
       if (distance < radius_float) {
-        auto entity_index = get_random_int();
-        auto entity_id = entity_ids.at(entity_index);
-        auto json_entity = json_entities.at(entity_id);
-        auto model_path = json_entity.at("model").get<std::string>();
-        auto velocity = velocity_items.at(entity_index);
-        auto entity = maker_fn(registry, model_path);
-        registry.replace<Position>(entity,
-                                   glm::vec3(center.x + static_cast<float>(x),
-                                             center.y + static_cast<float>(y),
-                                             center.z));
-        registry.replace<Velocity>(
-          entity, velocity.acceleration, velocity.damping);
-        attach_particles_emmiter_by_hit(
-          json_entities.at(json_strategy.at("hit_particle")), app, entity);
+        coords.emplace_back(x, y);
       }
     }
+  }
+
+  for (auto& coord : coords) {
+    auto entity_index = get_random_int();
+    auto entity_id = entity_ids.at(entity_index);
+    auto json_entity = json_entities.at(entity_id);
+    auto model_path = json_entity.at("model").get<std::string>();
+    auto velocity = velocity_items.at(entity_index);
+    auto entity = maker_fn(
+      registry, model_path, static_cast<size_t>(std::pow(radius + radius, 2)));
+    registry.replace<Position>(entity,
+                               glm::vec3(center.x + static_cast<float>(coord.x),
+                                         center.y + static_cast<float>(coord.y),
+                                         center.z));
+    registry.replace<Velocity>(entity, velocity.acceleration, velocity.damping);
+    attach_particles_emmiter_by_hit(
+      json_entities.at(json_strategy.at("hit_particle")), app, entity);
   }
 }

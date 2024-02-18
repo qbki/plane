@@ -16,11 +16,11 @@ private:
   std::unique_ptr<Mesh> _quad;
 
 public:
-  explicit DeferredShading(std::unique_ptr<Shader> geometry_pass,
-                           std::unique_ptr<Shader> light_pass,
-                           std::unique_ptr<Mesh> quad,
-                           unsigned int width,
-                           unsigned int height);
+  DeferredShading(std::unique_ptr<Shader> geometry_pass,
+                  std::unique_ptr<Shader> light_pass,
+                  std::unique_ptr<Mesh> quad,
+                  unsigned int width,
+                  unsigned int height);
   DeferredShading(const DeferredShading&) = delete;
   DeferredShading& operator=(const DeferredShading&) = delete;
   DeferredShading(DeferredShading&&) = delete;

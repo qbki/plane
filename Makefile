@@ -92,7 +92,10 @@ build-wasm-tests:
 
 build-debug:
 	@cd $(LINUX_DEBUG_BUILD_DIR) && \
-		cmake ../.. -DCMAKE_CXX_FLAGS="-O0 -g3" && \
+		cmake ../.. \
+			-DBUILD_TESTS=OFF \
+			-DBUILD_EXECUTABLE=ON \
+			-DCMAKE_CXX_FLAGS="-O0 -g3" && \
 		cmake --build .
 .PHONY: build-debug
 

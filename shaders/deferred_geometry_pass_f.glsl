@@ -7,12 +7,25 @@ layout (location = 2) out vec3 g_base_color;
 
 in vec3 i_position;
 in vec3 i_normal;
+flat in uint i_texture_id;
 in vec2 i_tex_coord;
 
-uniform sampler2D u_base_color_texture;
+const uint TEXTURE_TYPE_PRIMARY = 0u;
+const uint TEXTURE_TYPE_SECONDARY = 1u;
+uniform sampler2D u_primary_texture;
+uniform sampler2D u_secondary_texture;
 
 void main() {
-  vec4 color_sample = texture(u_base_color_texture, i_tex_coord);
+  vec4 color_sample;
+
+  switch (i_texture_id) {
+    case TEXTURE_TYPE_PRIMARY:
+      color_sample = texture(u_primary_texture, i_tex_coord);
+      break;
+    case TEXTURE_TYPE_SECONDARY:
+      color_sample = texture(u_secondary_texture, i_tex_coord);
+      break;
+  }
 
   if (color_sample.a < 0.1) {
     discard;

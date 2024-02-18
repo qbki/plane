@@ -29,12 +29,12 @@ glubyte_to_string(const GLubyte* value)
  * Thanks to the documentation: https://www.khronos.org/opengl/wiki/OpenGL_Error
  */
 void
-print_opengl_errors()
+print_opengl_errors(const std::string& place)
 {
   GLenum error = 0;
   while ((error = glGetError()) != GL_NO_ERROR) {
     std::stringstream ss;
-    ss << "Error: ";
+    ss << place << ": ";
     switch (error) {
       case GL_INVALID_ENUM: {
         ss << "An enumeration parameter is not legal (GL_INVALID_ENUM)";

@@ -2,10 +2,10 @@
 #include <string>
 
 namespace TextureType {
-enum class Type : unsigned int
+enum class Type : unsigned char
 {
   MAIN = 0,
-  DESTROYED,
+  DESTROYED = 1,
 };
 
 inline const Type DEFAULT_TYPE = Type::MAIN;

@@ -18,7 +18,7 @@ public:
   using MeshPtr = std::shared_ptr<Mesh>;
   using MaterialPtr = std::shared_ptr<Material>;
   using TexturesPtr =
-    std::shared_ptr<const std::unordered_map<TextureType::Type, Texture>>;
+    std::shared_ptr<std::unordered_map<TextureType::Type, Texture>>;
 
 private:
   std::unordered_map<std::string, std::tuple<MeshPtr, MaterialPtr, TexturesPtr>>
@@ -27,5 +27,6 @@ private:
 public:
   Cache();
 
-  std::tuple<MeshPtr, TexturesPtr> load(const std::string& mesh_file_name);
+  std::tuple<MeshPtr, TexturesPtr> load(const std::string& mesh_file_name,
+                                        size_t instance_quantity_hint = 1);
 };

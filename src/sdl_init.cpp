@@ -19,6 +19,18 @@ throw_sdl_error(std::string message)
   throw new std::runtime_error(std::format("{}: {}", message, SDL_GetError()));
 }
 
+void GLAPIENTRY
+MessageCallback(GLenum /*source*/,
+                GLenum /*type*/,
+                GLuint /*id*/,
+                GLenum /*severity*/,
+                GLsizei /*length*/,
+                const GLchar* message,
+                const void* /*userParam*/)
+{
+  logger().error(std::format("OpenGL: {}", message));
+}
+
 WindowPtr
 init_window(int screen_width, int screen_height)
 {
@@ -28,8 +40,13 @@ init_window(int screen_width, int screen_height)
   logger().info("SDL has been initialized.");
 
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+#ifdef __EMSCRIPTEN__
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#else
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+#endif
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
   auto window = SDL_CreateWindow("Plane",
@@ -74,6 +91,11 @@ init_context(SDL_Window* window)
   glCullFace(GL_BACK);
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+#ifndef __EMSCRIPTEN__
+  // glEnable(GL_DEBUG_OUTPUT);
+  glDebugMessageCallback(MessageCallback, nullptr);
+#endif
 
   return { ctx, [](auto c) { SDL_GL_DeleteContext(c); } };
 }

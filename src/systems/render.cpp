@@ -1,4 +1,8 @@
+#include <glm/ext/matrix_float4x4.hpp>
+#include <memory>
 #include <sstream>
+#include <unordered_map>
+#include <vector>
 
 #include "src/components/common.h"
 #include "src/components/textures.h"
@@ -10,6 +14,45 @@
 static const Material COMMON_MATERIAL(glm::vec3(0.01, 0.01, 0.01),
                                       glm::vec3(1.0, 1.0, 1.0),
                                       22);
+
+struct TransformHolder
+{
+  Mesh* mesh = nullptr;
+  const Textures* textures = nullptr;
+  Mesh::DrawParams draw_params;
+};
+
+void
+draw(std::unordered_map<Mesh*, TransformHolder>& transform_holders)
+{
+  for (auto& [_, holder] : transform_holders) {
+    holder.textures->use();
+    holder.mesh->draw(holder.draw_params);
+  }
+}
+
+void
+update_transform_mapping(
+  std::unordered_map<Mesh*, TransformHolder>& transform_mapping,
+  Mesh* mesh_pointer,
+  const Textures* textures_pointer,
+  glm::mat4& transform)
+{
+  if (transform_mapping.contains(mesh_pointer)) {
+    auto& holder = transform_mapping[mesh_pointer];
+    holder.draw_params.transforms.push_back(transform);
+    holder.draw_params.texture_indices.push_back(
+      textures_pointer->texture_type());
+  } else {
+    transform_mapping[mesh_pointer] = { .mesh = mesh_pointer,
+                                        .textures = textures_pointer,
+                                        .draw_params{
+                                          .transforms{ transform },
+                                          .texture_indices{
+                                            textures_pointer->texture_type() },
+                                        } };
+  }
+}
 
 void
 render_system(App::Meta& meta)
@@ -26,6 +69,8 @@ render_system(App::Meta& meta)
   geometry_pass_shader.uniform("u_PV", camera.pv());
   geometry_pass_shader.uniform("u_elapsed_seconds", meta.time);
 
+  std::unordered_map<Mesh*, TransformHolder> transform_mapping;
+
   registry
     .view<const Position,
           const Rotation,
@@ -33,21 +78,18 @@ render_system(App::Meta& meta)
           const Textures,
           const Opaque,
           const Available>()
-    .each([&geometry_pass_shader](const Position& position,
-                                  const Rotation& rotation,
-                                  const MeshPointer& mesh,
-                                  const Textures& textures) {
-      auto rotation_matrix =
-        glm::rotate(glm::mat4(1.0), rotation.value.z, { 0.0, 0.0, 1.0 });
-      auto transform_matrix = glm::translate(glm::mat4(1.0), position.value);
-      auto transform = transform_matrix * rotation_matrix;
-      geometry_pass_shader.uniform("u_M", transform);
-      geometry_pass_shader.uniform(
-        "u_normal_matrix", glm::transpose(glm::inverse(glm::mat3(transform))));
-      textures.texture().use(0);
-      geometry_pass_shader.uniform("main_texture", 0);
-      mesh->draw();
+    .each([&transform_mapping](const Position& position,
+                               const Rotation& rotation,
+                               const MeshPointer& mesh,
+                               const Textures& textures) {
+      auto transform = make_transform_matrix(position.value, rotation.value);
+      update_transform_mapping(
+        transform_mapping, mesh.get(), &textures, transform);
     });
+  geometry_pass_shader.uniform("u_primary_texture", 0);
+  geometry_pass_shader.uniform("u_secondary_texture", 1);
+  draw(transform_mapping);
+  transform_mapping.clear();
 
   auto [_sun_id, sun_color, sun_direction] =
     *registry.view<Color, Direction, DirectionalLightKind>().each().begin();
@@ -117,16 +159,14 @@ render_system(App::Meta& meta)
           const Textures,
           const Available,
           const ParticleKind>(entt::exclude<Opaque>)
-    .each([&particle_shader](const Position& position,
-                             const Rotation& rotation,
-                             const MeshPointer& mesh,
-                             const Textures& textures) {
+    .each([&transform_mapping](const Position& position,
+                               const Rotation& rotation,
+                               const MeshPointer& mesh,
+                               const Textures& textures) {
       auto transform = make_transform_matrix(position.value, rotation.value);
-      particle_shader.uniform("u_M", transform);
-      particle_shader.uniform(
-        "u_normal_matrix", glm::transpose(glm::inverse(glm::mat3(transform))));
-      textures.texture().use(0);
-      particle_shader.uniform("u_main_texture", 0);
-      mesh->draw();
+      update_transform_mapping(
+        transform_mapping, mesh.get(), &textures, transform);
     });
+  particle_shader.uniform("u_main_texture", 0);
+  draw(transform_mapping);
 }

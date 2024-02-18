@@ -16,23 +16,11 @@ const std::array<GLuint, 3> GBuffer::COLOR_ATTACHMENTS = {
 void
 gen_color_attachment(GLuint& texture_handle,
                      GLint internal_color_format,
-                     unsigned int attachment_index,
+                     GLint color_attachment,
                      unsigned int width,
                      unsigned int height,
                      GLuint date_type)
 {
-  auto attachment = GL_COLOR_ATTACHMENT0;
-  switch (attachment_index) {
-    case 1: {
-      attachment = GL_COLOR_ATTACHMENT1;
-      break;
-    }
-    case 2: {
-      attachment = GL_COLOR_ATTACHMENT2;
-      break;
-    }
-  }
-
   glGenTextures(1, &texture_handle);
   glBindTexture(GL_TEXTURE_2D, texture_handle);
   glTexImage2D(GL_TEXTURE_2D,
@@ -49,7 +37,7 @@ gen_color_attachment(GLuint& texture_handle,
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glFramebufferTexture2D(
-    GL_DRAW_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture_handle, 0);
+    GL_DRAW_FRAMEBUFFER, color_attachment, GL_TEXTURE_2D, texture_handle, 0);
 }
 
 GBuffer::GBuffer()
@@ -82,18 +70,30 @@ GBuffer::update(unsigned int width, unsigned int height)
   glDeleteRenderbuffers(1, &_render_buffer);
 
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _g_frame_buffer);
-  gen_color_attachment(
-    _position_texture, GL_RGBA32F, 0, _width, _height, GL_FLOAT);
-  gen_color_attachment(
-    _normal_texture, GL_RGBA32F, 1, _width, _height, GL_FLOAT);
-  gen_color_attachment(
-    _base_color_texture, GL_RGBA8, 2, _width, _height, GL_UNSIGNED_BYTE);
+  gen_color_attachment(_position_texture,
+                       GL_RGBA32F,
+                       GL_COLOR_ATTACHMENT0,
+                       _width,
+                       _height,
+                       GL_FLOAT);
+  gen_color_attachment(_normal_texture,
+                       GL_RGBA32F,
+                       GL_COLOR_ATTACHMENT1,
+                       _width,
+                       _height,
+                       GL_FLOAT);
+  gen_color_attachment(_base_color_texture,
+                       GL_RGBA8,
+                       GL_COLOR_ATTACHMENT2,
+                       _width,
+                       _height,
+                       GL_UNSIGNED_BYTE);
   glDrawBuffers(3, GBuffer::COLOR_ATTACHMENTS.data());
 
   glGenRenderbuffers(1, &_render_buffer);
   glBindRenderbuffer(GL_RENDERBUFFER, _render_buffer);
   glRenderbufferStorage(GL_RENDERBUFFER,
-                        GL_DEPTH_COMPONENT32F,
+                        GL_DEPTH24_STENCIL8,
                         static_cast<GLsizei>(_width),
                         static_cast<GLsizei>(_height));
   glFramebufferRenderbuffer(

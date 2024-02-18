@@ -26,7 +26,7 @@ std::string
 glubyte_to_string(const GLubyte* value);
 
 void
-print_opengl_errors();
+print_opengl_errors(const std::string& place);
 
 void
 print_opengl_info();

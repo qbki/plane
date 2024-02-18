@@ -99,8 +99,7 @@ main()
 
   game_loop(app);
 
-#ifdef __EMSCRIPTEN__
-#else
+#ifndef __EMSCRIPTEN__
   delete app;
 #endif
 }

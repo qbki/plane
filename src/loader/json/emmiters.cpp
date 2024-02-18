@@ -48,7 +48,8 @@ emit_particles(App& app,
   }
 
   for (; idx < (params.quantity - 1); idx += 1) {
-    auto entity = app.game_state->factory().make_particle(registry, file_path);
+    auto entity =
+      app.game_state->factory().make_particle(registry, file_path, 1);
     auto rotation = glm::vec3(0.0, 0.0, static_cast<float>(idx) * step);
     registry.replace<Lifetime>(entity, params.lifetime);
     registry.replace<LifetimeMax>(entity, params.lifetime);
@@ -78,7 +79,7 @@ emit_projectile(App& app,
   auto move_direction = calc_z_direction(rotation);
   if (projectile_id == entt::null) {
     auto entity =
-      app.game_state->factory().make_projectile(registry, file_path);
+      app.game_state->factory().make_projectile(registry, file_path, 1);
     registry.replace<Position>(entity, player_position.value);
     registry.replace<Rotation>(entity, rotation);
     registry.replace<InitialPosition>(entity, player_position.value);

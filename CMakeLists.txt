@@ -114,7 +114,9 @@ if(BUILD_EXECUTABLE)
     TARGET ${PROJECT_NAME} PRE_LINK
     COMMAND ${CMAKE_COMMAND} -E
     create_symlink ${SRC_ASSETS_DIRECTORY} ${ASSETS_DIRECTORY})
-  generate_licenses_file()
+  if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+    generate_licenses_file()
+  endif()
 endif()
 
 if(BUILD_TESTS)

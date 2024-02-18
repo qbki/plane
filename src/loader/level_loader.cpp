@@ -40,18 +40,20 @@ get_entity_maker(App& app,
   auto& factory = app.game_state->factory();
   return map_maker(
     strategy_behaviour,
-    { { "player", [&](auto&... args) { return factory.make_player(args...); } },
-      { "static", [&](auto&... args) { return factory.make_static(args...); } },
-      { "enemy", [&](auto&... args) { return factory.make_enemy(args...); } },
-      { "light", [&](auto&... args) {
+    { { "player",
+        [&](auto&&... args) { return factory.make_player(args...); } },
+      { "static",
+        [&](auto&&... args) { return factory.make_static(args...); } },
+      { "enemy", [&](auto&&... args) { return factory.make_enemy(args...); } },
+      { "light", [&](auto&&... args) {
          auto entity_kind = extract_kind(strategy_node, entities_node);
          auto make =
            map_maker(entity_kind,
                      { { "directional_light",
-                         [&](auto&... args) {
+                         [&](auto&&... args) {
                            return factory.make_directional_light(args...);
                          } },
-                       { "point_light", [&](auto&... args) {
+                       { "point_light", [&](auto&&... args) {
                           return factory.make_point_light(args...);
                         } } });
          return make(args...);

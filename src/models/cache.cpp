@@ -22,7 +22,7 @@ exctract_material_color(tinygltf::Model& model)
 }
 
 Cache::TexturesPtr
-generate_texture(tinygltf::Model& model)
+generate_textures(tinygltf::Model& model)
 {
   auto color = exctract_material_color(model);
   auto to_integer_value = [&](float value) {
@@ -33,10 +33,14 @@ generate_texture(tinygltf::Model& model)
                                    to_integer_value(color.y),
                                    to_integer_value(color.z),
                                    to_integer_value(1.0) };
-  auto texture_id = TextureType::map_to_id(TextureType::DEFAULT_TYPE);
+  auto texture_main_id = TextureType::map_to_id(TextureType::Type::MAIN);
+  auto texture_destroyed_id =
+    TextureType::map_to_id(TextureType::Type::DESTROYED);
   auto textures =
     std::make_shared<std::unordered_map<TextureType::Type, Texture>>();
-  textures->emplace(TextureType::DEFAULT_TYPE, Texture{ texture_id, data });
+  textures->emplace(TextureType::Type::MAIN, Texture{ texture_main_id, data });
+  textures->emplace(TextureType::Type::DESTROYED,
+                    Texture{ texture_destroyed_id, data });
   return textures;
 }
 
@@ -61,7 +65,7 @@ Cache::Cache()
 }
 
 std::tuple<Cache::MeshPtr, Cache::TexturesPtr>
-Cache::load(const std::string& mesh_file_name)
+Cache::load(const std::string& mesh_file_name, size_t instance_quantity_hint)
 {
   auto has_mesh = has_key(this->_meshes, mesh_file_name);
 
@@ -76,12 +80,14 @@ Cache::load(const std::string& mesh_file_name)
   } else {
     auto gltf_model = load_gltf_model(mesh_file_name);
     auto color = decode_gamma(exctract_material_color(gltf_model), GAMMA);
-
-    mesh = std::make_shared<Mesh>(gltf_model);
-    material = std::make_shared<Material>(color);
     auto extracted_textures = extract_textures(gltf_model);
-    textures = extracted_textures->size() > 0 ? extracted_textures
-                                              : generate_texture(gltf_model);
+
+    mesh = std::make_shared<Mesh>(gltf_model, instance_quantity_hint);
+    material = std::make_shared<Material>(color);
+    textures = generate_textures(gltf_model);
+    for (auto& [idx, texture] : *extracted_textures) {
+      textures->at(idx) = std::move(texture);
+    }
     this->_meshes[mesh_file_name] = std::make_tuple(mesh, material, textures);
   }
 

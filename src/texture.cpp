@@ -1,12 +1,10 @@
 #include <GL/glew.h>
-#include <GL/glext.h>
 #include <cmath>
 #include <stdexcept>
 #include <utility>
 
 #include "texture.h"
 
-const unsigned int Texture::DEFAULT_TEXTURE_TYPE = 0;
 const GLuint Texture::DEFAULT_TEXTURE_OBJECT = 0;
 
 GLuint
@@ -33,8 +31,7 @@ int_to_texture_index(unsigned int idx)
 /**
  * @param data Expects 4 bytes per pixel (RGBA) and a rectangular texture
  */
-Texture::Texture(unsigned int id, const std::vector<unsigned char>& data)
-  : _id(id)
+Texture::Texture(const std::vector<unsigned char>& data)
 {
   auto size = static_cast<int>(std::sqrt(data.size() / 4));
   glGenTextures(1, &_texture_object);
@@ -55,8 +52,7 @@ Texture::Texture(unsigned int id, const std::vector<unsigned char>& data)
 }
 
 Texture::Texture(Texture&& other) noexcept
-  : _id(std::exchange(other._id, DEFAULT_TEXTURE_TYPE))
-  , _texture_object(
+  : _texture_object(
       std::exchange(other._texture_object, DEFAULT_TEXTURE_OBJECT))
 {
 }
@@ -67,7 +63,6 @@ Texture::operator=(Texture&& other) noexcept
   if (this == &other) {
     return *this;
   }
-  _id = std::exchange(other._id, DEFAULT_TEXTURE_TYPE);
   _texture_object =
     std::exchange(other._texture_object, DEFAULT_TEXTURE_OBJECT);
   return *this;
@@ -85,16 +80,4 @@ Texture::use(unsigned int idx) const
 {
   glActiveTexture(int_to_texture_index(idx));
   glBindTexture(GL_TEXTURE_2D, _texture_object);
-}
-
-GLuint
-Texture::id() const
-{
-  return _id;
-}
-
-void
-Texture::id(unsigned int id)
-{
-  _id = id;
 }

@@ -15,9 +15,9 @@ attach_opaque(const nlohmann::basic_json<>& node,
               entt::entity entity);
 
 void
-attach_position(const nlohmann::basic_json<>& node,
-                entt::registry& registry,
-                entt::entity entity);
+attach_transform(const nlohmann::basic_json<>& node,
+                 entt::registry& registry,
+                 entt::entity entity);
 
 void
 attach_direction(const nlohmann::basic_json<>& node,

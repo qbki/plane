@@ -1,4 +1,5 @@
 #include "src/components/common.h"
+#include "src/components/transform.h"
 #include "src/components/velocity.h"
 
 #include "attachers.h"
@@ -14,7 +15,8 @@ attach_velocity(const nlohmann::basic_json<>& node,
     return;
   }
   auto velocity = extract_velocity(node);
-  registry.replace<Velocity>(entity, velocity.acceleration, velocity.damping);
+  registry.emplace_or_replace<Velocity>(
+    entity, velocity.acceleration, velocity.damping);
 }
 
 void
@@ -27,20 +29,30 @@ attach_opaque(const nlohmann::basic_json<>& node,
   }
   auto is_opaque = node.at("is_opaque").get<bool>();
   if (is_opaque) {
-    registry.emplace<Opaque>(entity);
+    registry.emplace_or_replace<Opaque>(entity);
   }
 }
 
 void
-attach_position(const nlohmann::basic_json<>& node,
-                entt::registry& registry,
-                entt::entity entity)
+attach_transform(const nlohmann::basic_json<>& node,
+                 entt::registry& registry,
+                 entt::entity entity)
 {
-  if (!node.contains("position")) {
-    return;
+  Transform transform;
+  bool is_set = false;
+  if (node.contains("position")) {
+    auto position = extract_vec3(node.at("position"));
+    transform.translate(position);
+    is_set = true;
   }
-  auto position = extract_vec3(node.at("position"));
-  registry.replace<Position>(entity, position);
+  if (node.contains("rotation")) {
+    auto rotation = extract_vec3(node.at("rotation"));
+    transform.rotate(rotation);
+    is_set = true;
+  }
+  if (is_set) {
+    registry.emplace_or_replace<Transform>(entity, transform);
+  }
 }
 
 void
@@ -52,7 +64,7 @@ attach_direction(const nlohmann::basic_json<>& node,
     return;
   }
   auto direction = extract_vec3(node.at("direction"));
-  registry.replace<Direction>(entity, direction);
+  registry.emplace_or_replace<Direction>(entity, direction);
 }
 
 void
@@ -64,7 +76,7 @@ attach_color(const nlohmann::basic_json<>& node,
     return;
   }
   auto color = extract_vec3(node.at("color"));
-  registry.replace<Color>(entity, color);
+  registry.emplace_or_replace<Color>(entity, color);
 }
 
 void
@@ -83,7 +95,7 @@ attach_particles_emmiter_by_hit(const nlohmann::basic_json<>& particle_node,
                               glm::vec3 position) {
     emit_particles(app, position, particle_params, file_path);
   } };
-  registry.emplace<ParticlesEmitter>(host_entity, emitter);
+  registry.emplace_or_replace<ParticlesEmitter>(host_entity, emitter);
 }
 
 void
@@ -107,5 +119,5 @@ attach_projectile_emmiter(const nlohmann::basic_json<>& json_entities,
   ProjectileEmitter emitter{ [projectile_params, file_path, &app]() {
     emit_projectile(app, projectile_params, file_path);
   } };
-  registry.emplace<ProjectileEmitter>(host_entity, emitter);
+  registry.emplace_or_replace<ProjectileEmitter>(host_entity, emitter);
 }

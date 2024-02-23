@@ -1,4 +1,7 @@
-#include "src/components/common.h"
+#include <glm/ext/vector_int3.hpp>
+#include <vector>
+
+#include "src/components/transform.h"
 #include "src/components/velocity.h"
 #include "src/utils/random.h"
 
@@ -6,9 +9,6 @@
 #include "extractors.h"
 #include "setups.h"
 #include "strategies.h"
-#include <cmath>
-#include <glm/ext/vector_int3.hpp>
-#include <vector>
 
 void
 single_strategy(const nlohmann::basic_json<>& json_entities,
@@ -25,7 +25,7 @@ single_strategy(const nlohmann::basic_json<>& json_entities,
   attach_color(json_entity, registry, entity);
   attach_direction(json_entity, registry, entity);
   attach_opaque(json_entity, registry, entity);
-  attach_position(json_strategy, registry, entity);
+  attach_transform(json_strategy, registry, entity);
   attach_projectile_emmiter(json_entities, json_entity, app, entity);
   attach_velocity(json_entity, registry, entity);
   setup_player(json_strategy, app, entity);
@@ -54,10 +54,11 @@ square_strategy(const nlohmann::basic_json<>& json_entities,
       auto json_entity = json_entities.at(entity_id);
       auto model_path = json_entity.at("model").get<std::string>();
       auto entity = maker_fn(registry, model_path, width * height);
-      registry.replace<Position>(entity,
-                                 glm::vec3(start_x + static_cast<float>(x),
-                                           start_y + static_cast<float>(y),
-                                           center.z));
+      Transform transform;
+      transform.translate(glm::vec3(start_x + static_cast<float>(x),
+                                    start_y + static_cast<float>(y),
+                                    center.z));
+      registry.replace<Transform>(entity, transform);
     }
   }
 }
@@ -99,10 +100,11 @@ round_strategy(const nlohmann::basic_json<>& json_entities,
     auto velocity = velocity_items.at(entity_index);
     auto entity = maker_fn(
       registry, model_path, static_cast<size_t>(std::pow(radius + radius, 2)));
-    registry.replace<Position>(entity,
-                               glm::vec3(center.x + static_cast<float>(coord.x),
-                                         center.y + static_cast<float>(coord.y),
-                                         center.z));
+    Transform transform;
+    transform.translate(glm::vec3(center.x + static_cast<float>(coord.x),
+                                  center.y + static_cast<float>(coord.y),
+                                  center.z));
+    registry.replace<Transform>(entity, transform);
     registry.replace<Velocity>(entity, velocity.acceleration, velocity.damping);
     attach_particles_emmiter_by_hit(
       json_entities.at(json_strategy.at("hit_particle")), app, entity);

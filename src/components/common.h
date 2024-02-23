@@ -22,9 +22,7 @@ using InitialPosition = NewType<glm::vec3, struct InitialPositionTag>;
 using Lifetime = NewType<float, struct LifeTimeTag>;
 using LifetimeMax = NewType<float, struct LifeTimeMaxTag>;
 using MeshPointer = std::shared_ptr<Mesh>;
-using Position = NewType<glm::vec3, struct PositionTag>;
 using Range = NewType<float, struct RangeTag>;
-using Rotation = NewType<glm::vec3, struct RotationTag>;
 using Speed = NewType<float, struct SpeedTag>;
 using TexturePointer = std::shared_ptr<Texture>;
 

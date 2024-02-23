@@ -4,6 +4,7 @@
 
 #include "src/components/common.h"
 #include "src/components/textures.h"
+#include "src/components/transform.h"
 #include "src/components/velocity.h"
 
 #include "factory.h"
@@ -21,9 +22,8 @@ ModelFactory::make_player(entt::registry& registry,
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<PlayerKind>(entity);
-  registry.emplace<Position>(entity, glm::zero<glm::vec3>());
-  registry.emplace<Rotation>(entity, glm::zero<glm::vec3>());
   registry.emplace<Textures>(entity, textures);
+  registry.emplace<Transform>(entity);
   registry.emplace<Velocity>(entity);
   return entity;
 }
@@ -40,9 +40,8 @@ ModelFactory::make_enemy(entt::registry& registry,
   registry.emplace<EnemyStateEnum>(entity, EnemyStateEnum::HUNTING);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<Opaque>(entity);
-  registry.emplace<Position>(entity, glm::zero<glm::vec3>());
-  registry.emplace<Rotation>(entity, glm::zero<glm::vec3>());
   registry.emplace<Textures>(entity, textures);
+  registry.emplace<Transform>(entity);
   registry.emplace<Velocity>(entity);
   return entity;
 }
@@ -58,12 +57,11 @@ ModelFactory::make_projectile(entt::registry& registry,
   registry.emplace<InitialPosition>(entity, glm::zero<glm::vec3>());
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<Opaque>(entity);
-  registry.emplace<Position>(entity, glm::zero<glm::vec3>());
   registry.emplace<ProjectileKind>(entity);
   registry.emplace<Range>(entity, 0);
-  registry.emplace<Rotation>(entity, glm::zero<glm::vec3>());
   registry.emplace<Speed>(entity, 0);
   registry.emplace<Textures>(entity, textures);
+  registry.emplace<Transform>(entity);
   registry.emplace<Velocity>(entity);
   return entity;
 }
@@ -78,9 +76,8 @@ ModelFactory::make_static(entt::registry& registry,
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<Opaque>(entity);
-  registry.emplace<Position>(entity, glm::zero<glm::vec3>());
-  registry.emplace<Rotation>(entity, glm::zero<glm::vec3>());
   registry.emplace<Textures>(entity, textures);
+  registry.emplace<Transform>(entity);
   return entity;
 }
 
@@ -92,15 +89,14 @@ ModelFactory::make_particle(entt::registry& registry,
   auto [mesh, textures] = cache->load(file_path, instance_quantity_hint);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
+  registry.emplace<Color>(entity, glm::zero<glm::vec3>());
   registry.emplace<Lifetime>(entity, 0);
   registry.emplace<LifetimeMax>(entity, 0);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<ParticleKind>(entity);
-  registry.emplace<Position>(entity, glm::zero<glm::vec3>());
-  registry.emplace<Rotation>(entity, glm::zero<glm::vec3>());
-  registry.emplace<Color>(entity, glm::zero<glm::vec3>());
   registry.emplace<Speed>(entity, 0);
   registry.emplace<Textures>(entity, textures);
+  registry.emplace<Transform>(entity);
   registry.emplace<Velocity>(entity);
   return entity;
 }
@@ -116,10 +112,10 @@ ModelFactory::make_point_light(entt::registry& registry,
     .quadratic = 0.0075,
   };
   auto entity = registry.create();
-  registry.emplace<Position>(entity, glm::zero<glm::vec3>());
   registry.emplace<Color>(entity, glm::zero<glm::vec3>());
-  registry.emplace<PointLightParams>(entity, point_light_params);
   registry.emplace<PointLightKind>(entity);
+  registry.emplace<PointLightParams>(entity, point_light_params);
+  registry.emplace<Transform>(entity);
   return entity;
 }
 

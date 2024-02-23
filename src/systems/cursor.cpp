@@ -2,6 +2,7 @@
 #include <glm/gtx/intersect.hpp>
 
 #include "src/components/common.h"
+#include "src/components/transform.h"
 
 #include "cursor.h"
 
@@ -19,12 +20,12 @@ cursor_handler_system(App::Meta& meta)
     viewport);
   auto ray = glm::normalize(projection_point - camera->position());
   float intersection_distance = 0;
-  auto [player_position] = meta.app->game_state->player<Position>();
+  auto player_transform = meta.app->game_state->player<Transform>();
 
   auto has_intersection =
     glm::intersectRayPlane(camera->position(),
                            ray,
-                           { 0.0, 0.0, player_position.z },
+                           { 0.0, 0.0, player_transform.translation().z },
                            { 0.0, 0.0, 1.0 },
                            intersection_distance);
   if (has_intersection) {

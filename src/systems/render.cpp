@@ -6,8 +6,8 @@
 
 #include "src/components/common.h"
 #include "src/components/textures.h"
+#include "src/components/transform.h"
 #include "src/consts.h"
-#include "src/utils/common.h"
 
 #include "render.h"
 
@@ -72,19 +72,17 @@ render_system(App::Meta& meta)
   std::unordered_map<Mesh*, TransformHolder> transform_mapping;
 
   registry
-    .view<const Position,
-          const Rotation,
+    .view<const Transform,
           const MeshPointer,
           const Textures,
           const Opaque,
           const Available>()
-    .each([&transform_mapping](const Position& position,
-                               const Rotation& rotation,
+    .each([&transform_mapping](const Transform& transform,
                                const MeshPointer& mesh,
                                const Textures& textures) {
-      auto transform = make_transform_matrix(position.value, rotation.value);
+      auto matrix = transform.matrix();
       update_transform_mapping(
-        transform_mapping, mesh.get(), &textures, transform);
+        transform_mapping, mesh.get(), &textures, matrix);
     });
   geometry_pass_shader.uniform("u_primary_texture", 0);
   geometry_pass_shader.uniform("u_secondary_texture", 1);
@@ -111,17 +109,18 @@ render_system(App::Meta& meta)
 
   int lights_quantity = 0;
   registry
-    .view<const Position,
+    .view<const Transform,
           const Color,
           const PointLightParams,
           const PointLightKind>()
-    .each([&](const Position& position,
+    .each([&](const Transform& transform,
               const Color& color,
               const PointLightParams& params) {
       std::stringstream prefix;
       prefix << "u_point_lights[" << lights_quantity << "].";
       light_pass_shader.uniform(prefix.str() + "color", color.value);
-      light_pass_shader.uniform(prefix.str() + "position", position.value);
+      light_pass_shader.uniform(prefix.str() + "position",
+                                transform.translation());
       light_pass_shader.uniform(prefix.str() + "constant", params.constant);
       light_pass_shader.uniform(prefix.str() + "linear", params.linear);
       light_pass_shader.uniform(prefix.str() + "quadratic", params.quadratic);
@@ -153,19 +152,17 @@ render_system(App::Meta& meta)
   particle_shader.uniform("u_PV", camera.pv());
 
   registry
-    .view<const Position,
-          const Rotation,
+    .view<const Transform,
           const MeshPointer,
           const Textures,
           const Available,
           const ParticleKind>(entt::exclude<Opaque>)
-    .each([&transform_mapping](const Position& position,
-                               const Rotation& rotation,
+    .each([&transform_mapping](const Transform& transform,
                                const MeshPointer& mesh,
                                const Textures& textures) {
-      auto transform = make_transform_matrix(position.value, rotation.value);
+      auto matrix = transform.matrix();
       update_transform_mapping(
-        transform_mapping, mesh.get(), &textures, transform);
+        transform_mapping, mesh.get(), &textures, matrix);
     });
   particle_shader.uniform("u_main_texture", 0);
   draw(transform_mapping);

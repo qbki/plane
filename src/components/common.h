@@ -6,7 +6,6 @@
 #include <memory>
 
 #include "src/mesh.h"
-#include "src/texture.h"
 #include "src/utils/types.h"
 
 enum class EnemyStateEnum
@@ -24,7 +23,6 @@ using LifetimeMax = NewType<float, struct LifeTimeMaxTag>;
 using MeshPointer = std::shared_ptr<Mesh>;
 using Range = NewType<float, struct RangeTag>;
 using Speed = NewType<float, struct SpeedTag>;
-using TexturePointer = std::shared_ptr<Texture>;
 
 struct Available
 {};

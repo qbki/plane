@@ -8,6 +8,7 @@
 #include "src/components/textures.h"
 #include "src/components/transform.h"
 #include "src/consts.h"
+#include "src/material.h"
 
 #include "render.h"
 

@@ -6,7 +6,6 @@
 #include "src/consts.h"
 #include "src/game_state/texture_type.h"
 #include "src/texture.h"
-#include "src/utils/color.h"
 #include "src/utils/common.h"
 #include "src/utils/file_loaders.h"
 
@@ -55,8 +54,7 @@ extract_textures(const tinygltf::Model& model)
 Cache::Cache()
 {
   this->_meshes =
-    std::unordered_map<std::string,
-                       std::tuple<MeshPtr, MaterialPtr, TexturesPtr>>();
+    std::unordered_map<std::string, std::tuple<MeshPtr, TexturesPtr>>();
 }
 
 std::tuple<Cache::MeshPtr, Cache::TexturesPtr>
@@ -65,7 +63,6 @@ Cache::load(const std::string& mesh_file_name, size_t instance_quantity_hint)
   auto has_mesh = has_key(this->_meshes, mesh_file_name);
 
   Cache::MeshPtr mesh;
-  Cache::MaterialPtr material;
   TexturesPtr textures;
 
   if (has_mesh) {
@@ -74,16 +71,14 @@ Cache::load(const std::string& mesh_file_name, size_t instance_quantity_hint)
     textures = std::get<TEXTURE_IDX>(mesh_data);
   } else {
     auto gltf_model = load_gltf_model(mesh_file_name);
-    auto color = decode_gamma(exctract_material_color(gltf_model), GAMMA);
     auto extracted_textures = extract_textures(gltf_model);
 
     mesh = std::make_shared<Mesh>(gltf_model, instance_quantity_hint);
-    material = std::make_shared<Material>(color);
     textures = generate_textures(gltf_model);
     for (auto& [idx, texture] : *extracted_textures) {
       textures->at(idx) = std::move(texture);
     }
-    this->_meshes[mesh_file_name] = std::make_tuple(mesh, material, textures);
+    this->_meshes[mesh_file_name] = std::make_tuple(mesh, textures);
   }
 
   return { mesh, textures };

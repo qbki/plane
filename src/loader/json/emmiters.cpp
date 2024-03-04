@@ -55,7 +55,7 @@ emit_particles(App& app,
     }
   }
 
-  for (; idx < (params.quantity - 1); idx += 1) {
+  for (; idx < params.quantity; idx += 1) {
     auto entity =
       app.game_state->factory().make_particle(registry, file_path, 1);
     auto rotation = calc_rotation(idx, step);
@@ -78,13 +78,17 @@ emit_projectile(App& app,
                 const std::string& file_path)
 {
   auto& registry = app.game_state->registry();
-
-  auto player_transform = app.game_state->player<Transform>();
   auto projectiles_view =
     registry.view<ProjectileKind>(entt::exclude<Available>);
   auto projectile_id = projectiles_view.front();
-  auto rotation = player_transform.rotation() * calc_spread_angle();
+
+  auto player_transform = app.game_state->player<Transform>();
+  auto player_z_rotation =
+    glm::angleAxis(player_transform.euler().z, glm::vec3(0, 0, 1));
+  auto rotation = player_z_rotation * calc_spread_angle();
+
   auto move_direction = rotation * glm::vec3(1, 0, 0);
+
   if (projectile_id == entt::null) {
     auto entity =
       app.game_state->factory().make_projectile(registry, file_path, 1);

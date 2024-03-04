@@ -1,7 +1,6 @@
 #include <glm/ext/matrix_projection.hpp>
 #include <glm/gtx/intersect.hpp>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 
 #include "cursor.h"

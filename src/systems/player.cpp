@@ -6,13 +6,21 @@
 #include "src/components/velocity.h"
 #include "src/utils/common.h"
 
+const auto TILT_ANGLE = glm::pi<float>() / 4.0f;
+
 void
 player_rotation_system(const App::Meta& meta)
 {
-  auto& transform = meta.app->game_state->player<Transform>();
+  auto [transform, velocity] =
+    meta.app->game_state->player<Transform, Velocity>();
   auto direction = meta.app->game_state->cursor() - transform.translation();
-  auto angle = glm::atan(direction.y, direction.x);
-  transform.rotate_z(angle);
+  auto x_tilt = -velocity.velocity.y / velocity.max_speed;
+  auto y_tilt = velocity.velocity.x / velocity.max_speed;
+  auto x = glm::angleAxis(TILT_ANGLE * x_tilt, glm::vec3(1, 0, 0));
+  auto y = glm::angleAxis(TILT_ANGLE * y_tilt, glm::vec3(0, 1, 0));
+  auto z =
+    glm::angleAxis(glm::atan(direction.y, direction.x), glm::vec3(0, 0, 1));
+  transform.rotate(x * y * z);
 }
 
 void

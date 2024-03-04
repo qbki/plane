@@ -12,7 +12,7 @@
 
 #include "render.h"
 
-static const Material COMMON_MATERIAL(glm::vec3(0.01, 0.01, 0.01),
+static const Material COMMON_MATERIAL(glm::vec3(0.1, 0.1, 0.1),
                                       glm::vec3(1.0, 1.0, 1.0),
                                       22);
 

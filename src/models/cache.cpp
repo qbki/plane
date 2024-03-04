@@ -14,6 +14,9 @@
 glm::vec3
 exctract_material_color(tinygltf::Model& model)
 {
+  if (model.materials.empty()) {
+    return { 0, 0, 0 };
+  }
   auto material_id = model.meshes.at(0).primitives.at(0).material;
   auto material = model.materials.at(material_id);
   auto color = material.pbrMetallicRoughness.baseColorFactor;
@@ -70,7 +73,7 @@ Cache::load(const std::string& mesh_file_name, size_t instance_quantity_hint)
     mesh = std::get<MESH_IDX>(mesh_data);
     textures = std::get<TEXTURE_IDX>(mesh_data);
   } else {
-    auto gltf_model = load_gltf_model(mesh_file_name);
+    auto gltf_model = load_gltf_model(ASSETS_DIR / mesh_file_name);
     auto extracted_textures = extract_textures(gltf_model);
 
     mesh = std::make_shared<Mesh>(gltf_model, instance_quantity_hint);

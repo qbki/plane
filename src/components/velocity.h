@@ -5,6 +5,7 @@ struct Velocity
 {
   float scalar_acceleration;
   float damping;
+  float max_speed;
   glm::vec3 acceleration;
   glm::vec3 velocity;
 

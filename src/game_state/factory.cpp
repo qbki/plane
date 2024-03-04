@@ -56,7 +56,7 @@ ModelFactory::make_projectile(entt::registry& registry,
   registry.emplace<Available>(entity);
   registry.emplace<InitialPosition>(entity, glm::zero<glm::vec3>());
   registry.emplace<MeshPointer>(entity, mesh);
-  registry.emplace<Opaque>(entity);
+  registry.emplace<ParticleKind>(entity);
   registry.emplace<ProjectileKind>(entity);
   registry.emplace<Range>(entity, 0);
   registry.emplace<Speed>(entity, 0);

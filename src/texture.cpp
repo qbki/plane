@@ -42,7 +42,7 @@ Texture::Texture(const std::vector<unsigned char>& data)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexImage2D(GL_TEXTURE_2D,
                0,
-               GL_SRGB_ALPHA,
+               GL_SRGB8_ALPHA8,
                size,
                size,
                0,

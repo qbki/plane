@@ -12,7 +12,7 @@
 
 #include "render.h"
 
-static const Material COMMON_MATERIAL(glm::vec3(0.1, 0.1, 0.1),
+static const Material COMMON_MATERIAL(glm::vec3(0.05, 0.05, 0.05),
                                       glm::vec3(1.0, 1.0, 1.0),
                                       22);
 
@@ -102,8 +102,7 @@ render_system(App::Meta& meta)
   light_pass_shader.uniform("u_material.specular", COMMON_MATERIAL.specular());
   light_pass_shader.uniform("u_material.shininess",
                             COMMON_MATERIAL.shininess());
-  light_pass_shader.uniform("u_gamma_in", GAMMA);
-  light_pass_shader.uniform("u_gamma_out", GAMMA);
+  light_pass_shader.uniform("u_gamma", GAMMA);
   light_pass_shader.uniform("u_position_texture", 0);
   light_pass_shader.uniform("u_normal_texture", 1);
   light_pass_shader.uniform("u_base_color_texture", 2);
@@ -147,9 +146,9 @@ render_system(App::Meta& meta)
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
   particle_shader.use();
-  particle_shader.uniform("u_gamma_in", GAMMA);
-  particle_shader.uniform("u_gamma_out", GAMMA);
+  particle_shader.uniform("u_gamma", GAMMA);
   particle_shader.uniform("u_PV", camera.pv());
 
   registry

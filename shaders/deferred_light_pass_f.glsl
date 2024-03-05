@@ -35,15 +35,10 @@ uniform int u_point_lights_quantity;
 
 uniform vec3 u_camera_pos;
 uniform Material u_material;
-uniform float u_gamma_in;
-uniform float u_gamma_out;
+uniform float u_gamma;
 
 vec3 encode_gamma(vec3 color) {
-  return pow(color, vec3(1.0 / u_gamma_out));
-}
-
-vec3 decode_gamma(vec3 color) {
-  return pow(color, vec3(u_gamma_in));
+  return pow(color, vec3(1.0 / u_gamma));
 }
 
 vec3 calc_diffuse(vec3 light_color, vec3 surface_color, vec3 surface_normal, vec3 light_direction) {
@@ -74,7 +69,7 @@ float calc_attenuation(PointLight light, float distance) {
 }
 
 void main() {
-  vec3 base_color = decode_gamma(texture(u_base_color_texture, i_tex_coord).rgb);
+  vec3 base_color = texture(u_base_color_texture, i_tex_coord).rgb;
   vec3 pixel_position = texture(u_position_texture, i_tex_coord).xyz;
   vec3 normal = normalize(texture(u_normal_texture, i_tex_coord).xyz);
   vec3 view_direction = normalize(u_camera_pos - pixel_position);
@@ -84,7 +79,7 @@ void main() {
   vec3 diffuse = vec3(0.0);
   vec3 specular = vec3(0.0);
 
-  ambient += u_material.ambient * base_color;
+  ambient += base_color.rgb * u_material.ambient;
 
   diffuse += calc_diffuse(
     u_light.color,
@@ -123,7 +118,6 @@ void main() {
     ) * u_material.specular * attenuation;
   }
 
-  vec3 result = ambient + diffuse + specular;
-
-  frag_color = vec4(encode_gamma(result), 1.0);
+  vec3 result = encode_gamma(ambient + diffuse + specular);
+  frag_color = vec4(result, 1.0);
 }

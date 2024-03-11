@@ -1,3 +1,4 @@
+#include <SDL_events.h>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <emscripten/html5.h>
@@ -7,13 +8,53 @@
 #include "game_loop.h"
 
 void
+resize_window(Camera& camera, int width, int height)
+{
+  camera.aspect_ratio(static_cast<float>(width) / static_cast<float>(height));
+  glViewport(0, 0, width, height);
+}
+
+void
 resize_window(const SDL_WindowEvent& window_event, Camera& camera)
 {
   auto width = window_event.data1;
   auto height = window_event.data2;
-  camera.aspect_ratio(static_cast<float>(width) / static_cast<float>(height));
-  glViewport(0, 0, width, height);
+  resize_window(camera, width, height);
 }
+
+#ifdef __EMSCRIPTEN__
+void
+wasm_resize_window(App& app, int width, int height)
+{
+  auto window = app.window.get();
+  auto camera = app.game_state->camera();
+  SDL_SetWindowSize(window, width, height);
+  app.deferred_shading->g_buffer().update(width, height);
+  app.screen_size->width = width;
+  app.screen_size->height = height;
+  resize_window(*camera, width, height);
+}
+
+EMSCRIPTEN_RESULT
+wasm_resize_window_cb(int /* eventType */,
+                      const EmscriptenUiEvent *uiEvent,
+                      void *data)
+{
+  auto app = static_cast<App*>(data);
+  int width = uiEvent->windowInnerWidth;
+  int height = uiEvent->windowInnerHeight;
+  wasm_resize_window(*app, width, height);
+  return EMSCRIPTEN_RESULT_SUCCESS;
+}
+
+EM_JS(int, get_js_window_width, (), {
+  return window.innerWidth;
+});
+
+EM_JS(int, get_js_window_height, (), {
+  return window.innerHeight;
+});
+#endif
 
 void
 inner_game_loop(App& app)
@@ -32,14 +73,15 @@ inner_game_loop(App& app)
         }
         break;
       }
-    }
-    switch (event.window.event) {
-      case SDL_WINDOWEVENT_RESIZED: {
-        app.screen_size->width = event.window.data1;
-        app.screen_size->height = event.window.data2;
-        resize_window(event.window, *game_state->camera());
-        app.deferred_shading->g_buffer().update(app.screen_size->width,
-                                                app.screen_size->height);
+      case SDL_WINDOWEVENT: {
+        if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+          auto width = event.window.data1;
+          auto height = event.window.data2;
+          app.screen_size->width = width;
+          app.screen_size->height = height;
+          resize_window(event.window, *game_state->camera());
+          app.deferred_shading->g_buffer().update(width, height);
+        }
         break;
       }
     }
@@ -60,6 +102,13 @@ emscripten_game_loop(void* data)
 void
 game_loop(App* app)
 {
+  wasm_resize_window(*app, get_js_window_width(), get_js_window_height());
+  emscripten_set_resize_callback(
+    EMSCRIPTEN_EVENT_TARGET_WINDOW,
+    app,
+    EM_FALSE,
+    wasm_resize_window_cb
+  );
   // The simulate_infinite_loop argument should be false. It is because I have
   // nothing on the stack what should be kept. And it helps me avoid
   // unnecessary exception that is thrown intentionally by emscripten. More

@@ -8,6 +8,7 @@ LINUX_DEBUG_BUILD_DIR=$(BUILD_DIR)/linux-debug
 LINUX_DEBUG_BIN_DIR=$(LINUX_DEBUG_BUILD_DIR)/bin
 WASM_BUILD_DIR=$(BUILD_DIR)/wasm
 WASM_BIN_DIR=$(WASM_BUILD_DIR)/bin
+WEB_SHELL_DIR=$(BUILD_DIR)/web-shell
 
 
 init:
@@ -34,6 +35,7 @@ init-wasm:
 		--lockfile=./wasm.lock \
 		--profile:build=./configs/profiles/linux \
 		--profile:host=./configs/profiles/wasm
+	@npm ci
 	@cd $(WASM_BUILD_DIR) && \
 		cmake cmake ../.. \
 			-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
@@ -81,6 +83,11 @@ build-wasm:
 .PHONY: build-wasm
 
 
+build-web-shell:
+	@npm run build
+.PHONY: build-web-shell
+
+
 build-wasm-tests:
 	@cd $(WASM_BUILD_DIR) && \
 		cmake ../.. \
@@ -111,7 +118,7 @@ run-debug: build-debug
 
 
 run-wasm: build-wasm
-	@cd $(WASM_BIN_DIR) && \
+	@cd $(WEB_SHELL_DIR) && \
 		python3 -m http.server -b 127.0.0.1
 .PHONY: run-wasm
 
@@ -166,7 +173,7 @@ pack-linux:
 .PHONY: pack-linux
 
 
-init-build-pack-wasm: init-wasm build-wasm pack-wasm
+init-build-pack-wasm: init-wasm build-wasm build-web-shell pack-wasm
 .PHONY: init-build-pack-wasm
 
 

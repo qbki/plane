@@ -1,0 +1,88 @@
+:root {
+  --loading-animation-duration: 1.5s;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body, div, canvas {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: "Noto Sans", "Segoe UI", Helvetica, Arial, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.monospace {
+  font-family: ui-monospace, SFMono-Regular, Liberation Mono, Menlo, Consolas, monospace;
+}
+
+.canvas {
+  background-color: black;
+}
+
+.full-window {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.log {
+  background-color: #111111dd;
+  color: #dddddd;
+  z-index: 1000;
+  white-space: pre-wrap;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes scaling-animation {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  .item {
+    opacity: 0.5;
+    transform: scale(0.3);
+    animation-name: scaling-animation;
+    animation-duration: var(--loading-animation-duration);
+    animation-iteration-count: infinite;
+    fill: #0088ff;
+
+    &:nth-child(1) { animation-delay: calc(0 / 9 * var(--loading-animation-duration)); }
+    &:nth-child(2) { animation-delay: calc(1 / 9 * var(--loading-animation-duration)); }
+    &:nth-child(3) { animation-delay: calc(2 / 9 * var(--loading-animation-duration)); }
+    &:nth-child(4) { animation-delay: calc(3 / 9 * var(--loading-animation-duration)); }
+    &:nth-child(5) { animation-delay: calc(4 / 9 * var(--loading-animation-duration)); }
+    &:nth-child(6) { animation-delay: calc(5 / 9 * var(--loading-animation-duration)); }
+    &:nth-child(7) { animation-delay: calc(6 / 9 * var(--loading-animation-duration)); }
+    &:nth-child(8) { animation-delay: calc(7 / 9 * var(--loading-animation-duration)); }
+    &:nth-child(9) { animation-delay: calc(8 / 9 * var(--loading-animation-duration)); }
+  }
+}

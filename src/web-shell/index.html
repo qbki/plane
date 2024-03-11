@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Plane Engine</title>
+  </head>
+  <body>
+    <div
+      id="pre-loading-screen"
+      class="loading full-window"
+    >
+      <svg class="spinner" viewBox="-1 -1 5 5" width="200" height="200">
+        <rect class="item" x="0" y="0" width="1" height="1" transform-origin="0.5 0.5" />
+        <rect class="item" x="1" y="0" width="1" height="1" transform-origin="1.5 0.5" />
+        <rect class="item" x="2" y="0" width="1" height="1" transform-origin="2.5 0.5" />
+        <rect class="item" x="0" y="1" width="1" height="1" transform-origin="0.5 1.5" />
+        <rect class="item" x="1" y="1" width="1" height="1" transform-origin="1.5 1.5" />
+        <rect class="item" x="2" y="1" width="1" height="1" transform-origin="2.5 1.5" />
+        <rect class="item" x="0" y="2" width="1" height="1" transform-origin="0.5 2.5" />
+        <rect class="item" x="1" y="2" width="1" height="1" transform-origin="1.5 2.5" />
+        <rect class="item" x="2" y="2" width="1" height="1" transform-origin="2.5 2.5" />
+      </svg>
+    </div>
+    <canvas
+      id="canvas-screen"
+      class="canvas full-window hidden"
+      tabindex=-1
+    ></canvas>
+    <div
+      id="log-screen"
+      class="log monospace full-window hidden"
+    ></div>
+  </body>
+</html>

@@ -1,6 +1,10 @@
 /CMakeUserPresets.json
-/build
+
 /assets
+/build
+/node_modules
+
 /.cache
 /.env
+
 *.blend1

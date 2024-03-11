@@ -5,6 +5,7 @@ RUN apt-get update \
     cmake \
     make \
     nodejs \
+    npm \
     pipx \
     sudo \
   && sudo --user=ubuntu pipx ensurepath \

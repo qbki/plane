@@ -49,13 +49,16 @@ endfunction()
 
 set(JSON_ImplicitConversions, OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+
 set(SRC_SHADERS_DIRECTORY ${CMAKE_SOURCE_DIR}/shaders)
 set(SRC_ASSETS_DIRECTORY ${CMAKE_SOURCE_DIR}/assets)
 set(SHADERS_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders)
 set(ASSETS_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets)
-set(THIRD_PARTY_LICENSES_FILE
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/THIRD_PARTY_LICENSES)
+set(WEB_SHELL_BUILD_DIRECTORY ${CMAKE_SOURCE_DIR}/build/web-shell)
+
+set(THIRD_PARTY_LICENSES_FILE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/THIRD_PARTY_LICENSES)
 
 option(BUILD_TESTS "Turn this ON to compile tests" OFF)
 option(BUILD_EXECUTABLE "Turn this ON to compile an executable file" OFF)
@@ -82,8 +85,17 @@ if(DEFINED EMSCRIPTEN)
   add_flag("-fexceptions")
   add_flag("-std=c++20")
   add_flag("-sUSE_SDL=2")
+  add_exe_flag("-sEXPORT_NAME=moduleFactory")
+  add_exe_flag("-sMODULARIZE")
+  add_exe_flag("-sEXPORT_ES6=1")
+  # Removes node.js support from the wasm build. Without this option
+  # webpack tries import node.js modules that can't be found or vite creates
+  # unnecessary chunks with modules from node.js.
+  add_exe_flag("-sENVIRONMENT=web")
+  # It allows to use an arbitrary id for canvas element in html. In other
+  # case Emscripten uses hardcoded name ("canvas").
+  add_exe_flag("-sDISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0")
   add_exe_flag("--preload-file ${SRC_SHADERS_DIRECTORY}/@/shaders/")
-  add_exe_flag("--shell-file ${PROJECT_SOURCE_DIR}/src/shell.html")
   add_exe_flag("-fexceptions")
   add_exe_flag("-sASYNCIFY")
   add_exe_flag("-sALLOW_MEMORY_GROWTH")
@@ -103,17 +115,17 @@ if(BUILD_EXECUTABLE)
   setup_link_libraries(${PROJECT_NAME})
   if(DEFINED EMSCRIPTEN)
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "index")
-    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
+    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".js")
   else()
     add_custom_command(
       TARGET ${PROJECT_NAME} PRE_LINK
       COMMAND ${CMAKE_COMMAND} -E
       create_symlink ${SRC_SHADERS_DIRECTORY} ${SHADERS_DIRECTORY})
+    add_custom_command(
+      TARGET ${PROJECT_NAME} PRE_LINK
+      COMMAND ${CMAKE_COMMAND} -E
+      create_symlink ${SRC_ASSETS_DIRECTORY} ${ASSETS_DIRECTORY})
   endif()
-  add_custom_command(
-    TARGET ${PROJECT_NAME} PRE_LINK
-    COMMAND ${CMAKE_COMMAND} -E
-    create_symlink ${SRC_ASSETS_DIRECTORY} ${ASSETS_DIRECTORY})
   if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     generate_licenses_file()
   endif()
@@ -145,12 +157,7 @@ if(BUILD_EXECUTABLE)
   install(FILES ${CMAKE_SOURCE_DIR}/LICENSE DESTINATION .)
   install(FILES ${THIRD_PARTY_LICENSES_FILE} DESTINATION .)
   if(DEFINED EMSCRIPTEN)
-    install(FILES
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.data
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.js
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.wasm
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html
-            DESTINATION .)
+    install(DIRECTORY ${WEB_SHELL_BUILD_DIRECTORY}/ DESTINATION .)
   else()
     install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
     install(DIRECTORY ${SRC_SHADERS_DIRECTORY} DESTINATION .)

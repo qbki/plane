@@ -23,6 +23,5 @@ private:
 public:
   Cache();
 
-  std::tuple<MeshPtr, TexturesPtr> load(const std::string& mesh_file_name,
-                                        size_t instance_quantity_hint = 1);
+  std::tuple<MeshPtr, TexturesPtr> load(const std::string& mesh_file_name);
 };

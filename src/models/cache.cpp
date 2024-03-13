@@ -61,7 +61,7 @@ Cache::Cache()
 }
 
 std::tuple<Cache::MeshPtr, Cache::TexturesPtr>
-Cache::load(const std::string& mesh_file_name, size_t instance_quantity_hint)
+Cache::load(const std::string& mesh_file_name)
 {
   auto has_mesh = has_key(this->_meshes, mesh_file_name);
 
@@ -76,7 +76,7 @@ Cache::load(const std::string& mesh_file_name, size_t instance_quantity_hint)
     auto gltf_model = load_gltf_model(ASSETS_DIR / mesh_file_name);
     auto extracted_textures = extract_textures(gltf_model);
 
-    mesh = std::make_shared<Mesh>(gltf_model, instance_quantity_hint);
+    mesh = std::make_shared<Mesh>(gltf_model);
     textures = generate_textures(gltf_model);
     for (auto& [idx, texture] : *extracted_textures) {
       textures->at(idx) = std::move(texture);

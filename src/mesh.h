@@ -32,12 +32,11 @@ private:
   void free();
 
 public:
-  explicit Mesh(tinygltf::Model& model, size_t instance_quantity = 1);
+  explicit Mesh(tinygltf::Model& model);
   Mesh(std::vector<float>& vertices,
        std::vector<float>& normals,
        std::vector<float>& tex_coords,
-       std::vector<unsigned int>& indices,
-       size_t instance_quantity = 1);
+       std::vector<unsigned int>& indices);
   Mesh(const Mesh&) = delete;
   Mesh& operator=(const Mesh&) = delete;
   Mesh(Mesh&&) = delete;

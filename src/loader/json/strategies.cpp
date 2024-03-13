@@ -21,7 +21,7 @@ single_strategy(const nlohmann::basic_json<>& json_entities,
   auto json_entity = json_entities.at(json_entity_id);
   auto model_path =
     json_entity.value<std::string>("model", "[path not defined]");
-  auto entity = maker_fn(registry, model_path, 1);
+  auto entity = maker_fn(registry, model_path);
   attach_color(json_entity, registry, entity);
   attach_direction(json_entity, registry, entity);
   attach_opaque(json_entity, registry, entity);
@@ -54,7 +54,7 @@ square_strategy(const nlohmann::basic_json<>& json_entities,
       auto entity_id = entity_ids.at(entity_index);
       auto json_entity = json_entities.at(entity_id);
       auto model_path = json_entity.at("model").get<std::string>();
-      auto entity = maker_fn(registry, model_path, width * height);
+      auto entity = maker_fn(registry, model_path);
       Transform transform;
       transform.translate(glm::vec3(start_x + static_cast<float>(x),
                                     start_y + static_cast<float>(y),
@@ -99,8 +99,7 @@ round_strategy(const nlohmann::basic_json<>& json_entities,
     auto json_entity = json_entities.at(entity_id);
     auto model_path = json_entity.at("model").get<std::string>();
     auto velocity = velocity_items.at(entity_index);
-    auto entity = maker_fn(
-      registry, model_path, static_cast<size_t>(std::pow(radius + radius, 2)));
+    auto entity = maker_fn(registry, model_path);
     Transform transform;
     transform.translate(glm::vec3(center.x + static_cast<float>(coord.x),
                                   center.y + static_cast<float>(coord.y),

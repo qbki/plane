@@ -148,8 +148,7 @@ populate_buffer(GLuint buffer_object, const std::vector<T>& data)
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-Mesh::Mesh(tinygltf::Model& model, size_t instance_quantity)
-  : _instance_quantity(instance_quantity)
+Mesh::Mesh(tinygltf::Model& model)
 {
   try {
     glGenVertexArrays(1, &_vertex_array_object);
@@ -221,10 +220,8 @@ Mesh::Mesh(tinygltf::Model& model, size_t instance_quantity)
 Mesh::Mesh(std::vector<float>& vertices,
            std::vector<float>& normals,
            std::vector<float>& tex_coords,
-           std::vector<unsigned int>& indices,
-           size_t instance_quantity)
+           std::vector<unsigned int>& indices)
   : _number_of_elements(indices.size())
-  , _instance_quantity(instance_quantity)
 {
   glGenVertexArrays(1, &_vertex_array_object);
   glBindVertexArray(_vertex_array_object);

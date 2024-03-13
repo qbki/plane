@@ -56,8 +56,7 @@ emit_particles(App& app,
   }
 
   for (; idx < params.quantity; idx += 1) {
-    auto entity =
-      app.game_state->factory().make_particle(registry, file_path, 1);
+    auto entity = app.game_state->factory().make_particle(registry, file_path);
     auto rotation = calc_rotation(idx, step);
     Transform transform;
     transform.translate(initial_position).rotate(rotation);
@@ -91,7 +90,7 @@ emit_projectile(App& app,
 
   if (projectile_id == entt::null) {
     auto entity =
-      app.game_state->factory().make_projectile(registry, file_path, 1);
+      app.game_state->factory().make_projectile(registry, file_path);
     Transform transform;
     transform.translate(player_transform.translation()).rotate(rotation);
     registry.replace<Transform>(entity, transform);

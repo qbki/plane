@@ -39,4 +39,7 @@ public:
   entt::entity make_point_light(entt::registry& registry,
                                 const std::string&,
                                 size_t);
+  entt::entity make_tutorial_button(entt::registry& registry,
+                                    const std::string& file_path,
+                                    size_t instance_quantity_hint);
 };

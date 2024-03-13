@@ -92,7 +92,7 @@ create_texture_indices_attribute(GLuint& buffer_object,
                                  size_t instance_quantity)
 {
   std::vector<TextureType::Type> texture_indeces(instance_quantity,
-                                                 TextureType::Type::MAIN);
+                                                 TextureType::Type::PRIMARY);
   create_buffer(
     buffer_object, GL_ARRAY_BUFFER, texture_indeces, GL_DYNAMIC_DRAW);
   glVertexAttribIPointer(TEXTURE_INDICES_LOCATION,

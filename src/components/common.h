@@ -5,6 +5,7 @@
 #include <glm/vec3.hpp>
 #include <memory>
 
+#include "src/control.h"
 #include "src/mesh.h"
 #include "src/utils/types.h"
 
@@ -23,6 +24,7 @@ using LifetimeMax = NewType<float, struct LifeTimeMaxTag>;
 using MeshPointer = std::shared_ptr<Mesh>;
 using Range = NewType<float, struct RangeTag>;
 using Speed = NewType<float, struct SpeedTag>;
+using TutorialButton = NewType<Control::Action, struct TutorialButtonTag>;
 
 struct Available
 {};
@@ -42,6 +44,8 @@ struct PlayerKind
 struct PointLightKind
 {};
 struct ProjectileKind
+{};
+struct TutorialButtonKind
 {};
 
 using ParticlesEmitter = std::function<void(glm::vec3 position)>;

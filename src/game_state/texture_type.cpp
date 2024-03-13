@@ -1,3 +1,4 @@
+#include <format>
 #include <stdexcept>
 
 #include "src/services.h"
@@ -5,6 +6,7 @@
 #include "texture_type.h"
 
 namespace TextureType {
+
 Type
 handle_unknown_type()
 {
@@ -12,14 +14,21 @@ handle_unknown_type()
   return DEFAULT_TYPE;
 }
 
+Type
+handle_unknown_type(const std::string& message)
+{
+  logger().warn(std::format("Unknown type of a texture: {}", message));
+  return DEFAULT_TYPE;
+}
+
 std::string
 map_to_str(Type type)
 {
   switch (type) {
-    case Type::MAIN:
-      return "main";
-    case Type::DESTROYED:
-      return "destroyed";
+    case Type::PRIMARY:
+      return "primary";
+    case Type::SECONDARY:
+      return "secondary";
     default:
       throw std::out_of_range(
         "Unknown representation of texture type (string)");
@@ -29,9 +38,9 @@ map_to_str(Type type)
 Type
 map_to_type(const std::string& type)
 {
-  return (type == "main"        ? Type::MAIN
-          : type == "destroyed" ? Type::DESTROYED
-                                : handle_unknown_type());
+  return (type == "primary"     ? Type::PRIMARY
+          : type == "secondary" ? Type::SECONDARY
+                                : handle_unknown_type(type));
 }
 
 unsigned int
@@ -45,9 +54,9 @@ map_to_type(int type)
 {
   switch (type) {
     case 0:
-      return Type::MAIN;
+      return Type::PRIMARY;
     case 1:
-      return Type::DESTROYED;
+      return Type::SECONDARY;
     default:
       return handle_unknown_type();
   }

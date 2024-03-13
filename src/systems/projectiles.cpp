@@ -53,7 +53,7 @@ projectile_handler_system(const App::Meta& meta)
              impact_velocity_damping);
           enemy_state = EnemyStateEnum::SINKING;
           particles_emitter(prj_transform.translation());
-          textures.change_type(TextureType::Type::DESTROYED);
+          textures.change_type(TextureType::Type::SECONDARY);
           registry.emplace<Gravity>(enemy_id);
         }
         registry.remove<Available>(prj_id);

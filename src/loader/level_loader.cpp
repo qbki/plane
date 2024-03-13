@@ -45,6 +45,8 @@ get_entity_maker(App& app,
       { "static",
         [&](auto&&... args) { return factory.make_static(args...); } },
       { "enemy", [&](auto&&... args) { return factory.make_enemy(args...); } },
+      { "tutorial-button",
+        [&](auto&&... args) { return factory.make_tutorial_button(args...); } },
       { "light", [&](auto&&... args) {
          auto entity_kind = extract_kind(strategy_node, entities_node);
          auto make =

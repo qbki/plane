@@ -1,6 +1,14 @@
+#include <format>
+#include <numeric>
+#include <ranges>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
+#include "src/control.h"
 
 #include "attachers.h"
 #include "emmiters.h"
@@ -77,6 +85,42 @@ attach_color(const nlohmann::basic_json<>& node,
   }
   auto color = extract_vec3(node.at("color"));
   registry.emplace_or_replace<Color>(entity, color);
+}
+
+void
+attach_tutorial_button_value(const nlohmann::basic_json<>& node,
+                             entt::registry& registry,
+                             entt::entity entity)
+{
+  if (!node.contains("button")) {
+    return;
+  }
+  auto key_string = node.at("button").get<std::string>();
+  std::unordered_map<std::string, Control::Action> mapping{
+    { "left", Control::Action::LEFT },
+    { "right", Control::Action::RIGHT },
+    { "up", Control::Action::UP },
+    { "down", Control::Action::DOWN },
+    { "shooting", Control::Action::SHOOTING },
+  };
+  if (mapping.contains(key_string)) {
+    registry.emplace_or_replace<TutorialButton>(entity, mapping.at(key_string));
+  } else {
+    auto keys = std::views::keys(mapping);
+    auto possible_values = std::accumulate(
+      begin(keys),
+      end(keys),
+      std::string{},
+      [](const std::string& acc, const std::string& tail) -> std::string {
+        return acc == "" ? std::format(R"("{}")", tail)
+                         : std::format(R"({}, "{}")", acc, tail);
+      });
+    auto message = std::format(
+      R"(An unknown value of "button" parameter. Found: "{}". Possible values: {})",
+      key_string,
+      possible_values);
+    throw std::runtime_error(message);
+  }
 }
 
 void

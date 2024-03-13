@@ -4,7 +4,7 @@
 
 Textures::Textures(TextureList textures)
   : _textures(std::move(textures))
-  , _texture_type(TextureType::Type::MAIN)
+  , _texture_type(TextureType::Type::PRIMARY)
 {
 }
 
@@ -30,6 +30,6 @@ void
 Textures::use() const
 {
   using TextureType::Type;
-  _textures->at(Type::MAIN).use(0);
-  _textures->at(Type::DESTROYED).use(1);
+  _textures->at(Type::PRIMARY).use(0);
+  _textures->at(Type::SECONDARY).use(1);
 }

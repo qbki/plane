@@ -37,8 +37,8 @@ wasm_resize_window(App& app, int width, int height)
 
 EMSCRIPTEN_RESULT
 wasm_resize_window_cb(int /* eventType */,
-                      const EmscriptenUiEvent *uiEvent,
-                      void *data)
+                      const EmscriptenUiEvent* uiEvent,
+                      void* data)
 {
   auto app = static_cast<App*>(data);
   int width = uiEvent->windowInnerWidth;
@@ -47,13 +47,9 @@ wasm_resize_window_cb(int /* eventType */,
   return EMSCRIPTEN_RESULT_SUCCESS;
 }
 
-EM_JS(int, get_js_window_width, (), {
-  return window.innerWidth;
-});
+EM_JS(int, get_js_window_width, (), { return window.innerWidth; });
 
-EM_JS(int, get_js_window_height, (), {
-  return window.innerHeight;
-});
+EM_JS(int, get_js_window_height, (), { return window.innerHeight; });
 #endif
 
 void
@@ -104,11 +100,7 @@ game_loop(App* app)
 {
   wasm_resize_window(*app, get_js_window_width(), get_js_window_height());
   emscripten_set_resize_callback(
-    EMSCRIPTEN_EVENT_TARGET_WINDOW,
-    app,
-    EM_FALSE,
-    wasm_resize_window_cb
-  );
+    EMSCRIPTEN_EVENT_TARGET_WINDOW, app, EM_FALSE, wasm_resize_window_cb);
   // The simulate_infinite_loop argument should be false. It is because I have
   // nothing on the stack what should be kept. And it helps me avoid
   // unnecessary exception that is thrown intentionally by emscripten. More

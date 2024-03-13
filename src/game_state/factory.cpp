@@ -6,6 +6,7 @@
 #include "src/components/textures.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
+#include "src/control.h"
 
 #include "factory.h"
 
@@ -78,6 +79,23 @@ ModelFactory::make_static(entt::registry& registry,
   registry.emplace<Opaque>(entity);
   registry.emplace<Textures>(entity, textures);
   registry.emplace<Transform>(entity);
+  return entity;
+}
+
+entt::entity
+ModelFactory::make_tutorial_button(entt::registry& registry,
+                                   const std::string& file_path,
+                                   size_t instance_quantity_hint)
+{
+  auto [mesh, textures] = cache->load(file_path, instance_quantity_hint);
+  auto entity = registry.create();
+  registry.emplace<Available>(entity);
+  registry.emplace<MeshPointer>(entity, mesh);
+  registry.emplace<Opaque>(entity);
+  registry.emplace<Textures>(entity, textures);
+  registry.emplace<Transform>(entity);
+  registry.emplace<TutorialButton>(entity, Control::Action::UNKNOWN);
+  registry.emplace<TutorialButtonKind>(entity);
   return entity;
 }
 

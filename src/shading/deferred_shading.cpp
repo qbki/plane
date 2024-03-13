@@ -49,7 +49,7 @@ DeferredShading::draw_quad()
 {
   Mesh::DrawParams draw_params{
     .transforms{ glm::mat4(1) },
-    .texture_indices{ TextureType::Type::MAIN },
+    .texture_indices{ TextureType::Type::PRIMARY },
   };
   _quad->draw(draw_params);
 }

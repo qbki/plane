@@ -4,6 +4,16 @@
 class Control
 {
 public:
+  enum class Action
+  {
+    UNKNOWN = 0,
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    SHOOTING,
+  };
+
   bool up = false;
   bool down = false;
   bool left = false;

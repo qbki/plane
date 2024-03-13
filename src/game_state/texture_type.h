@@ -4,11 +4,11 @@
 namespace TextureType {
 enum class Type : unsigned char
 {
-  MAIN = 0,
-  DESTROYED = 1,
+  PRIMARY = 0,
+  SECONDARY = 1,
 };
 
-inline const Type DEFAULT_TYPE = Type::MAIN;
+inline const Type DEFAULT_TYPE = Type::PRIMARY;
 
 std::string
 map_to_str(Type type);

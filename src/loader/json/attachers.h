@@ -30,6 +30,11 @@ attach_color(const nlohmann::basic_json<>& node,
              entt::entity entity);
 
 void
+attach_tutorial_button_value(const nlohmann::basic_json<>& node,
+                             entt::registry& registry,
+                             entt::entity entity);
+
+void
 attach_particles_emmiter_by_hit(const nlohmann::basic_json<>& particle_node,
                                 App& app,
                                 entt::entity host_entity);

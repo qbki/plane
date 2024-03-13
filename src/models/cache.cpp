@@ -37,8 +37,8 @@ generate_textures(tinygltf::Model& model)
                                    to_integer_value(1.0) };
   auto textures =
     std::make_shared<std::unordered_map<TextureType::Type, Texture>>();
-  textures->emplace(TextureType::Type::MAIN, Texture{ data });
-  textures->emplace(TextureType::Type::DESTROYED, Texture{ data });
+  textures->emplace(TextureType::Type::PRIMARY, Texture{ data });
+  textures->emplace(TextureType::Type::SECONDARY, Texture{ data });
   return textures;
 }
 

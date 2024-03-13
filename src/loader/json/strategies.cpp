@@ -28,6 +28,7 @@ single_strategy(const nlohmann::basic_json<>& json_entities,
   attach_transform(json_strategy, registry, entity);
   attach_projectile_emmiter(json_entities, json_entity, app, entity);
   attach_velocity(json_entity, registry, entity);
+  attach_tutorial_button_value(json_strategy, registry, entity);
   setup_player(json_strategy, app, entity);
 }
 

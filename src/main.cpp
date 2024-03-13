@@ -1,3 +1,4 @@
+#include "src/systems/tutorial_buttons.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <SDL2/SDL.h>
 #include <entt/entt.hpp>
@@ -92,6 +93,7 @@ main()
   app->add_handler(velocity_system);
   app->add_handler(projectile_handler_system);
   app->add_handler(camera_move_system);
+  app->add_handler(tutorial_buttons_system);
   app->add_handler(render_system);
 
   load_level(

@@ -8,13 +8,15 @@
 class ModelFactory
 {
 private:
-  std::unique_ptr<Cache> cache;
+  std::unique_ptr<Cache> _cache;
 
 public:
   using MakerFn =
     std::function<entt::entity(entt::registry&, const std::string&)>;
 
   ModelFactory();
+
+  Cache& cache();
 
   entt::entity make_enemy(entt::registry& registry,
                           const std::string& file_path);

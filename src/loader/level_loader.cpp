@@ -63,12 +63,26 @@ get_entity_maker(App& app,
 }
 
 void
+preload_models(const nlohmann::basic_json<>& entities_json, App& app)
+{
+  auto& factory = app.game_state->factory();
+  for (auto& [_, value] : entities_json.items()) {
+    if (value.contains("model")) {
+      auto path = value.at("model").get<std::string>();
+      factory.cache().load(path);
+    }
+  }
+}
+
+void
 load_level(const std::string& entities_file_path,
            const std::string& level_file_path,
            App& app)
 {
   auto json_entities = load_json(entities_file_path).at("entities");
   auto json_level = load_json(level_file_path);
+
+  preload_models(json_entities, app);
 
   setup_camera(json_level, app);
   for (auto& json_strategy : json_level.at("map")) {

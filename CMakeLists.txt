@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.27)
 include(${CMAKE_SOURCE_DIR}/configs/cmake/utils.cmake)
 include(${CMAKE_SOURCE_DIR}/configs/cmake/license.cmake)
 
-project(plane VERSION 0.1.3)
+project(plane VERSION 0.1.4)
 
 function(setup_link_libraries target_name)
   target_link_libraries(${target_name} EnTT::EnTT)

@@ -31,7 +31,7 @@ calc_rotation(unsigned int multiplier, float angle)
 void
 emit_particles(App& app,
                glm::vec3 initial_position,
-               const ParticleParams& params,
+               const ParticlesParams& params,
                const std::string& file_path)
 {
   auto& registry = app.game_state->registry();
@@ -73,7 +73,7 @@ emit_particles(App& app,
 
 void
 emit_projectile(App& app,
-                const ProjectileParams& params,
+                const ProjectilesParams& params,
                 const std::string& file_path)
 {
   auto& registry = app.game_state->registry();

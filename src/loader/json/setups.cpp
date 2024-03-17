@@ -1,5 +1,7 @@
+#include <glm/vec3.hpp>
+
+#include "mappers.h" // IWYU pragma: keep
 #include "setups.h"
-#include "extractors.h"
 
 void
 setup_player(const nlohmann::basic_json<>& json_strategy,
@@ -16,6 +18,6 @@ setup_player(const nlohmann::basic_json<>& json_strategy,
 void
 setup_camera(const nlohmann::basic_json<>& json_level, App& app)
 {
-  auto position = extract_vec3(json_level.at("camera").at("position"));
+  auto position = json_level.at("camera").at("position").get<glm::vec3>();
   app.game_state->camera()->position(position);
 }

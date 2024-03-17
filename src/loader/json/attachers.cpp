@@ -1,8 +1,8 @@
 #include <format>
+#include <glm/vec3.hpp>
 #include <numeric>
 #include <ranges>
 #include <unordered_map>
-#include <utility>
 #include <vector>
 
 #include "src/components/common.h"
@@ -12,7 +12,7 @@
 
 #include "attachers.h"
 #include "emmiters.h"
-#include "extractors.h"
+#include "mappers.h" // IWYU pragma: keep
 
 void
 attach_velocity(const nlohmann::basic_json<>& node,
@@ -22,7 +22,7 @@ attach_velocity(const nlohmann::basic_json<>& node,
   if (!node.contains("velocity")) {
     return;
   }
-  auto velocity = extract_velocity(node);
+  auto velocity = node.at("velocity").get<VelocityParams>();
   registry.emplace_or_replace<Velocity>(
     entity, velocity.acceleration, velocity.damping);
 }
@@ -49,12 +49,12 @@ attach_transform(const nlohmann::basic_json<>& node,
   Transform transform;
   bool is_set = false;
   if (node.contains("position")) {
-    auto position = extract_vec3(node.at("position"));
+    auto position = node.at("position").get<glm::vec3>();
     transform.translate(position);
     is_set = true;
   }
   if (node.contains("rotation")) {
-    auto rotation = extract_vec3(node.at("rotation"));
+    auto rotation = node.at("rotation").get<glm::vec3>();
     transform.rotate(rotation);
     is_set = true;
   }
@@ -71,7 +71,7 @@ attach_direction(const nlohmann::basic_json<>& node,
   if (!node.contains("direction")) {
     return;
   }
-  auto direction = extract_vec3(node.at("direction"));
+  auto direction = node.at("direction").get<glm::vec3>();
   registry.emplace_or_replace<Direction>(entity, direction);
 }
 
@@ -83,7 +83,7 @@ attach_color(const nlohmann::basic_json<>& node,
   if (!node.contains("color")) {
     return;
   }
-  auto color = extract_vec3(node.at("color"));
+  auto color = node.at("color").get<glm::vec3>();
   registry.emplace_or_replace<Color>(entity, color);
 }
 
@@ -130,11 +130,7 @@ attach_particles_emmiter_by_hit(const nlohmann::basic_json<>& particle_node,
 {
   auto& registry{ app.game_state->registry() };
   auto file_path{ particle_node.at("model").get<std::string>() };
-  ParticleParams particle_params{
-    .quantity = particle_node.at("quantity").get<unsigned int>(),
-    .velocity = extract_velocity(particle_node),
-    .lifetime = particle_node.at("life_time").get<float>(),
-  };
+  auto particle_params = particle_node.get<ParticlesParams>();
   ParticlesEmitter emitter{ [particle_params, file_path, &app](
                               glm::vec3 position) {
     emit_particles(app, position, particle_params, file_path);
@@ -151,15 +147,12 @@ attach_projectile_emmiter(const nlohmann::basic_json<>& json_entities,
   if (!node.contains("gun_id")) {
     return;
   }
-  auto gun_node = json_entities.at(node.at("gun_id").get<std::string>());
+  auto gun_id = node.at("gun_id").get<std::string>();
+  auto gun_node = json_entities.at(gun_id);
   auto& registry{ app.game_state->registry() };
-  auto projectile_id{ gun_node.at("projectile_id").get<std::string>() };
-  auto projectile_node = json_entities.at(projectile_id);
+  auto projectile_params = gun_node.get<ProjectilesParams>();
+  auto projectile_node = json_entities.at(projectile_params.projectile_id);
   auto file_path = projectile_node.at("model").get<std::string>();
-  ProjectileParams projectile_params{
-    .velocity = extract_velocity(gun_node),
-    .range = gun_node.at("range").get<float>(),
-  };
   ProjectileEmitter emitter{ [projectile_params, file_path, &app]() {
     emit_projectile(app, projectile_params, file_path);
   } };

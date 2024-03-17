@@ -129,6 +129,7 @@ cppcheck:
 		--inconclusive \
 		--verbose \
 		--quiet \
+		--inline-suppr \
 		-I ./ \
 		--suppress=unusedFunction \
 		--suppress=missingIncludeSystem \

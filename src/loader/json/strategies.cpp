@@ -1,14 +1,15 @@
-#include <glm/ext/vector_int3.hpp>
+#include <glm/vec3.hpp>
+#include <ranges>
 #include <vector>
 
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
+#include "src/loader/params.h"
 #include "src/utils/random.h"
 
 #include "attachers.h"
-#include "extractors.h"
+#include "mappers.h" // IWYU pragma: keep
 #include "setups.h"
-#include "strategies.h"
 
 void
 single_strategy(const nlohmann::basic_json<>& json_entities,
@@ -39,12 +40,13 @@ square_strategy(const nlohmann::basic_json<>& json_entities,
                 ModelFactory::MakerFn maker_fn)
 {
   auto& registry = app.game_state->registry();
-  auto entity_ids = extract_vector<std::string>(json_strategy.at("entity_ids"));
+  auto strategy_params = json_strategy.get<SquareStrategyParams>();
+  auto& center = strategy_params.center;
+  auto& entity_ids = strategy_params.entity_ids;
+  auto& width = strategy_params.width;
+  auto& height = strategy_params.height;
   auto get_random_int =
     make_random_fn(static_cast<size_t>(0), entity_ids.size() - 1);
-  auto width = json_strategy.at("width").get<int>();
-  auto height = json_strategy.at("height").get<int>();
-  auto center = extract_vec3(json_strategy.at("center"));
   const auto half = 2.0f;
   auto start_x = center.x - static_cast<float>(width) / half;
   auto start_y = center.y - static_cast<float>(height) / half;
@@ -71,16 +73,18 @@ round_strategy(const nlohmann::basic_json<>& json_entities,
                ModelFactory::MakerFn maker_fn)
 {
   auto& registry = app.game_state->registry();
-  auto entity_ids = extract_vector<std::string>(json_strategy.at("entity_ids"));
-  std::vector<ExtractVelocityResult> velocity_items;
-  std::ranges::copy(entity_ids | std::ranges::views::transform([&](auto& id) {
-                      return extract_velocity(json_entities.at(id));
-                    }),
-                    std::back_inserter(velocity_items));
+  auto strategy_params = json_strategy.get<RoundStrategyParams>();
+  auto& center = strategy_params.center;
+  auto& entity_ids = strategy_params.entity_ids;
+  auto& radius = strategy_params.radius;
+  auto velocity_items_view =
+    entity_ids | std::views::transform([&](auto& id) {
+      return json_entities.at(id).at("velocity").template get<VelocityParams>();
+    });
+  std::vector<VelocityParams> velocity_items(velocity_items_view.begin(),
+                                             velocity_items_view.end());
   auto get_random_int =
     make_random_fn(static_cast<size_t>(0), entity_ids.size() - 1);
-  auto radius = json_strategy.at("radius").get<int>();
-  auto center = extract_vec3(json_strategy.at("center"));
   auto radius_float = static_cast<float>(radius);
 
   std::vector<glm::ivec2> coords;

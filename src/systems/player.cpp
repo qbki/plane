@@ -1,4 +1,7 @@
+#include <glm/geometric.hpp>
+#include <glm/gtc/constants.hpp>
 #include <glm/gtx/norm.hpp>
+#include <glm/trigonometric.hpp>
 
 #include "src/app.h"
 #include "src/components/common.h"

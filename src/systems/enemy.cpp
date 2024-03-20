@@ -1,4 +1,8 @@
+#include <glm/geometric.hpp>
+#include <glm/gtc/constants.hpp>
+#include <glm/trigonometric.hpp>
 #include <ranges>
+#include <tuple>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"

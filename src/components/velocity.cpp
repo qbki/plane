@@ -1,5 +1,5 @@
 #include <cmath>
-#include <glm/ext/quaternion_exponential.hpp>
+#include <glm/exponential.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtc/constants.hpp>
 

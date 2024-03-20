@@ -2,10 +2,10 @@
 #include <gsl/pointers>
 #include <memory>
 #include <stdexcept>
+#include <string>
+#include <utility>
 
 #include "app.h"
-#include "shader.h"
-#include "shapes.h"
 
 App::App(std::unique_ptr<GameState> _game_state,
          std::unique_ptr<Control> _control,

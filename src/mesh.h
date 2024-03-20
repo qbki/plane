@@ -1,8 +1,10 @@
 #pragma once
 #include <GL/glew.h>
-#include <glm/ext/matrix_float4x4.hpp>
-#include <memory>
+#include <cstddef>
+#include <glm/mat4x4.hpp>
+#include <memory> // IWYU pragma: export
 #include <tiny_gltf.h>
+#include <vector> // IWYU pragma: export
 
 #include "src/game_state/texture_type.h"
 

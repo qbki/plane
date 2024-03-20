@@ -1,5 +1,6 @@
 #pragma once
 #include <format>
+#include <stdexcept>
 #include <unordered_map>
 
 template<typename Key, typename Value>

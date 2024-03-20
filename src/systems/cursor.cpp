@@ -1,5 +1,7 @@
 #include <glm/ext/matrix_projection.hpp>
+#include <glm/geometric.hpp>
 #include <glm/gtx/intersect.hpp>
+#include <glm/vec4.hpp>
 
 #include "src/components/transform.h"
 

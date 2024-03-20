@@ -1,6 +1,5 @@
 #include <GL/glew.h>
 #include <SDL.h>
-#include <SDL_video.h>
 #include <format>
 #include <stdexcept>
 #include <string>

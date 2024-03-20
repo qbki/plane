@@ -1,5 +1,4 @@
 #pragma once
-#include <entt/entt.hpp>
 #include <nlohmann/json.hpp>
 
 #include "src/app.h"

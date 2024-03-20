@@ -1,16 +1,8 @@
-#include "src/systems/tutorial_buttons.h"
 #define GLM_ENABLE_EXPERIMENTAL
-#include <SDL2/SDL.h>
-#include <entt/entt.hpp>
-#include <glm/ext/vector_float3.hpp>
 #include <gsl/pointers>
-#include <memory>
-#include <nlohmann/json.hpp>
+#include <utility>
 
-#include "app.h"
-#include "camera.h"
 #include "consts.h"
-#include "control.h"
 #include "game_loop.h"
 #include "mesh.h"
 #include "sdl_init.h"
@@ -25,6 +17,7 @@
 #include "src/systems/player.h"
 #include "src/systems/projectiles.h"
 #include "src/systems/render.h"
+#include "src/systems/tutorial_buttons.h"
 #include "src/systems/velocity.h"
 #include "utils/file_loaders.h"
 

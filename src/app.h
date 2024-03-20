@@ -1,14 +1,17 @@
 #pragma once
+#include <functional>
+#include <glm/vec2.hpp> // IWYU pragma: export
 #include <memory>
 #include <optional>
+#include <vector>
 
-#include "control.h"
-#include "game_state/game_state.h"
-#include "sdl_init.h"
-#include "shader.h"
-#include "shading/deferred_shading.h"
-#include "shapes.h"
-#include "utils/types.h"
+#include "src/control.h"               // IWYU pragma: export
+#include "src/game_state/game_state.h" // IWYU pragma: export
+#include "src/sdl_init.h"
+#include "src/shader.h"                   // IWYU pragma: export
+#include "src/shading/deferred_shading.h" // IWYU pragma: export
+#include "src/shapes.h"                   // IWYU pragma: export
+#include "src/utils/types.h"
 
 class App
 {

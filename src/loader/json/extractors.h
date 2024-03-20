@@ -1,6 +1,6 @@
 #pragma once
-#include <glm/vec3.hpp>
 #include <nlohmann/json.hpp>
+#include <string>
 
 std::string
 extract_kind(const nlohmann::basic_json<>& strategy_node,

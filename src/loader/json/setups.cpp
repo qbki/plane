@@ -1,4 +1,5 @@
 #include <glm/vec3.hpp>
+#include <string>
 
 #include "mappers.h" // IWYU pragma: keep
 #include "setups.h"

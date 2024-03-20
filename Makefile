@@ -1,6 +1,9 @@
+SHELL=/bin/bash
 CPP_SOURCE_FILES_LIST=$(shell git ls-files | egrep '(h|cpp)$$')
 PROJECT_NAME=plane
 BUILD_DIR=$(shell pwd)/build
+SRC_DIR=$(shell pwd)/src
+CONFIGS_DIR=$(shell pwd)/configs
 PACK_DIR=$(BUILD_DIR)/pack
 LINUX_BUILD_DIR=$(BUILD_DIR)/linux
 LINUX_BIN_DIR=$(LINUX_BUILD_DIR)/bin
@@ -136,16 +139,29 @@ cppcheck:
 		./src
 .PHONY: cppcheck
 
+iwyu:
+	@iwyu_tool -p "$(BUILD_DIR)" "$(SRC_DIR)" \
+		 -- -Xiwyu --mapping_file=$(CONFIGS_DIR)/iwyu/mapping.imp \
+				-Xiwyu --no_fwd_decls
+.PHONY: iwyu
 
 clang-tidy:
 	@clang-tidy $(CPP_SOURCE_FILES_LIST) -p $(BUILD_DIR)
 .PHONY: clang-tidy
 
+clang-tidy-verify-config: export SYSTEM_VERSION = `\
+	echo \`clang-tidy --version\` | grep -Po '(?<=version )\d+'`
+clang-tidy-verify-config: export EXPECTED_VERSION = "17"
+clang-tidy-verify-config:
+	@if [ "$(SYSTEM_VERSION)" != "$(EXPECTED_VERSION)" ]; then \
+		echo "WARNING: Tested on clang-tidy $(EXPECTED_VERSION). Your version is $(SYSTEM_VERSION)."; \
+	fi
+	@clang-tidy --verify-config -p $(BUILD_DIR)
+.PHONY: clang-tidy
 
 check-code-style:
 	@clang-format --dry-run $(CPP_SOURCE_FILES_LIST)
 .PHONY: format-check
-
 
 format-code:
 	@clang-format -i $(CPP_SOURCE_FILES_LIST)

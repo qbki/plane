@@ -1,3 +1,7 @@
+#include <GL/glew.h>
+#include <glm/mat4x4.hpp>
+#include <utility>
+
 #include "src/game_state/texture_type.h"
 
 #include "deferred_shading.h"

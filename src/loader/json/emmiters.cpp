@@ -1,9 +1,11 @@
+#include <glm/common.hpp>
+#include <glm/gtc/constants.hpp>
+
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
+#include "src/game_state/factory.h"
 #include "src/utils/random.h"
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/ext/quaternion_trigonometric.hpp>
 
 #include "emmiters.h"
 

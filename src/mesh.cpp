@@ -1,7 +1,10 @@
 #include <GL/glew.h>
-#include <entt/entity/fwd.hpp>
+#include <algorithm>
+#include <glm/vec4.hpp>
+#include <iterator>
+#include <map>
 #include <span>
-#include <strings.h>
+#include <string>
 #include <tiny_gltf.h>
 #include <tuple>
 #include <vector>

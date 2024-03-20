@@ -1,5 +1,10 @@
 #pragma once
-#include <glm/gtc/quaternion.hpp>
+#include <glm/common.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/gtc/constants.hpp>
+#include <glm/gtc/quaternion.hpp> // IWYU pragma: export
+#include <glm/mat4x4.hpp>         // IWYU pragma: export
+#include <glm/vec3.hpp>           // IWYU pragma: export
 
 class Transform
 {

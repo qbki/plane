@@ -1,10 +1,12 @@
 #include <filesystem>
 #include <format>
 #include <fstream>
+#include <iterator>
+#include <nlohmann/json.hpp>
+#include <stdexcept>
 #include <string>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
-#include <iostream>
 #include <sstream>
 #endif
 

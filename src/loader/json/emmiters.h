@@ -1,4 +1,7 @@
 #pragma once
+#include <glm/vec3.hpp>
+#include <string>
+
 #include "src/app.h"
 #include "src/loader/params.h"
 

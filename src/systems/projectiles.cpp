@@ -1,3 +1,5 @@
+#include <glm/geometric.hpp>
+
 #include "src/components/common.h"
 #include "src/components/textures.h"
 #include "src/components/transform.h"

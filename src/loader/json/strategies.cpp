@@ -1,9 +1,16 @@
-#include <glm/vec3.hpp>
+#include <cstddef>
+#include <functional>
+#include <glm/ext/vector_int2.hpp>
+#include <glm/geometric.hpp>
+#include <nlohmann/json.hpp>
 #include <ranges>
+#include <string>
 #include <vector>
 
+#include "src/app.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
+#include "src/game_state/factory.h"
 #include "src/loader/params.h"
 #include "src/utils/random.h"
 

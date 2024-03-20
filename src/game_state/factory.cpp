@@ -1,5 +1,4 @@
-#include <entt/entity/fwd.hpp>
-#include <glm/ext/vector_float3.hpp>
+#include <glm/gtc/constants.hpp>
 #include <memory>
 
 #include "src/components/common.h"

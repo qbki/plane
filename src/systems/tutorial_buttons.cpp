@@ -1,9 +1,6 @@
-#include <SDL_keycode.h>
-
 #include "src/components/common.h"
 #include "src/components/textures.h"
-#include "src/control.h"
-#include "src/game_state/texture_type.h"
+#include "src/utils/noop.h"
 
 #include "tutorial_buttons.h"
 

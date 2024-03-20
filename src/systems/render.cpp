@@ -1,14 +1,13 @@
-#include <glm/ext/matrix_float4x4.hpp>
-#include <memory>
-#include <sstream>
+#include <GL/glew.h>
+#include <format>
 #include <unordered_map>
-#include <vector>
 
 #include "src/components/common.h"
 #include "src/components/textures.h"
 #include "src/components/transform.h"
 #include "src/consts.h"
 #include "src/material.h"
+#include "src/mesh.h"
 
 #include "render.h"
 
@@ -107,7 +106,7 @@ render_system(App::Meta& meta)
   light_pass_shader.uniform("u_normal_texture", 1);
   light_pass_shader.uniform("u_base_color_texture", 2);
 
-  int lights_quantity = 0;
+  int light_idx = 0;
   registry
     .view<const Transform,
           const Color,
@@ -116,17 +115,19 @@ render_system(App::Meta& meta)
     .each([&](const Transform& transform,
               const Color& color,
               const PointLightParams& params) {
-      std::stringstream prefix;
-      prefix << "u_point_lights[" << lights_quantity << "].";
-      light_pass_shader.uniform(prefix.str() + "color", color.value);
-      light_pass_shader.uniform(prefix.str() + "position",
-                                transform.translation());
-      light_pass_shader.uniform(prefix.str() + "constant", params.constant);
-      light_pass_shader.uniform(prefix.str() + "linear", params.linear);
-      light_pass_shader.uniform(prefix.str() + "quadratic", params.quadratic);
-      lights_quantity += 1;
+      auto u_color = std::format("u_point_lights[{}].color", light_idx);
+      auto u_position = std::format("u_point_lights[{}].position", light_idx);
+      auto u_constant = std::format("u_point_lights[{}].constant", light_idx);
+      auto u_linear = std::format("u_point_lights[{}].linear", light_idx);
+      auto u_quadratic = std::format("u_point_lights[{}].quadratic", light_idx);
+      light_pass_shader.uniform(u_color, color.value);
+      light_pass_shader.uniform(u_position, transform.translation());
+      light_pass_shader.uniform(u_constant, params.constant);
+      light_pass_shader.uniform(u_linear, params.linear);
+      light_pass_shader.uniform(u_quadratic, params.quadratic);
+      light_idx += 1;
     });
-  light_pass_shader.uniform("u_point_lights_quantity", lights_quantity);
+  light_pass_shader.uniform("u_point_lights_quantity", light_idx);
   deferred_shading.draw_quad();
 
   glBindFramebuffer(GL_READ_FRAMEBUFFER,

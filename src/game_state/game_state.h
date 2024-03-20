@@ -1,9 +1,10 @@
 #pragma once
-#include <entt/entt.hpp>
+#include <entt/entt.hpp> // IWYU pragma: export
 #include <glm/gtc/constants.hpp>
-#include <memory>
+#include <glm/vec3.hpp>
+#include <memory> // IWYU pragma: export
 
-#include "src/camera.h"
+#include "src/camera.h" // IWYU pragma: export
 
 #include "factory.h"
 

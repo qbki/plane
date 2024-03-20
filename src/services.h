@@ -1,5 +1,6 @@
 #pragma once
-#include "logger/abstract_logger.h"
+#include "logger/abstract_logger.h" // IWYU pragma: export
+
 #include "service.h"
 
 inline AbstractLogger&

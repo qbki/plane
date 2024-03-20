@@ -1,8 +1,6 @@
-#include <glm/geometric.hpp>
-
+#include "src/components/velocity.h"
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/components/velocity.h"
 #include "src/consts.h"
 #include "src/utils/interpolations.h"
 

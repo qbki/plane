@@ -1,0 +1,51 @@
+[
+  { include: [ '@<SDL_.*>', private, '<SDL.h>', public ] },
+  { include: [ '@<nlohmann/.*>', private, '<nlohmann/json.hpp>', public ] },
+  { include: [ '@<entt/.*>', private, '<entt/entt.hpp>', public ] },
+
+  { include: [ '<glm/detail/type_vec2.hpp>', private, '<glm/vec2.hpp>', public ] },
+  { include: [ '<glm/detail/type_vec2.inl>', private, '<glm/vec2.hpp>', public ] },
+  { include: [ '<glm/ext/vector_float2.hpp>', private, '<glm/vec2.hpp>', public ] },
+
+  { include: [ '<glm/detail/type_vec3.hpp>', private, '<glm/vec3.hpp>', public ] },
+  { include: [ '<glm/detail/type_vec3.inl>', private, '<glm/vec3.hpp>', public ] },
+  { include: [ '<glm/ext/vector_float3.hpp>', private, '<glm/vec3.hpp>', public ] },
+  { symbol: [ 'glm::vec3', private, '<glm/vec3.hpp>', public ] },
+
+  { include: [ '<glm/detail/type_vec4.hpp>', private, '<glm/vec4.hpp>', public ] },
+  { include: [ '<glm/detail/type_vec4.inl>', private, '<glm/vec4.hpp>', public ] },
+  { include: [ '<glm/ext/vector_float4.hpp>', private, '<glm/vec4.hpp>', public ] },
+  { symbol: [ 'glm::vec4', private, '<glm/vec4.hpp>', public ] },
+
+  { include: [ '<glm/fwd.hpp>', private, '<glm/glm.hpp>', public ] },
+  { include: [ '<glm/detail/func_geometric.inl>', private, '<glm/geometric.hpp>', public ] },
+  { include: [ '<glm/detail/func_trigonometric.inl>', private, '<glm/trigonometric.hpp>', public ] },
+  { include: [ '<glm/detail/func_exponential.inl>', private, '<glm/exponential.hpp>', public ] },
+
+  { include: [ '<glm/ext/matrix_clip_space.inl>', private, '<glm/ext/matrix_clip_space.hpp>', public ] },
+  { include: [ '<glm/ext/matrix_projection.inl>', private, '<glm/ext/matrix_projection.hpp>', public ] },
+  { include: [ '<glm/ext/matrix_transform.inl>', private, '<glm/ext/matrix_transform.hpp>', public ] },
+
+  { include: [ '<glm/ext/matrix_float3x3.hpp>', private, '<glm/mat3x3.hpp>', public ] },
+  { include: [ '<glm/detail/type_mat3x3.hpp>', private, '<glm/mat3x3.hpp>', public ] },
+  { include: [ '<glm/detail/type_mat3x3.inl>', private, '<glm/mat3x3.hpp>', public ] },
+  { symbol: [ 'glm::mat3', private, '<glm/mat3x3.hpp>', public ] },
+
+  { include: [ '<glm/ext/matrix_float4x4.hpp>', private, '<glm/mat4x4.hpp>', public ] },
+  { include: [ '<glm/detail/type_mat4x4.hpp>', private, '<glm/mat4x4.hpp>', public ] },
+  { include: [ '<glm/detail/type_mat4x4.inl>', private, '<glm/mat4x4.hpp>', public ] },
+  { symbol: [ 'glm::mat4', private, '<glm/mat4x4.hpp>', public ] },
+
+  { include: [ '<glm/gtx/intersect.inl>', private, '<glm/gtx/intersect.hpp>', public ] },
+  { include: [ '<glm/gtx/norm.inl>', private, '<glm/gtx/norm.hpp>', public ] },
+
+  { include: [ '<glm/detail/type_quat.hpp>', private, '<glm/gtc/quaternion.hpp>', public ] },
+  { include: [ '<glm/detail/type_quat.inl>', private, '<glm/gtc/quaternion.hpp>', public ] },
+  { include: [ '<glm/gtc/quaternion.inl>', private, '<glm/gtc/quaternion.hpp>', public ] },
+  { include: [ '<glm/ext/quaternion_trigonometric.inl>', private, '<glm/gtc/quaternion.hpp>', public ] },
+  { symbol: [ 'glm::quat', private, '<glm/gtc/quaternion.hpp>', public ] },
+
+  { include: [ '<glm/detail/qualifier.hpp>', private, '<glm/common.hpp>', public ] },
+  { include: [ '<glm/ext/scalar_constants.inl>', private, '<glm/gtc/constants.hpp>', public ] },
+  { include: [ '<glm/gtc/constants.inl>', private, '<glm/gtc/constants.hpp>', public ] },
+]

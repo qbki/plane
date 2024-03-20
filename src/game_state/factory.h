@@ -2,6 +2,7 @@
 #include <entt/entt.hpp>
 #include <functional>
 #include <memory>
+#include <string>
 
 #include "src/models/cache.h"
 

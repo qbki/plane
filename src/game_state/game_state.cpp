@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "factory.h"
 
 void
 GameState::camera(std::shared_ptr<Camera> camera)

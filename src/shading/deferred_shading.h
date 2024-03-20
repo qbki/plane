@@ -1,11 +1,7 @@
 #pragma once
-#include <memory>
-#include <sys/types.h>
-
 #include "src/mesh.h"
 #include "src/shader.h"
-
-#include "g_buffer.h"
+#include "src/shading/g_buffer.h" // IWYU pragma: export
 
 class DeferredShading
 {

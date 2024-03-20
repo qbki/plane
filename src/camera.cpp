@@ -1,7 +1,7 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/constants.hpp>
-#include <glm/matrix.hpp>
+#include <glm/trigonometric.hpp>
 #include <glm/vec3.hpp>
 
 #include "camera.h"

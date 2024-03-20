@@ -1,13 +1,13 @@
 #pragma once
 #include <entt/entity/fwd.hpp>
-#include <functional>
+#include <functional> // IWYU pragma: export
 #include <glm/gtc/constants.hpp>
 #include <glm/vec3.hpp>
 #include <memory>
 
 #include "src/control.h"
 #include "src/mesh.h"
-#include "src/utils/types.h"
+#include "src/utils/types.h" // IWYU pragma: export
 
 enum class EnemyStateEnum
 {

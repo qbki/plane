@@ -2,7 +2,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "src/game_state/texture_type.h"
+#include "src/game_state/texture_type.h" // IWYU pragma: export
 #include "src/texture.h"
 
 class Textures

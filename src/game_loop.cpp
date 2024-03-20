@@ -1,4 +1,5 @@
-#include <SDL_events.h>
+#include <GL/glew.h>
+#include <SDL.h>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <emscripten/html5.h>

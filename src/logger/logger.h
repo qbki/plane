@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 #include "abstract_logger.h"
 
 class Logger : public AbstractLogger

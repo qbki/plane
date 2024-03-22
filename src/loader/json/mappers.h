@@ -1,7 +1,9 @@
 #pragma once
+#include <format>
 #include <glm/vec3.hpp>
 #include <nlohmann/json.hpp>
 #include <stdexcept>
+#include <utility>
 
 #include "src/loader/params.h"
 
@@ -80,38 +82,68 @@ NLOHMANN_JSON_NAMESPACE_END
 
 NLOHMANN_JSON_NAMESPACE_BEGIN
 template<>
-struct adl_serializer<SquareStrategyParams>
+struct adl_serializer<PositionStrategy>
 {
-  static void to_json(nlohmann::json&, const SquareStrategyParams&)
+  static void to_json(nlohmann::json&, const PositionStrategy&)
   {
     throw std::runtime_error("Not implemented");
   }
-  static void from_json(const nlohmann::json& json_obj,
-                        SquareStrategyParams& value)
+  static void from_json(const nlohmann::json& json_obj, PositionStrategy& value)
   {
-    json_obj.at("center").get_to(value.center);
-    json_obj.at("entity_ids").get_to(value.entity_ids);
-    json_obj.at("height").get_to(value.height);
-    json_obj.at("width").get_to(value.width);
+    auto kind = json_obj.at("position_strategy").get<std::string>();
+    if (kind == "void") {
+      PositionStrategyVoid strategy{};
+      json_obj.at("entity_id").get_to(strategy.entity_id);
+      value = strategy;
+    } else if (kind == "round") {
+      PositionStrategyRound strategy{};
+      json_obj.at("radius").get_to(strategy.radius);
+      json_obj.at("center").get_to(strategy.center);
+      json_obj.at("entity_ids").get_to(strategy.entity_ids);
+      value = strategy;
+    } else if (kind == "square") {
+      PositionStrategySquare strategy{};
+      json_obj.at("width").get_to(strategy.width);
+      json_obj.at("height").get_to(strategy.height);
+      json_obj.at("center").get_to(strategy.center);
+      json_obj.at("entity_ids").get_to(strategy.entity_ids);
+      value = strategy;
+    } else if (kind == "single") {
+      PositionStrategySingle strategy{};
+      json_obj.at("position").get_to(strategy.position);
+      json_obj.at("entity_id").get_to(strategy.entity_id);
+      value = strategy;
+    } else {
+      std::runtime_error(std::format("Unknown strategy: {}", kind));
+    }
   }
 };
 NLOHMANN_JSON_NAMESPACE_END
 
 NLOHMANN_JSON_NAMESPACE_BEGIN
 template<>
-
-struct adl_serializer<RoundStrategyParams>
+struct adl_serializer<BehaviourEnum>
 {
-  static void to_json(nlohmann::json&, const RoundStrategyParams&)
+  static void to_json(nlohmann::json&, const BehaviourEnum&)
   {
     throw std::runtime_error("Not implemented");
   }
-  static void from_json(const nlohmann::json& json_obj,
-                        RoundStrategyParams& value)
+  static void from_json(const nlohmann::json& json_obj, BehaviourEnum& value)
   {
-    json_obj.at("radius").get_to(value.radius);
-    json_obj.at("center").get_to(value.center);
-    json_obj.at("entity_ids").get_to(value.entity_ids);
+    auto behaviour = json_obj.get<std::string>();
+    if (behaviour == "enemy") {
+      value = BehaviourEnum::ENEMY;
+    } else if (behaviour == "light") {
+      value = BehaviourEnum::LIGHT;
+    } else if (behaviour == "player") {
+      value = BehaviourEnum::PLAYER;
+    } else if (behaviour == "static") {
+      value = BehaviourEnum::STATIC;
+    } else if (behaviour == "tutorial-button") {
+      value = BehaviourEnum::TUTORIAL_BUTTON;
+    } else {
+      throw std::runtime_error(std::format("Unknown behaviour: {}", behaviour));
+    }
   }
 };
 NLOHMANN_JSON_NAMESPACE_END

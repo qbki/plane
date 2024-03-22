@@ -1,65 +1,67 @@
-#include <functional>
+#include <format>
 #include <nlohmann/json.hpp>
+#include <stdexcept>
 #include <string>
-#include <unordered_map>
-#include <utility>
+#include <variant>
 
 #include "src/app.h"
 #include "src/game_state/factory.h"
+#include "src/loader/params.h"
 #include "src/models/cache.h"
 #include "src/utils/file_loaders.h"
-#include "src/utils/mappers.h"
 
 #include "level_loader.h"
 #include "json/extractors.h"
+#include "json/mappers.h" // IWYU pragma: keep
 #include "json/setups.h"
 #include "json/strategies.h"
-
-ModelFactory::MakerFn
-map_maker(std::string key,
-          std::unordered_map<std::string, ModelFactory::MakerFn>&& values)
-{
-  return map_value(key, std::move(values));
-}
-
-std::function<decltype(single_strategy)>
-map_strategy(
-  std::string key,
-  std::unordered_map<std::string, std::function<decltype(single_strategy)>>&&
-    values)
-{
-  return map_value(key, std::move(values));
-}
 
 ModelFactory::MakerFn
 get_entity_maker(App& app,
                  const nlohmann::basic_json<>& strategy_node,
                  const nlohmann::basic_json<>& entities_node)
 {
-  auto strategy_behaviour = strategy_node.at("behaviour").get<std::string>();
+  auto behaviour = strategy_node.at("behaviour").get<BehaviourEnum>();
   auto& factory = app.game_state->factory();
-  return map_maker(
-    strategy_behaviour,
-    { { "player",
-        [&](auto&&... args) { return factory.make_player(args...); } },
-      { "static",
-        [&](auto&&... args) { return factory.make_static(args...); } },
-      { "enemy", [&](auto&&... args) { return factory.make_enemy(args...); } },
-      { "tutorial-button",
-        [&](auto&&... args) { return factory.make_tutorial_button(args...); } },
-      { "light", [&](auto&&... args) {
-         auto entity_kind = extract_kind(strategy_node, entities_node);
-         auto make =
-           map_maker(entity_kind,
-                     { { "directional_light",
-                         [&](auto&&... args) {
-                           return factory.make_directional_light(args...);
-                         } },
-                       { "point_light", [&](auto&&... args) {
-                          return factory.make_point_light(args...);
-                        } } });
-         return make(args...);
-       } } });
+  ModelFactory::MakerFn maker = [&](auto&... args) {
+    switch (behaviour) {
+      case BehaviourEnum::ENEMY: {
+        return factory.make_enemy(args...);
+        break;
+      }
+      case BehaviourEnum::PLAYER: {
+        return factory.make_player(args...);
+        break;
+      }
+      case BehaviourEnum::STATIC: {
+        return factory.make_static(args...);
+        break;
+      }
+      case BehaviourEnum::TUTORIAL_BUTTON: {
+        return factory.make_tutorial_button(args...);
+        break;
+      }
+      case BehaviourEnum::LIGHT: {
+        auto entity_kind = extract_kind(strategy_node, entities_node);
+        if (entity_kind == "directional_light") {
+          return factory.make_directional_light(args...);
+        } else if (entity_kind == "point_light") {
+          return factory.make_point_light(args...);
+        } else {
+          throw std::runtime_error(
+            std::format("Unknown light type: {}", entity_kind));
+        }
+        break;
+      }
+      default: {
+        auto behaviour_str = strategy_node.at("behaviour").get<std::string>();
+        throw std::runtime_error(
+          std::format("Unknown befaviour type: {}", behaviour_str));
+        break;
+      }
+    }
+  };
+  return maker;
 }
 
 void
@@ -86,17 +88,10 @@ load_level(const std::string& entities_file_path,
 
   setup_camera(json_level, app);
   for (auto& json_strategy : json_level.at("map")) {
-    auto strategy_name =
-      json_strategy.at("position_strategy").get<std::string>();
-    auto behaviour_name = json_strategy.at("behaviour").get<std::string>();
     auto maker = get_entity_maker(app, json_strategy, json_entities);
-    auto run_strategy = map_strategy(strategy_name,
-                                     {
-                                       { "single", single_strategy },
-                                       { "round", round_strategy },
-                                       { "square", square_strategy },
-                                       { "void", single_strategy },
-                                     });
-    run_strategy(json_entities, json_strategy, app, maker);
+    auto strategy = json_strategy.get<PositionStrategy>();
+    PositionStrategyVisitor strategy_handler(
+      &json_entities, &json_strategy, &app, &maker);
+    std::visit(strategy_handler, strategy);
   }
 }

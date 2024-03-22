@@ -43,28 +43,6 @@ attach_opaque(const nlohmann::basic_json<>& node,
 }
 
 void
-attach_transform(const nlohmann::basic_json<>& node,
-                 entt::registry& registry,
-                 entt::entity entity)
-{
-  Transform transform;
-  bool is_set = false;
-  if (node.contains("position")) {
-    auto position = node.at("position").get<glm::vec3>();
-    transform.translate(position);
-    is_set = true;
-  }
-  if (node.contains("rotation")) {
-    auto rotation = node.at("rotation").get<glm::vec3>();
-    transform.rotate(rotation);
-    is_set = true;
-  }
-  if (is_set) {
-    registry.emplace_or_replace<Transform>(entity, transform);
-  }
-}
-
-void
 attach_direction(const nlohmann::basic_json<>& node,
                  entt::registry& registry,
                  entt::entity entity)

@@ -8,6 +8,7 @@
 #include "src/utils/random.h"
 
 #include "emmiters.h"
+#include "entities.h"
 
 const auto get_random_percentage = make_random_fn(0.0f, 1.0f);
 
@@ -33,7 +34,7 @@ calc_rotation(unsigned int multiplier, float angle)
 void
 emit_particles(App& app,
                glm::vec3 initial_position,
-               const ParticlesParams& params,
+               const EntityParamsParticles& params,
                const std::string& file_path)
 {
   auto& registry = app.game_state->registry();
@@ -75,7 +76,7 @@ emit_particles(App& app,
 
 void
 emit_projectile(App& app,
-                const ProjectilesParams& params,
+                const EntityParamsGun& params,
                 const std::string& file_path)
 {
   auto& registry = app.game_state->registry();

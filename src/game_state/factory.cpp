@@ -5,6 +5,7 @@
 #include "src/components/textures.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
+#include "src/utils/noop.h"
 #include "src/control.h"
 
 #include "factory.h"
@@ -27,6 +28,7 @@ ModelFactory::make_player(entt::registry& registry,
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<PlayerKind>(entity);
+  registry.emplace<ProjectileEmitter>(entity, noop);
   registry.emplace<Textures>(entity, textures);
   registry.emplace<Transform>(entity);
   registry.emplace<Velocity>(entity);

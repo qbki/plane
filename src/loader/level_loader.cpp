@@ -3,27 +3,32 @@
 #include <stdexcept>
 #include <string>
 #include <variant>
+#include <vector>
 
 #include "src/app.h"
 #include "src/game_state/factory.h"
-#include "src/loader/params.h"
 #include "src/models/cache.h"
 #include "src/utils/file_loaders.h"
+#include "src/utils/types.h"
 
 #include "level_loader.h"
-#include "json/extractors.h"
+#include "params.h"
 #include "json/mappers.h" // IWYU pragma: keep
-#include "json/setups.h"
-#include "json/strategies.h"
+
+void
+setup_camera(CameraParams camera_params, App& app)
+{
+  app.game_state->camera()->position(camera_params.position);
+}
 
 ModelFactory::MakerFn
 get_entity_maker(App& app,
-                 const nlohmann::basic_json<>& strategy_node,
-                 const nlohmann::basic_json<>& entities_node)
+                 const PositionStrategy& strategy,
+                 const EntityParamsMap& entities)
 {
-  auto behaviour = strategy_node.at("behaviour").get<BehaviourEnum>();
   auto& factory = app.game_state->factory();
-  ModelFactory::MakerFn maker = [&](auto&... args) {
+  ModelFactory::MakerFn maker = [&factory, &entities, strategy](auto&... args) {
+    auto behaviour = get_behaviour(strategy);
     switch (behaviour) {
       case BehaviourEnum::ENEMY: {
         return factory.make_enemy(args...);
@@ -42,21 +47,30 @@ get_entity_maker(App& app,
         break;
       }
       case BehaviourEnum::LIGHT: {
-        auto entity_kind = extract_kind(strategy_node, entities_node);
-        if (entity_kind == "directional_light") {
+        auto entity_id = std::visit(
+          Overloaded{
+            [](auto&) -> std::string {
+              throw std::runtime_error("Non single strategy for light behaviour"
+                                       " is not supported at this moment");
+            },
+            [](const PositionStrategySingle& value) { return value.entity_id; },
+            [](const PositionStrategyVoid& value) { return value.entity_id; } },
+          strategy);
+        auto entity_params = entities.params(entity_id);
+        if (std::holds_alternative<EntityParamsDirectionalLight>(
+              entity_params)) {
           return factory.make_directional_light(args...);
-        } else if (entity_kind == "point_light") {
+        } else if (std::holds_alternative<EntityParamsPointLight>(
+                     entity_params)) {
           return factory.make_point_light(args...);
         } else {
           throw std::runtime_error(
-            std::format("Unknown light type: {}", entity_kind));
+            std::format("Unknown light type for the entity: {}", entity_id));
         }
         break;
       }
       default: {
-        auto behaviour_str = strategy_node.at("behaviour").get<std::string>();
-        throw std::runtime_error(
-          std::format("Unknown befaviour type: {}", behaviour_str));
+        throw std::runtime_error("Unknown behaviour type???");
         break;
       }
     }
@@ -65,14 +79,11 @@ get_entity_maker(App& app,
 }
 
 void
-preload_models(const nlohmann::basic_json<>& entities_json, App& app)
+preload_models(const std::vector<EntityParamsModel>& models, App& app)
 {
   auto& factory = app.game_state->factory();
-  for (auto& [_, value] : entities_json.items()) {
-    if (value.contains("model")) {
-      auto path = value.at("model").get<std::string>();
-      factory.cache().load(path);
-    }
+  for (auto& model : models) {
+    factory.cache().load(model.path);
   }
 }
 
@@ -81,17 +92,17 @@ load_level(const std::string& entities_file_path,
            const std::string& level_file_path,
            App& app)
 {
-  auto json_entities = load_json(entities_file_path).at("entities");
+  auto entities =
+    load_json(entities_file_path).at("entities").get<EntityParamsMap>();
   auto json_level = load_json(level_file_path);
-
-  preload_models(json_entities, app);
-
-  setup_camera(json_level, app);
-  for (auto& json_strategy : json_level.at("map")) {
-    auto maker = get_entity_maker(app, json_strategy, json_entities);
-    auto strategy = json_strategy.get<PositionStrategy>();
-    PositionStrategyVisitor strategy_handler(
-      &json_entities, &json_strategy, &app, &maker);
+  auto camera = json_level.at("camera").get<CameraParams>();
+  auto strategies = json_level.at("map").get<std::vector<PositionStrategy>>();
+  auto models = entities.get_all<EntityParamsModel>();
+  preload_models(models, app);
+  setup_camera(camera, app);
+  for (auto& strategy : strategies) {
+    auto maker = get_entity_maker(app, strategy, entities);
+    PositionStrategyVisitor strategy_handler(&entities, &app, &maker);
     std::visit(strategy_handler, strategy);
   }
 }

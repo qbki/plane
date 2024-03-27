@@ -1,0 +1,60 @@
+#pragma once
+#include <algorithm>
+#include <format>
+#include <iterator>
+#include <ranges>
+#include <stdexcept>
+#include <string>
+#include <unordered_map>
+#include <variant>
+#include <vector>
+
+#include "src/loader/params/entities.h" // IWYU pragma: export
+#include "src/utils/types.h"
+
+class EntityParamsMap
+{
+public:
+  using Mapping = std::unordered_map<std::string, EntityParams>;
+
+private:
+  Mapping _mapping;
+
+public:
+  template<typename T>
+  T get(const std::string& key) const
+  {
+    auto value = _mapping.at(key);
+    if (std::holds_alternative<T>(value)) {
+      return std::get<T>(value);
+    }
+    throw std::runtime_error(
+      std::format(R"(Can't find an entity params with key "{}" and type "{}")",
+                  key,
+                  demangled_name<T>()));
+  }
+
+  template<typename T>
+  std::vector<T> get_all() const
+  {
+    std::vector<T> result;
+    auto data = _mapping | std::views::values |
+                std::views::filter([](auto& value) {
+                  return std::holds_alternative<T>(value);
+                }) |
+                std::views::transform([](auto& value) {
+                  return std::get<EntityParamsModel>(value);
+                });
+    std::ranges::copy(data, std::back_inserter(result));
+    return result;
+  }
+
+  void set(Mapping&& mapping);
+  EntityParams params(const std::string& key) const;
+  EntityParamsActor actor(const std::string& key) const;
+  EntityParamsDirectionalLight directional_light(const std::string& key) const;
+  EntityParamsGun gun(const std::string& key) const;
+  EntityParamsModel model(const std::string& key) const;
+  EntityParamsParticles particles(const std::string& key) const;
+  EntityParamsPointLight point_light(const std::string& key) const;
+};

@@ -42,3 +42,10 @@ demangled_name()
   }
   return result;
 }
+
+// @link https://en.cppreference.com/w/cpp/utility/variant/visit
+template<class... Ts>
+struct Overloaded : Ts...
+{
+  using Ts::operator()...;
+};

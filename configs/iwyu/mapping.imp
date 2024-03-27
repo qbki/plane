@@ -6,6 +6,7 @@
   { include: [ '<glm/detail/type_vec2.hpp>', private, '<glm/vec2.hpp>', public ] },
   { include: [ '<glm/detail/type_vec2.inl>', private, '<glm/vec2.hpp>', public ] },
   { include: [ '<glm/ext/vector_float2.hpp>', private, '<glm/vec2.hpp>', public ] },
+  { include: [ '<glm/ext/vector_int2.hpp>', private, '<glm/vec2.hpp>', public ] },
 
   { include: [ '<glm/detail/type_vec3.hpp>', private, '<glm/vec3.hpp>', public ] },
   { include: [ '<glm/detail/type_vec3.inl>', private, '<glm/vec3.hpp>', public ] },

@@ -1,64 +1,58 @@
 #include <cstddef>
 #include <functional>
-#include <glm/ext/vector_int2.hpp>
 #include <glm/geometric.hpp>
-#include <nlohmann/json.hpp>
 #include <ranges>
 #include <stdexcept>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include "src/app.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
 #include "src/game_state/factory.h"
-#include "src/loader/params.h"
 #include "src/utils/random.h"
 
-#include "attachers.h"
-#include "mappers.h" // IWYU pragma: keep
-#include "setups.h"
+#include "components_attacher.h"
+#include "entities_map.h"
+#include "entity_maker.h"
+#include "position_strategy_visitor.h"
 #include "strategies.h"
 
+void
+setup_player(BehaviourEnum behaviour, App& app, entt::entity entity)
+{
+  if (behaviour == BehaviourEnum::PLAYER) {
+    app.game_state->player_id(entity);
+  }
+}
+
 PositionStrategyVisitor::PositionStrategyVisitor(
-  const nlohmann::basic_json<>* json_entities,
-  const nlohmann::basic_json<>* json_strategy,
+  const EntityParamsMap* entities,
   App* app,
   ModelFactory::MakerFn* maker_fn)
-  : _json_entities(json_entities)
-  , _json_strategy(json_strategy)
+  : _entities(entities)
   , _app(app)
-  , _maker_fn(maker_fn){};
+  , _entity_maker(&app->game_state->registry(), entities, maker_fn){};
 
 entt::entity
-PositionStrategyVisitor::handle_single(const std::string& entity_id)
+PositionStrategyVisitor::handle_single(const std::string& entity_id) const
 {
-  auto& registry = _app->game_state->registry();
-  auto json_entity = _json_entities->at(entity_id);
-  auto model_path =
-    json_entity.value<std::string>("model", "[path not defined]");
-  auto entity = (*_maker_fn)(registry, model_path);
-  attach_color(json_entity, registry, entity);
-  attach_direction(json_entity, registry, entity);
-  attach_opaque(json_entity, registry, entity);
-  attach_projectile_emmiter(*_json_entities, json_entity, *_app, entity);
-  attach_velocity(json_entity, registry, entity);
-  attach_tutorial_button_value(*_json_strategy, registry, entity);
-  setup_player(*_json_strategy, *_app, entity);
+  auto entity_params = _entities->params(entity_id);
+  auto entity = _entity_maker.get(entity_params);
+  ComponetsAttacher(_app, entity, _entities).attach(entity_params);
   return entity;
 }
 
 void
-PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy)
+PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy) const
 {
   auto& registry = _app->game_state->registry();
   auto& center = strategy.center;
   auto& radius = strategy.radius;
   auto velocity_items_view =
-    strategy.entity_ids | std::views::transform([&](auto& id) {
-      return _json_entities->at(id)
-        .at("velocity")
-        .template get<VelocityParams>();
+    strategy.entity_ids | std::views::transform([&](const auto& id) {
+      return _entities->actor(id).velocity;
     });
   std::vector<VelocityParams> velocity_items(velocity_items_view.begin(),
                                              velocity_items_view.end());
@@ -79,33 +73,34 @@ PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy)
   for (auto& coord : coords) {
     auto entity_index = get_random_int();
     auto entity_id = strategy.entity_ids.at(entity_index);
-    auto json_entity = _json_entities->at(entity_id);
-    auto model_path = json_entity.at("model").get<std::string>();
+    auto entity_params = _entities->params(entity_id);
+    auto entity = _entity_maker.get(entity_params);
     auto velocity = velocity_items.at(entity_index);
-    auto entity = (*_maker_fn)(registry, model_path);
+    ComponetsAttacher(_app, entity, _entities).attach(entity_params);
     Transform transform;
     transform.translate(glm::vec3(center.x + static_cast<float>(coord.x),
                                   center.y + static_cast<float>(coord.y),
                                   center.z));
     registry.replace<Transform>(entity, transform);
     registry.replace<Velocity>(entity, velocity.acceleration, velocity.damping);
-    attach_particles_emmiter_by_hit(
-      _json_entities->at(_json_strategy->at("hit_particle")), *_app, entity);
   }
 }
 
 void
-PositionStrategyVisitor::operator()(const PositionStrategySingle& strategy)
+PositionStrategyVisitor::operator()(
+  const PositionStrategySingle& strategy) const
 {
   auto& registry = _app->game_state->registry();
   auto entity = handle_single(strategy.entity_id);
   Transform transform;
   transform.translate(strategy.position);
   registry.emplace_or_replace<Transform>(entity, transform);
+  setup_player(strategy.behaviour, *_app, entity);
 }
 
 void
-PositionStrategyVisitor::operator()(const PositionStrategySquare& strategy)
+PositionStrategyVisitor::operator()(
+  const PositionStrategySquare& strategy) const
 {
   auto& registry = _app->game_state->registry();
   auto& center = strategy.center;
@@ -120,9 +115,8 @@ PositionStrategyVisitor::operator()(const PositionStrategySquare& strategy)
     for (int y = 0; y < height; y++) {
       auto entity_index = get_random_int();
       auto entity_id = strategy.entity_ids.at(entity_index);
-      auto json_entity = _json_entities->at(entity_id);
-      auto model_path = json_entity.at("model").get<std::string>();
-      auto entity = (*_maker_fn)(registry, model_path);
+      auto entity_params = _entities->params(entity_id);
+      auto entity = _entity_maker.get(entity_params);
       Transform transform;
       transform.translate(glm::vec3(start_x + static_cast<float>(x),
                                     start_y + static_cast<float>(y),
@@ -133,13 +127,13 @@ PositionStrategyVisitor::operator()(const PositionStrategySquare& strategy)
 }
 
 void
-PositionStrategyVisitor::operator()(const PositionStrategyUndefined&)
+PositionStrategyVisitor::operator()(const PositionStrategyUndefined&) const
 {
-  std::runtime_error("Can't handle an unknown strategy");
+  throw std::runtime_error("Can't handle an unknown strategy");
 }
 
 void
-PositionStrategyVisitor::operator()(const PositionStrategyVoid& strategy)
+PositionStrategyVisitor::operator()(const PositionStrategyVoid& strategy) const
 {
-  handle_single(strategy.entity_id);
+  std::ignore = handle_single(strategy.entity_id);
 }

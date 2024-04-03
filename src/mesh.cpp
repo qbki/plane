@@ -1,5 +1,8 @@
 #include <GL/glew.h>
 #include <algorithm>
+#include <glm/common.hpp>
+#include <glm/geometric.hpp>
+#include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <iterator>
 #include <map>
@@ -10,6 +13,7 @@
 #include <vector>
 
 #include "src/game_state/texture_type.h"
+#include "src/math/shapes.h"
 #include "src/utils/gl.h"
 
 #include "mesh.h"
@@ -116,11 +120,11 @@ create_transform_attribute(GLuint& buffer_object, size_t instance_quantity)
   create_buffer(
     buffer_object, GL_ARRAY_BUFFER, identity_matrices, GL_DYNAMIC_DRAW);
   const auto stride = sizeof(glm::mat4);
-  // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
+  // NOLINTBEGIN (cppcoreguidelines-pro-type-reinterpret-cast)
   const auto second_offset = reinterpret_cast<void*>(sizeof(glm::vec4));
   const auto third_offset = reinterpret_cast<void*>(sizeof(glm::vec4) * 2);
   const auto fourth_offset = reinterpret_cast<void*>(sizeof(glm::vec4) * 3);
-  // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
+  // NOLINTEND (cppcoreguidelines-pro-type-reinterpret-cast)
   glVertexAttribPointer(
     MODEL_TRANSFORM_1_LOCATION, 4, GL_FLOAT, GL_FALSE, stride, nullptr);
   glVertexAttribPointer(
@@ -151,9 +155,34 @@ populate_buffer(GLuint buffer_object, const std::vector<T>& data)
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+void
+Mesh::calculate_bounding_volume(tinygltf::Model& model)
+{
+  Shape::Sphere volume{
+    .center = { 0, 0, 0 },
+    .radius = 0,
+  };
+  auto primitive = model.meshes.at(0).primitives.at(0);
+  auto vbo_accessor_id = primitive.attributes.at("POSITION");
+  auto accessor = model.accessors.at(vbo_accessor_id);
+  auto [buffer_view, buffer] = extract_data_by_accessor(model, vbo_accessor_id);
+  auto offset = buffer_view.byteOffset + accessor.byteOffset;
+  // see: https://github.com/syoyo/tinygltf/wiki/Accessing-vertex-data
+  // NOLINTNEXTLINE (cppcoreguidelines-pro-type-reinterpret-cast)
+  auto data = reinterpret_cast<const float*>(&buffer.data[offset]); //
+  for (size_t i = 0; i < accessor.count; i++) {
+    // NOLINTNEXTLINE (cppcoreguidelines-pro-bounds-pointer-arithmetic)
+    glm::vec3 vertex = { data[i * 3 + 0], data[i * 3 + 1], data[i * 3 + 2] };
+    volume.radius = glm::max(volume.radius, glm::length(vertex));
+  }
+  _bounding_volume = volume;
+}
+
 Mesh::Mesh(tinygltf::Model& model)
 {
   try {
+    calculate_bounding_volume(model);
+
     glGenVertexArrays(1, &_vertex_array_object);
     glBindVertexArray(_vertex_array_object);
 
@@ -226,6 +255,15 @@ Mesh::Mesh(std::vector<float>& vertices,
            std::vector<unsigned int>& indices)
   : _number_of_elements(indices.size())
 {
+  Shape::Sphere volume = {
+    .center = { 0, 0, 0 },
+    .radius = 0,
+  };
+  for (auto& vertex : vertices) {
+    volume.radius = glm::max(glm::length(vertex), volume.radius);
+  }
+  _bounding_volume = volume;
+
   glGenVertexArrays(1, &_vertex_array_object);
   glBindVertexArray(_vertex_array_object);
 
@@ -308,4 +346,10 @@ Mesh::quad(float z)
   };
   std::vector<unsigned int> indices = { 2, 1, 0, 2, 3, 1 };
   return std::make_unique<Mesh>(vertices, normals, tex_coords, indices);
+}
+
+const Shape::Collider&
+Mesh::bounding_volume() const
+{
+  return _bounding_volume;
 }

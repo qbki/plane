@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "src/control.h"
-#include "src/mesh.h"
+#include "src/mesh.h"        // IWYU pragma: export
 #include "src/utils/types.h" // IWYU pragma: export
 
 enum class EnemyStateEnum

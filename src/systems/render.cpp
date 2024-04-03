@@ -7,7 +7,8 @@
 #include "src/components/transform.h"
 #include "src/consts.h"
 #include "src/material.h"
-#include "src/mesh.h"
+#include "src/math/intersection.h"
+#include "src/math/shapes.h"
 
 #include "render.h"
 
@@ -62,6 +63,7 @@ render_system(App::Meta& meta)
   auto& deferred_shading = *meta.app->deferred_shading;
   auto& particle_shader = *meta.app->particle_shader;
   auto& screen_size = *meta.app->screen_size;
+  auto frustum = camera.frustum();
 
   glDisable(GL_BLEND);
   deferred_shading.use_geometry_pass();
@@ -77,9 +79,14 @@ render_system(App::Meta& meta)
           const Textures,
           const Opaque,
           const Available>()
-    .each([&transform_mapping](const Transform& transform,
-                               const MeshPointer& mesh,
-                               const Textures& textures) {
+    .each([&](const Transform& transform,
+              const MeshPointer& mesh,
+              const Textures& textures) {
+      const auto transformed_collider =
+        apply_transform_to_collider(transform, mesh->bounding_volume());
+      if (!is_in_frustum(frustum, transformed_collider)) {
+        return;
+      }
       auto matrix = transform.matrix();
       update_transform_mapping(
         transform_mapping, mesh.get(), &textures, matrix);

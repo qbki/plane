@@ -3,10 +3,12 @@
 #include <glm/trigonometric.hpp>
 #include <ranges>
 #include <tuple>
+#include <variant>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
+#include "src/math/shapes.h"
 
 #include "enemy.h"
 
@@ -26,20 +28,33 @@ enemy_hunting_system(const App::Meta& meta)
   // TODO Replace by a real AI
   auto player_transform = meta.app->game_state->player<Transform>();
   auto player_position = player_transform.translation();
-  auto enemies_view =
-    meta.app->game_state->registry()
-      .view<Transform, Velocity, EnemyStateEnum, EnemyKind, Available>()
-      .each();
+  auto enemies_view = meta.app->game_state->registry()
+                        .view<Transform,
+                              Velocity,
+                              EnemyStateEnum,
+                              MeshPointer,
+                              EnemyKind,
+                              Available>()
+                        .each();
   auto enemies = std::ranges::subrange(enemies_view) |
                  std::ranges::views::filter([](const auto& tuple) {
                    return std::get<3>(tuple) == EnemyStateEnum::HUNTING;
                  });
-  for (auto [id_a, transform_a, velocity_a, _state_a] : enemies) {
+  for (auto [id_a, transform_a, velocity_a, _state_a, mesh_a] : enemies) {
     glm::vec3 sum{ 0, 0, 0 };
     auto position_a = transform_a.translation();
-    for (auto [id_b, transform_b, _velocity_b, _state_b] : enemies) {
+    auto bvolume_a = std::get_if<Shape::Sphere>(&mesh_a->bounding_volume());
+    if (bvolume_a == nullptr) {
+      continue;
+    }
+    for (auto [id_b, transform_b, _velocity_b, _state_b, mesh_b] : enemies) {
       auto position_b = transform_b.translation();
-      if (are_siblings_close(position_a, position_b)) {
+      auto bvolume_b = std::get_if<Shape::Sphere>(&mesh_b->bounding_volume());
+      if (bvolume_b == nullptr) {
+        continue;
+      }
+      auto collapse_distance = bvolume_a->radius + bvolume_b->radius;
+      if (glm::distance(position_a, position_b) < collapse_distance) {
         sum += position_a - position_b;
       }
     }

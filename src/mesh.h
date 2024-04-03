@@ -7,6 +7,7 @@
 #include <vector> // IWYU pragma: export
 
 #include "src/game_state/texture_type.h"
+#include "src/math/shapes.h"
 
 class Mesh
 {
@@ -30,8 +31,10 @@ private:
   size_t _number_of_elements;
   size_t _instance_quantity = 1;
   int _componentType = GL_UNSIGNED_INT;
+  Shape::Collider _bounding_volume;
 
   void free();
+  void calculate_bounding_volume(tinygltf::Model& model);
 
 public:
   explicit Mesh(tinygltf::Model& model);
@@ -48,4 +51,5 @@ public:
   void draw(const DrawParams& draw_params);
 
   static std::unique_ptr<Mesh> quad(float z = 0.0);
+  [[nodiscard]] const Shape::Collider& bounding_volume() const;
 };

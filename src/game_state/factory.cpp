@@ -5,8 +5,8 @@
 #include "src/components/textures.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
-#include "src/utils/noop.h"
 #include "src/control.h"
+#include "src/utils/noop.h"
 
 #include "factory.h"
 

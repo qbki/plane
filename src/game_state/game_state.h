@@ -4,7 +4,7 @@
 #include <glm/vec3.hpp>
 #include <memory> // IWYU pragma: export
 
-#include "src/camera.h" // IWYU pragma: export
+#include "src/cameras/camera.h" // IWYU pragma: export
 
 #include "factory.h"
 

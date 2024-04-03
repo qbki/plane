@@ -46,6 +46,7 @@
   { include: [ '<glm/ext/quaternion_trigonometric.inl>', private, '<glm/gtc/quaternion.hpp>', public ] },
   { symbol: [ 'glm::quat', private, '<glm/gtc/quaternion.hpp>', public ] },
 
+  { include: [ '<glm/detail/func_common.inl>', private, '<glm/common.hpp>', public ] },
   { include: [ '<glm/detail/qualifier.hpp>', private, '<glm/common.hpp>', public ] },
   { include: [ '<glm/ext/scalar_constants.inl>', private, '<glm/gtc/constants.hpp>', public ] },
   { include: [ '<glm/gtc/constants.inl>', private, '<glm/gtc/constants.hpp>', public ] },

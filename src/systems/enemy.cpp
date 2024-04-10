@@ -5,14 +5,17 @@
 #include <tuple>
 #include <variant>
 
+#include "src/collections/octree.h"
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
+#include "src/math/intersection.h"
 #include "src/math/shapes.h"
 
 #include "enemy.h"
 
 const float INACTIVE_ALTITUDE = -2.0;
+const unsigned int MAX_OCTREE_DEPTH = 12;
 const float SINKING_ROTATION_SPEED_PER_SEC = glm::two_pi<float>();
 
 bool
@@ -26,6 +29,8 @@ void
 enemy_hunting_system(const App::Meta& meta)
 {
   // TODO Replace by a real AI
+  auto& game_state = meta.app->game_state;
+  auto& registry = game_state->registry();
   auto player_transform = meta.app->game_state->player<Transform>();
   auto player_position = player_transform.translation();
   auto enemies_view = meta.app->game_state->registry()
@@ -40,6 +45,13 @@ enemy_hunting_system(const App::Meta& meta)
                  std::ranges::views::filter([](const auto& tuple) {
                    return std::get<3>(tuple) == EnemyStateEnum::HUNTING;
                  });
+  Octree<entt::entity> octree(game_state->world_bbox(), MAX_OCTREE_DEPTH);
+  for (auto [id_a, transform_a, velocity_a, _state_a, mesh_a] : enemies) {
+    auto a =
+      apply_transform_to_collider(transform_a, mesh_a->bounding_volume());
+    octree.insert(std::get<Shape::Sphere>(a), id_a);
+  }
+
   for (auto [id_a, transform_a, velocity_a, _state_a, mesh_a] : enemies) {
     glm::vec3 sum{ 0, 0, 0 };
     auto position_a = transform_a.translation();
@@ -47,7 +59,12 @@ enemy_hunting_system(const App::Meta& meta)
     if (bvolume_a == nullptr) {
       continue;
     }
-    for (auto [id_b, transform_b, _velocity_b, _state_b, mesh_b] : enemies) {
+    auto found_ids = octree.at({
+      .min = transform_a.translation() - glm::vec3(-bvolume_a->radius),
+      .max = transform_a.translation() + glm::vec3(bvolume_a->radius),
+    });
+    for (const auto& id_b : found_ids) {
+      auto [transform_b, mesh_b] = registry.get<Transform, MeshPointer>(id_b);
       auto position_b = transform_b.translation();
       auto bvolume_b = std::get_if<Shape::Sphere>(&mesh_b->bounding_volume());
       if (bvolume_b == nullptr) {

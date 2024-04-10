@@ -7,6 +7,7 @@
 #include "src/cameras/camera.h" // IWYU pragma: export
 
 #include "factory.h"
+#include "src/math/shapes.h"
 
 class GameState
 {
@@ -17,6 +18,7 @@ private:
   entt::entity _player_id = entt::null;
   ModelFactory _factory;
   bool _is_game_running = true;
+  Shape::AABB _world_bbox;
 
 public:
   GameState() = default;
@@ -31,6 +33,10 @@ public:
 
   void cursor(glm::vec3 value);
   [[nodiscard]] glm::vec3 cursor() const;
+
+  void world_bbox(const Shape::AABB& value);
+  void extend_world_bbox(const Shape::Collider& value);
+  [[nodiscard]] const Shape::AABB& world_bbox() const;
 
   void is_running(bool value);
   [[nodiscard]] bool is_running() const;

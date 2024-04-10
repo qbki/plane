@@ -1,13 +1,10 @@
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers)
 // NOLINTBEGIN(cppcoreguidelines-avoid-do-while)
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
-#include <glm/gtc/constants.hpp>
-#include <glm/trigonometric.hpp>
+#include <glm/vec3.hpp>
 
-#include "intersection.h"
-#include "src/math/shapes.h"
+#include "../intersection.h"
+#include "../shapes.h"
 
 const Shape::Plane PLANE{
   .point{ 0, 0, 0 },

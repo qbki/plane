@@ -1,10 +1,12 @@
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers)
 // NOLINTBEGIN(cppcoreguidelines-avoid-do-while)
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <glm/geometric.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <memory>
 
 #include "src/math/shapes.h"
 #include "src/tests-utils/common.h"

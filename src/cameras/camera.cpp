@@ -53,6 +53,18 @@ Camera::position(const glm::vec3& value)
   this->look_at(value + this->_forward_norm);
 }
 
+float
+Camera::far() const
+{
+  return _far;
+}
+
+float
+Camera::near() const
+{
+  return _near;
+}
+
 const glm::mat4&
 Camera::projection() const
 {

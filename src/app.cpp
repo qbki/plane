@@ -111,6 +111,12 @@ App::add_handler(Handler handler)
 }
 
 void
+App::add_once_handler(Handler handler)
+{
+  _once_handlers.push_back(handler);
+}
+
+void
 App::update(unsigned long time_since_start_of_program)
 {
   const auto second_coeficient = 0.001f;
@@ -121,6 +127,12 @@ App::update(unsigned long time_since_start_of_program)
              .delta_time = delta_time,
              .time = static_cast<float>(_last_time_point) * second_coeficient };
   _last_time_point = time_since_start_of_program;
+  for (const auto& handler : _once_handlers) {
+    handler(meta);
+  }
+  if (_once_handlers.size() > 0) {
+    _once_handlers.clear();
+  }
   for (const auto& handler : _handlers) {
     handler(meta);
   }

@@ -1,3 +1,4 @@
+#include "src/systems/calculate_world_bbox.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <gsl/pointers>
 #include <utility>
@@ -74,6 +75,7 @@ main()
   // async nature of requestanimationframe in browser api (emscripten)
   gsl::owner<App*> app{ app_builder.build() };
 
+  app->add_once_handler(calculate_world_bbox);
   app->add_handler(cursor_handler_system);
   app->add_handler(enemy_hunting_system);
   app->add_handler(enemy_rotation_system);

@@ -50,4 +50,5 @@
   { include: [ '<glm/detail/qualifier.hpp>', private, '<glm/common.hpp>', public ] },
   { include: [ '<glm/ext/scalar_constants.inl>', private, '<glm/gtc/constants.hpp>', public ] },
   { include: [ '<glm/gtc/constants.inl>', private, '<glm/gtc/constants.hpp>', public ] },
+  { include: [ '<glm/gtx/string_cast.inl>', private, '<glm/gtx/string_cast.hpp>', public ] },
 ]

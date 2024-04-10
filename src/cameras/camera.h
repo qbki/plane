@@ -36,6 +36,9 @@ public:
   [[nodiscard]] glm::vec3 position() const;
   void position(const glm::vec3& value);
 
+  [[nodiscard]] float far() const;
+  [[nodiscard]] float near() const;
+
   [[nodiscard]] const glm::mat4& projection() const;
 
   [[nodiscard]] const glm::mat4& view() const;

@@ -1,8 +1,10 @@
+#include <glm/common.hpp>
 #include <glm/geometric.hpp>
 #include <variant>
 
-#include "intersection.h"
 #include "src/math/shapes.h"
+
+#include "intersection.h"
 
 bool
 is_in_front(const Shape::Plane& plane, const Shape::Sphere& sphere)
@@ -35,6 +37,14 @@ is_in_front(const Shape::Plane& plane, const glm::vec3& point)
 {
   auto product = glm::dot(point - plane.point, -plane.normal);
   return product <= 0;
+}
+
+bool
+are_intersected(const Shape::AABB& a, const Shape::AABB& b)
+{
+  return (a.min.x <= b.max.x && a.max.x >= b.min.x) &&
+         (a.min.y <= b.max.y && a.max.y >= b.min.y) &&
+         (a.min.z <= b.max.z && a.max.z >= b.min.z);
 }
 
 struct InFrustumVisitor
@@ -74,6 +84,22 @@ struct InFrustumVisitor
     return is_collider_in_front_of_plane(collider.point);
   }
 };
+
+bool
+is_inside(const Shape::AABB& collider, const glm::vec3& point)
+{
+  return collider.min.x <= point.x && collider.min.y <= point.y &&
+         collider.min.z <= point.z && collider.max.x >= point.x &&
+         collider.max.y >= point.y && collider.max.z >= point.z;
+}
+
+bool
+on_axis(const Shape::Sphere& collider, const glm::vec3& point)
+{
+  return glm::abs(point.x - collider.center.x) <= collider.radius ||
+         glm::abs(point.y - collider.center.y) <= collider.radius ||
+         glm::abs(point.z - collider.center.z) <= collider.radius;
+}
 
 struct TransformApplyierVisitor
 {

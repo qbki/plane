@@ -35,6 +35,7 @@ public:
 
   using Handler = std::function<void(Meta& meta)>;
   std::vector<Handler> _handlers = std::vector<Handler>();
+  std::vector<Handler> _once_handlers = std::vector<Handler>();
 
   App(std::unique_ptr<GameState> _game_state,
       std::unique_ptr<Control> _control,
@@ -50,6 +51,7 @@ public:
   ~App() = default;
 
   void add_handler(Handler handler);
+  void add_once_handler(Handler handler);
   void update(unsigned long time_since_start_of_program);
 
   static glm::vec2 mouse_position();

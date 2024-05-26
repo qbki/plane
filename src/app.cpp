@@ -1,3 +1,5 @@
+#include <SDL_mouse.h>
+#include <SDL_timer.h>
 #include <algorithm>
 #include <gsl/pointers>
 #include <memory>
@@ -12,16 +14,18 @@ App::App(std::unique_ptr<GameState> _game_state,
          std::unique_ptr<RectSize> _screen_size,
          std::unique_ptr<DeferredShading> _deferred_shading,
          std::unique_ptr<Shader> _particle_shader,
+         std::unique_ptr<GUI::Theme> _theme,
          WindowPtr _window,
          ContextPtr _gl_context)
   : _last_time_point(SDL_GetTicks64())
+  , window(std::move(_window))
+  , gl_context(std::move(_gl_context))
   , game_state(std::move(_game_state))
   , control(std::move(_control))
   , screen_size(std::move(_screen_size))
   , deferred_shading(std::move(_deferred_shading))
   , particle_shader(std::move(_particle_shader))
-  , window(std::move(_window))
-  , gl_context(std::move(_gl_context))
+  , theme(std::move(_theme))
 {
 }
 
@@ -84,6 +88,13 @@ AppBuilder::context(ContextPtr context)
   return *this;
 }
 
+AppBuilder&
+AppBuilder::theme(std::unique_ptr<GUI::Theme> theme)
+{
+  _theme = std::move(theme);
+  return *this;
+}
+
 gsl::owner<App*>
 AppBuilder::build()
 {
@@ -94,12 +105,14 @@ AppBuilder::build()
   auto particle_shader_obj = or_throw(_particle_shader, "Particle Shader");
   auto window_obj = or_throw(_window, "Window");
   auto context_obj = or_throw(_context, "Context");
+  auto theme_obj = or_throw(_theme, "Theme");
 
   return new App(std::move(game_state_obj),
                  std::move(control_obj),
                  std::move(screen_size_obj),
                  std::move(deferred_shading_obj),
                  std::move(particle_shader_obj),
+                 std::move(theme_obj),
                  std::move(window_obj),
                  std::move(context_obj));
 }
@@ -130,7 +143,7 @@ App::update(unsigned long time_since_start_of_program)
   for (const auto& handler : _once_handlers) {
     handler(meta);
   }
-  if (_once_handlers.size() > 0) {
+  if (!_once_handlers.empty()) {
     _once_handlers.clear();
   }
   for (const auto& handler : _handlers) {

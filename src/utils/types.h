@@ -1,8 +1,12 @@
 #pragma once
+#include <SDL_rwops.h>
+#include <cstdint>
 #include <cxxabi.h>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
+#include <vector>
 
 #include "noop.h"
 
@@ -49,3 +53,22 @@ struct Overloaded : Ts...
 {
   using Ts::operator()...;
 };
+
+struct RWopsHolder
+{
+  using RWopsPtrType =
+    std::unique_ptr<SDL_RWops, std::function<void(SDL_RWops*)>>;
+  std::vector<unsigned char> data;
+  RWopsPtrType rwops;
+};
+
+namespace Core {
+union Color
+{
+  std::uint32_t value;
+  std::uint8_t r;
+  std::uint8_t g;
+  std::uint8_t b;
+  std::uint8_t a;
+};
+}

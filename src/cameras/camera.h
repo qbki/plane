@@ -13,23 +13,22 @@ private:
   glm::vec3 _forward_norm;
   float _near;
   float _far;
-  float _fovy;
-  float _aspect_ratio;
 
 public:
-  static const float DEFAULT_FOVY;
   static const float DEFAULT_NEAR;
   static const float DEFAULT_FAR;
   static const glm::vec3 DEFAULT_UP_NORM;
 
-  explicit Camera(float aspect_ratio,
-                  float near = DEFAULT_NEAR,
-                  float far = DEFAULT_FAR,
-                  float fovy = DEFAULT_FOVY);
+  Camera(float near = DEFAULT_NEAR, float far = DEFAULT_FAR);
+  Camera(const Camera&) = default;
+  Camera(Camera&&) = delete;
+  Camera& operator=(const Camera&) = default;
+  Camera& operator=(Camera&&) = delete;
+  virtual ~Camera() = default;
 
   [[nodiscard]] glm::mat4 pv() const;
 
-  void aspect_ratio(float aspect_ratio);
+  virtual void screen_size(int width, int height) = 0;
 
   void look_at(const glm::vec3& value);
 
@@ -38,10 +37,12 @@ public:
 
   [[nodiscard]] float far() const;
   [[nodiscard]] float near() const;
+  [[nodiscard]] glm::vec3 forward_norm() const;
 
+  void projection(const glm::mat4& matrix);
   [[nodiscard]] const glm::mat4& projection() const;
 
   [[nodiscard]] const glm::mat4& view() const;
 
-  [[nodiscard]] Shape::Frustum frustum() const;
+  [[nodiscard]] virtual Shape::Frustum frustum() const = 0;
 };

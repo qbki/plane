@@ -8,4 +8,5 @@ const int DEFAULT_SCREEN_WIDTH = 800;
 const int DEFAULT_SCREEN_HEIGHT = 600;
 const float HALF = 0.5;
 
+const std::filesystem::path SHADERS_DIR("shaders");
 const std::filesystem::path ASSETS_DIR("assets");

@@ -1,5 +1,4 @@
 [
-  { include: [ '@<SDL_.*>', private, '<SDL.h>', public ] },
   { include: [ '@<nlohmann/.*>', private, '<nlohmann/json.hpp>', public ] },
   { include: [ '@<entt/.*>', private, '<entt/entt.hpp>', public ] },
 

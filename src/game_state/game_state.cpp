@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <glm/common.hpp>
+#include <memory>
 #include <stdexcept>
+#include <utility>
 #include <variant>
 
 #include "src/utils/types.h"
@@ -9,15 +11,27 @@
 #include "game_state.h"
 
 void
-GameState::camera(std::shared_ptr<Camera> camera)
+GameState::camera(std::unique_ptr<Camera>& camera)
 {
-  _camera = camera;
+  _camera = std::move(camera);
 }
 
-std::shared_ptr<Camera>
+std::unique_ptr<Camera>&
 GameState::camera()
 {
   return _camera;
+}
+
+void
+GameState::gui_camera(std::unique_ptr<Camera>& camera)
+{
+  _gui_camera = std::move(camera);
+}
+
+std::unique_ptr<Camera>&
+GameState::gui_camera()
+{
+  return _gui_camera;
 }
 
 void

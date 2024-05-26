@@ -9,11 +9,13 @@ class App(ConanFile):
 
   def requirements(self):
     self.requires("catch2/3.5.2"),
-    self.requires("entt/3.12.2"),
+    self.requires("entt/3.13.0"),
     self.requires("glm/cci.20230113"),
     self.requires("ms-gsl/4.0.0"),
-    self.requires("nlohmann_json/3.11.2"),
+    self.requires("nlohmann_json/3.11.3"),
     self.requires("tinygltf/2.5.0"),
     if self.settings.os == "Linux":
       self.requires("glew/2.2.0")
-      self.requires("sdl/2.26.5")
+      self.requires("sdl/2.28.3")
+      self.requires("sdl_ttf/2.22.0"),
+      self.requires("libxml2/2.12.5", override=True),

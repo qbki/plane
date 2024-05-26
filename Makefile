@@ -120,7 +120,7 @@ run-debug: build-debug
 .PHONY: run-debug
 
 
-run-wasm: build-wasm
+run-wasm: build-wasm build-web-shell
 	@cd $(WEB_SHELL_DIR) && \
 		python3 -m http.server -b 127.0.0.1
 .PHONY: run-wasm

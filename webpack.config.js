@@ -43,8 +43,10 @@ export default {
     new CopyWebpackPlugin({
       patterns: [
         { from: root('build/wasm/bin/index.data'), to: 'index.data' },
-        { from: root('assets/models'), to: 'assets/models' },
+        { from: root('shaders'), to: 'shaders' },
+        { from: root('assets/fonts'), to: 'assets/fonts' },
         { from: root('assets/levels'), to: 'assets/levels' },
+        { from: root('assets/models'), to: 'assets/models' },
       ],
     }),
   ],

@@ -1,17 +1,18 @@
 {
     "version": "0.5",
     "requires": [
-        "tinygltf/2.5.0#e43c2ee9f69c2d5c9eabafe09f4d40ac%1688053802.512",
-        "stb/cci.20220909#1c47474f095ef8cd9e4959558525b827%1669653676.766",
-        "nlohmann_json/3.11.2#a35423bb6e1eb8f931423557e282c7ed%1666619820.488",
+        "tinygltf/2.5.0#65c28d0a4c3cbd4ef92b08b59df769da%1701621757.442",
+        "stb/cci.20230920#9792498b81cf34a90138d239e36b0bf8%1700546289.605",
+        "nlohmann_json/3.11.3#45828be26eb619a2e04ca517bb7b828d%1701220705.259",
         "ms-gsl/4.0.0#60ed7b1ae7ff8fbfe0bf9a1c1f0443a8%1700512686.639",
-        "glm/cci.20230113#3e19f4607c4d22cee611b572ce677479%1675657264.662",
-        "entt/3.12.2#41bd2755a29e67dbd9d35e166bc377d2%1687564611.164",
+        "glm/cci.20230113#c9c89bea128786a245028f0cb4c1936d%1700512110.519",
+        "entt/3.13.0#584cc859978605ccb38354b083d40006%1705590040.62",
         "catch2/3.5.2#9554dc3c4ffcab50daf8f2cac4b79308%1705365891.626"
     ],
     "build_requires": [
-        "nodejs/16.3.0#fbb644235845086644bebd53e452595b%1693183693.992",
+        "nodejs/16.3.0#a7eaed2d69910ba185e2ddce7a926cd1%1699800365.225",
         "emsdk/3.1.50#4978d062889977c9631481e286be8589%1701861852.804"
     ],
-    "python_requires": []
+    "python_requires": [],
+    "config_requires": []
 }

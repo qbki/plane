@@ -1,11 +1,13 @@
 #include <GL/glew.h>
 #include <format>
 #include <unordered_map>
+#include <variant>
 
 #include "src/components/common.h"
 #include "src/components/textures.h"
 #include "src/components/transform.h"
 #include "src/consts.h"
+#include "src/gui/types.h"
 #include "src/material.h"
 #include "src/math/intersection.h"
 #include "src/math/shapes.h"
@@ -153,7 +155,7 @@ render_system(App::Meta& meta)
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   particle_shader.use();
   particle_shader.uniform("u_gamma", GAMMA);
@@ -174,4 +176,11 @@ render_system(App::Meta& meta)
     });
   particle_shader.uniform("u_main_texture", 0);
   draw(transform_mapping);
+
+  const auto& gui_camera = *meta.app->game_state->gui_camera();
+  particle_shader.uniform("u_PV", gui_camera.pv());
+
+  registry.view<GUI::Component>().each([&](GUI::Component& gui_component) {
+    std::visit(Overloaded{ [](auto& value) { value.draw(); } }, gui_component);
+  });
 }

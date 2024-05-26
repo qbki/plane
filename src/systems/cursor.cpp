@@ -11,7 +11,7 @@ void
 cursor_handler_system(App::Meta& meta)
 {
   auto mouse_pos = meta.app->mouse_position();
-  auto camera = meta.app->game_state->camera();
+  auto& camera = meta.app->game_state->camera();
   auto& screen_size = meta.app->screen_size;
   glm::vec4 viewport{ 0, 0, screen_size->width, screen_size->height };
   auto projection_point = glm::unProject(

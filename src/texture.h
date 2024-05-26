@@ -7,11 +7,15 @@ class Texture
 private:
   static const GLuint DEFAULT_TEXTURE_OBJECT;
 
+  int _width = 0;
+  int _height = 0;
   GLuint _texture_object = DEFAULT_TEXTURE_OBJECT;
 
 public:
   Texture() = default;
-  explicit Texture(const std::vector<unsigned char>& data);
+  explicit Texture(int width,
+                   int height,
+                   const std::vector<unsigned char>& data);
   Texture(const Texture&) = delete;
   Texture& operator=(const Texture&) = delete;
   Texture(Texture&&) noexcept;
@@ -19,4 +23,5 @@ public:
   virtual ~Texture() noexcept;
 
   void use(unsigned int idx) const;
+  void data(const std::vector<unsigned char>& pixels);
 };

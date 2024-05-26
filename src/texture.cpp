@@ -1,5 +1,5 @@
 #include <GL/glew.h>
-#include <cmath>
+#include <cassert>
 #include <stdexcept>
 #include <utility>
 
@@ -31,11 +31,16 @@ int_to_texture_index(unsigned int idx)
 /**
  * @param data Expects 4 bytes per pixel (RGBA) and a rectangular texture
  */
-Texture::Texture(const std::vector<unsigned char>& data)
+Texture::Texture(int width, int height, const std::vector<unsigned char>& data)
+  : _width(width)
+  , _height(height)
 {
-  auto size = static_cast<int>(std::sqrt(data.size() / 4));
+  assert(width > 0 && "Width of a texture should be more than 0");
+  assert(height > 0 && "Height of a texture should be more than 0");
   glGenTextures(1, &_texture_object);
   glBindTexture(GL_TEXTURE_2D, _texture_object);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -43,16 +48,19 @@ Texture::Texture(const std::vector<unsigned char>& data)
   glTexImage2D(GL_TEXTURE_2D,
                0,
                GL_SRGB8_ALPHA8,
-               size,
-               size,
+               width,
+               height,
                0,
                GL_RGBA,
                GL_UNSIGNED_BYTE,
                data.data());
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 Texture::Texture(Texture&& other) noexcept
-  : _texture_object(
+  : _width(other._width)
+  , _height(other._height)
+  , _texture_object(
       std::exchange(other._texture_object, DEFAULT_TEXTURE_OBJECT))
 {
 }
@@ -63,6 +71,8 @@ Texture::operator=(Texture&& other) noexcept
   if (this == &other) {
     return *this;
   }
+  _width = other._width;
+  _height = other._height;
   _texture_object =
     std::exchange(other._texture_object, DEFAULT_TEXTURE_OBJECT);
   return *this;
@@ -80,4 +90,22 @@ Texture::use(unsigned int idx) const
 {
   glActiveTexture(int_to_texture_index(idx));
   glBindTexture(GL_TEXTURE_2D, _texture_object);
+}
+
+void
+Texture::data(const std::vector<unsigned char>& pixels)
+{
+  glBindTexture(GL_TEXTURE_2D, _texture_object);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  glTexSubImage2D(GL_TEXTURE_2D,
+                  0,
+                  0,
+                  0,
+                  _width,
+                  _height,
+                  GL_RGBA,
+                  GL_UNSIGNED_BYTE,
+                  pixels.data());
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+  glBindTexture(GL_TEXTURE_2D, 0);
 }

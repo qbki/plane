@@ -11,12 +11,13 @@
 #include "src/math/shapes.h"
 #include "src/tests-utils/common.h"
 
-#include "camera.h"
+#include "perspective_camera.h"
 
 const float NEAR = 0.1;
 const float FAR = 1.0;
 const float FOVY = glm::radians(90.0);
-const float ASPECT_RATIO = 1.0;
+const int SCREEN_WIDTH = 100;
+const int SCREEN_HEIGHT = 100;
 const glm::vec3 ORIGIN = glm::zero<glm::vec3>();
 const float TERM = glm::normalize(glm::vec2(1, 1)).x;
 
@@ -49,7 +50,7 @@ const Shape::Frustum EXPECTED_FRUSTUM = {
 
 TEST_CASE("should calculate an expected frustum")
 {
-  Camera camera(ASPECT_RATIO, NEAR, FAR, FOVY);
+  PerspectiveCamera camera(SCREEN_WIDTH, SCREEN_HEIGHT, NEAR, FAR, FOVY);
   auto frustum = camera.frustum();
 
   check_equality(

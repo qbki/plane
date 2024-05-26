@@ -1,3 +1,5 @@
+#include <SDL_keycode.h>
+
 #include "control.h"
 
 void

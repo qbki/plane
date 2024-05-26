@@ -12,7 +12,8 @@
 class GameState
 {
 private:
-  std::shared_ptr<Camera> _camera;
+  std::unique_ptr<Camera> _camera;
+  std::unique_ptr<Camera> _gui_camera;
   glm::vec3 _cursor = glm::zero<glm::vec3>();
   entt::registry _registry;
   entt::entity _player_id = entt::null;
@@ -28,8 +29,11 @@ public:
   GameState& operator=(GameState&&) = delete;
   ~GameState() = default;
 
-  void camera(std::shared_ptr<Camera> camera);
-  std::shared_ptr<Camera> camera();
+  void camera(std::unique_ptr<Camera>& camera);
+  std::unique_ptr<Camera>& camera();
+
+  void gui_camera(std::unique_ptr<Camera>& camera);
+  std::unique_ptr<Camera>& gui_camera();
 
   void cursor(glm::vec3 value);
   [[nodiscard]] glm::vec3 cursor() const;

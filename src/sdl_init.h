@@ -1,5 +1,5 @@
 #pragma once
-#include <SDL.h> // IWYU pragma: export
+#include <SDL_video.h>
 #include <memory>
 
 using WindowPtr = std::unique_ptr<SDL_Window, void (*)(SDL_Window*)>;

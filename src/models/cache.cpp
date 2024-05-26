@@ -30,7 +30,7 @@ generate_textures(tinygltf::Model& model)
 {
   auto color = exctract_material_color(model);
   auto to_integer_value = [&](float value) {
-    const float max_color_value{ 255.0 };
+    const float max_color_value = 255.0;
     return static_cast<unsigned char>(value * max_color_value);
   };
   std::vector<unsigned char> data{ to_integer_value(color.x),
@@ -39,8 +39,8 @@ generate_textures(tinygltf::Model& model)
                                    to_integer_value(1.0) };
   auto textures =
     std::make_shared<std::unordered_map<TextureType::Type, Texture>>();
-  textures->emplace(TextureType::Type::PRIMARY, Texture{ data });
-  textures->emplace(TextureType::Type::SECONDARY, Texture{ data });
+  textures->emplace(TextureType::Type::PRIMARY, Texture{ 1, 1, data });
+  textures->emplace(TextureType::Type::SECONDARY, Texture{ 1, 1, data });
   return textures;
 }
 
@@ -51,7 +51,8 @@ extract_textures(const tinygltf::Model& model)
     std::make_shared<std::unordered_map<TextureType::Type, Texture>>();
   for (const auto& image : model.images) {
     auto texture_type = TextureType::map_to_type(image.name);
-    textures->emplace(texture_type, Texture{ image.image });
+    textures->emplace(texture_type,
+                      Texture(image.width, image.height, image.image));
   }
   return textures;
 }

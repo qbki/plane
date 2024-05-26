@@ -1,6 +1,9 @@
 #include <GL/glew.h>
 #include <SDL.h>
+#include <SDL_error.h>
+#include <SDL_ttf.h>
 #include <format>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #ifdef __EMSCRIPTEN__
@@ -38,6 +41,11 @@ init_window(int screen_width, int screen_height)
   }
   logger().info("SDL has been initialized.");
 
+  if (TTF_Init() < 0) {
+    throw_sdl_error("Unable to init SDL_ttf");
+  }
+  logger().info("SDL_ttf has been initialized.");
+
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 #ifdef __EMSCRIPTEN__
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -62,6 +70,7 @@ init_window(int screen_width, int screen_height)
 
   return { window, [](auto w) {
             SDL_DestroyWindow(w);
+            TTF_Quit();
             SDL_Quit();
           } };
 }

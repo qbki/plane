@@ -1,5 +1,9 @@
 #include <GL/glew.h>
-#include <SDL.h>
+#include <SDL_events.h>
+#include <SDL_keycode.h>
+#include <SDL_timer.h>
+#include <SDL_video.h>
+#include <vector>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <emscripten/html5.h>
@@ -9,31 +13,38 @@
 #include "game_loop.h"
 
 void
-resize_window(Camera& camera, int width, int height)
+resize_window(std::vector<Camera*>& cameras, int width, int height)
 {
-  camera.aspect_ratio(static_cast<float>(width) / static_cast<float>(height));
+  for (auto& camera : cameras) {
+    camera->screen_size(width, height);
+  }
   glViewport(0, 0, width, height);
 }
 
 void
-resize_window(const SDL_WindowEvent& window_event, Camera& camera)
+resize_window(const SDL_WindowEvent& window_event,
+              std::vector<Camera*>& cameras)
 {
   auto width = window_event.data1;
   auto height = window_event.data2;
-  resize_window(camera, width, height);
+  resize_window(cameras, width, height);
 }
 
 #ifdef __EMSCRIPTEN__
 void
 wasm_resize_window(App& app, int width, int height)
 {
+  auto& game_state = app.game_state;
   auto window = app.window.get();
-  auto camera = app.game_state->camera();
   SDL_SetWindowSize(window, width, height);
   app.deferred_shading->g_buffer().update(width, height);
   app.screen_size->width = width;
   app.screen_size->height = height;
-  resize_window(*camera, width, height);
+  std::vector<Camera*> cameras = {
+    &*game_state->camera(),
+    &*game_state->gui_camera(),
+  };
+  resize_window(cameras, width, height);
 }
 
 EMSCRIPTEN_RESULT
@@ -76,7 +87,11 @@ inner_game_loop(App& app)
           auto height = event.window.data2;
           app.screen_size->width = width;
           app.screen_size->height = height;
-          resize_window(event.window, *game_state->camera());
+          std::vector<Camera*> cameras = {
+            &*game_state->camera(),
+            &*game_state->gui_camera(),
+          };
+          resize_window(event.window, cameras);
           app.deferred_shading->g_buffer().update(width, height);
         }
         break;

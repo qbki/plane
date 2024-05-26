@@ -1,16 +1,21 @@
 #include <filesystem>
 #include <format>
 #include <fstream>
+#include <functional>
 #include <iterator>
+#include <memory>
 #include <nlohmann/json.hpp>
 #include <stdexcept>
 #include <string>
+#include <utility>
+#include <vector>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <sstream>
 #endif
 
 #include "src/services.h"
+#include "src/utils/types.h"
 
 #include "file_loaders.h"
 
@@ -23,7 +28,7 @@ throw_error_if_file_not_found(const std::string& file_name)
 }
 
 void
-throw_error_if_file_is_not_readable(const std::fstream& stream,
+throw_error_if_file_is_not_readable(const std::istream& stream,
                                     const std::string& file_name)
 {
   if (stream.fail()) {
@@ -42,7 +47,32 @@ load_string_by_emscripten(const std::string& file_name)
                        reinterpret_cast<void**>(&loaded_data),
                        &loaded_size,
                        &error);
+  if (error > 0) {
+    delete loaded_data;
+    throw std::runtime_error(
+      std::format("Can't load a text file: {}", file_name));
+  }
   std::string data(loaded_data, loaded_data + loaded_size);
+  delete loaded_data;
+  return data;
+}
+
+std::vector<unsigned char>
+load_binary_by_emscripten(const std::string& file_name)
+{
+  unsigned char* loaded_data;
+  int loaded_size = 0;
+  int error = 0;
+  emscripten_wget_data(file_name.c_str(),
+                       reinterpret_cast<void**>(&loaded_data),
+                       &loaded_size,
+                       &error);
+  if (error > 0) {
+    delete loaded_data;
+    throw std::runtime_error(
+      std::format("Can't load a binary file: {}", file_name));
+  }
+  std::vector<unsigned char> data(loaded_data, loaded_data + loaded_size);
   delete loaded_data;
   return data;
 }
@@ -90,11 +120,29 @@ load_gltf_model(const std::string& file_name)
 std::string
 load_text(const std::string& file_name)
 {
+#ifdef __EMSCRIPTEN__
+  return load_string_by_emscripten(file_name);
+#else
   throw_error_if_file_not_found(file_name);
   std::fstream file_stream{ file_name };
   throw_error_if_file_is_not_readable(file_stream, file_name);
   return { std::istreambuf_iterator<char>(file_stream),
            std::istreambuf_iterator<char>() };
+#endif
+}
+
+std::vector<unsigned char>
+load_binary(const std::string& file_name)
+{
+#ifdef __EMSCRIPTEN__
+  return load_binary_by_emscripten(file_name);
+#else
+  throw_error_if_file_not_found(file_name);
+  std::ifstream file_stream{ file_name, std::ios::binary };
+  throw_error_if_file_is_not_readable(file_stream, file_name);
+  return { std::istreambuf_iterator<char>(file_stream),
+           std::istreambuf_iterator<char>() };
+#endif
 }
 
 nlohmann::basic_json<>
@@ -109,4 +157,25 @@ load_json(const std::string& file_name)
   throw_error_if_file_is_not_readable(file_stream, file_name);
   return nlohmann::json::parse(file_stream);
 #endif
+}
+
+std::shared_ptr<RWopsHolder>
+load_sdl_rw_data(const std::filesystem::path& path)
+{
+  auto raw_data = load_binary(path);
+  auto rw =
+    SDL_RWFromConstMem(raw_data.data(), static_cast<int>(raw_data.size()));
+  if (rw == nullptr) {
+    throw std::runtime_error(
+      std::format("Can't create RWops of {}", static_cast<std::string>(path)));
+  }
+  auto deleter = [path](SDL_RWops* value) {
+    auto result = SDL_RWclose(value);
+    if (result < 0) {
+      logger().error(std::format("Can't close SDL_RWops of {}", path.c_str()));
+    }
+  };
+  logger().info(std::format("Loaded: {} ({})", path.c_str(), rw->size(rw)));
+  return std::make_shared<RWopsHolder>(std::move(raw_data),
+                                       RWopsHolder::RWopsPtrType(rw, deleter));
 }

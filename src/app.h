@@ -7,6 +7,7 @@
 
 #include "src/control.h"               // IWYU pragma: export
 #include "src/game_state/game_state.h" // IWYU pragma: export
+#include "src/gui/theme.h"
 #include "src/sdl_init.h"
 #include "src/shader.h"                   // IWYU pragma: export
 #include "src/shading/deferred_shading.h" // IWYU pragma: export
@@ -25,13 +26,14 @@ public:
 
   unsigned long _last_time_point;
 
+  WindowPtr window;
+  ContextPtr gl_context;
   std::unique_ptr<GameState> game_state;
   std::unique_ptr<Control> control;
   std::unique_ptr<RectSize> screen_size;
   std::unique_ptr<DeferredShading> deferred_shading;
   std::unique_ptr<Shader> particle_shader;
-  WindowPtr window;
-  ContextPtr gl_context;
+  std::unique_ptr<GUI::Theme> theme;
 
   using Handler = std::function<void(Meta& meta)>;
   std::vector<Handler> _handlers = std::vector<Handler>();
@@ -42,6 +44,7 @@ public:
       std::unique_ptr<RectSize> _screen_size,
       std::unique_ptr<DeferredShading> _deferred_shading,
       std::unique_ptr<Shader> _particle_shader,
+      std::unique_ptr<GUI::Theme> _theme,
       WindowPtr _window,
       ContextPtr _gl_context);
   App(const App&) = delete;
@@ -65,6 +68,7 @@ public:
   OptionalPtr<RectSize> _screen_size;
   OptionalPtr<DeferredShading> _deferred_shading;
   OptionalPtr<Shader> _particle_shader;
+  OptionalPtr<GUI::Theme> _theme;
   std::optional<WindowPtr> _window;
   std::optional<ContextPtr> _context;
 
@@ -76,6 +80,7 @@ public:
   AppBuilder& particle_shader(std::unique_ptr<Shader> particle_shader);
   AppBuilder& window(WindowPtr window);
   AppBuilder& context(ContextPtr context);
+  AppBuilder& theme(std::unique_ptr<GUI::Theme> theme);
 
   App* build();
 };

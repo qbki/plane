@@ -26,7 +26,7 @@ export default {
   resolve: {
     extensions: ['.ts', '.js', '.data', '.wasm'],
     alias: {
-      "plane": root('build/wasm/bin')
+      "plane": root('build/wasm32-emscripten-release/bin')
     }
   },
   output: {
@@ -42,7 +42,6 @@ export default {
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: root('build/wasm/bin/index.data'), to: 'index.data' },
         { from: root('shaders'), to: 'shaders' },
         { from: root('assets/fonts'), to: 'assets/fonts' },
         { from: root('assets/levels'), to: 'assets/levels' },

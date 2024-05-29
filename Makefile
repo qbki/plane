@@ -5,84 +5,58 @@ BUILD_DIR=$(shell pwd)/build
 SRC_DIR=$(shell pwd)/src
 CONFIGS_DIR=$(shell pwd)/configs
 PACK_DIR=$(BUILD_DIR)/pack
-LINUX_BUILD_DIR=$(BUILD_DIR)/linux
+LINUX_BUILD_DIR=$(BUILD_DIR)/x86_64-linux-release
+LINUX_BUILD_TESTS_DIR=$(BUILD_DIR)/x86_64-linux-tests
 LINUX_BIN_DIR=$(LINUX_BUILD_DIR)/bin
-LINUX_DEBUG_BUILD_DIR=$(BUILD_DIR)/linux-debug
+LINUX_DEBUG_BUILD_DIR=$(BUILD_DIR)/x86_64-linux-debug
 LINUX_DEBUG_BIN_DIR=$(LINUX_DEBUG_BUILD_DIR)/bin
-WASM_BUILD_DIR=$(BUILD_DIR)/wasm
+WASM_BUILD_DIR=$(BUILD_DIR)/wasm32-emscripten-release
 WASM_BIN_DIR=$(WASM_BUILD_DIR)/bin
 WEB_SHELL_DIR=$(BUILD_DIR)/web-shell
 
 
+install-tools:
+	@sh scripts/install-tools.sh
+.PHONY: install-tools
+
+
 init:
-	@conan install . \
-		--output-folder=$(LINUX_BUILD_DIR) \
-		--build=missing \
-		--lockfile=./linux.lock \
-		--profile:build=./configs/profiles/linux \
-		--profile:host=./configs/profiles/linux
-	@cd $(LINUX_BUILD_DIR) \
-		&& cmake ../.. \
-			-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
-			-DCMAKE_BUILD_TYPE=Release \
-		&& cd .. \
-		&& ((ls compile_commands.json 2> /dev/null && echo "A link to compile_commands.json already exists") \
-			|| ln -s linux/compile_commands.json)
+	@cmake --preset x86_64-linux-release
+	@cd $(BUILD_DIR) && \
+		(ls compile_commands.json 2> /dev/null && \
+			echo "A link to compile_commands.json already exists") \
+		|| ln -s $(LINUX_BUILD_DIR)/compile_commands.json
 .PHONY: init
 
 
-init-wasm:
-	@conan install . \
-		--output-folder=$(WASM_BUILD_DIR) \
-		--build=missing \
-		--lockfile=./wasm.lock \
-		--profile:build=./configs/profiles/linux \
-		--profile:host=./configs/profiles/wasm
-	@npm ci
-	@cd $(WASM_BUILD_DIR) && \
-		cmake cmake ../.. \
-			-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
-			-DCMAKE_BUILD_TYPE=Release
-.PHONY: init-wasm
+init-tests:
+	@cmake --preset x86_64-linux-tests -DVCPKG_MANIFEST_FEATURES=tests
+.PHONY: init-tests
 
 
 init-debug:
-	@conan install . \
-		--output-folder=$(LINUX_DEBUG_BUILD_DIR) \
-		--settings=build_type=Debug \
-		--build=missing \
-		-pr ./configs/profiles/linux
-	@cd $(LINUX_DEBUG_BUILD_DIR) && \
-		cmake ../.. \
-			-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
-			-DCMAKE_BUILD_TYPE=Debug
+	@cmake --preset x86_64-linux-debug
 .PHONY: init-debug
 
 
+init-wasm:
+	@cmake --preset wasm32-emscripten-release
+	@npm ci
+.PHONY: init-wasm
+
+
 build:
-	@cd $(LINUX_BUILD_DIR) && \
-		cmake ../.. \
-			-DBUILD_TESTS=OFF \
-			-DBUILD_EXECUTABLE=ON && \
-		cmake --build .
+	@cmake --build --preset linux
 .PHONY: build
 
 
 build-tests:
-	@cd $(LINUX_BUILD_DIR) && \
-		cmake ../.. \
-			-DBUILD_TESTS=ON \
-			-DBUILD_EXECUTABLE=OFF && \
-		cmake --build .
+	@cmake --build --preset tests -DVCPKG_MANIFEST_FEATURES=tests
 .PHONY: build-tests
 
 
 build-wasm:
-	@cd $(WASM_BUILD_DIR) && \
-		cmake ../.. \
-			-DBUILD_TESTS=OFF \
-			-DBUILD_EXECUTABLE=ON && \
-		cmake --build .
+	@cmake --build --preset web
 .PHONY: build-wasm
 
 
@@ -91,22 +65,8 @@ build-web-shell:
 .PHONY: build-web-shell
 
 
-build-wasm-tests:
-	@cd $(WASM_BUILD_DIR) && \
-		cmake ../.. \
-			-DBUILD_TESTS=ON \
-			-DBUILD_EXECUTABLE=OFF && \
-		cmake --build .
-.PHONY: build-wasm-tests
-
-
 build-debug:
-	@cd $(LINUX_DEBUG_BUILD_DIR) && \
-		cmake ../.. \
-			-DBUILD_TESTS=OFF \
-			-DBUILD_EXECUTABLE=ON \
-			-DCMAKE_CXX_FLAGS="-O0 -g3" && \
-		cmake --build .
+	@cmake --build --preset linux-debug
 .PHONY: build-debug
 
 
@@ -145,9 +105,11 @@ iwyu:
 				-Xiwyu --no_fwd_decls
 .PHONY: iwyu
 
+
 clang-tidy:
 	@clang-tidy $(CPP_SOURCE_FILES_LIST) -p $(BUILD_DIR)
 .PHONY: clang-tidy
+
 
 clang-tidy-verify-config: export SYSTEM_VERSION = `\
 	echo \`clang-tidy --version\` | grep -Po '(?<=version )\d+'`
@@ -169,8 +131,8 @@ format-code:
 
 
 tests: build-tests
-	@cd $(LINUX_BUILD_DIR) && \
-		ctest --output-on-failure
+	@cd $(LINUX_BUILD_TESTS_DIR) && \
+		ctest -V --output-on-failure
 .PHONY: tests
 
 
@@ -190,24 +152,12 @@ pack-linux:
 .PHONY: pack-linux
 
 
-init-build-pack-wasm: init-wasm build-wasm build-web-shell pack-wasm
+init-build-pack-wasm: install-tools init-wasm build-wasm build-web-shell pack-wasm
 .PHONY: init-build-pack-wasm
 
 
 docker-build-wasm:
 	@mkdir -p $(BUILD_DIR)/docker_build && \
-	  mkdir -p $(BUILD_DIR)/docker_conan && \
+	  mkdir -p $(BUILD_DIR)/docker_tools && \
 		docker compose run --rm build-wasm make init-build-pack-wasm
 .PHONY: docker-build-wasm
-
-
-lock-files:
-	@conan lock create . -s os=Linux \
-		--lockfile-out=linux.lock \
-		--profile=./configs/profiles/linux \
-		--lockfile-clean
-	@conan lock create . -s os=Emscripten \
-		--lockfile-out=wasm.lock \
-		--profile=./configs/profiles/wasm \
-		--lockfile-clean
-.PHONY: lock-files

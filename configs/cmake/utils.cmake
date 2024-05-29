@@ -7,7 +7,6 @@ function(print_variables)
 endfunction()
 
 function(print_list items)
-  message("HERE")
   foreach (item ${items})
     message(STATUS "${item}")
   endforeach()

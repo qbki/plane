@@ -2,54 +2,42 @@ cmake_minimum_required(VERSION 3.27)
 include(${CMAKE_SOURCE_DIR}/configs/cmake/utils.cmake)
 include(${CMAKE_SOURCE_DIR}/configs/cmake/license.cmake)
 
+set(CMAKE_TOOLCHAIN_FILE
+    "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    CACHE STRING "Vcpkg toolchain file")
+
 project(plane VERSION 0.1.5)
 
 function(setup_link_libraries target_name)
-  target_link_libraries(${target_name} EnTT::EnTT)
-  target_link_libraries(${target_name} Microsoft.GSL::GSL)
-  target_link_libraries(${target_name} TinyGLTF::TinyGLTF)
-  target_link_libraries(${target_name} glm::glm)
-  target_link_libraries(${target_name} nlohmann_json::nlohmann_json)
+  target_link_libraries(${target_name} PRIVATE EnTT::EnTT)
+  target_link_libraries(${target_name} PRIVATE Microsoft.GSL::GSL)
+  target_link_libraries(${target_name} PRIVATE glm::glm-header-only)
+
+  target_link_libraries(${target_name} PRIVATE nlohmann_json::nlohmann_json)
+  set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
+
+  target_include_directories(${target_name} PRIVATE ${TINYGLTF_INCLUDE_DIRS})
+
   if(DEFINED EMSCRIPTEN)
     target_include_directories(${target_name} PUBLIC "${EMSCRIPTEN_SYSROOT}/include")
-    target_link_libraries(${target_name} GL GLEW SDL2)
+    target_link_libraries(${target_name} PRIVATE GL GLEW SDL2)
   else()
-    target_link_libraries(${target_name} GLEW::GLEW)
-    target_link_libraries(${target_name} SDL2::SDL2main)
-    target_link_libraries(${target_name} sdl_ttf::sdl_ttf)
+    target_link_libraries(${target_name} PRIVATE GLEW::GLEW)
+    target_link_libraries(${target_name} PRIVATE
+        $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
+        $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>)
+    target_link_libraries(${target_name} PRIVATE
+      $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>)
   endif()
-endfunction()
 
-function(generate_licenses_file)
-  set(licenses "")
-  string(APPEND licenses
-    "This file was generated semiautomatically and it\n"
-    "might contain errors or lack information. Please\n"
-    "check the official sites of these libraries to get\n"
-    "current legal information.\n\n"
-    "This software is distributed with further described\n"
-    "libraries but is not limited. If your library\n"
-    "or/and license is missing in the file, please\n"
-    "address it to the maintainers of Plane Game Engine.\n\n")
-  append_license(licenses "EnTT" "EnTT" "entt")
-  append_license(licenses "Microsoft.GSL" "Microsoft.GSL" "ms-gsl")
-  append_license(licenses "glm" "glm" "glm")
-  append_license(licenses "nlohmann/json" "nlohmann_json" "nlohmann_json")
-  append_license(licenses "TinyGLTF" "TinyGLTF" "tinygltf")
-  if(DEFINED EMSCRIPTEN)
-    # Emscripten is a tool dependency and it doesn't have
-    # generated constants like other dependencies.
-    append_license_title(licenses "Emscripten" ${EMSCRIPTEN_VERSION})
-    append_license_file(licenses "${EMSCRIPTEN_ROOT_PATH}/../../..")
-  else()
-    append_license(licenses "SDL2" "SDL2" "sdl")
-    append_license(licenses "GLEW" "glew" "glew")
+  if(${BUILD_TESTS})
+    target_link_libraries(${target_name} PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)
   endif()
-  file(WRITE ${THIRD_PARTY_LICENSES_FILE} ${licenses})
 endfunction()
 
 set(JSON_ImplicitConversions, OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
@@ -64,16 +52,20 @@ set(THIRD_PARTY_LICENSES_FILE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/THIRD_PARTY_LICE
 option(BUILD_TESTS "Turn this ON to compile tests" OFF)
 option(BUILD_EXECUTABLE "Turn this ON to compile an executable file" OFF)
 
-find_package(Catch2 3 REQUIRED)
-find_package(EnTT REQUIRED)
-find_package(GLM REQUIRED)
-find_package(Microsoft.GSL REQUIRED)
-find_package(TinyGLTF REQUIRED)
-find_package(nlohmann_json REQUIRED)
+find_package(EnTT CONFIG REQUIRED)
+find_package(Microsoft.GSL CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
+find_path(TINYGLTF_INCLUDE_DIRS "tiny_gltf.h")
+
+if(${BUILD_TESTS})
+  find_package(Catch2 CONFIG REQUIRED)
+endif()
+
 if(NOT DEFINED EMSCRIPTEN)
   find_package(GLEW REQUIRED)
-  find_package(SDL2 REQUIRED)
-  find_package(SDL2_ttf REQUIRED)
+  find_package(SDL2 CONFIG REQUIRED)
+  find_package(SDL2_ttf CONFIG REQUIRED)
 endif()
 
 include_directories(${CMAKE_SOURCE_DIR})
@@ -85,7 +77,6 @@ add_flag("-Wpedantic")
 add_flag("-pedantic-errors")
 if(DEFINED EMSCRIPTEN)
   add_flag("-fexceptions")
-  add_flag("-std=c++20")
   add_flag("-sUSE_SDL=2")
   add_flag("-sUSE_SDL_TTF=2")
   add_exe_flag("-sEXPORT_NAME=moduleFactory")
@@ -128,9 +119,7 @@ if(BUILD_EXECUTABLE)
       COMMAND ${CMAKE_COMMAND} -E
       create_symlink ${SRC_ASSETS_DIRECTORY} ${ASSETS_DIRECTORY})
   endif()
-  if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-    generate_licenses_file()
-  endif()
+  generate_licenses_file()
 endif()
 
 if(BUILD_TESTS)
@@ -140,13 +129,8 @@ if(BUILD_TESTS)
   set_target_properties(
     tests
     PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests)
-  if(DEFINED EMSCRIPTEN)
-    add_test(NAME ${TESTS_TARGET} COMMAND node "tests/${TESTS_TARGET}.js")
-  else()
-    add_test(NAME ${TESTS_TARGET} COMMAND tests/${TESTS_TARGET})
-  endif()
+  add_test(NAME ${TESTS_TARGET} COMMAND "tests/${TESTS_TARGET}")
   setup_link_libraries(${TESTS_TARGET})
-  target_link_libraries(${TESTS_TARGET} Catch2::Catch2WithMain)
 endif()
 
 if(BUILD_EXECUTABLE)

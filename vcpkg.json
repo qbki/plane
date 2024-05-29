@@ -1,0 +1,29 @@
+{
+  "dependencies": [
+    "entt",
+    "glm",
+    "ms-gsl",
+    "nlohmann-json",
+    "tinygltf",
+    { "name": "glew", "platform": "linux" },
+    { "name": "sdl2", "platform": "linux" },
+    { "name": "sdl2-ttf", "platform": "linux" }
+  ],
+  "features": {
+    "tests": {
+      "description": "Tests",
+      "dependencies": [ "catch2" ]
+    }
+  },
+  "overrides": [
+    { "name": "catch2", "version": "3.5.4" },
+    { "name": "entt", "version": "3.13.2" },
+    { "name": "glew", "version": "2.2.0" },
+    { "name": "glm", "version": "1.0.1#2" },
+    { "name": "ms-gsl", "version": "4.0.0" },
+    { "name": "nlohmann-json", "version": "3.11.3" },
+    { "name": "sdl2", "version": "2.30.1" },
+    { "name": "sdl2-ttf", "version": "2.22.0" },
+    { "name": "tinygltf", "version": "2.8.21" }
+  ]
+}

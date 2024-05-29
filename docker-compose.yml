@@ -12,5 +12,5 @@ services:
         source: ./build/docker_build
         target: /home/ubuntu/project/build
       - type: bind
-        source: ./build/docker_conan
-        target: /home/ubuntu/.conan2
+        source: ./build/docker_tools
+        target: /home/ubuntu/project/tools

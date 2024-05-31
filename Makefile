@@ -84,6 +84,7 @@ run-debug: build-debug
 
 run-wasm: build-wasm build-web-shell
 	@cd $(WEB_SHELL_DIR) && \
+		ln -snf $(shell pwd)/assets assets && \
 		python3 -m http.server -b 127.0.0.1
 .PHONY: run-wasm
 

@@ -6,7 +6,7 @@ set(CMAKE_TOOLCHAIN_FILE
     "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake"
     CACHE STRING "Vcpkg toolchain file")
 
-project(plane VERSION 0.1.5)
+project(plane VERSION 0.1.6)
 
 function(setup_link_libraries target_name)
   target_link_libraries(${target_name} PRIVATE EnTT::EnTT)

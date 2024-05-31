@@ -8,9 +8,9 @@
 #include "projectiles.h"
 
 void
-projectile_handler_system(const App::Meta& meta)
+projectile_handler_system(const App& app)
 {
-  auto& registry = meta.app->game_state->registry();
+  auto& registry = app.game_state().registry();
   auto enemies_view = registry.view<Transform,
                                     Velocity,
                                     EnemyStateEnum,

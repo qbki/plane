@@ -13,27 +13,27 @@ change_texture_type(Textures& textures, bool is_button_pressed)
 }
 
 void
-tutorial_buttons_system(const App::Meta& meta)
+tutorial_buttons_system(const App& app)
 {
-  auto& registry = meta.app->game_state->registry();
-  auto control = meta.app->control.get();
+  auto& registry = app.game_state().registry();
+  const auto& control = app.control();
   registry.view<Textures, TutorialButton, TutorialButtonKind>().each(
     [&](Textures& textures, const TutorialButton& button) {
       switch (button.value) {
         case Control::Action::UP:
-          change_texture_type(textures, control->up);
+          change_texture_type(textures, control.up);
           break;
         case Control::Action::DOWN:
-          change_texture_type(textures, control->down);
+          change_texture_type(textures, control.down);
           break;
         case Control::Action::LEFT:
-          change_texture_type(textures, control->left);
+          change_texture_type(textures, control.left);
           break;
         case Control::Action::RIGHT:
-          change_texture_type(textures, control->right);
+          change_texture_type(textures, control.right);
           break;
         case Control::Action::SHOOTING:
-          change_texture_type(textures, control->is_player_shooting);
+          change_texture_type(textures, control.is_player_shooting);
           break;
         default:
           noop();

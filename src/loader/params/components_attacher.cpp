@@ -2,18 +2,20 @@
 
 #include "src/components/common.h"
 #include "src/components/velocity.h"
+#include "src/events/event.h"
+#include "src/services.h"
 #include "src/utils/noop.h"
 
 #include "components_attacher.h"
-#include "emmiters.h"
+#include "emitters.h"
 #include "entities_map.h"
 
-ComponetsAttacher::ComponetsAttacher(App* app,
+ComponetsAttacher::ComponetsAttacher(const App* app,
                                      const entt::entity entity,
                                      const EntityParamsMap* params_map)
   : _app(app)
   , _entity(entity)
-  , _registry(&app->game_state->registry())
+  , _registry(&app->game_state().registry())
   , _entities(params_map)
 {
 }
@@ -129,6 +131,8 @@ ComponetsAttacher::attach_projectile_emmiter(
   const EntityParamsActor& actor_params) const
 {
   if (!actor_params.gun_id.has_value()) {
+    _registry->emplace_or_replace<ShotSound>(_entity, std::nullopt);
+    _registry->emplace_or_replace<ProjectileEmitter>(_entity, std::nullopt);
     return;
   }
   auto gun_params = _entities->gun(actor_params.gun_id.value());
@@ -138,5 +142,6 @@ ComponetsAttacher::attach_projectile_emmiter(
   ProjectileEmitter emitter{ [gun_params, model_params, app]() {
     emit_projectile(*app, gun_params, model_params.path);
   } };
+  _registry->emplace_or_replace<ShotSound>(_entity, gun_params.sound_shot);
   _registry->emplace_or_replace<ProjectileEmitter>(_entity, emitter);
 }

@@ -1,20 +1,20 @@
 #pragma once
 #include <glm/vec3.hpp>
 
-#include "src/app.h"
+#include "src/app/app.h"
 
 #include "entities_map.h"
 
 class ComponetsAttacher
 {
 private:
-  App* _app;
+  const App* _app;
   entt::entity _entity;
   entt::registry* _registry;
   const EntityParamsMap* _entities;
 
 public:
-  ComponetsAttacher(App* app,
+  ComponetsAttacher(const App* app,
                     const entt::entity entity,
                     const EntityParamsMap* params_map);
   void operator()(const EntityParamsActor& params) const;

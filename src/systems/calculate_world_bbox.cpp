@@ -11,17 +11,17 @@
 #include "calculate_world_bbox.h"
 
 void
-calculate_world_bbox(const App::Meta& meta)
+calculate_world_bbox(const App& app)
 {
-  auto& game_state = meta.app->game_state;
-  auto& registry = game_state->registry();
+  auto& game_state = app.game_state();
+  auto& registry = game_state.registry();
   registry.view<MeshPointer, Transform>().each(
     [&](const MeshPointer& mesh, const Transform& transform) {
       auto bounding_volume =
         apply_transform_to_collider(transform, mesh->bounding_volume());
-      game_state->extend_world_bbox(bounding_volume);
+      game_state.extend_world_bbox(bounding_volume);
     });
-  auto world_bbox = game_state->world_bbox();
+  auto world_bbox = game_state.world_bbox();
   logger().info(std::format("World bounding box: {} x {}",
                             glm::to_string(world_bbox.min),
                             glm::to_string(world_bbox.max)));

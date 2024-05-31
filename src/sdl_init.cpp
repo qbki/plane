@@ -1,7 +1,9 @@
 #include <GL/glew.h>
 #include <SDL.h>
 #include <SDL_error.h>
+#include <SDL_mixer.h>
 #include <SDL_ttf.h>
+#include <SDL_video.h>
 #include <format>
 #include <memory>
 #include <stdexcept>
@@ -10,6 +12,7 @@
 #include <emscripten/html5.h>
 #endif
 
+#include "src/consts.h"
 #include "src/utils/gl.h"
 
 #include "sdl_init.h"
@@ -18,7 +21,7 @@
 void
 throw_sdl_error(std::string message)
 {
-  throw new std::runtime_error(std::format("{}: {}", message, SDL_GetError()));
+  throw std::runtime_error(std::format("{}: {}", message, SDL_GetError()));
 }
 
 void GLAPIENTRY
@@ -36,12 +39,28 @@ MessageCallback(GLenum /*source*/,
 WindowPtr
 init_window(int screen_width, int screen_height)
 {
-  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+  // SDL
+  int error = 0;
+  error = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+  if (error < 0) {
     throw_sdl_error("Unable to init SDL");
   }
   logger().info("SDL has been initialized.");
 
-  if (TTF_Init() < 0) {
+  // Audio
+  error = Mix_OpenAudio(MIX_DEFAULT_FREQUENCY,
+                        MIX_DEFAULT_FORMAT,
+                        MIX_DEFAULT_CHANNELS,
+                        DEFAULT_AUDIO_CHUNKSIZE);
+  if (error < 0) {
+    throw_sdl_error("Unable to init SDL_mixer");
+  }
+  Mix_AllocateChannels(DEFAULT_MAX_CHANNELS);
+  logger().info("SDL_mixer has been initialized.");
+
+  // Font
+  error = TTF_Init();
+  if (error < 0) {
     throw_sdl_error("Unable to init SDL_ttf");
   }
   logger().info("SDL_ttf has been initialized.");

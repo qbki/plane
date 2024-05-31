@@ -58,20 +58,19 @@ update_transform_mapping(
 }
 
 void
-render_system(App::Meta& meta)
+render_system(const App& app)
 {
-  auto& registry = meta.app->game_state->registry();
-  const auto& camera = *meta.app->game_state->camera();
-  auto& deferred_shading = *meta.app->deferred_shading;
-  auto& particle_shader = *meta.app->particle_shader;
-  auto& screen_size = *meta.app->screen_size;
+  auto& registry = app.game_state().registry();
+  const auto& camera = app.game_state().camera();
+  auto& deferred_shading = app.deferred_shading();
+  auto& particle_shader = app.particle_shader();
+  auto& screen_size = app.screen_size();
   auto frustum = camera.frustum();
 
   glDisable(GL_BLEND);
   deferred_shading.use_geometry_pass();
   auto& geometry_pass_shader = deferred_shading.geometry_pass();
   geometry_pass_shader.uniform("u_PV", camera.pv());
-  geometry_pass_shader.uniform("u_elapsed_seconds", meta.time);
 
   std::unordered_map<Mesh*, TransformHolder> transform_mapping;
 
@@ -177,7 +176,7 @@ render_system(App::Meta& meta)
   particle_shader.uniform("u_main_texture", 0);
   draw(transform_mapping);
 
-  const auto& gui_camera = *meta.app->game_state->gui_camera();
+  const auto& gui_camera = app.game_state().gui_camera();
   particle_shader.uniform("u_PV", gui_camera.pv());
 
   registry.view<GUI::Component>().each([&](GUI::Component& gui_component) {

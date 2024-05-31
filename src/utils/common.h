@@ -6,13 +6,6 @@
 #include <limits>
 #include <ostream>
 
-template<typename M, typename K>
-bool
-has_key(const M& map, const K& key)
-{
-  return map.find(key) != map.end();
-}
-
 template<typename T>
 bool
 is_approx_equal(T a, T b)

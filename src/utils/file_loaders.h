@@ -6,6 +6,7 @@
 #include <string>
 #include <tiny_gltf.h>
 
+#include "src/sound/sound.h"
 #include "src/utils/types.h"
 
 tinygltf::Model
@@ -19,3 +20,6 @@ load_json(const std::string& file_name);
 
 std::shared_ptr<RWopsHolder>
 load_sdl_rw_data(const std::filesystem::path& path);
+
+std::unique_ptr<Sound::Sound>
+load_sound(const std::filesystem::path& sound_file_path);

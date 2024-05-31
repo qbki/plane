@@ -1,18 +1,18 @@
-#include "src/app.h"
+#include "src/app/app.h"
 #include "src/components/common.h"
 
 #include "particles.h"
 
 void
-particle_handler_system(const App::Meta& meta)
+particle_handler_system(const App& app)
 {
-  auto& registry = meta.app->game_state->registry();
+  auto& registry = app.game_state().registry();
   auto particles = registry.view<Lifetime, Available, ParticleKind>();
   particles.each([&](entt::entity id, Lifetime& lifetime) {
     if (lifetime.value <= 0.0) {
       registry.remove<Available>(id);
       return;
     }
-    lifetime.value -= meta.delta_time;
+    lifetime.value -= app.delta_time();
   });
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "src/app.h"
+#include "src/app/app.h"
 
 void
-update_gui(const App::Meta& meta);
+update_gui(const App& app);

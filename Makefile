@@ -1,5 +1,5 @@
 SHELL=/bin/bash
-CPP_SOURCE_FILES_LIST=$(shell git ls-files | egrep '(h|cpp)$$')
+CPP_SOURCE_FILES_LIST=$(shell git ls-files | egrep '(\.h|\.cpp)$$')
 PROJECT_NAME=plane
 BUILD_DIR=$(shell pwd)/build
 SRC_DIR=$(shell pwd)/src
@@ -30,7 +30,7 @@ init:
 
 
 init-tests:
-	@cmake --preset x86_64-linux-tests -DVCPKG_MANIFEST_FEATURES=tests
+	@cmake --preset x86_64-linux-tests
 .PHONY: init-tests
 
 
@@ -40,7 +40,8 @@ init-debug:
 
 
 init-wasm:
-	@cmake --preset wasm32-emscripten-release
+	@. ./tools/emsdk/emsdk_env.sh && \
+	  cmake --preset wasm32-emscripten-release
 	@npm ci
 .PHONY: init-wasm
 
@@ -51,12 +52,13 @@ build:
 
 
 build-tests:
-	@cmake --build --preset tests -DVCPKG_MANIFEST_FEATURES=tests
+	@cmake --build --preset tests
 .PHONY: build-tests
 
 
 build-wasm:
-	@cmake --build --preset web
+	@. ./tools/emsdk/emsdk_env.sh && \
+		cmake --build --preset web
 .PHONY: build-wasm
 
 
@@ -134,12 +136,6 @@ tests: build-tests
 	@cd $(LINUX_BUILD_TESTS_DIR) && \
 		ctest -V --output-on-failure
 .PHONY: tests
-
-
-tests-wasm: build-wasm-tests
-	@cd $(WASM_BUILD_DIR) && \
-		ctest --output-on-failure
-.PHONY: tests-wasm
 
 
 pack-wasm:

@@ -1,5 +1,5 @@
 #pragma once
-#include "src/app.h"
+#include "src/app/app.h"
 
 void
-calculate_world_bbox(const App::Meta& meta);
+calculate_world_bbox(const App& app);

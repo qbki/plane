@@ -1,5 +1,5 @@
 #pragma once
-#include "src/app.h"
+#include "src/app/app.h"
 
 void
-render_system(App::Meta& meta);
+render_system(const App& app);

@@ -179,3 +179,11 @@ load_sdl_rw_data(const std::filesystem::path& path)
   return std::make_shared<RWopsHolder>(std::move(raw_data),
                                        RWopsHolder::RWopsPtrType(rw, deleter));
 }
+
+std::unique_ptr<Sound::Sound>
+load_sound(const std::filesystem::path& sound_file_path)
+{
+  auto rwops = load_sdl_rw_data(sound_file_path);
+  auto chunk = Mix_LoadWAV_RW(rwops->rwops.get(), 0);
+  return std::make_unique<Sound::Sound>(chunk);
+}

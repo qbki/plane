@@ -16,10 +16,10 @@ GameState::camera(std::unique_ptr<Camera>& camera)
   _camera = std::move(camera);
 }
 
-std::unique_ptr<Camera>&
-GameState::camera()
+Camera&
+GameState::camera() const
 {
-  return _camera;
+  return *_camera;
 }
 
 void
@@ -28,10 +28,10 @@ GameState::gui_camera(std::unique_ptr<Camera>& camera)
   _gui_camera = std::move(camera);
 }
 
-std::unique_ptr<Camera>&
-GameState::gui_camera()
+Camera&
+GameState::gui_camera() const
 {
-  return _gui_camera;
+  return *_gui_camera;
 }
 
 void
@@ -112,10 +112,4 @@ entt::registry&
 GameState::registry()
 {
   return _registry;
-}
-
-ModelFactory&
-GameState::factory()
-{
-  return _factory;
 }

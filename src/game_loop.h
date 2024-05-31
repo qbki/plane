@@ -1,5 +1,5 @@
 #pragma once
-#include "app.h"
+#include "app/app.h"
 
 void
 game_loop(App* app);

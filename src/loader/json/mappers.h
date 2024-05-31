@@ -7,6 +7,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "src/consts.h"
 #include "src/control.h"
 #include "src/loader/params.h"
 
@@ -178,9 +179,12 @@ struct adl_serializer<EntityParams>
       value = params;
     } else if (kind == "gun") {
       EntityParamsGun params{};
+      std::string sound_shot_path;
       json_obj.at("model_id").get_to(params.model_id);
       json_obj.at("range").get_to(params.range);
       json_obj.at("velocity").get_to(params.velocity);
+      json_obj.at("sound_shot").get_to(sound_shot_path);
+      params.sound_shot = ASSETS_DIR / sound_shot_path;
       value = params;
     } else if (kind == "point_light") {
       EntityParamsPointLight params{};

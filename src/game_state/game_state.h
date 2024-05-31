@@ -6,7 +6,6 @@
 
 #include "src/cameras/camera.h" // IWYU pragma: export
 
-#include "factory.h"
 #include "src/math/shapes.h"
 
 class GameState
@@ -17,7 +16,6 @@ private:
   glm::vec3 _cursor = glm::zero<glm::vec3>();
   entt::registry _registry;
   entt::entity _player_id = entt::null;
-  ModelFactory _factory;
   bool _is_game_running = true;
   Shape::AABB _world_bbox;
 
@@ -30,10 +28,10 @@ public:
   ~GameState() = default;
 
   void camera(std::unique_ptr<Camera>& camera);
-  std::unique_ptr<Camera>& camera();
+  [[nodiscard]] Camera& camera() const;
 
   void gui_camera(std::unique_ptr<Camera>& camera);
-  std::unique_ptr<Camera>& gui_camera();
+  [[nodiscard]] Camera& gui_camera() const;
 
   void cursor(glm::vec3 value);
   [[nodiscard]] glm::vec3 cursor() const;
@@ -49,7 +47,6 @@ public:
   [[nodiscard]] entt::entity player_id() const;
 
   entt::registry& registry();
-  ModelFactory& factory();
 
   template<typename... Components>
   decltype(auto) player()

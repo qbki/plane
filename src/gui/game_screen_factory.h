@@ -1,5 +1,5 @@
 #pragma once
-#include "src/app.h"
+#include "src/app/app.h"
 
 void
-game_screen_factory(const App::Meta& meta);
+game_screen_factory(const App& app);

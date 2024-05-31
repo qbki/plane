@@ -9,7 +9,7 @@
 #include <emscripten/html5.h>
 #endif
 
-#include "app.h"
+#include "app/app.h"
 #include "game_loop.h"
 
 void
@@ -34,15 +34,15 @@ resize_window(const SDL_WindowEvent& window_event,
 void
 wasm_resize_window(App& app, int width, int height)
 {
-  auto& game_state = app.game_state;
-  auto window = app.window.get();
-  SDL_SetWindowSize(window, width, height);
-  app.deferred_shading->g_buffer().update(width, height);
-  app.screen_size->width = width;
-  app.screen_size->height = height;
+  const auto& game_state = app.game_state();
+  auto& window = app.window();
+  SDL_SetWindowSize(&window, width, height);
+  app.deferred_shading().g_buffer().update(width, height);
+  app.screen_size().width = width;
+  app.screen_size().height = height;
   std::vector<Camera*> cameras = {
-    &*game_state->camera(),
-    &*game_state->gui_camera(),
+    &game_state.camera(),
+    &game_state.gui_camera(),
   };
   resize_window(cameras, width, height);
 }
@@ -68,16 +68,16 @@ void
 inner_game_loop(App& app)
 {
   SDL_Event event;
-  auto& game_state = app.game_state;
+  auto& game_state = app.game_state();
   while (SDL_PollEvent(&event)) {
     switch (event.type) {
       case SDL_QUIT: {
-        game_state->is_running(false);
+        game_state.is_running(false);
         break;
       }
       case SDL_KEYDOWN: {
         if (event.key.keysym.sym == SDLK_q) {
-          game_state->is_running(false);
+          game_state.is_running(false);
         }
         break;
       }
@@ -85,24 +85,24 @@ inner_game_loop(App& app)
         if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
           auto width = event.window.data1;
           auto height = event.window.data2;
-          app.screen_size->width = width;
-          app.screen_size->height = height;
+          app.screen_size().width = width;
+          app.screen_size().height = height;
           std::vector<Camera*> cameras = {
-            &*game_state->camera(),
-            &*game_state->gui_camera(),
+            &game_state.camera(),
+            &game_state.gui_camera(),
           };
           resize_window(event.window, cameras);
-          app.deferred_shading->g_buffer().update(width, height);
+          app.deferred_shading().g_buffer().update(width, height);
         }
         break;
       }
     }
-    app.control->update(event);
+    app.control().update(event);
   }
 
   app.update(SDL_GetTicks64());
 
-  SDL_GL_SwapWindow(app.window.get());
+  SDL_GL_SwapWindow(&app.window());
 };
 
 #ifdef __EMSCRIPTEN__
@@ -129,7 +129,7 @@ game_loop(App* app)
 void
 game_loop(App* app)
 {
-  while (app->game_state->is_running()) {
+  while (app->game_state().is_running()) {
     inner_game_loop(*app);
   }
 }

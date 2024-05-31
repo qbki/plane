@@ -4,9 +4,13 @@
 #include <gsl/pointers>
 #include <utility>
 
+#include "app/app_builder.h"
+#include "cache/cache.h"
 #include "cameras/gui_camera.h"
 #include "cameras/perspective_camera.h"
 #include "consts.h"
+#include "events/event.h"
+#include "events/event_emitter.h"
 #include "game_loop.h"
 #include "gui/game_screen_factory.h"
 #include "gui/theme.h"
@@ -17,6 +21,7 @@
 #include "mesh.h"
 #include "sdl_init.h"
 #include "service.h"
+#include "services.h"
 #include "systems/calculate_world_bbox.h"
 #include "systems/camera.h"
 #include "systems/cursor.h"
@@ -34,6 +39,9 @@ int
 main()
 {
   Service<AbstractLogger>::install(std::make_unique<Logger>());
+  Service<Cache>::install(std::make_unique<Cache>());
+  Service<Events::EventEmitter<Events::ShootEvent>>::install(
+    std::make_unique<Events::EventEmitter<Events::ShootEvent>>());
 
   auto window = init_window(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
   auto context = init_context(window.get());
@@ -108,6 +116,11 @@ main()
   app->add_handler(tutorial_buttons_system);
   app->add_handler(update_gui);
   app->add_handler(render_system);
+
+  std::function<void(const Events::ShootEvent&)> cb = [](const auto& event) {
+    cache().get_sound(event.sound_path)->play();
+  };
+  events<Events::ShootEvent>().add(cb);
 
   load_level(ASSETS_DIR / "levels/entities.json",
              ASSETS_DIR / "levels/level_1.json",

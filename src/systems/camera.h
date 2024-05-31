@@ -1,5 +1,5 @@
 #pragma once
-#include "src/app.h"
+#include "src/app/app.h"
 
 void
-camera_move_system(const App::Meta& meta);
+camera_move_system(const App& app);

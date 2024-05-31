@@ -24,10 +24,12 @@ function(setup_link_libraries target_name)
   else()
     target_link_libraries(${target_name} PRIVATE GLEW::GLEW)
     target_link_libraries(${target_name} PRIVATE
-        $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-        $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>)
+      $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
+      $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>)
     target_link_libraries(${target_name} PRIVATE
       $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>)
+    target_link_libraries(${target_name} PRIVATE
+      $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>)
   endif()
 
   if(${BUILD_TESTS})
@@ -40,7 +42,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
-
 set(SRC_SHADERS_DIRECTORY ${CMAKE_SOURCE_DIR}/shaders)
 set(SRC_ASSETS_DIRECTORY ${CMAKE_SOURCE_DIR}/assets)
 set(SHADERS_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders)
@@ -57,14 +58,12 @@ find_package(Microsoft.GSL CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_path(TINYGLTF_INCLUDE_DIRS "tiny_gltf.h")
-
-if(${BUILD_TESTS})
-  find_package(Catch2 CONFIG REQUIRED)
-endif()
+find_package(Catch2 CONFIG REQUIRED)
 
 if(NOT DEFINED EMSCRIPTEN)
   find_package(GLEW REQUIRED)
   find_package(SDL2 CONFIG REQUIRED)
+  find_package(SDL2_mixer CONFIG REQUIRED)
   find_package(SDL2_ttf CONFIG REQUIRED)
 endif()
 
@@ -79,6 +78,7 @@ if(DEFINED EMSCRIPTEN)
   add_flag("-fexceptions")
   add_flag("-sUSE_SDL=2")
   add_flag("-sUSE_SDL_TTF=2")
+  add_flag("-sUSE_SDL_MIXER=2")
   add_exe_flag("-sEXPORT_NAME=moduleFactory")
   add_exe_flag("-sMODULARIZE")
   add_exe_flag("-sEXPORT_ES6=1")

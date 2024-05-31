@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-#include "src/app.h"
+#include "src/app/app.h"
 #include "src/game_state/factory.h"
 
 #include "entities_map.h"
@@ -12,14 +12,14 @@ class PositionStrategyVisitor
 {
 private:
   const EntityParamsMap* _entities;
-  App* _app;
+  const App* _app;
   EntityMaker _entity_maker;
 
   [[nodiscard]] entt::entity handle_single(const std::string& entity_id) const;
 
 public:
   PositionStrategyVisitor(const EntityParamsMap* entities,
-                          App* app,
+                          const App* app,
                           ModelFactory::MakerFn* maker_fn);
   void operator()(const PositionStrategyRound& strategy) const;
   void operator()(const PositionStrategySingle& strategy) const;

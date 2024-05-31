@@ -6,25 +6,18 @@
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
 #include "src/control.h"
+#include "src/services.h"
 #include "src/utils/noop.h"
 
 #include "factory.h"
 
-ModelFactory::ModelFactory()
-  : _cache(new Cache()){};
-
-Cache&
-ModelFactory::cache()
-{
-  return *_cache;
-}
+namespace ModelFactory {
 
 entt::entity
-ModelFactory::make_player(entt::registry& registry,
-                          const std::string& file_path)
+make_player(entt::registry& registry, const std::string& file_path)
 {
   auto entity = registry.create();
-  auto [mesh, textures] = _cache->load(file_path);
+  auto [mesh, textures] = cache().get_model(file_path);
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<PlayerKind>(entity);
@@ -36,9 +29,9 @@ ModelFactory::make_player(entt::registry& registry,
 }
 
 entt::entity
-ModelFactory::make_enemy(entt::registry& registry, const std::string& file_path)
+make_enemy(entt::registry& registry, const std::string& file_path)
 {
-  auto [mesh, textures] = _cache->load(file_path);
+  auto [mesh, textures] = cache().get_model(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<EnemyKind>(entity);
@@ -52,10 +45,9 @@ ModelFactory::make_enemy(entt::registry& registry, const std::string& file_path)
 }
 
 entt::entity
-ModelFactory::make_projectile(entt::registry& registry,
-                              const std::string& file_path)
+make_projectile(entt::registry& registry, const std::string& file_path)
 {
-  auto [mesh, textures] = _cache->load(file_path);
+  auto [mesh, textures] = cache().get_model(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<InitialPosition>(entity, glm::zero<glm::vec3>());
@@ -71,10 +63,9 @@ ModelFactory::make_projectile(entt::registry& registry,
 }
 
 entt::entity
-ModelFactory::make_static(entt::registry& registry,
-                          const std::string& file_path)
+make_static(entt::registry& registry, const std::string& file_path)
 {
-  auto [mesh, textures] = _cache->load(file_path);
+  auto [mesh, textures] = cache().get_model(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
@@ -85,10 +76,9 @@ ModelFactory::make_static(entt::registry& registry,
 }
 
 entt::entity
-ModelFactory::make_tutorial_button(entt::registry& registry,
-                                   const std::string& file_path)
+make_tutorial_button(entt::registry& registry, const std::string& file_path)
 {
-  auto [mesh, textures] = _cache->load(file_path);
+  auto [mesh, textures] = cache().get_model(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
@@ -101,10 +91,9 @@ ModelFactory::make_tutorial_button(entt::registry& registry,
 }
 
 entt::entity
-ModelFactory::make_particle(entt::registry& registry,
-                            const std::string& file_path)
+make_particle(entt::registry& registry, const std::string& file_path)
 {
-  auto [mesh, textures] = _cache->load(file_path);
+  auto [mesh, textures] = cache().get_model(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<Color>(entity, glm::zero<glm::vec3>());
@@ -120,7 +109,7 @@ ModelFactory::make_particle(entt::registry& registry,
 }
 
 entt::entity
-ModelFactory::make_point_light(entt::registry& registry, const std::string&)
+make_point_light(entt::registry& registry, const std::string&)
 {
   const PointLightParams point_light_params{
     .constant = 1.0,
@@ -136,12 +125,13 @@ ModelFactory::make_point_light(entt::registry& registry, const std::string&)
 }
 
 entt::entity
-ModelFactory::make_directional_light(entt::registry& registry,
-                                     const std::string&)
+make_directional_light(entt::registry& registry, const std::string&)
 {
   auto entity = registry.create();
   registry.emplace<Direction>(entity, glm::zero<glm::vec3>());
   registry.emplace<Color>(entity, glm::zero<glm::vec3>());
   registry.emplace<DirectionalLightKind>(entity);
   return entity;
+}
+
 }

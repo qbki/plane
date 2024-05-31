@@ -1,5 +1,6 @@
 #include <filesystem>
 #include <glm/vec3.hpp>
+#include <memory>
 #include <tiny_gltf.h>
 #include <tuple>
 #include <unordered_map>
@@ -7,6 +8,7 @@
 
 #include "src/consts.h"
 #include "src/game_state/texture_type.h"
+#include "src/sound/sound.h"
 #include "src/texture.h"
 #include "src/utils/common.h"
 #include "src/utils/file_loaders.h"
@@ -58,34 +60,34 @@ extract_textures(const tinygltf::Model& model)
 }
 
 Cache::Cache()
+  : _meshes(std::unordered_map<std::string, std::tuple<MeshPtr, TexturesPtr>>())
 {
-  this->_meshes =
-    std::unordered_map<std::string, std::tuple<MeshPtr, TexturesPtr>>();
 }
 
 std::tuple<Cache::MeshPtr, Cache::TexturesPtr>
-Cache::load(const std::string& mesh_file_name)
+Cache::get_model(const std::filesystem::path& mesh_file_name)
 {
-  auto has_mesh = has_key(this->_meshes, mesh_file_name);
-
-  Cache::MeshPtr mesh;
-  TexturesPtr textures;
-
-  if (has_mesh) {
-    auto mesh_data = this->_meshes.at(mesh_file_name);
-    mesh = std::get<MESH_IDX>(mesh_data);
-    textures = std::get<TEXTURE_IDX>(mesh_data);
-  } else {
-    auto gltf_model = load_gltf_model(ASSETS_DIR / mesh_file_name);
-    auto extracted_textures = extract_textures(gltf_model);
-
-    mesh = std::make_shared<Mesh>(gltf_model);
-    textures = generate_textures(gltf_model);
-    for (auto& [idx, texture] : *extracted_textures) {
-      textures->at(idx) = std::move(texture);
-    }
-    this->_meshes[mesh_file_name] = std::make_tuple(mesh, textures);
+  if (_meshes.contains(mesh_file_name)) {
+    return _meshes[mesh_file_name];
   }
-
+  auto gltf_model = load_gltf_model(ASSETS_DIR / mesh_file_name);
+  auto extracted_textures = extract_textures(gltf_model);
+  auto mesh = std::make_shared<Mesh>(gltf_model);
+  auto textures = generate_textures(gltf_model);
+  for (auto& [idx, texture] : *extracted_textures) {
+    textures->at(idx) = std::move(texture);
+  }
+  _meshes[mesh_file_name] = std::make_tuple(mesh, textures);
   return { mesh, textures };
+}
+
+Cache::SoundPtr
+Cache::get_sound(const std::filesystem::path& sound_file_name)
+{
+  if (_sounds.contains(sound_file_name)) {
+    return _sounds[sound_file_name];
+  }
+  std::shared_ptr<Sound::Sound> sound = load_sound(sound_file_name);
+  _sounds[sound_file_name] = sound;
+  return sound;
 }

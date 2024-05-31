@@ -5,9 +5,10 @@
 #include <variant>
 #include <vector>
 
-#include "src/app.h"
+#include "src/app/app.h"
+#include "src/cache/cache.h"
 #include "src/game_state/factory.h"
-#include "src/models/cache.h"
+#include "src/services.h"
 #include "src/utils/file_loaders.h"
 #include "src/utils/types.h"
 
@@ -18,32 +19,30 @@
 void
 setup_camera(CameraParams camera_params, App& app)
 {
-  app.game_state->camera()->position(camera_params.position);
+  app.game_state().camera().position(camera_params.position);
 }
 
 ModelFactory::MakerFn
-get_entity_maker(App& app,
-                 const PositionStrategy& strategy,
+get_entity_maker(const PositionStrategy& strategy,
                  const EntityParamsMap& entities)
 {
-  auto& factory = app.game_state->factory();
-  ModelFactory::MakerFn maker = [&factory, &entities, strategy](auto&... args) {
+  ModelFactory::MakerFn maker = [&entities, strategy](auto&... args) {
     auto behaviour = get_behaviour(strategy);
     switch (behaviour) {
       case BehaviourEnum::ENEMY: {
-        return factory.make_enemy(args...);
+        return ModelFactory::make_enemy(args...);
         break;
       }
       case BehaviourEnum::PLAYER: {
-        return factory.make_player(args...);
+        return ModelFactory::make_player(args...);
         break;
       }
       case BehaviourEnum::STATIC: {
-        return factory.make_static(args...);
+        return ModelFactory::make_static(args...);
         break;
       }
       case BehaviourEnum::TUTORIAL_BUTTON: {
-        return factory.make_tutorial_button(args...);
+        return ModelFactory::make_tutorial_button(args...);
         break;
       }
       case BehaviourEnum::LIGHT: {
@@ -59,10 +58,10 @@ get_entity_maker(App& app,
         auto entity_params = entities.params(entity_id);
         if (std::holds_alternative<EntityParamsDirectionalLight>(
               entity_params)) {
-          return factory.make_directional_light(args...);
+          return ModelFactory::make_directional_light(args...);
         } else if (std::holds_alternative<EntityParamsPointLight>(
                      entity_params)) {
-          return factory.make_point_light(args...);
+          return ModelFactory::make_point_light(args...);
         } else {
           throw std::runtime_error(
             std::format("Unknown light type for the entity: {}", entity_id));
@@ -79,11 +78,10 @@ get_entity_maker(App& app,
 }
 
 void
-preload_models(const std::vector<EntityParamsModel>& models, App& app)
+preload_models(const std::vector<EntityParamsModel>& models)
 {
-  auto& factory = app.game_state->factory();
   for (auto& model : models) {
-    factory.cache().load(model.path);
+    cache().get_model(model.path);
   }
 }
 
@@ -98,10 +96,10 @@ load_level(const std::string& entities_file_path,
   auto camera = json_level.at("camera").get<CameraParams>();
   auto strategies = json_level.at("map").get<std::vector<PositionStrategy>>();
   auto models = entities.get_all<EntityParamsModel>();
-  preload_models(models, app);
+  preload_models(models);
   setup_camera(camera, app);
   for (auto& strategy : strategies) {
-    auto maker = get_entity_maker(app, strategy, entities);
+    auto maker = get_entity_maker(strategy, entities);
     PositionStrategyVisitor strategy_handler(&entities, &app, &maker);
     std::visit(strategy_handler, strategy);
   }

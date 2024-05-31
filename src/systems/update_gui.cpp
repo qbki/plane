@@ -7,9 +7,9 @@
 #include "update_gui.h"
 
 void
-update_gui(const App::Meta& meta)
+update_gui(const App& app)
 {
-  auto& registry = meta.app->game_state->registry();
+  auto& registry = app.game_state().registry();
 
   int enemy_quantity = 0;
   registry.view<const EnemyStateEnum>().each(

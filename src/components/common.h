@@ -1,9 +1,11 @@
 #pragma once
 #include <entt/entity/fwd.hpp>
+#include <filesystem>
 #include <functional> // IWYU pragma: export
 #include <glm/gtc/constants.hpp>
 #include <glm/vec3.hpp>
 #include <memory>
+#include <optional>
 
 #include "src/control.h"
 #include "src/mesh.h"        // IWYU pragma: export
@@ -23,6 +25,7 @@ using Lifetime = NewType<float, struct LifeTimeTag>;
 using LifetimeMax = NewType<float, struct LifeTimeMaxTag>;
 using MeshPointer = std::shared_ptr<Mesh>;
 using Range = NewType<float, struct RangeTag>;
+using ShotSound = NewType<std::optional<std::string>, struct ShotSoundTag>;
 using Speed = NewType<float, struct SpeedTag>;
 using TutorialButton = NewType<Control::Action, struct TutorialButtonTag>;
 
@@ -49,7 +52,8 @@ struct TutorialButtonKind
 {};
 
 using ParticlesEmitter = std::function<void(glm::vec3 position)>;
-using ProjectileEmitter = std::function<void()>;
+using ProjectileEmitter =
+  NewType<std::optional<std::function<void()>>, struct ProjectileEmitterTag>;
 
 struct PointLightParams
 {

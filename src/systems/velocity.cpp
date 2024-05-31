@@ -7,22 +7,22 @@
 #include "velocity.h"
 
 void
-velocity_system(const App::Meta& meta)
+velocity_system(const App& app)
 {
-  meta.app->game_state->registry().view<Transform, Velocity>().each(
+  app.game_state().registry().view<Transform, Velocity>().each(
     [&](Transform& transform, Velocity& velocity) {
-      velocity.velocity += velocity.acceleration * meta.delta_time;
-      velocity.velocity =
-        damp(velocity.velocity, velocity.damping, meta.delta_time);
-      transform.add_translation(velocity.velocity * meta.delta_time);
+      auto delta_time = app.delta_time();
+      velocity.velocity += velocity.acceleration * delta_time;
+      velocity.velocity = damp(velocity.velocity, velocity.damping, delta_time);
+      transform.add_translation(velocity.velocity * delta_time);
       velocity.acceleration = glm::vec3(0.0);
     });
 }
 
 void
-velocity_gravity_system(const App::Meta& meta)
+velocity_gravity_system(const App& app)
 {
-  meta.app->game_state->registry().view<Velocity, Gravity>().each(
+  app.game_state().registry().view<Velocity, Gravity>().each(
     [&](Velocity& velocity) {
       velocity.acceleration += glm::vec3(0.0, 0.0, -GRAVITY);
     });

@@ -53,6 +53,7 @@ struct EntityParamsGun
   std::string model_id;
   float range;
   VelocityParams velocity;
+  std::filesystem::path sound_shot;
 };
 
 struct EntityParamsTutorialButton

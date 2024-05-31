@@ -1,5 +1,5 @@
 #pragma once
-#include "src/app.h"
+#include "src/app/app.h"
 
 void
-tutorial_buttons_system(const App::Meta& meta);
+tutorial_buttons_system(const App& app);

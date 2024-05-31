@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-#include "src/app.h"
+#include "src/app/app.h"
 
 void
 load_level(const std::string& entities_file_path,

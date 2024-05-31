@@ -7,7 +7,7 @@
 #include <tuple>
 #include <vector>
 
-#include "src/app.h"
+#include "src/app/app.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
 #include "src/game_state/factory.h"
@@ -20,20 +20,20 @@
 #include "strategies.h"
 
 void
-setup_player(BehaviourEnum behaviour, App& app, entt::entity entity)
+setup_player(BehaviourEnum behaviour, const App& app, entt::entity entity)
 {
   if (behaviour == BehaviourEnum::PLAYER) {
-    app.game_state->player_id(entity);
+    app.game_state().player_id(entity);
   }
 }
 
 PositionStrategyVisitor::PositionStrategyVisitor(
   const EntityParamsMap* entities,
-  App* app,
+  const App* app,
   ModelFactory::MakerFn* maker_fn)
   : _entities(entities)
   , _app(app)
-  , _entity_maker(&app->game_state->registry(), entities, maker_fn){};
+  , _entity_maker(&app->game_state().registry(), entities, maker_fn){};
 
 entt::entity
 PositionStrategyVisitor::handle_single(const std::string& entity_id) const
@@ -47,7 +47,7 @@ PositionStrategyVisitor::handle_single(const std::string& entity_id) const
 void
 PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy) const
 {
-  auto& registry = _app->game_state->registry();
+  auto& registry = _app->game_state().registry();
   auto& center = strategy.center;
   auto& radius = strategy.radius;
   auto velocity_items_view =
@@ -90,7 +90,7 @@ void
 PositionStrategyVisitor::operator()(
   const PositionStrategySingle& strategy) const
 {
-  auto& registry = _app->game_state->registry();
+  auto& registry = _app->game_state().registry();
   auto entity = handle_single(strategy.entity_id);
   Transform transform;
   transform.translate(strategy.position);
@@ -102,7 +102,7 @@ void
 PositionStrategyVisitor::operator()(
   const PositionStrategySquare& strategy) const
 {
-  auto& registry = _app->game_state->registry();
+  auto& registry = _app->game_state().registry();
   auto& center = strategy.center;
   auto& width = strategy.width;
   auto& height = strategy.height;

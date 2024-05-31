@@ -46,6 +46,7 @@ export default {
         { from: root('assets/fonts'), to: 'assets/fonts' },
         { from: root('assets/levels'), to: 'assets/levels' },
         { from: root('assets/models'), to: 'assets/models' },
+        { from: root('assets/sound'), to: 'assets/sound' },
       ],
     }),
   ],

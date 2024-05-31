@@ -17,28 +17,25 @@
 class App
 {
 public:
-  struct Meta
-  {
-    App* app;
-    float delta_time;
-    float time;
-  };
+  using Handler = std::function<void(App& app)>;
 
-  unsigned long _last_time_point;
+private:
+  unsigned long _last_time_point{};
+  float _delta_time{};
+  float _time{};
+  WindowPtr _window;
+  ContextPtr _gl_context;
+  std::unique_ptr<GameState> _game_state;
+  std::unique_ptr<Control> _control;
+  std::unique_ptr<RectSize> _screen_size;
+  std::unique_ptr<DeferredShading> _deferred_shading;
+  std::unique_ptr<Shader> _particle_shader;
+  std::unique_ptr<GUI::Theme> _theme;
 
-  WindowPtr window;
-  ContextPtr gl_context;
-  std::unique_ptr<GameState> game_state;
-  std::unique_ptr<Control> control;
-  std::unique_ptr<RectSize> screen_size;
-  std::unique_ptr<DeferredShading> deferred_shading;
-  std::unique_ptr<Shader> particle_shader;
-  std::unique_ptr<GUI::Theme> theme;
-
-  using Handler = std::function<void(Meta& meta)>;
   std::vector<Handler> _handlers = std::vector<Handler>();
   std::vector<Handler> _once_handlers = std::vector<Handler>();
 
+public:
   App(std::unique_ptr<GameState> _game_state,
       std::unique_ptr<Control> _control,
       std::unique_ptr<RectSize> _screen_size,
@@ -53,34 +50,20 @@ public:
   App& operator=(App&&) = delete;
   ~App() = default;
 
+  [[nodiscard]] GameState& game_state() const;
+  [[nodiscard]] Control& control() const;
+  [[nodiscard]] RectSize& screen_size() const;
+  [[nodiscard]] DeferredShading& deferred_shading() const;
+  [[nodiscard]] Shader& particle_shader() const;
+  [[nodiscard]] GUI::Theme& theme() const;
+  [[nodiscard]] SDL_Window& window() const;
+  [[nodiscard]] SDL_GLContext gl_context() const;
+
+  [[nodiscard]] float delta_time() const;
+
   void add_handler(Handler handler);
   void add_once_handler(Handler handler);
   void update(unsigned long time_since_start_of_program);
 
   static glm::vec2 mouse_position();
-};
-
-class AppBuilder
-{
-public:
-  OptionalPtr<GameState> _game_state;
-  OptionalPtr<Control> _control;
-  OptionalPtr<RectSize> _screen_size;
-  OptionalPtr<DeferredShading> _deferred_shading;
-  OptionalPtr<Shader> _particle_shader;
-  OptionalPtr<GUI::Theme> _theme;
-  std::optional<WindowPtr> _window;
-  std::optional<ContextPtr> _context;
-
-  AppBuilder& game_state(std::unique_ptr<GameState> game_state);
-  AppBuilder& control(std::unique_ptr<Control> control);
-  AppBuilder& screen_size(int width, int height);
-  AppBuilder& deferred_shading(
-    std::unique_ptr<DeferredShading> deferred_shading);
-  AppBuilder& particle_shader(std::unique_ptr<Shader> particle_shader);
-  AppBuilder& window(WindowPtr window);
-  AppBuilder& context(ContextPtr context);
-  AppBuilder& theme(std::unique_ptr<GUI::Theme> theme);
-
-  App* build();
 };

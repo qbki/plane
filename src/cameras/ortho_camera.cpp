@@ -1,14 +1,18 @@
 #include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
 #include <stdexcept>
 
 #include "camera.h"
 #include "ortho_camera.h"
+#include "src/consts.h"
 
 OrthoCamera::OrthoCamera(int screen_width,
                          int screen_height,
                          float near,
-                         float far)
+                         float far,
+                         float scale_factor)
   : Camera(near, far)
+  , _scale_factor(scale_factor)
 {
   nonvirt_screen_size(screen_width, screen_height);
 }
@@ -16,10 +20,15 @@ OrthoCamera::OrthoCamera(int screen_width,
 void
 OrthoCamera::nonvirt_screen_size(int width, int height)
 {
-  const float half_width = static_cast<float>(width) * 0.5f;
-  const float half_height = static_cast<float>(height) * 0.5f;
-  Camera::projection(
-    glm::ortho(-half_width, half_width, -half_height, half_height, -1.f, 1.f));
+  _half_width = static_cast<float>(width) * HALF / _scale_factor;
+  _half_height = static_cast<float>(height) * HALF / _scale_factor;
+  auto ortho = glm::ortho(-_half_width,
+                          _half_width,
+                          -_half_height,
+                          _half_height,
+                          Camera::near(),
+                          Camera::far());
+  Camera::projection(ortho);
 }
 
 void
@@ -31,5 +40,34 @@ OrthoCamera::screen_size(int width, int height)
 Shape::Frustum
 OrthoCamera::frustum() const
 {
-  throw std::runtime_error("Not implemented");
+  auto near = Camera::near();
+  auto far = Camera::far();
+  auto forward_norm = Camera::forward_norm();
+  auto position = Camera::position();
+  return {
+    .near{
+      .point = position + forward_norm * near,
+      .normal = forward_norm,
+    },
+    .far{
+      .point = position + forward_norm * far,
+      .normal = -forward_norm,
+    },
+    .left{
+      .point = position + glm::vec3(-_half_width, 0, 0),
+      .normal = { 1, 0, 0 },
+    },
+    .right{
+      .point = position + glm::vec3(_half_width, 0, 0),
+      .normal = { -1, 0, 0 },
+    },
+    .top{
+      .point = position + glm::vec3(0, _half_height, 0),
+      .normal = { 0, -1, 0 },
+    },
+    .bottom{
+      .point = position + glm::vec3(0, -_half_height, 0),
+      .normal = { 0, 1, 0 },
+    },
+  };
 }

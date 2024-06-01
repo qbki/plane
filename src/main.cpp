@@ -7,7 +7,7 @@
 #include "app/app_builder.h"
 #include "cache/cache.h"
 #include "cameras/gui_camera.h"
-#include "cameras/perspective_camera.h"
+#include "cameras/ortho_camera.h"
 #include "consts.h"
 #include "events/event.h"
 #include "events/event_emitter.h"
@@ -69,8 +69,8 @@ main()
   auto particle_fragment_shader = load_text(SHADERS_DIR / "particle_f.glsl");
   particle_shader->compile(particle_vertex_shader, particle_fragment_shader);
 
-  std::unique_ptr<Camera> camera = std::make_unique<PerspectiveCamera>(
-    DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
+  std::unique_ptr<Camera> camera =
+    std::make_unique<OrthoCamera>(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
   game_state->camera(camera);
 
   std::unique_ptr<Camera> gui_camera =

@@ -11,6 +11,12 @@ struct ShootEvent
   std::string_view sound_path;
 };
 
+struct WinLevelEvent
+{};
+
+template<typename T>
+using CB = std::function<void(const T&)>;
+
 using Event = std::variant<ShootEvent>;
 
 }

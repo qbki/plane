@@ -47,6 +47,7 @@ public:
   [[nodiscard]] entt::entity player_id() const;
 
   entt::registry& registry();
+  void clear_registry();
 
   template<typename... Components>
   decltype(auto) player()

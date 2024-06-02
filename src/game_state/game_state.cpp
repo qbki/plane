@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <entt/entity/fwd.hpp>
 #include <glm/common.hpp>
 #include <memory>
 #include <stdexcept>
@@ -112,4 +113,10 @@ entt::registry&
 GameState::registry()
 {
   return _registry;
+}
+
+void
+GameState::clear_registry()
+{
+  _registry = entt::registry{};
 }

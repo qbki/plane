@@ -15,3 +15,4 @@ const float HALF = 0.5;
 
 const std::filesystem::path SHADERS_DIR("shaders");
 const std::filesystem::path ASSETS_DIR("assets");
+const std::filesystem::path LEVELS_DIR(ASSETS_DIR / "levels");

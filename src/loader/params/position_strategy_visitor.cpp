@@ -117,6 +117,7 @@ PositionStrategyVisitor::operator()(
       auto entity_id = strategy.entity_ids.at(entity_index);
       auto entity_params = _entities->params(entity_id);
       auto entity = _entity_maker.get(entity_params);
+      ComponetsAttacher(_app, entity, _entities).attach(entity_params);
       Transform transform;
       transform.translate(glm::vec3(start_x + static_cast<float>(x),
                                     start_y + static_cast<float>(y),

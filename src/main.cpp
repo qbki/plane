@@ -1,7 +1,9 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <SDL_video.h>
+#include <algorithm>
 #include <filesystem>
 #include <gsl/pointers>
+#include <stdexcept>
 #include <utility>
 
 #include "app/app_builder.h"
@@ -22,10 +24,12 @@
 #include "sdl_init.h"
 #include "service.h"
 #include "services.h"
+#include "src/loader/levels_meta_loader.h"
 #include "systems/calculate_world_bbox.h"
 #include "systems/camera.h"
 #include "systems/cursor.h"
 #include "systems/enemy.h"
+#include "systems/finish_condition.h"
 #include "systems/particles.h"
 #include "systems/player.h"
 #include "systems/projectiles.h"
@@ -42,6 +46,8 @@ main()
   Service<Cache>::install(std::make_unique<Cache>());
   Service<Events::EventEmitter<Events::ShootEvent>>::install(
     std::make_unique<Events::EventEmitter<Events::ShootEvent>>());
+  Service<Events::EventEmitter<Events::WinLevelEvent>>::install(
+    std::make_unique<Events::EventEmitter<Events::WinLevelEvent>>());
 
   auto window = init_window(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
   auto context = init_context(window.get());
@@ -114,17 +120,33 @@ main()
   app->add_handler(projectile_handler_system);
   app->add_handler(camera_move_system);
   app->add_handler(tutorial_buttons_system);
+  app->add_handler(check_finish_condition);
   app->add_handler(update_gui);
   app->add_handler(render_system);
 
-  std::function<void(const Events::ShootEvent&)> cb = [](const auto& event) {
-    cache().get_sound(event.sound_path)->play();
-  };
-  events<Events::ShootEvent>().add(cb);
+  std::function<void(const Events::ShootEvent&)> shoot_cb =
+    [](const auto& event) { cache().get_sound(event.sound_path)->play(); };
+  events<Events::ShootEvent>().add(shoot_cb);
 
-  load_level(ASSETS_DIR / "levels/entities.json",
-             ASSETS_DIR / "levels/level_1.json",
-             *app);
+  auto levels_meta = load_levels_meta(LEVELS_DIR / "levels.json");
+  if (levels_meta.levels.empty()) {
+    throw std::runtime_error("No levels were found");
+  }
+  std::filesystem::path current_level = levels_meta.levels.at(0);
+  load_level(LEVELS_DIR / "entities.json", current_level, *app);
+
+  Events::CB<Events::WinLevelEvent> load_next_level_cb =
+    [app, levels_meta, current_level](const auto&) mutable {
+      auto found_level_it = std::find(
+        levels_meta.levels.begin(), levels_meta.levels.end(), current_level);
+      auto next_level_it = found_level_it + 1;
+      if (next_level_it < levels_meta.levels.end()) {
+        app->game_state().clear_registry();
+        load_level(LEVELS_DIR / "entities.json", *next_level_it, *app);
+        current_level = *next_level_it;
+      }
+    };
+  events<Events::WinLevelEvent>().add(load_next_level_cb);
 
   game_loop(app);
 

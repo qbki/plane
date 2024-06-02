@@ -103,4 +103,5 @@ load_level(const std::string& entities_file_path,
     PositionStrategyVisitor strategy_handler(&entities, &app, &maker);
     std::visit(strategy_handler, strategy);
   }
+  logger().info(std::format("Loaded \"{}\" level", level_file_path));
 }

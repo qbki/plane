@@ -22,6 +22,12 @@ private:
   int _size;
 
 public:
+  Font(const Font&) = delete;
+  Font(Font&&) noexcept = delete;
+  Font& operator=(const Font&) = delete;
+  Font& operator=(Font&&) noexcept = delete;
+  ~Font() = default;
+
   using SurfaceBearer = std::unique_ptr<SDL_Surface, void (*)(SDL_Surface*)>;
 
   struct DrawResult

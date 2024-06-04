@@ -1,6 +1,5 @@
 #include <filesystem>
 #include <glm/vec3.hpp>
-#include <memory>
 #include <tiny_gltf.h>
 #include <tuple>
 #include <unordered_map>
@@ -10,7 +9,6 @@
 #include "src/game_state/texture_type.h"
 #include "src/sound/sound.h"
 #include "src/texture.h"
-#include "src/utils/common.h"
 #include "src/utils/file_loaders.h"
 
 #include "cache.h"

@@ -1,42 +1,21 @@
 #define GLM_ENABLE_EXPERIMENTAL
-#include <SDL_video.h>
-#include <algorithm>
 #include <filesystem>
-#include <gsl/pointers>
-#include <stdexcept>
 #include <utility>
 
 #include "app/app_builder.h"
 #include "cache/cache.h"
-#include "cameras/gui_camera.h"
-#include "cameras/ortho_camera.h"
+#include "common_handlers.h"
 #include "consts.h"
-#include "events/event.h"
-#include "events/event_emitter.h"
 #include "game_loop.h"
-#include "gui/game_screen_factory.h"
 #include "gui/theme.h"
-#include "loader/level_loader.h"
 #include "loader/theme_loader.h"
 #include "logger/abstract_logger.h"
 #include "logger/logger.h"
 #include "mesh.h"
+#include "scene/scene.h"
 #include "sdl_init.h"
 #include "service.h"
-#include "services.h"
-#include "src/loader/levels_meta_loader.h"
-#include "systems/calculate_world_bbox.h"
-#include "systems/camera.h"
-#include "systems/cursor.h"
-#include "systems/enemy.h"
-#include "systems/finish_condition.h"
-#include "systems/particles.h"
-#include "systems/player.h"
-#include "systems/projectiles.h"
 #include "systems/render.h"
-#include "systems/tutorial_buttons.h"
-#include "systems/update_gui.h"
-#include "systems/velocity.h"
 #include "utils/file_loaders.h"
 
 int
@@ -44,16 +23,14 @@ main()
 {
   Service<AbstractLogger>::install(std::make_unique<Logger>());
   Service<Cache>::install(std::make_unique<Cache>());
-  Service<Events::EventEmitter<Events::ShootEvent>>::install(
-    std::make_unique<Events::EventEmitter<Events::ShootEvent>>());
-  Service<Events::EventEmitter<Events::WinLevelEvent>>::install(
-    std::make_unique<Events::EventEmitter<Events::WinLevelEvent>>());
+  Service<Events::EventEmitter<const Events::ShootEvent>>::install(
+    std::make_unique<Events::EventEmitter<const Events::ShootEvent>>());
+  Service<Events::EventEmitter<const Events::LoadLevelEvent>>::install(
+    std::make_unique<Events::EventEmitter<const Events::LoadLevelEvent>>());
 
   auto window = init_window(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
   auto context = init_context(window.get());
   auto control = std::make_unique<Control>();
-
-  auto game_state = std::make_unique<GameState>();
 
   auto geometry_pass_shader = std::make_unique<Shader>();
   auto geometry_pass_vertex_shader = load_text(SHADERS_DIR / "main_v.glsl");
@@ -75,14 +52,6 @@ main()
   auto particle_fragment_shader = load_text(SHADERS_DIR / "particle_f.glsl");
   particle_shader->compile(particle_vertex_shader, particle_fragment_shader);
 
-  std::unique_ptr<Camera> camera =
-    std::make_unique<OrthoCamera>(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
-  game_state->camera(camera);
-
-  std::unique_ptr<Camera> gui_camera =
-    std::make_unique<GUICamera>(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
-  game_state->gui_camera(gui_camera);
-
   auto deferred_shading = std::make_unique<DeferredShading>(
     std::move(geometry_pass_shader),
     std::move(light_pass_shader),
@@ -97,60 +66,19 @@ main()
   app_builder.context(std::move(context));
   app_builder.control(std::move(control));
   app_builder.deferred_shading(std::move(deferred_shading));
-  app_builder.game_state(std::move(game_state));
   app_builder.particle_shader(std::move(particle_shader));
   app_builder.window(std::move(window));
   app_builder.theme(std::move(theme));
-  // The app variable must overlive the main function because of
-  // async nature of requestanimationframe in browser api (emscripten)
-  gsl::owner<App*> app{ app_builder.build() };
 
-  app->add_once_handler(calculate_world_bbox);
-  app->add_once_handler(game_screen_factory);
-  app->add_handler(cursor_handler_system);
-  app->add_handler(enemy_hunting_system);
-  app->add_handler(enemy_rotation_system);
-  app->add_handler(enemy_sinking_system);
-  app->add_handler(particle_handler_system);
-  app->add_handler(player_moving_system);
-  app->add_handler(player_rotation_system);
-  app->add_handler(player_shooting_system);
-  app->add_handler(velocity_gravity_system);
-  app->add_handler(velocity_system);
-  app->add_handler(projectile_handler_system);
-  app->add_handler(camera_move_system);
-  app->add_handler(tutorial_buttons_system);
-  app->add_handler(check_finish_condition);
-  app->add_handler(update_gui);
+  std::unique_ptr<App> app{ app_builder.build() };
+  app->add_handler([](App& app) {
+    for (auto& scene : app.scenes()) {
+      scene->update();
+    }
+  });
   app->add_handler(render_system);
+  Service<App>::install(std::move(app));
 
-  std::function<void(const Events::ShootEvent&)> shoot_cb =
-    [](const auto& event) { cache().get_sound(event.sound_path)->play(); };
-  events<Events::ShootEvent>().add(shoot_cb);
-
-  auto levels_meta = load_levels_meta(LEVELS_DIR / "levels.json");
-  if (levels_meta.levels.empty()) {
-    throw std::runtime_error("No levels were found");
-  }
-  std::filesystem::path current_level = levels_meta.levels.at(0);
-  load_level(LEVELS_DIR / "entities.json", current_level, *app);
-
-  Events::CB<Events::WinLevelEvent> load_next_level_cb =
-    [app, levels_meta, current_level](const auto&) mutable {
-      auto found_level_it = std::find(
-        levels_meta.levels.begin(), levels_meta.levels.end(), current_level);
-      auto next_level_it = found_level_it + 1;
-      if (next_level_it < levels_meta.levels.end()) {
-        app->game_state().clear_registry();
-        load_level(LEVELS_DIR / "entities.json", *next_level_it, *app);
-        current_level = *next_level_it;
-      }
-    };
-  events<Events::WinLevelEvent>().add(load_next_level_cb);
-
-  game_loop(app);
-
-#ifndef __EMSCRIPTEN__
-  delete app;
-#endif
+  register_common_handlers();
+  game_loop();
 }

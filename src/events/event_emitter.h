@@ -1,8 +1,8 @@
 #pragma once
 #include <functional>
+#include <map>
 #include <ranges>
 #include <typeindex>
-#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -12,16 +12,16 @@ namespace Events {
 
 using fn = void(void*);
 
-template<typename T>
+template<typename... Ts>
 class EventEmitter
 {
 public:
-  using Handler = std::function<void(const T&)>;
+  using Handler = std::function<void(Ts&...)>;
 
 private:
   unsigned int _current_event_id = 0;
   std::unordered_set<unsigned int> _should_be_called_once_ids{};
-  std::unordered_map<unsigned int, Handler> _handlers{};
+  std::map<unsigned int, Handler> _handlers{};
 
   void remove_by_id(unsigned int event_id)
   {
@@ -41,18 +41,10 @@ private:
   }
 
 public:
-  void emit(const T& event)
+  void emit(Ts&... args)
   {
     for (const auto& handler : std::views::values(_handlers)) {
-      handler(event);
-    }
-    clear_once_handlers();
-  }
-
-  void emit()
-  {
-    for (const auto& handler : std::views::values(_handlers)) {
-      handler(T{});
+      handler(args...);
     }
     clear_once_handlers();
   }

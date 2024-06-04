@@ -8,9 +8,9 @@
 #include "projectiles.h"
 
 void
-projectile_handler_system(const App& app)
+projectile_handler_system(Scene& scene)
 {
-  auto& registry = app.game_state().registry();
+  auto& registry = scene.state().registry();
   auto enemies_view = registry.view<Transform,
                                     Velocity,
                                     EnemyStateEnum,

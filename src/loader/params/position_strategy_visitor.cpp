@@ -19,35 +19,27 @@
 #include "position_strategy_visitor.h"
 #include "strategies.h"
 
-void
-setup_player(BehaviourEnum behaviour, const App& app, entt::entity entity)
-{
-  if (behaviour == BehaviourEnum::PLAYER) {
-    app.game_state().player_id(entity);
-  }
-}
-
 PositionStrategyVisitor::PositionStrategyVisitor(
   const EntityParamsMap* entities,
-  const App* app,
+  Scene* scene,
   ModelFactory::MakerFn* maker_fn)
   : _entities(entities)
-  , _app(app)
-  , _entity_maker(&app->game_state().registry(), entities, maker_fn){};
+  , _scene(scene)
+  , _entity_maker(&scene->state().registry(), entities, maker_fn){};
 
 entt::entity
 PositionStrategyVisitor::handle_single(const std::string& entity_id) const
 {
   auto entity_params = _entities->params(entity_id);
   auto entity = _entity_maker.get(entity_params);
-  ComponetsAttacher(_app, entity, _entities).attach(entity_params);
+  ComponetsAttacher(_scene, entity, _entities).attach(entity_params);
   return entity;
 }
 
 void
 PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy) const
 {
-  auto& registry = _app->game_state().registry();
+  auto& registry = _scene->state().registry();
   auto& center = strategy.center;
   auto& radius = strategy.radius;
   auto velocity_items_view =
@@ -76,7 +68,7 @@ PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy) const
     auto entity_params = _entities->params(entity_id);
     auto entity = _entity_maker.get(entity_params);
     auto velocity = velocity_items.at(entity_index);
-    ComponetsAttacher(_app, entity, _entities).attach(entity_params);
+    ComponetsAttacher(_scene, entity, _entities).attach(entity_params);
     Transform transform;
     transform.translate(glm::vec3(center.x + static_cast<float>(coord.x),
                                   center.y + static_cast<float>(coord.y),
@@ -90,19 +82,18 @@ void
 PositionStrategyVisitor::operator()(
   const PositionStrategySingle& strategy) const
 {
-  auto& registry = _app->game_state().registry();
+  auto& registry = _scene->state().registry();
   auto entity = handle_single(strategy.entity_id);
   Transform transform;
   transform.translate(strategy.position);
   registry.emplace_or_replace<Transform>(entity, transform);
-  setup_player(strategy.behaviour, *_app, entity);
 }
 
 void
 PositionStrategyVisitor::operator()(
   const PositionStrategySquare& strategy) const
 {
-  auto& registry = _app->game_state().registry();
+  auto& registry = _scene->state().registry();
   auto& center = strategy.center;
   auto& width = strategy.width;
   auto& height = strategy.height;
@@ -117,7 +108,7 @@ PositionStrategyVisitor::operator()(
       auto entity_id = strategy.entity_ids.at(entity_index);
       auto entity_params = _entities->params(entity_id);
       auto entity = _entity_maker.get(entity_params);
-      ComponetsAttacher(_app, entity, _entities).attach(entity_params);
+      ComponetsAttacher(_scene, entity, _entities).attach(entity_params);
       Transform transform;
       transform.translate(glm::vec3(start_x + static_cast<float>(x),
                                     start_y + static_cast<float>(y),

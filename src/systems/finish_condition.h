@@ -1,5 +1,5 @@
 #pragma once
-#include "src/app/app.h"
+#include "src/scene/scene.h"
 
 void
-check_finish_condition(const App& app);
+check_finish_condition(Scene& scene);

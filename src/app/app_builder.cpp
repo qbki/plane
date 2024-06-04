@@ -1,5 +1,9 @@
-#include "app_builder.h"
 #include <gsl/pointers>
+#include <stdexcept>
+#include <string>
+#include <utility>
+
+#include "app_builder.h"
 
 template<typename T>
 T
@@ -11,11 +15,6 @@ or_throw(std::optional<T>& optional, const std::string& message)
   throw std::runtime_error("System is incomplete: " + message);
 }
 
-void
-AppBuilder::game_state(std::unique_ptr<GameState> game_state)
-{
-  _game_state = std::move(game_state);
-}
 void
 AppBuilder::control(std::unique_ptr<Control> control)
 {
@@ -61,7 +60,6 @@ AppBuilder::theme(std::unique_ptr<GUI::Theme> theme)
 gsl::owner<App*>
 AppBuilder::build()
 {
-  auto game_state_obj = or_throw(_game_state, "Game State");
   auto control_obj = or_throw(_control, "Control");
   auto screen_size_obj = or_throw(_screen_size, "Screen Size");
   auto deferred_shading_obj = or_throw(_deferred_shading, "Deferred Shading");
@@ -70,8 +68,7 @@ AppBuilder::build()
   auto context_obj = or_throw(_context, "Context");
   auto theme_obj = or_throw(_theme, "Theme");
 
-  return new App(std::move(game_state_obj),
-                 std::move(control_obj),
+  return new App(std::move(control_obj),
                  std::move(screen_size_obj),
                  std::move(deferred_shading_obj),
                  std::move(particle_shader_obj),

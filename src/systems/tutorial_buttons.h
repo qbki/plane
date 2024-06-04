@@ -1,5 +1,5 @@
 #pragma once
-#include "src/app/app.h"
+#include "src/scene/scene.h"
 
 void
-tutorial_buttons_system(const App& app);
+tutorial_buttons_system(Scene& scene);

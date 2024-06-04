@@ -11,7 +11,7 @@ struct ShootEvent
   std::string_view sound_path;
 };
 
-struct WinLevelEvent
+struct LoadLevelEvent
 {};
 
 template<typename T>

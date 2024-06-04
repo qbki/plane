@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <entt/entity/fwd.hpp>
 #include <glm/common.hpp>
 #include <memory>
 #include <stdexcept>
@@ -8,53 +7,40 @@
 
 #include "src/utils/types.h"
 
-#include "factory.h"
-#include "game_state.h"
+#include "state.h"
 
 void
-GameState::camera(std::unique_ptr<Camera>& camera)
+State::camera(std::unique_ptr<Camera> camera)
 {
   _camera = std::move(camera);
 }
 
 Camera&
-GameState::camera() const
+State::camera() const
 {
   return *_camera;
 }
 
 void
-GameState::gui_camera(std::unique_ptr<Camera>& camera)
-{
-  _gui_camera = std::move(camera);
-}
-
-Camera&
-GameState::gui_camera() const
-{
-  return *_gui_camera;
-}
-
-void
-GameState::cursor(glm::vec3 value)
+State::cursor(glm::vec3 value)
 {
   _cursor = value;
 }
 
 glm::vec3
-GameState::cursor() const
+State::cursor() const
 {
   return _cursor;
 }
 
 void
-GameState::world_bbox(const Shape::AABB& value)
+State::world_bbox(const Shape::AABB& value)
 {
   _world_bbox = value;
 }
 
 void
-GameState::extend_world_bbox(const Shape::Collider& value)
+State::extend_world_bbox(const Shape::Collider& value)
 {
   std::visit(
     Overloaded{
@@ -80,43 +66,19 @@ GameState::extend_world_bbox(const Shape::Collider& value)
 }
 
 const Shape::AABB&
-GameState::world_bbox() const
+State::world_bbox() const
 {
   return _world_bbox;
 }
 
-void
-GameState::is_running(bool value)
-{
-  _is_game_running = value;
-}
-
-bool
-GameState::is_running() const
-{
-  return _is_game_running;
-}
-
-void
-GameState::player_id(entt::entity value)
-{
-  _player_id = value;
-}
-
-entt::entity
-GameState::player_id() const
-{
-  return _player_id;
-}
-
 entt::registry&
-GameState::registry()
+State::registry()
 {
   return _registry;
 }
 
 void
-GameState::clear_registry()
+State::clear_registry()
 {
   _registry = entt::registry{};
 }

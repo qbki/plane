@@ -2,4 +2,4 @@
 #include "src/app/app.h"
 
 void
-render_system(const App& app);
+render_system(App& app);

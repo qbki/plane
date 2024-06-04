@@ -5,7 +5,7 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/vec3.hpp>
 #include <memory>
-#include <optional>
+#include <optional> // IWYU pragma: export
 
 #include "src/control.h"
 #include "src/mesh.h"        // IWYU pragma: export
@@ -53,7 +53,8 @@ struct TutorialButtonKind
 
 using ParticlesEmitter = std::function<void(glm::vec3 position)>;
 using ProjectileEmitter =
-  NewType<std::optional<std::function<void()>>, struct ProjectileEmitterTag>;
+  NewType<std::optional<std::function<void(entt::entity entity)>>,
+          struct ProjectileEmitterTag>;
 
 struct PointLightParams
 {

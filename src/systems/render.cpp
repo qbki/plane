@@ -11,6 +11,7 @@
 #include "src/material.h"
 #include "src/math/intersection.h"
 #include "src/math/shapes.h"
+#include "src/scene/scene.h"
 
 #include "render.h"
 
@@ -58,22 +59,20 @@ update_transform_mapping(
 }
 
 void
-render_system(const App& app)
+render_generic_objects(App& app, const Scene& scene)
 {
-  auto& registry = app.game_state().registry();
-  const auto& camera = app.game_state().camera();
   auto& deferred_shading = app.deferred_shading();
-  auto& particle_shader = app.particle_shader();
-  auto& screen_size = app.screen_size();
+  auto& registry = scene.state().registry();
+  const auto& camera = scene.state().camera();
   auto frustum = camera.frustum();
 
-  glDisable(GL_BLEND);
   deferred_shading.use_geometry_pass();
   auto& geometry_pass_shader = deferred_shading.geometry_pass();
   geometry_pass_shader.uniform("u_PV", camera.pv());
 
   std::unordered_map<Mesh*, TransformHolder> transform_mapping;
 
+  glDisable(GL_BLEND);
   registry
     .view<const Transform,
           const MeshPointer,
@@ -97,22 +96,24 @@ render_system(const App& app)
   draw(transform_mapping);
   transform_mapping.clear();
 
-  auto [_sun_id, sun_color, sun_direction] =
-    *registry.view<Color, Direction, DirectionalLightKind>().each().begin();
-
   deferred_shading.use_light_pass();
   auto& light_pass_shader = deferred_shading.light_path();
-  light_pass_shader.uniform("u_camera_pos", camera.position());
-  light_pass_shader.uniform("u_light.color", sun_color.value);
-  light_pass_shader.uniform("u_light.direction", sun_direction.value);
-  light_pass_shader.uniform("u_material.ambient", COMMON_MATERIAL.ambient());
-  light_pass_shader.uniform("u_material.specular", COMMON_MATERIAL.specular());
-  light_pass_shader.uniform("u_material.shininess",
-                            COMMON_MATERIAL.shininess());
-  light_pass_shader.uniform("u_gamma", GAMMA);
-  light_pass_shader.uniform("u_position_texture", 0);
-  light_pass_shader.uniform("u_normal_texture", 1);
-  light_pass_shader.uniform("u_base_color_texture", 2);
+  registry.view<Color, Direction, DirectionalLightKind>().each(
+    [&](const Color& sun_color, const Direction& sun_direction) {
+      light_pass_shader.uniform("u_camera_pos", camera.position());
+      light_pass_shader.uniform("u_light.color", sun_color.value);
+      light_pass_shader.uniform("u_light.direction", sun_direction.value);
+      light_pass_shader.uniform("u_material.ambient",
+                                COMMON_MATERIAL.ambient());
+      light_pass_shader.uniform("u_material.specular",
+                                COMMON_MATERIAL.specular());
+      light_pass_shader.uniform("u_material.shininess",
+                                COMMON_MATERIAL.shininess());
+      light_pass_shader.uniform("u_gamma", GAMMA);
+      light_pass_shader.uniform("u_position_texture", 0);
+      light_pass_shader.uniform("u_normal_texture", 1);
+      light_pass_shader.uniform("u_base_color_texture", 2);
+    });
 
   int light_idx = 0;
   registry
@@ -138,6 +139,10 @@ render_system(const App& app)
   light_pass_shader.uniform("u_point_lights_quantity", light_idx);
   deferred_shading.draw_quad();
 
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  auto& screen_size = app.screen_size();
   glBindFramebuffer(GL_READ_FRAMEBUFFER,
                     deferred_shading.g_buffer().g_buffer_handle());
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -152,20 +157,25 @@ render_system(const App& app)
                     GL_DEPTH_BUFFER_BIT,
                     GL_NEAREST);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+void
+render_particles(App& app, const Scene& scene)
+{
+  auto& registry = scene.state().registry();
+  const auto& camera = scene.state().camera();
+  auto& particle_shader = app.particle_shader();
   particle_shader.use();
   particle_shader.uniform("u_gamma", GAMMA);
   particle_shader.uniform("u_PV", camera.pv());
+  std::unordered_map<Mesh*, TransformHolder> transform_mapping;
 
   registry
     .view<const Transform,
           const MeshPointer,
           const Textures,
           const Available,
-          const ParticleKind>(entt::exclude<Opaque>)
+          const ParticleKind>()
     .each([&transform_mapping](const Transform& transform,
                                const MeshPointer& mesh,
                                const Textures& textures) {
@@ -175,11 +185,25 @@ render_system(const App& app)
     });
   particle_shader.uniform("u_main_texture", 0);
   draw(transform_mapping);
+}
 
-  const auto& gui_camera = app.game_state().gui_camera();
-  particle_shader.uniform("u_PV", gui_camera.pv());
-
+void
+render_ui(const Scene& scene)
+{
+  auto& registry = scene.state().registry();
   registry.view<GUI::Component>().each([&](GUI::Component& gui_component) {
     std::visit(Overloaded{ [](auto& value) { value.draw(); } }, gui_component);
   });
+}
+
+void
+render_system(App& app)
+{
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  for (const auto& scene : app.scenes()) {
+    render_generic_objects(app, *scene);
+    render_particles(app, *scene);
+    render_ui(*scene);
+  }
 }

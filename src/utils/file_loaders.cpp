@@ -1,3 +1,4 @@
+#include <SDL_mixer.h>
 #include <filesystem>
 #include <format>
 #include <fstream>

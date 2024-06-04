@@ -2,20 +2,18 @@
 
 #include "src/components/common.h"
 #include "src/components/velocity.h"
-#include "src/events/event.h"
-#include "src/services.h"
 #include "src/utils/noop.h"
 
 #include "components_attacher.h"
 #include "emitters.h"
 #include "entities_map.h"
 
-ComponetsAttacher::ComponetsAttacher(const App* app,
+ComponetsAttacher::ComponetsAttacher(Scene* scene,
                                      const entt::entity entity,
                                      const EntityParamsMap* params_map)
-  : _app(app)
+  : _scene(scene)
   , _entity(entity)
-  , _registry(&app->game_state().registry())
+  , _registry(&scene->state().registry())
   , _entities(params_map)
 {
 }
@@ -25,7 +23,7 @@ ComponetsAttacher::operator()(const EntityParamsActor& params) const
 {
   attach_velocity(params.velocity);
   attach_particles_emmiter_by_hit(params);
-  attach_projectile_emmiter(params);
+  attach_projectile_emitter(params);
   auto model = _entities->model(params.model_id);
   (*this)(model);
 }
@@ -117,17 +115,18 @@ ComponetsAttacher::attach_particles_emmiter_by_hit(
   const auto particles_params =
     _entities->particles(actor_params.hit_particles_id.value());
   auto model_params = _entities->model(particles_params.model_id);
-  auto app = _app; // The App should outlive everything in the game, so it
-                   // should be safe enough
-  ParticlesEmitter emitter{ [particles_params, model_params, app](
+  auto scene = _scene; // The App should outlive everything in the game, so it
+                       // should be safe enough
+  ParticlesEmitter emitter{ [scene, particles_params, model_params](
                               glm::vec3 position) {
-    emit_particles(*app, position, particles_params, model_params.path);
+    emit_particles(
+      scene->state(), position, particles_params, model_params.path);
   } };
   _registry->emplace_or_replace<ParticlesEmitter>(_entity, emitter);
 }
 
 void
-ComponetsAttacher::attach_projectile_emmiter(
+ComponetsAttacher::attach_projectile_emitter(
   const EntityParamsActor& actor_params) const
 {
   if (!actor_params.gun_id.has_value()) {
@@ -137,10 +136,10 @@ ComponetsAttacher::attach_projectile_emmiter(
   }
   auto gun_params = _entities->gun(actor_params.gun_id.value());
   auto model_params = _entities->model(gun_params.model_id);
-  auto app = _app; // The App should outlive everything in the game, so it
-                   // should be safe enough
-  ProjectileEmitter emitter{ [gun_params, model_params, app]() {
-    emit_projectile(*app, gun_params, model_params.path);
+  auto scene = _scene; // The App should outlive everything in the game, so it
+                       // should be safe enough
+  ProjectileEmitter emitter{ [scene, gun_params, model_params](auto entity) {
+    emit_projectile(scene->state(), entity, gun_params, model_params.path);
   } };
   _registry->emplace_or_replace<ShotSound>(_entity, gun_params.sound_shot);
   _registry->emplace_or_replace<ProjectileEmitter>(_entity, emitter);

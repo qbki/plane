@@ -6,14 +6,15 @@
 #include "src/components/transform.h"
 #include "src/math/intersection.h"
 #include "src/math/shapes.h"
+#include "src/scene/scene.h"
 #include "src/services.h"
 
 #include "calculate_world_bbox.h"
 
 void
-calculate_world_bbox(const App& app)
+calculate_world_bbox(Scene& scene)
 {
-  auto& game_state = app.game_state();
+  auto& game_state = scene.state();
   auto& registry = game_state.registry();
   registry.view<MeshPointer, Transform>().each(
     [&](const MeshPointer& mesh, const Transform& transform) {

@@ -1,7 +1,6 @@
 #pragma once
 #include <entt/entt.hpp>
 #include <functional>
-#include <memory>
 #include <string>
 
 namespace ModelFactory {

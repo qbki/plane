@@ -22,20 +22,20 @@ Camera::Camera(float near, float far)
 glm::mat4
 Camera::pv() const
 {
-  return this->_projection * this->_view;
+  return _projection * _view;
 }
 
 glm::vec3
 Camera::position() const
 {
-  return this->_position;
+  return _position;
 }
 
 void
 Camera::position(const glm::vec3& value)
 {
-  this->_position = value;
-  this->look_at(value + this->_forward_norm);
+  _position = value;
+  look_at(value + _forward_norm);
 }
 
 float

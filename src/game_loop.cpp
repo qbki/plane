@@ -9,42 +9,31 @@
 #include <emscripten/html5.h>
 #endif
 
-#include "app/app.h"
 #include "game_loop.h"
+#include "scene/scene.h"
+#include "services.h"
 
 void
-resize_window(std::vector<Camera*>& cameras, int width, int height)
+resize_cameras(const std::vector<std::unique_ptr<Scene>>& scenes,
+               int width,
+               int height)
 {
-  for (auto& camera : cameras) {
-    camera->screen_size(width, height);
+  for (const auto& scene : scenes) {
+    scene->state().camera().screen_size(width, height);
   }
-  glViewport(0, 0, width, height);
-}
-
-void
-resize_window(const SDL_WindowEvent& window_event,
-              std::vector<Camera*>& cameras)
-{
-  auto width = window_event.data1;
-  auto height = window_event.data2;
-  resize_window(cameras, width, height);
 }
 
 #ifdef __EMSCRIPTEN__
 void
 wasm_resize_window(App& app, int width, int height)
 {
-  const auto& game_state = app.game_state();
   auto& window = app.window();
   SDL_SetWindowSize(&window, width, height);
   app.deferred_shading().g_buffer().update(width, height);
   app.screen_size().width = width;
   app.screen_size().height = height;
-  std::vector<Camera*> cameras = {
-    &game_state.camera(),
-    &game_state.gui_camera(),
-  };
-  resize_window(cameras, width, height);
+  resize_cameras(app.scenes(), width, height);
+  glViewport(0, 0, width, height);
 }
 
 EMSCRIPTEN_RESULT
@@ -52,10 +41,10 @@ wasm_resize_window_cb(int /* eventType */,
                       const EmscriptenUiEvent* uiEvent,
                       void* data)
 {
-  auto app = static_cast<App*>(data);
   int width = uiEvent->windowInnerWidth;
   int height = uiEvent->windowInnerHeight;
-  wasm_resize_window(*app, width, height);
+  auto application = static_cast<App*>(data);
+  wasm_resize_window(*application, width, height);
   return EMSCRIPTEN_RESULT_SUCCESS;
 }
 
@@ -68,16 +57,15 @@ void
 inner_game_loop(App& app)
 {
   SDL_Event event;
-  auto& game_state = app.game_state();
   while (SDL_PollEvent(&event)) {
     switch (event.type) {
       case SDL_QUIT: {
-        game_state.is_running(false);
+        app.is_running(false);
         break;
       }
       case SDL_KEYDOWN: {
         if (event.key.keysym.sym == SDLK_q) {
-          game_state.is_running(false);
+          app.is_running(false);
         }
         break;
       }
@@ -87,11 +75,8 @@ inner_game_loop(App& app)
           auto height = event.window.data2;
           app.screen_size().width = width;
           app.screen_size().height = height;
-          std::vector<Camera*> cameras = {
-            &game_state.camera(),
-            &game_state.gui_camera(),
-          };
-          resize_window(event.window, cameras);
+          resize_cameras(app.scenes(), width, height);
+          glViewport(0, 0, width, height);
           app.deferred_shading().g_buffer().update(width, height);
         }
         break;
@@ -112,25 +97,30 @@ emscripten_game_loop(void* data)
   inner_game_loop(*static_cast<App*>(data));
 }
 void
-game_loop(App* app)
+game_loop()
 {
-  wasm_resize_window(*app, get_js_window_width(), get_js_window_height());
-  emscripten_set_resize_callback(
-    EMSCRIPTEN_EVENT_TARGET_WINDOW, app, EM_FALSE, wasm_resize_window_cb);
+  auto& application = app();
+  wasm_resize_window(
+    application, get_js_window_width(), get_js_window_height());
+  emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,
+                                 &application,
+                                 EM_FALSE,
+                                 wasm_resize_window_cb);
   // The simulate_infinite_loop argument should be false. It is because I have
   // nothing on the stack what should be kept. And it helps me avoid
   // unnecessary exception that is thrown intentionally by emscripten. More
   // details in the documentation below.
   // @doc
   // https://emscripten.org/docs/api_reference/emscripten.h.html?highlight=set_main_loop#c.emscripten_set_main_loop
-  emscripten_set_main_loop_arg(emscripten_game_loop, app, 0, false);
+  emscripten_set_main_loop_arg(emscripten_game_loop, &application, 0, false);
 }
 #else
 void
-game_loop(App* app)
+game_loop()
 {
-  while (app->game_state().is_running()) {
-    inner_game_loop(*app);
+  auto& application = app();
+  while (application.is_running()) {
+    inner_game_loop(application);
   }
 }
 #endif

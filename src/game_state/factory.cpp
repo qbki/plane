@@ -1,13 +1,11 @@
+#include <filesystem>
 #include <glm/gtc/constants.hpp>
-#include <memory>
 
 #include "src/components/common.h"
 #include "src/components/textures.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
-#include "src/control.h"
 #include "src/services.h"
-#include "src/utils/noop.h"
 
 #include "factory.h"
 
@@ -21,7 +19,7 @@ make_player(entt::registry& registry, const std::string& file_path)
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<PlayerKind>(entity);
-  registry.emplace<ProjectileEmitter>(entity, noop);
+  registry.emplace<ProjectileEmitter>(entity, std::nullopt);
   registry.emplace<Textures>(entity, textures);
   registry.emplace<Transform>(entity);
   registry.emplace<Velocity>(entity);

@@ -1,4 +1,5 @@
 #pragma once
+#include "src/app/app.h"                // IWYU pragma: export
 #include "src/cache/cache.h"            // IWYU pragma: export
 #include "src/events/event_emitter.h"   // IWYU pragma: export
 #include "src/logger/abstract_logger.h" // IWYU pragma: export
@@ -15,6 +16,12 @@ inline Cache&
 cache()
 {
   return Service<Cache>::get();
+}
+
+inline App&
+app()
+{
+  return Service<App>::get();
 }
 
 template<typename T>

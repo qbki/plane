@@ -1,11 +1,12 @@
 #include <glm/ext/matrix_clip_space.hpp>
-#include <stdexcept>
 
 #include "camera.h"
 #include "gui_camera.h"
 
 GUICamera::GUICamera(int screen_width, int screen_height, float near, float far)
   : Camera(near, far)
+  , _width(screen_width)
+  , _height(screen_height)
 {
   nonvirt_screen_size(screen_width, screen_height);
 }
@@ -13,6 +14,8 @@ GUICamera::GUICamera(int screen_width, int screen_height, float near, float far)
 void
 GUICamera::nonvirt_screen_size(int width, int height)
 {
+  _width = width;
+  _height = height;
   Camera::projection(glm::ortho(0.f,
                                 static_cast<float>(width),
                                 -static_cast<float>(height),
@@ -30,5 +33,6 @@ GUICamera::screen_size(int width, int height)
 Shape::Frustum
 GUICamera::frustum() const
 {
-  throw std::runtime_error("Not implemented");
+  // No need now
+  return {};
 }

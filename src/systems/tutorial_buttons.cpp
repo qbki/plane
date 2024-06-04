@@ -1,5 +1,6 @@
 #include "src/components/common.h"
 #include "src/components/textures.h"
+#include "src/services.h"
 #include "src/utils/noop.h"
 
 #include "tutorial_buttons.h"
@@ -13,10 +14,10 @@ change_texture_type(Textures& textures, bool is_button_pressed)
 }
 
 void
-tutorial_buttons_system(const App& app)
+tutorial_buttons_system(Scene& scene)
 {
-  auto& registry = app.game_state().registry();
-  const auto& control = app.control();
+  auto& registry = scene.state().registry();
+  const auto& control = app().control();
   registry.view<Textures, TutorialButton, TutorialButtonKind>().each(
     [&](Textures& textures, const TutorialButton& button) {
       switch (button.value) {

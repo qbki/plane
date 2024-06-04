@@ -1,12 +1,13 @@
 #include "src/components/common.h"
+#include "src/scene/scene.h"
 #include "src/services.h"
 
 #include "finish_condition.h"
 
 void
-check_finish_condition(const App& app)
+check_finish_condition(Scene& scene)
 {
-  auto& registry = app.game_state().registry();
+  auto& registry = scene.state().registry();
 
   int enemy_quantity = 0;
   registry.view<const EnemyStateEnum>().each(
@@ -16,6 +17,7 @@ check_finish_condition(const App& app)
       }
     });
   if (enemy_quantity == 0) {
-    events<Events::WinLevelEvent>().emit();
+    app().add_once_handler(
+      [](auto&) { events<const Events::LoadLevelEvent>().emit({}); });
   }
 }

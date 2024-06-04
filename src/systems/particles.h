@@ -1,5 +1,5 @@
 #pragma once
-#include "src/app/app.h"
+#include "src/scene/scene.h"
 
 void
-particle_handler_system(const App& app);
+particle_handler_system(Scene& scene);

@@ -1,5 +1,5 @@
 #pragma once
-#include "src/app/app.h"
+#include "src/scene/scene.h"
 
 void
-calculate_world_bbox(const App& app);
+calculate_world_bbox(Scene& scene);

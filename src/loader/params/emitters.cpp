@@ -5,6 +5,7 @@
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
 #include "src/game_state/factory.h"
+#include "src/game_state/state.h"
 #include "src/utils/random.h"
 
 #include "emitters.h"
@@ -32,12 +33,12 @@ calc_rotation(unsigned int multiplier, float angle)
 }
 
 void
-emit_particles(const App& app,
+emit_particles(State& state,
                glm::vec3 initial_position,
                const EntityParamsParticles& params,
                const std::string& file_path)
 {
-  auto& registry = app.game_state().registry();
+  auto& registry = state.registry();
   unsigned int idx = 0;
   const float step = glm::two_pi<float>() / static_cast<float>(params.quantity);
   auto particles =
@@ -75,16 +76,17 @@ emit_particles(const App& app,
 }
 
 void
-emit_projectile(const App& app,
+emit_projectile(State& state,
+                const entt::entity owner,
                 const EntityParamsGun& params,
                 const std::string& file_path)
 {
-  auto& registry = app.game_state().registry();
+  auto& registry = state.registry();
   auto projectiles_view =
     registry.view<ProjectileKind>(entt::exclude<Available>);
   auto projectile_id = projectiles_view.front();
 
-  auto& player_transform = app.game_state().player<Transform>();
+  auto& player_transform = registry.get<Transform>(owner);
   auto player_z_rotation =
     glm::angleAxis(player_transform.euler().z, glm::vec3(0, 0, 1));
   auto rotation = player_z_rotation * calc_spread_angle();

@@ -1,5 +1,7 @@
+#include <array>
 #include <format>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 #include "src/services.h"
@@ -106,4 +108,58 @@ print_extension_support(std::string extension_name)
   }
   logger().info(std::format("{}: is not supported", extension_name));
   return;
+}
+
+GLuint
+gen_color_attachment(GLint internal_color_format,
+                     GLint color_attachment,
+                     unsigned int width,
+                     unsigned int height,
+                     GLuint date_type)
+{
+  GLuint texture_handle = 0;
+  glGenTextures(1, &texture_handle);
+  glBindTexture(GL_TEXTURE_2D, texture_handle);
+  glTexImage2D(GL_TEXTURE_2D,
+               0,
+               internal_color_format,
+               static_cast<GLint>(width),
+               static_cast<GLint>(height),
+               0,
+               GL_RGBA,
+               date_type,
+               nullptr);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glFramebufferTexture2D(
+    GL_DRAW_FRAMEBUFFER, color_attachment, GL_TEXTURE_2D, texture_handle, 0);
+  return texture_handle;
+}
+
+GLuint
+gen_render_buffer(unsigned int width, unsigned int height)
+{
+  GLuint render_buffer = 0;
+  glGenRenderbuffers(1, &render_buffer);
+  glBindRenderbuffer(GL_RENDERBUFFER, render_buffer);
+  glRenderbufferStorage(GL_RENDERBUFFER,
+                        GL_DEPTH24_STENCIL8,
+                        static_cast<GLsizei>(width),
+                        static_cast<GLsizei>(height));
+  glFramebufferRenderbuffer(
+    GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, render_buffer);
+
+  auto status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+  if (status != GL_FRAMEBUFFER_COMPLETE) {
+    std::array<GLint, 4> dimentions{ 0, 0, 0, 0 };
+    glGetIntegerv(GL_VIEWPORT, dimentions.data());
+    logger().error(std::format(
+      "Viewport dimentions: {}x{}", dimentions.at(2), dimentions.at(3)));
+    auto status_text =
+      std::format("Framebuffer status ({}x{}): {}", width, height, status);
+    throw std::runtime_error(status_text);
+  }
+  return render_buffer;
 }

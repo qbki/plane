@@ -1,5 +1,8 @@
 #pragma once
-#include "src/app/app.h"
+#include "src/scene/scene.h"
 
 void
-update_gui(const App& app);
+update_gui(Scene& scene);
+
+void
+update_gui_calculate_hostiles(const Scene& scene);

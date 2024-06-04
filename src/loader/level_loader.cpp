@@ -5,9 +5,8 @@
 #include <variant>
 #include <vector>
 
-#include "src/app/app.h"
-#include "src/cache/cache.h"
 #include "src/game_state/factory.h"
+#include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/utils/file_loaders.h"
 #include "src/utils/types.h"
@@ -17,9 +16,9 @@
 #include "json/mappers.h" // IWYU pragma: keep
 
 void
-setup_camera(CameraParams camera_params, App& app)
+setup_camera(CameraParams& camera_params, Scene& scene)
 {
-  app.game_state().camera().position(camera_params.position);
+  scene.state().camera().position(camera_params.position);
 }
 
 ModelFactory::MakerFn
@@ -88,7 +87,7 @@ preload_models(const std::vector<EntityParamsModel>& models)
 void
 load_level(const std::string& entities_file_path,
            const std::string& level_file_path,
-           App& app)
+           Scene& scene)
 {
   auto entities =
     load_json(entities_file_path).at("entities").get<EntityParamsMap>();
@@ -97,10 +96,10 @@ load_level(const std::string& entities_file_path,
   auto strategies = json_level.at("map").get<std::vector<PositionStrategy>>();
   auto models = entities.get_all<EntityParamsModel>();
   preload_models(models);
-  setup_camera(camera, app);
+  setup_camera(camera, scene);
   for (auto& strategy : strategies) {
     auto maker = get_entity_maker(strategy, entities);
-    PositionStrategyVisitor strategy_handler(&entities, &app, &maker);
+    PositionStrategyVisitor strategy_handler(&entities, &scene, &maker);
     std::visit(strategy_handler, strategy);
   }
   logger().info(std::format("Loaded \"{}\" level", level_file_path));

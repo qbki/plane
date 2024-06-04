@@ -31,7 +31,6 @@ void
 DeferredShading::use_light_pass()
 {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   _light_pass->use();
   _g_buffer->use();
 }

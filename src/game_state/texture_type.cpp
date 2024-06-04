@@ -1,6 +1,7 @@
 #include <format>
 #include <stdexcept>
 
+#include "src/game_state/texture_type.h"
 #include "src/services.h"
 
 #include "texture_type.h"

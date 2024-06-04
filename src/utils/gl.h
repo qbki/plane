@@ -32,3 +32,13 @@ print_opengl_info();
 
 void
 print_extension_support(std::string extension_name);
+
+GLuint
+gen_color_attachment(GLint internal_color_format,
+                     GLint color_attachment,
+                     unsigned int width,
+                     unsigned int height,
+                     GLuint date_type);
+
+GLuint
+gen_render_buffer(unsigned int width, unsigned int height);

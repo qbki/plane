@@ -6,6 +6,9 @@
 class GUICamera : public Camera
 {
 private:
+  int _width;
+  int _height;
+
   void nonvirt_screen_size(int width, int height);
 
 public:

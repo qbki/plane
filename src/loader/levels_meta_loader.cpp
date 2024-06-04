@@ -1,4 +1,7 @@
 #include <algorithm>
+#include <nlohmann/json.hpp>
+#include <ranges>
+#include <string>
 #include <vector>
 
 #include "levels_meta_loader.h"

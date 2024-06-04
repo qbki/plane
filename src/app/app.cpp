@@ -1,16 +1,11 @@
 #include <SDL_mouse.h>
 #include <SDL_timer.h>
 #include <algorithm>
-#include <gsl/pointers>
-#include <memory>
-#include <stdexcept>
-#include <string>
 #include <utility>
 
 #include "app.h"
 
-App::App(std::unique_ptr<GameState> _game_state,
-         std::unique_ptr<Control> _control,
+App::App(std::unique_ptr<Control> _control,
          std::unique_ptr<RectSize> _screen_size,
          std::unique_ptr<DeferredShading> _deferred_shading,
          std::unique_ptr<Shader> _particle_shader,
@@ -20,19 +15,12 @@ App::App(std::unique_ptr<GameState> _game_state,
   : _last_time_point(SDL_GetTicks64())
   , _window(std::move(_window))
   , _gl_context(std::move(_gl_context))
-  , _game_state(std::move(_game_state))
   , _control(std::move(_control))
   , _screen_size(std::move(_screen_size))
   , _deferred_shading(std::move(_deferred_shading))
   , _particle_shader(std::move(_particle_shader))
   , _theme(std::move(_theme))
 {
-}
-
-GameState&
-App::game_state() const
-{
-  return *_game_state;
 }
 
 Control&
@@ -81,6 +69,44 @@ float
 App::delta_time() const
 {
   return _delta_time;
+}
+
+void
+App::is_running(bool value)
+{
+  _is_game_running = value;
+}
+
+bool
+App::is_running() const
+{
+  return _is_game_running;
+}
+
+void
+App::push_scene(std::unique_ptr<Scene> scene)
+{
+  _scenes.push_back(std::move(scene));
+}
+
+void
+App::pop_scene()
+{
+  if (!_scenes.empty()) {
+    _scenes.pop_back();
+  }
+}
+
+std::vector<std::unique_ptr<Scene>>&
+App::scenes()
+{
+  return _scenes;
+}
+
+AppInfo&
+App::info()
+{
+  return _info;
 }
 
 void

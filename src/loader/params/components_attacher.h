@@ -2,19 +2,20 @@
 #include <glm/vec3.hpp>
 
 #include "src/app/app.h"
+#include "src/scene/scene.h"
 
 #include "entities_map.h"
 
 class ComponetsAttacher
 {
 private:
-  const App* _app;
+  Scene* _scene;
   entt::entity _entity;
   entt::registry* _registry;
   const EntityParamsMap* _entities;
 
 public:
-  ComponetsAttacher(const App* app,
+  ComponetsAttacher(Scene* scene,
                     const entt::entity entity,
                     const EntityParamsMap* params_map);
   void operator()(const EntityParamsActor& params) const;
@@ -33,5 +34,5 @@ public:
   void attach_tutorial_button_value(Control::Action action) const;
   void attach_particles_emmiter_by_hit(
     const EntityParamsActor& actor_params) const;
-  void attach_projectile_emmiter(const EntityParamsActor& actor_params) const;
+  void attach_projectile_emitter(const EntityParamsActor& actor_params) const;
 };

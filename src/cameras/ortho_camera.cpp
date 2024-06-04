@@ -1,6 +1,5 @@
 #include <glm/ext/matrix_clip_space.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include <stdexcept>
+#include <glm/vec3.hpp>
 
 #include "camera.h"
 #include "ortho_camera.h"

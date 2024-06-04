@@ -1,11 +1,11 @@
 #pragma once
-#include "src/app/app.h"
+#include "src/scene/scene.h"
 
 void
-enemy_hunting_system(const App& app);
+enemy_hunting_system(Scene& scene);
 
 void
-enemy_sinking_system(const App& app);
+enemy_sinking_system(Scene& scene);
 
 void
-enemy_rotation_system(const App& app);
+enemy_rotation_system(Scene& scene);

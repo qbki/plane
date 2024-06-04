@@ -1,16 +1,16 @@
 #pragma once
-#include <functional>
 #include <glm/vec2.hpp> // IWYU pragma: export
 #include <memory>
 #include <optional>
-#include <vector>
 
-#include "app.h"
+#include "src/app/app.h" // IWYU pragma: export
+#include "src/gui/theme.h"
+#include "src/sdl_init.h"
+#include "src/utils/types.h"
 
 class AppBuilder
 {
 public:
-  OptionalPtr<GameState> _game_state;
   OptionalPtr<Control> _control;
   OptionalPtr<RectSize> _screen_size;
   OptionalPtr<DeferredShading> _deferred_shading;
@@ -19,7 +19,6 @@ public:
   std::optional<WindowPtr> _window;
   std::optional<ContextPtr> _context;
 
-  void game_state(std::unique_ptr<GameState> game_state);
   void control(std::unique_ptr<Control> control);
   void screen_size(int width, int height);
   void deferred_shading(std::unique_ptr<DeferredShading> deferred_shading);

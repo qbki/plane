@@ -11,6 +11,8 @@
 #include "src/components/velocity.h"
 #include "src/math/intersection.h"
 #include "src/math/shapes.h"
+#include "src/scene/scene.h"
+#include "src/services.h"
 
 #include "enemy.h"
 
@@ -26,15 +28,18 @@ are_siblings_close(glm::vec3 a, glm::vec3 b)
 }
 
 void
-enemy_hunting_system(const App& app)
+enemy_hunting_system(Scene& scene)
 {
   // TODO Replace by a real AI
-  auto& game_state = app.game_state();
-  auto& registry = game_state.registry();
-  auto& player_transform = app.game_state().player<Transform>();
+  auto& state = scene.state();
+  auto& registry = state.registry();
+  Transform player_transform{};
+  registry.view<Transform, PlayerKind>().each(
+    [&player_transform](const auto& transform) {
+      player_transform = transform;
+    });
   auto player_position = player_transform.translation();
-  auto enemies_view = app.game_state()
-                        .registry()
+  auto enemies_view = registry
                         .view<Transform,
                               Velocity,
                               EnemyStateEnum,
@@ -46,7 +51,7 @@ enemy_hunting_system(const App& app)
                  std::ranges::views::filter([](const auto& tuple) {
                    return std::get<3>(tuple) == EnemyStateEnum::HUNTING;
                  });
-  Octree<entt::entity> octree(game_state.world_bbox(), MAX_OCTREE_DEPTH);
+  Octree<entt::entity> octree(state.world_bbox(), MAX_OCTREE_DEPTH);
   for (auto [id_a, transform_a, velocity_a, _state_a, mesh_a] : enemies) {
     auto a =
       apply_transform_to_collider(transform_a, mesh_a->bounding_volume());
@@ -86,14 +91,14 @@ enemy_hunting_system(const App& app)
 }
 
 void
-enemy_sinking_system(const App& app)
+enemy_sinking_system(Scene& scene)
 {
-  auto& registry = app.game_state().registry();
+  auto& registry = scene.state().registry();
   registry.view<Transform, EnemyStateEnum, EnemyKind, Available>().each(
     [&](entt::entity id, Transform& transform, EnemyStateEnum& state) {
       if (state == EnemyStateEnum::SINKING) {
         transform.add_rotation_z(SINKING_ROTATION_SPEED_PER_SEC *
-                                 app.delta_time());
+                                 app().delta_time());
         if (transform.translation().z < INACTIVE_ALTITUDE) {
           registry.remove<Available>(id);
           state = EnemyStateEnum::INACTIVE;
@@ -103,14 +108,17 @@ enemy_sinking_system(const App& app)
 }
 
 void
-enemy_rotation_system(const App& app)
+enemy_rotation_system(Scene& scene)
 {
-  auto& player_transform = app.game_state().player<Transform>();
-  app.game_state()
-    .registry()
-    .view<Transform, EnemyStateEnum, EnemyKind, Available>()
-    .each([&player_transform](Transform& enemy_transform,
-                              EnemyStateEnum& enemy_state) {
+  Transform player_transform{};
+  auto& registry = scene.state().registry();
+  registry.view<Transform, PlayerKind>().each(
+    [&player_transform](const auto& transform) {
+      player_transform = transform;
+    });
+  registry.view<Transform, EnemyStateEnum, EnemyKind, Available>().each(
+    [&player_transform](Transform& enemy_transform,
+                        EnemyStateEnum& enemy_state) {
       if (enemy_state == EnemyStateEnum::HUNTING) {
         auto dir_vector =
           player_transform.translation() - enemy_transform.translation();

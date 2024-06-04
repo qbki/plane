@@ -1,8 +1,8 @@
 #pragma once
-#include "src/app/app.h" // IWYU pragma: export
+#include "src/scene/scene.h"
 
 void
-velocity_system(const App& app);
+velocity_system(const Scene& scene);
 
 void
-velocity_gravity_system(const App& app);
+velocity_gravity_system(const Scene& scene);

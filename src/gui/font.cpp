@@ -23,11 +23,12 @@ Font::surface_pointer_deleter(SDL_Surface* pointer)
   SDL_FreeSurface(pointer);
 };
 
-Font::Font(const std::shared_ptr<RWopsHolder>& font_rw, int size)
-  : _font_rw(font_rw)
+Font::Font(const std::shared_ptr<DataHolder>& font_data_holder, int size)
+  : _font_data_holder(font_data_holder)
   , _size(size)
 {
-  auto font = TTF_OpenFontRW(_font_rw->rwops.get(), SDL_FALSE, _size);
+  auto unsafe_rwops = _font_data_holder->unsafe_rwops();
+  auto font = TTF_OpenFontRW(unsafe_rwops, SDL_TRUE, _size);
   if (font == nullptr) {
     throw std::runtime_error(TTF_GetError());
   }

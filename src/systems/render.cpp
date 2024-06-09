@@ -65,8 +65,12 @@ render_generic_objects(App& app, const Scene& scene)
   auto& registry = scene.state().registry();
   const auto& camera = scene.state().camera();
   auto frustum = camera.frustum();
+  auto inter_fb_handle = app.intermediate_fb().handle();
+  auto g_buffer_handle = deferred_shading.g_buffer().g_buffer_handle();
 
   deferred_shading.use_geometry_pass();
+  glBindFramebuffer(GL_FRAMEBUFFER, g_buffer_handle);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   auto& geometry_pass_shader = deferred_shading.geometry_pass();
   geometry_pass_shader.uniform("u_PV", camera.pv());
 
@@ -96,6 +100,10 @@ render_generic_objects(App& app, const Scene& scene)
   draw(transform_mapping);
   transform_mapping.clear();
 
+  auto& screen_size = app.screen_size();
+
+  glBindFramebuffer(GL_FRAMEBUFFER, inter_fb_handle);
+
   deferred_shading.use_light_pass();
   auto& light_pass_shader = deferred_shading.light_path();
   registry.view<Color, Direction, DirectionalLightKind>().each(
@@ -109,7 +117,6 @@ render_generic_objects(App& app, const Scene& scene)
                                 COMMON_MATERIAL.specular());
       light_pass_shader.uniform("u_material.shininess",
                                 COMMON_MATERIAL.shininess());
-      light_pass_shader.uniform("u_gamma", GAMMA);
       light_pass_shader.uniform("u_position_texture", 0);
       light_pass_shader.uniform("u_normal_texture", 1);
       light_pass_shader.uniform("u_base_color_texture", 2);
@@ -137,15 +144,11 @@ render_generic_objects(App& app, const Scene& scene)
       light_idx += 1;
     });
   light_pass_shader.uniform("u_point_lights_quantity", light_idx);
+
   deferred_shading.draw_quad();
 
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  auto& screen_size = app.screen_size();
-  glBindFramebuffer(GL_READ_FRAMEBUFFER,
-                    deferred_shading.g_buffer().g_buffer_handle());
-  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+  glBindFramebuffer(GL_READ_FRAMEBUFFER, g_buffer_handle);
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, inter_fb_handle);
   glBlitFramebuffer(0,
                     0,
                     static_cast<GLint>(screen_size.width),
@@ -156,7 +159,6 @@ render_generic_objects(App& app, const Scene& scene)
                     static_cast<GLint>(screen_size.height),
                     GL_DEPTH_BUFFER_BIT,
                     GL_NEAREST);
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void
@@ -166,10 +168,8 @@ render_particles(App& app, const Scene& scene)
   const auto& camera = scene.state().camera();
   auto& particle_shader = app.particle_shader();
   particle_shader.use();
-  particle_shader.uniform("u_gamma", GAMMA);
   particle_shader.uniform("u_PV", camera.pv());
   std::unordered_map<Mesh*, TransformHolder> transform_mapping;
-
   registry
     .view<const Transform,
           const MeshPointer,
@@ -191,6 +191,13 @@ void
 render_ui(const Scene& scene)
 {
   auto& registry = scene.state().registry();
+  const auto& camera = scene.state().camera();
+  auto& particle_shader = app().particle_shader();
+  auto inter_fb = app().intermediate_fb().handle();
+  particle_shader.use();
+  particle_shader.uniform("u_PV", camera.pv());
+  glBindFramebuffer(GL_FRAMEBUFFER, inter_fb);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   registry.view<GUI::Component>().each([&](GUI::Component& gui_component) {
     std::visit(Overloaded{ [](auto& value) { value.draw(); } }, gui_component);
   });
@@ -201,9 +208,24 @@ render_system(App& app)
 {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  auto& inter_fb = app.intermediate_fb();
+  auto& inter_shader = app.intermediate_shader();
   for (const auto& scene : app.scenes()) {
-    render_generic_objects(app, *scene);
-    render_particles(app, *scene);
-    render_ui(*scene);
+    glBindFramebuffer(GL_FRAMEBUFFER, inter_fb.handle());
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (scene->is_deferred()) {
+      render_generic_objects(app, *scene);
+      render_particles(app, *scene);
+    } else {
+      render_ui(*scene);
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    inter_fb.use();
+    inter_shader.use();
+    inter_shader.uniform("u_gamma", GAMMA);
+    inter_shader.uniform("u_main_texture", 0);
+    app.deferred_shading().draw_quad();
   }
 }

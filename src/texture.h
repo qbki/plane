@@ -20,7 +20,7 @@ public:
   Texture& operator=(const Texture&) = delete;
   Texture(Texture&&) noexcept;
   Texture& operator=(Texture&&) noexcept;
-  virtual ~Texture() noexcept;
+  ~Texture() noexcept;
 
   void use(unsigned int idx) const;
   void data(const std::vector<unsigned char>& pixels);

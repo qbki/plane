@@ -45,7 +45,6 @@ GBuffer::update(unsigned int width, unsigned int height)
     GL_RGBA8, GL_COLOR_ATTACHMENT2, _width, _height, GL_UNSIGNED_BYTE);
   glDrawBuffers(3, GBuffer::COLOR_ATTACHMENTS.data());
   _render_buffer = gen_render_buffer(_width, _height);
-  glViewport(0, 0, static_cast<GLsizei>(_width), static_cast<GLsizei>(_height));
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 

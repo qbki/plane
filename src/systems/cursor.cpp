@@ -1,4 +1,3 @@
-#include "src/services.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext/matrix_projection.hpp>
 #include <glm/geometric.hpp>
@@ -7,13 +6,15 @@
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
+#include "src/services.h"
+#include "src/utils/mouse.h"
 
 #include "cursor.h"
 
 void
 cursor_handler_system(Scene& scene)
 {
-  auto mouse_pos = app().mouse_position();
+  auto mouse_pos = mouse_position();
   auto& camera = scene.state().camera();
   auto& screen_size = app().screen_size();
   glm::vec4 viewport{ 0, 0, screen_size.width, screen_size.height };

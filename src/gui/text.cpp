@@ -77,7 +77,12 @@ Text::draw()
     _is_dirty = false;
   }
   auto transform =
-    glm::translate(glm::mat4(1), { _width / 2, -_height / 2, 0 });
+    glm::translate(glm::mat4(1),
+                   {
+                     static_cast<float>(_width) * HALF + _position.x,
+                     static_cast<float>(_height) * HALF + _position.y,
+                     _position.z,
+                   });
   transform = glm::scale(transform, { _width, _height, 1 });
   Mesh::DrawParams draw_params{
     .transforms{ transform },
@@ -94,6 +99,30 @@ Text::text(const std::string& text)
     _text = text;
     _is_dirty = true;
   }
+}
+
+int
+Text::width() const
+{
+  return _width;
+}
+
+int
+Text::height() const
+{
+  return _height;
+}
+
+void
+Text::position(const glm::vec3& value)
+{
+  _position = value;
+}
+
+glm::vec3
+Text::position() const
+{
+  return _position;
 }
 
 }

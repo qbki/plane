@@ -23,7 +23,7 @@ struct PointLight {
 
 in vec2 i_tex_coord;
 
-out vec4 frag_color;
+layout (location = 0) out vec4 frag_color;
 
 uniform sampler2D u_position_texture;
 uniform sampler2D u_normal_texture;
@@ -35,11 +35,6 @@ uniform int u_point_lights_quantity;
 
 uniform vec3 u_camera_pos;
 uniform Material u_material;
-uniform float u_gamma;
-
-vec3 encode_gamma(vec3 color) {
-  return pow(color, vec3(1.0 / u_gamma));
-}
 
 vec3 calc_diffuse(vec3 light_color, vec3 surface_color, vec3 surface_normal, vec3 light_direction) {
   float light_angle = max(dot(surface_normal, -light_direction), 0.0);
@@ -118,6 +113,6 @@ void main() {
     ) * u_material.specular * attenuation;
   }
 
-  vec3 result = encode_gamma(ambient + diffuse + specular);
+  vec3 result = ambient + diffuse + specular;
   frag_color = vec4(result, 1.0);
 }

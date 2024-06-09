@@ -5,21 +5,21 @@
 
 #include "app.h"
 
-App::App(std::unique_ptr<Control> _control,
-         std::unique_ptr<RectSize> _screen_size,
-         std::unique_ptr<DeferredShading> _deferred_shading,
-         std::unique_ptr<Shader> _particle_shader,
-         std::unique_ptr<GUI::Theme> _theme,
-         WindowPtr _window,
-         ContextPtr _gl_context)
+App::App(std::unique_ptr<Control> control,
+         std::unique_ptr<RectSize> screen_size,
+         std::unique_ptr<DeferredShading> deferred_shading,
+         std::unique_ptr<Shader> particle_shader,
+         std::unique_ptr<Shader> intermediate_shader,
+         WindowPtr window,
+         ContextPtr gl_context)
   : _last_time_point(SDL_GetTicks64())
-  , _window(std::move(_window))
-  , _gl_context(std::move(_gl_context))
-  , _control(std::move(_control))
-  , _screen_size(std::move(_screen_size))
-  , _deferred_shading(std::move(_deferred_shading))
-  , _particle_shader(std::move(_particle_shader))
-  , _theme(std::move(_theme))
+  , _window(std::move(window))
+  , _gl_context(std::move(gl_context))
+  , _control(std::move(control))
+  , _screen_size(std::move(screen_size))
+  , _deferred_shading(std::move(deferred_shading))
+  , _particle_shader(std::move(particle_shader))
+  , _intermediate_shader(std::move(intermediate_shader))
 {
 }
 
@@ -41,16 +41,22 @@ App::deferred_shading() const
   return *_deferred_shading;
 }
 
+FrameBuffer&
+App::intermediate_fb() const
+{
+  return *_intermediate_fb;
+}
+
 Shader&
 App::particle_shader() const
 {
   return *_particle_shader;
 }
 
-GUI::Theme&
-App::theme() const
+Shader&
+App::intermediate_shader() const
 {
-  return *_theme;
+  return *_intermediate_shader;
 }
 
 SDL_Window&
@@ -139,13 +145,4 @@ App::update(unsigned long time_since_start_of_program)
   for (const auto& handler : _handlers) {
     handler(*this);
   }
-}
-
-glm::vec2
-App::mouse_position()
-{
-  int x = 0;
-  int y = 0;
-  SDL_GetMouseState(&x, &y);
-  return { x, y };
 }

@@ -17,6 +17,7 @@ private:
   std::shared_ptr<Font> _font;
   std::string _text;
   bool _is_dirty;
+  glm::vec3 _position{ 0, 0, 0 };
   int _width;
   int _height;
 
@@ -27,8 +28,13 @@ public:
        int width,
        int height,
        std::string text);
+
   void draw();
   void text(const std::string& text);
+  [[nodiscard]] int width() const;
+  [[nodiscard]] int height() const;
+  void position(const glm::vec3& value);
+  [[nodiscard]] glm::vec3 position() const;
 };
 
 }

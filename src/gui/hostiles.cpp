@@ -8,7 +8,7 @@
 namespace GUI {
 
 Hostiles::Hostiles(const GUI::Theme& theme, int width, int height)
-  : _text(std::make_unique<Text>(theme.typography.body_1, width, height, ""))
+  : _text(std::make_unique<Text>(theme.typography.body1, width, height, ""))
 {
 }
 

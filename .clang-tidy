@@ -9,5 +9,4 @@ Checks: >
   misc-header-include-cycle
 WarningsAsErrors: true
 HeaderFilterRegex: ''
-AnalyzeTemporaryDtors: false
 FormatStyle: mozilla

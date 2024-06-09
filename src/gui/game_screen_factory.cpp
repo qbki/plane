@@ -11,10 +11,10 @@ void
 game_screen_factory(Scene& scene)
 {
   auto& registry = scene.state().registry();
-  const auto text_block_width = 150;
-  const auto text_block_height = 50;
+  const auto text_block_width = 100;
+  const auto text_block_height = 20;
   auto entity = registry.create();
   GUI::Component hostiles =
-    GUI::Hostiles(app().theme(), text_block_width, text_block_height);
+    GUI::Hostiles(theme(), text_block_width, text_block_height);
   registry.emplace<GUI::Component>(entity, std::move(hostiles));
 }

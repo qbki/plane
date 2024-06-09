@@ -32,6 +32,8 @@ main()
   auto context = init_context(window.get());
   auto control = std::make_unique<Control>();
 
+  auto output_vertex_shader = load_text(SHADERS_DIR / "output_v.glsl");
+
   auto geometry_pass_shader = std::make_unique<Shader>();
   auto geometry_pass_vertex_shader = load_text(SHADERS_DIR / "main_v.glsl");
   auto geometry_pass_fragment_shader =
@@ -40,17 +42,18 @@ main()
                                 geometry_pass_fragment_shader);
 
   auto light_pass_shader = std::make_unique<Shader>();
-  auto light_pass_vertex_shader =
-    load_text(SHADERS_DIR / "deferred_light_pass_v.glsl");
   auto light_pass_fragment_shader =
     load_text(SHADERS_DIR / "deferred_light_pass_f.glsl");
-  light_pass_shader->compile(light_pass_vertex_shader,
-                             light_pass_fragment_shader);
+  light_pass_shader->compile(output_vertex_shader, light_pass_fragment_shader);
 
   auto particle_shader = std::make_unique<Shader>();
   auto particle_vertex_shader = load_text(SHADERS_DIR / "main_v.glsl");
   auto particle_fragment_shader = load_text(SHADERS_DIR / "particle_f.glsl");
   particle_shader->compile(particle_vertex_shader, particle_fragment_shader);
+
+  auto inter_shader = std::make_unique<Shader>();
+  auto inter_fragment_shader = load_text(SHADERS_DIR / "output_f.glsl");
+  inter_shader->compile(output_vertex_shader, inter_fragment_shader);
 
   auto deferred_shading = std::make_unique<DeferredShading>(
     std::move(geometry_pass_shader),
@@ -59,7 +62,8 @@ main()
     DEFAULT_SCREEN_WIDTH,
     DEFAULT_SCREEN_HEIGHT);
 
-  auto theme = load_theme(ASSETS_DIR / "levels/theme.json");
+  auto theme = load_theme(LEVELS_DIR / "theme.json");
+  Service<const GUI::Theme>::install(std::move(theme));
 
   AppBuilder app_builder = AppBuilder();
   app_builder.screen_size(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
@@ -67,8 +71,8 @@ main()
   app_builder.control(std::move(control));
   app_builder.deferred_shading(std::move(deferred_shading));
   app_builder.particle_shader(std::move(particle_shader));
+  app_builder.intermediate_shader(std::move(inter_shader));
   app_builder.window(std::move(window));
-  app_builder.theme(std::move(theme));
 
   std::unique_ptr<App> app{ app_builder.build() };
   app->add_handler([](App& app) {

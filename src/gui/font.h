@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "src/utils/data_holder.h"
 #include "src/utils/types.h"
 
 namespace GUI {
@@ -17,11 +18,12 @@ private:
   static void font_pointer_deleter(TTF_Font* pointer);
   static void surface_pointer_deleter(SDL_Surface* pointer);
 
+  std::shared_ptr<DataHolder> _font_data_holder;
   FontBearer _font = { nullptr, Font::font_pointer_deleter };
-  std::shared_ptr<RWopsHolder> _font_rw;
   int _size;
 
 public:
+  Font(const std::shared_ptr<DataHolder>& font_data_holder, int size);
   Font(const Font&) = delete;
   Font(Font&&) noexcept = delete;
   Font& operator=(const Font&) = delete;
@@ -34,10 +36,9 @@ public:
   {
     std::vector<unsigned char> data;
     int width;
-    int heiht;
+    int height;
   };
 
-  Font(const std::shared_ptr<RWopsHolder>& font_rw, int size);
   Font::SurfaceBearer draw(const std::string& text, const Core::Color& color);
   [[nodiscard]] int size() const;
 };

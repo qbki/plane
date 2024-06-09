@@ -8,6 +8,7 @@
 class Scene
 {
 private:
+  bool _is_deferred = true;
   Events::EventEmitter<Scene> _events{};
   std::unique_ptr<State> _state = std::make_unique<State>();
 
@@ -17,4 +18,6 @@ public:
   void update();
   Events::EventEmitter<Scene>& handlers();
   State& state() const;
+  void is_deferred(bool value);
+  bool is_deferred() const;
 };

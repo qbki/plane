@@ -16,9 +16,9 @@ or_throw(std::optional<T>& optional, const std::string& message)
 }
 
 void
-AppBuilder::control(std::unique_ptr<Control> control)
+AppBuilder::control(std::unique_ptr<Control> value)
 {
-  _control = std::move(control);
+  _control = std::move(value);
 }
 
 void
@@ -28,33 +28,33 @@ AppBuilder::screen_size(int width, int height)
 }
 
 void
-AppBuilder::deferred_shading(std::unique_ptr<DeferredShading> deferred_shading)
+AppBuilder::deferred_shading(std::unique_ptr<DeferredShading> value)
 {
-  _deferred_shading = std::move(deferred_shading);
+  _deferred_shading = std::move(value);
 }
 
 void
-AppBuilder::particle_shader(std::unique_ptr<Shader> particle_shader)
+AppBuilder::particle_shader(std::unique_ptr<Shader> value)
 {
-  _particle_shader = std::move(particle_shader);
+  _particle_shader = std::move(value);
 }
 
 void
-AppBuilder::window(WindowPtr window)
+AppBuilder::window(WindowPtr value)
 {
-  _window = std::move(window);
+  _window = std::move(value);
 }
 
 void
-AppBuilder::context(ContextPtr context)
+AppBuilder::context(ContextPtr value)
 {
-  _context = std::move(context);
+  _context = std::move(value);
 }
 
 void
-AppBuilder::theme(std::unique_ptr<GUI::Theme> theme)
+AppBuilder::intermediate_shader(std::unique_ptr<Shader> value)
 {
-  _theme = std::move(theme);
+  _intermediate_shader = std::move(value);
 }
 
 gsl::owner<App*>
@@ -64,15 +64,16 @@ AppBuilder::build()
   auto screen_size_obj = or_throw(_screen_size, "Screen Size");
   auto deferred_shading_obj = or_throw(_deferred_shading, "Deferred Shading");
   auto particle_shader_obj = or_throw(_particle_shader, "Particle Shader");
+  auto intermediate_shader_obj =
+    or_throw(_intermediate_shader, "Intermediate Shader");
   auto window_obj = or_throw(_window, "Window");
   auto context_obj = or_throw(_context, "Context");
-  auto theme_obj = or_throw(_theme, "Theme");
 
   return new App(std::move(control_obj),
                  std::move(screen_size_obj),
                  std::move(deferred_shading_obj),
                  std::move(particle_shader_obj),
-                 std::move(theme_obj),
+                 std::move(intermediate_shader_obj),
                  std::move(window_obj),
                  std::move(context_obj));
 }

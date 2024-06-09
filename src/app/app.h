@@ -1,15 +1,16 @@
 #pragma once
 #include <functional>
 #include <glm/vec2.hpp> // IWYU pragma: export
+#include <memory>
 #include <vector>
 
 #include "src/app/app_info.h" // IWYU pragma: export
 #include "src/control.h"      // IWYU pragma: export
-#include "src/gui/theme.h"
 #include "src/scene/scene.h"
 #include "src/sdl_init.h"
 #include "src/shader.h"                   // IWYU pragma: export
 #include "src/shading/deferred_shading.h" // IWYU pragma: export
+#include "src/shading/framebuffer.h"      // IWYU pragma: export
 #include "src/shapes.h"                   // IWYU pragma: export
 
 class App
@@ -29,20 +30,22 @@ private:
   std::unique_ptr<Control> _control;
   std::unique_ptr<RectSize> _screen_size;
   std::unique_ptr<DeferredShading> _deferred_shading;
+  std::unique_ptr<FrameBuffer> _intermediate_fb =
+    std::make_unique<FrameBuffer>();
   std::unique_ptr<Shader> _particle_shader;
-  std::unique_ptr<GUI::Theme> _theme;
+  std::unique_ptr<Shader> _intermediate_shader;
 
   std::vector<Handler> _handlers = std::vector<Handler>();
   std::vector<Handler> _once_handlers = std::vector<Handler>();
 
 public:
-  App(std::unique_ptr<Control> _control,
-      std::unique_ptr<RectSize> _screen_size,
-      std::unique_ptr<DeferredShading> _deferred_shading,
-      std::unique_ptr<Shader> _particle_shader,
-      std::unique_ptr<GUI::Theme> _theme,
-      WindowPtr _window,
-      ContextPtr _gl_context);
+  App(std::unique_ptr<Control> control,
+      std::unique_ptr<RectSize> screen_size,
+      std::unique_ptr<DeferredShading> deferred_shading,
+      std::unique_ptr<Shader> particle_shader,
+      std::unique_ptr<Shader> intermediate_shader,
+      WindowPtr window,
+      ContextPtr gl_context);
   App(const App&) = delete;
   App& operator=(const App&) = delete;
   App(App&&) = delete;
@@ -50,10 +53,10 @@ public:
   ~App() = default;
 
   [[nodiscard]] Control& control() const;
-  [[nodiscard]] RectSize& screen_size() const;
   [[nodiscard]] DeferredShading& deferred_shading() const;
+  [[nodiscard]] FrameBuffer& intermediate_fb() const;
   [[nodiscard]] Shader& particle_shader() const;
-  [[nodiscard]] GUI::Theme& theme() const;
+  [[nodiscard]] Shader& intermediate_shader() const;
   [[nodiscard]] SDL_Window& window() const;
   [[nodiscard]] SDL_GLContext gl_context() const;
 
@@ -72,5 +75,5 @@ public:
   void add_once_handler(Handler handler);
   void update(unsigned long time_since_start_of_program);
 
-  static glm::vec2 mouse_position();
+  [[nodiscard]] RectSize& screen_size() const;
 };

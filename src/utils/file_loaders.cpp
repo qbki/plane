@@ -160,31 +160,19 @@ load_json(const std::string& file_name)
 #endif
 }
 
-std::shared_ptr<RWopsHolder>
+std::shared_ptr<DataHolder>
 load_sdl_rw_data(const std::filesystem::path& path)
 {
   auto raw_data = load_binary(path);
-  auto rw =
-    SDL_RWFromConstMem(raw_data.data(), static_cast<int>(raw_data.size()));
-  if (rw == nullptr) {
-    throw std::runtime_error(
-      std::format("Can't create RWops of {}", static_cast<std::string>(path)));
-  }
-  auto deleter = [path](SDL_RWops* value) {
-    auto result = SDL_RWclose(value);
-    if (result < 0) {
-      logger().error(std::format("Can't close SDL_RWops of {}", path.c_str()));
-    }
-  };
-  logger().info(std::format("Loaded: {} ({})", path.c_str(), rw->size(rw)));
-  return std::make_shared<RWopsHolder>(std::move(raw_data),
-                                       RWopsHolder::RWopsPtrType(rw, deleter));
+  logger().info(std::format("Loaded: {} ({})", path.c_str(), raw_data.size()));
+  return std::make_shared<DataHolder>(std::move(raw_data));
 }
 
 std::unique_ptr<Sound::Sound>
 load_sound(const std::filesystem::path& sound_file_path)
 {
-  auto rwops = load_sdl_rw_data(sound_file_path);
-  auto chunk = Mix_LoadWAV_RW(rwops->rwops.get(), 0);
+  auto holder = load_sdl_rw_data(sound_file_path);
+  auto rwops = holder->rwops();
+  auto chunk = Mix_LoadWAV_RW(rwops.get(), 0);
   return std::make_unique<Sound::Sound>(chunk);
 }

@@ -54,14 +54,6 @@ struct Overloaded : Ts...
   using Ts::operator()...;
 };
 
-struct RWopsHolder
-{
-  using RWopsPtrType =
-    std::unique_ptr<SDL_RWops, std::function<void(SDL_RWops*)>>;
-  std::vector<unsigned char> data;
-  RWopsPtrType rwops;
-};
-
 namespace Core {
 union Color
 {

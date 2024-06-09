@@ -86,9 +86,10 @@ emit_projectile(State& state,
     registry.view<ProjectileKind>(entt::exclude<Available>);
   auto projectile_id = projectiles_view.front();
 
-  auto& player_transform = registry.get<Transform>(owner);
+  auto [owner_transform, owner_velocity] =
+    registry.get<Transform, Velocity>(owner);
   auto player_z_rotation =
-    glm::angleAxis(player_transform.euler().z, glm::vec3(0, 0, 1));
+    glm::angleAxis(owner_transform.euler().z, glm::vec3(0, 0, 1));
   auto rotation = player_z_rotation * calc_spread_angle();
 
   auto move_direction = rotation * glm::vec3(1, 0, 0);
@@ -96,19 +97,22 @@ emit_projectile(State& state,
   if (projectile_id == entt::null) {
     auto entity = ModelFactory::make_projectile(registry, file_path);
     Transform transform;
-    transform.translate(player_transform.translation()).rotate(rotation);
+    transform.translate(owner_transform.translation()).rotate(rotation);
+    Velocity velocity(move_direction * params.velocity.speed +
+                        owner_velocity.velocity,
+                      params.velocity.damping);
     registry.replace<Transform>(entity, transform);
-    registry.replace<InitialPosition>(entity, player_transform.translation());
+    registry.replace<InitialPosition>(entity, owner_transform.translation());
     registry.replace<Speed>(entity, params.velocity.speed);
     registry.replace<Range>(entity, params.range);
-    registry.replace<Velocity>(
-      entity, move_direction * params.velocity.speed, params.velocity.damping);
+    registry.replace<Velocity>(entity, velocity);
   } else {
     auto [prj_transform, prj_initial_position, prj_velocity, prj_speed] =
       registry.get<Transform, InitialPosition, Velocity, Speed>(projectile_id);
-    prj_transform.translate(player_transform.translation()).rotate(rotation);
-    prj_initial_position.value = player_transform.translation();
-    prj_velocity.velocity = move_direction * prj_speed.value;
+    prj_transform.translate(owner_transform.translation()).rotate(rotation);
+    prj_initial_position.value = owner_transform.translation();
+    prj_velocity.velocity =
+      move_direction * prj_speed.value + owner_velocity.velocity;
     registry.emplace_or_replace<Available>(projectile_id);
   }
 }

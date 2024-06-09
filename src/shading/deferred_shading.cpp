@@ -22,15 +22,12 @@ DeferredShading::DeferredShading(std::unique_ptr<Shader> geometry_pass,
 void
 DeferredShading::use_geometry_pass()
 {
-  glBindFramebuffer(GL_FRAMEBUFFER, _g_buffer->g_buffer_handle());
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   _geometry_pass->use();
 }
 
 void
 DeferredShading::use_light_pass()
 {
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
   _light_pass->use();
   _g_buffer->use();
 }

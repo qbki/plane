@@ -78,6 +78,7 @@ inner_game_loop(App& app)
           resize_cameras(app.scenes(), width, height);
           glViewport(0, 0, width, height);
           app.deferred_shading().g_buffer().update(width, height);
+          app.intermediate_fb().update(width, height);
         }
         break;
       }

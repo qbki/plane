@@ -1,4 +1,4 @@
 #pragma once
 
 inline void
-noop(){};
+noop() {};

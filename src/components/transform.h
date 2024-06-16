@@ -13,6 +13,9 @@ private:
   glm::vec3 _translation = glm::zero<glm::vec3>();
   glm::vec3 _scale{ 1, 1, 1 };
 
+  mutable glm::mat4 _matrix{}; // for cache purpose
+  mutable bool _is_dirty = true; // for cache purpose
+
 public:
   Transform& add_rotation_x(float radians);
   Transform& add_rotation_y(float radians);
@@ -29,5 +32,5 @@ public:
   Transform& scale(const glm::vec3& value);
   [[nodiscard]] glm::vec3 translation() const;
 
-  [[nodiscard]] glm::mat4 matrix() const;
+  [[nodiscard]] glm::mat4& matrix() const;
 };

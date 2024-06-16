@@ -99,7 +99,7 @@ render_generic_objects(App& app, const Scene& scene)
       if (!is_in_frustum(frustum, transformed_collider)) {
         return;
       }
-      auto matrix = transform.matrix();
+      auto& matrix = transform.matrix();
       update_transform_mapping(
         transform_mapping, mesh.get(), &textures, matrix);
     });
@@ -187,7 +187,7 @@ render_particles(App& app, const Scene& scene)
     .each([&transform_mapping](const Transform& transform,
                                const MeshPointer& mesh,
                                const Textures& textures) {
-      auto matrix = transform.matrix();
+      auto& matrix = transform.matrix();
       update_transform_mapping(
         transform_mapping, mesh.get(), &textures, matrix);
     });

@@ -1,5 +1,4 @@
 #include <entt/entt.hpp>
-#include <exception>
 #include <stdexcept>
 
 #include "src/components/common.h"

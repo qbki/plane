@@ -101,11 +101,10 @@ emscripten_game_loop(void* data)
 void
 game_loop()
 {
-  auto& application = app();
-  wasm_resize_window(
-    application, get_js_window_width(), get_js_window_height());
+  auto& app = Services::app();
+  wasm_resize_window(app, get_js_window_width(), get_js_window_height());
   emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,
-                                 &application,
+                                 &app,
                                  EM_FALSE,
                                  wasm_resize_window_cb);
   // The simulate_infinite_loop argument should be false. It is because I have
@@ -114,15 +113,15 @@ game_loop()
   // details in the documentation below.
   // @doc
   // https://emscripten.org/docs/api_reference/emscripten.h.html?highlight=set_main_loop#c.emscripten_set_main_loop
-  emscripten_set_main_loop_arg(emscripten_game_loop, &application, 0, false);
+  emscripten_set_main_loop_arg(emscripten_game_loop, &app, 0, false);
 }
 #else
 void
 game_loop()
 {
-  auto& application = Services::app();
-  while (application.is_running()) {
-    inner_game_loop(application);
+  auto& app = Services::app();
+  while (app.is_running()) {
+    inner_game_loop(app);
   }
 }
 #endif

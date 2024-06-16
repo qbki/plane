@@ -1,6 +1,6 @@
 #include "mouse.h"
 
-glm::vec2
+glm::ivec2
 mouse_position()
 {
   int x = 0;

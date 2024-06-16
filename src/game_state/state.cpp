@@ -74,11 +74,17 @@ State::world_bbox() const
 entt::registry&
 State::registry()
 {
+  return *_registry;
+}
+
+std::shared_ptr<entt::registry>&
+State::shared_registry()
+{
   return _registry;
 }
 
 void
 State::clear_registry()
 {
-  _registry = entt::registry{};
+  _registry = std::make_shared<entt::registry>();
 }

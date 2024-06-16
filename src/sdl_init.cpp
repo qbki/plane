@@ -33,7 +33,7 @@ MessageCallback(GLenum /*source*/,
                 const GLchar* message,
                 const void* /*userParam*/)
 {
-  logger().error(std::format("OpenGL: {}", message));
+  Services::logger().error(std::format("OpenGL: {}", message));
 }
 
 WindowPtr
@@ -45,7 +45,7 @@ init_window(int screen_width, int screen_height)
   if (error < 0) {
     throw_sdl_error("Unable to init SDL");
   }
-  logger().info("SDL has been initialized.");
+  Services::logger().info("SDL has been initialized.");
 
   // Audio
   error = Mix_OpenAudio(MIX_DEFAULT_FREQUENCY,
@@ -56,14 +56,14 @@ init_window(int screen_width, int screen_height)
     throw_sdl_error("Unable to init SDL_mixer");
   }
   Mix_AllocateChannels(DEFAULT_MAX_CHANNELS);
-  logger().info("SDL_mixer has been initialized.");
+  Services::logger().info("SDL_mixer has been initialized.");
 
   // Font
   error = TTF_Init();
   if (error < 0) {
     throw_sdl_error("Unable to init SDL_ttf");
   }
-  logger().info("SDL_ttf has been initialized.");
+  Services::logger().info("SDL_ttf has been initialized.");
 
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 #ifdef __EMSCRIPTEN__
@@ -85,7 +85,7 @@ init_window(int screen_width, int screen_height)
   if (window == nullptr) {
     throw_sdl_error("Unable to create window");
   }
-  logger().info("Window has been created.");
+  Services::logger().info("Window has been created.");
 
   return { window, [](auto w) {
             SDL_DestroyWindow(w);
@@ -101,7 +101,7 @@ init_context(SDL_Window* window)
   if (ctx == nullptr) {
     throw_sdl_error("Unable to create GL Context");
   }
-  logger().info("Context has been created.");
+  Services::logger().info("Context has been created.");
 
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
@@ -110,7 +110,7 @@ init_context(SDL_Window* window)
     throw new std::runtime_error(
       std::format("Unable to initialize GLEW: {}", err_glew));
   }
-  logger().info("GLEW has been inited.");
+  Services::logger().info("GLEW has been inited.");
 
   print_opengl_info();
   glEnable(GL_DEPTH_TEST);

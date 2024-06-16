@@ -85,6 +85,18 @@ Texture::~Texture() noexcept
   }
 }
 
+int
+Texture::width() const
+{
+  return _width;
+}
+
+int
+Texture::height() const
+{
+  return _height;
+}
+
 void
 Texture::use(unsigned int idx) const
 {
@@ -106,6 +118,26 @@ Texture::data(const std::vector<unsigned char>& pixels)
                   GL_RGBA,
                   GL_UNSIGNED_BYTE,
                   pixels.data());
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+  glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void
+Texture::data(const std::vector<unsigned char>& pixels, int width, int height)
+{
+  _width = width;
+  _height = height;
+  glBindTexture(GL_TEXTURE_2D, _texture_object);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  glTexImage2D(GL_TEXTURE_2D,
+               0,
+               GL_SRGB8_ALPHA8,
+               width,
+               height,
+               0,
+               GL_RGBA,
+               GL_UNSIGNED_BYTE,
+               pixels.data());
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
   glBindTexture(GL_TEXTURE_2D, 0);
 }

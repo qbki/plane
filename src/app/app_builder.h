@@ -4,7 +4,6 @@
 #include <optional>
 
 #include "src/app/app.h" // IWYU pragma: export
-#include "src/gui/theme.h"
 #include "src/sdl_init.h"
 #include "src/shader.h"
 #include "src/utils/types.h"
@@ -13,7 +12,7 @@ class AppBuilder
 {
 public:
   OptionalPtr<Control> _control;
-  OptionalPtr<RectSize> _screen_size;
+  std::optional<RectSize> _screen_size;
   OptionalPtr<DeferredShading> _deferred_shading;
   OptionalPtr<Shader> _particle_shader;
   OptionalPtr<Shader> _intermediate_shader;

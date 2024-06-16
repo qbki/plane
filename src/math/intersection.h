@@ -1,5 +1,8 @@
 #pragma once
+#include <glm/vec2.hpp>
+
 #include "src/components/transform.h"
+#include "src/shapes.h"
 
 #include "shapes.h"
 
@@ -15,6 +18,9 @@ is_in_frustum(const Shape::Frustum& frustum, const Shape::Collider& collider);
 
 bool
 is_inside(const Shape::AABB& collider, const glm::vec3& point);
+
+bool
+is_inside(const Rect<int>& collider, const glm::ivec2& point);
 
 bool
 on_axis(const Shape::Sphere& collider, const glm::vec3& point);

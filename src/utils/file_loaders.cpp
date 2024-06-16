@@ -1,8 +1,8 @@
 #include <SDL_mixer.h>
+#include <algorithm>
 #include <filesystem>
 #include <format>
 #include <fstream>
-#include <functional>
 #include <iterator>
 #include <memory>
 #include <nlohmann/json.hpp>
@@ -16,7 +16,6 @@
 #endif
 
 #include "src/services.h"
-#include "src/utils/types.h"
 
 #include "file_loaders.h"
 
@@ -102,17 +101,17 @@ load_gltf_model(const std::string& file_name)
 #endif
 
   if (!warn.empty()) {
-    logger().warn(warn);
+    Services::logger().warn(warn);
   }
 
   if (!err.empty()) {
-    logger().error(err);
+    Services::logger().error(err);
   }
 
   if (!status) {
     throw std::runtime_error(std::format("Failed to load glTF: {}", file_name));
   } else {
-    logger().info(std::format("Loaded glTF: {}", file_name));
+    Services::logger().info(std::format("Loaded glTF: {}", file_name));
   }
 
   return model;
@@ -164,7 +163,8 @@ std::shared_ptr<DataHolder>
 load_sdl_rw_data(const std::filesystem::path& path)
 {
   auto raw_data = load_binary(path);
-  logger().info(std::format("Loaded: {} ({})", path.c_str(), raw_data.size()));
+  Services::logger().info(
+    std::format("Loaded: {} ({})", path.c_str(), raw_data.size()));
   return std::make_shared<DataHolder>(std::move(raw_data));
 }
 

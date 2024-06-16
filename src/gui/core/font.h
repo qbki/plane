@@ -3,6 +3,7 @@
 #include <SDL_ttf.h>
 #include <memory>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include "src/utils/data_holder.h"
@@ -41,6 +42,8 @@ public:
 
   Font::SurfaceBearer draw(const std::string& text, const Core::Color& color);
   [[nodiscard]] int size() const;
+
+  std::tuple<int, int> calculate_size(const std::string& value);
 };
 
 }

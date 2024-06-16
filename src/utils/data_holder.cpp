@@ -1,5 +1,6 @@
 #include <SDL_rwops.h>
 #include <stdexcept>
+#include <utility>
 
 #include "data_holder.h"
 

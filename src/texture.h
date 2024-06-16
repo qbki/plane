@@ -22,6 +22,10 @@ public:
   Texture& operator=(Texture&&) noexcept;
   ~Texture() noexcept;
 
+  [[nodiscard]] int width() const;
+  [[nodiscard]] int height() const;
+
   void use(unsigned int idx) const;
   void data(const std::vector<unsigned char>& pixels);
+  void data(const std::vector<unsigned char>& pixels, int width, int height);
 };

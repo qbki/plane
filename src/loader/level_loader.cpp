@@ -80,7 +80,7 @@ void
 preload_models(const std::vector<EntityParamsModel>& models)
 {
   for (auto& model : models) {
-    cache().get_model(model.path);
+    Services::cache().get_model(model.path);
   }
 }
 
@@ -102,5 +102,5 @@ load_level(const std::string& entities_file_path,
     PositionStrategyVisitor strategy_handler(&entities, &scene, &maker);
     std::visit(strategy_handler, strategy);
   }
-  logger().info(std::format("Loaded \"{}\" level", level_file_path));
+  Services::logger().info(std::format("Loaded \"{}\" level", level_file_path));
 }

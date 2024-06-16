@@ -1,12 +1,11 @@
 #pragma once
+#include <memory>
 #include <variant>
 
-#include "hostiles.h"
-#include "loading_screen.h"
-#include "text.h"
+#include "src/gui/core/font.h"
 
 namespace GUI {
 
-using Component = std::variant<Text, Hostiles, LoadingScreen>;
+using FontPtr = std::shared_ptr<Font>;
 
 }

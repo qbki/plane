@@ -94,6 +94,13 @@ is_inside(const Shape::AABB& collider, const glm::vec3& point)
 }
 
 bool
+is_inside(const Rect<int>& collider, const glm::ivec2& point)
+{
+  return collider.x <= point.x && point.x <= (collider.x + collider.width) &&
+         collider.y <= point.y && point.y <= (collider.y + collider.height);
+}
+
+bool
 on_axis(const Shape::Sphere& collider, const glm::vec3& point)
 {
   return glm::abs(point.x - collider.center.x) <= collider.radius ||

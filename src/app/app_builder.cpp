@@ -1,4 +1,5 @@
 #include <gsl/pointers>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -24,7 +25,7 @@ AppBuilder::control(std::unique_ptr<Control> value)
 void
 AppBuilder::screen_size(int width, int height)
 {
-  _screen_size = std::make_unique<RectSize>(width, height);
+  _screen_size = { width, height };
 }
 
 void
@@ -70,7 +71,7 @@ AppBuilder::build()
   auto context_obj = or_throw(_context, "Context");
 
   return new App(std::move(control_obj),
-                 std::move(screen_size_obj),
+                 screen_size_obj,
                  std::move(deferred_shading_obj),
                  std::move(particle_shader_obj),
                  std::move(intermediate_shader_obj),

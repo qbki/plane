@@ -17,7 +17,7 @@ void
 tutorial_buttons_system(Scene& scene)
 {
   auto& registry = scene.state().registry();
-  const auto& control = app().control();
+  const auto& control = Services::app().control();
   registry.view<Textures, TutorialButton, TutorialButtonKind>().each(
     [&](Textures& textures, const TutorialButton& button) {
       switch (button.value) {

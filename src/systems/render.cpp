@@ -1,17 +1,25 @@
 #include <GL/glew.h>
+#include <SDL_pixels.h>
+#include <SDL_surface.h>
+#include <algorithm>
 #include <format>
+#include <string>
 #include <unordered_map>
-#include <variant>
 
 #include "src/components/common.h"
 #include "src/components/textures.h"
 #include "src/components/transform.h"
 #include "src/consts.h"
+#include "src/gui/core/font.h"
 #include "src/gui/types.h"
 #include "src/material.h"
 #include "src/math/intersection.h"
 #include "src/math/shapes.h"
 #include "src/scene/scene.h"
+#include "src/services.h"
+#include "src/texture.h"
+#include "src/utils/common.h"
+#include "src/utils/ecs.h"
 
 #include "render.h"
 
@@ -100,7 +108,7 @@ render_generic_objects(App& app, const Scene& scene)
   draw(transform_mapping);
   transform_mapping.clear();
 
-  auto& screen_size = app.screen_size();
+  auto screen_size = app.screen_size();
 
   glBindFramebuffer(GL_FRAMEBUFFER, inter_fb_handle);
 
@@ -192,15 +200,102 @@ render_ui(const Scene& scene)
 {
   auto& registry = scene.state().registry();
   const auto& camera = scene.state().camera();
-  auto& particle_shader = app().particle_shader();
-  auto inter_fb = app().intermediate_fb().handle();
+  auto& particle_shader = Services::app().particle_shader();
+  auto inter_fb = Services::app().intermediate_fb().handle();
   particle_shader.use();
   particle_shader.uniform("u_PV", camera.pv());
+  particle_shader.uniform("u_main_texture", 0);
   glBindFramebuffer(GL_FRAMEBUFFER, inter_fb);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  registry.view<GUI::Component>().each([&](GUI::Component& gui_component) {
-    std::visit(Overloaded{ [](auto& value) { value.draw(); } }, gui_component);
-  });
+  registry
+    .view<Transform, UniqueTexturePtr, RectSize, Parent, Available, GUIKind>()
+    .each([&registry](Transform& orig_transform,
+                      UniqueTexturePtr& texture,
+                      RectSize& rect,
+                      Parent& parent) {
+      Transform transform{};
+      transform.translate({
+        orig_transform.translation().x + static_cast<float>(rect.width) * HALF,
+        orig_transform.translation().y + static_cast<float>(rect.height) * HALF,
+        transform.translation().z,
+      });
+      transform.scale({ rect.width, rect.height, 1 });
+      texture->use(0);
+
+      glm::mat4 global_matrix =
+        get_global_matrix(registry, parent) * transform.matrix();
+      Services::gui_quad().draw({
+        .transforms = std::vector<glm::mat4>{ global_matrix },
+        .texture_indices =
+          std::vector<TextureType::Type>{ TextureType::Type::PRIMARY },
+      });
+    });
+}
+
+void
+update_font_texture(const Scene& scene)
+{
+  auto& registry = scene.state().registry();
+  registry
+    .view<GUI::FontPtr,
+          UniqueTexturePtr,
+          RectSize,
+          Text,
+          Core::Color,
+          IsDirty,
+          GUIKind>()
+    .each([](GUI::FontPtr& font,
+             UniqueTexturePtr& texture,
+             RectSize& rect,
+             Text& _text,
+             Core::Color& color,
+             IsDirty& _is_dirty) {
+      const auto color_size = 4;
+      auto& text = _text.value;
+      auto& is_dirty = _is_dirty.value;
+      if (!is_dirty) {
+        return;
+      }
+      is_dirty = false;
+      auto update = [&](const std::vector<unsigned char>& data) {
+        if (texture->width() == rect.width &&
+            texture->height() == rect.height) {
+          texture->data(data);
+        } else {
+          texture->data(data, rect.width, rect.height);
+        }
+      };
+      if (text.empty()) {
+        rect.width = 1;
+        rect.height = font->size();
+        std::vector<unsigned char> result(rect.height, 0);
+        update(result);
+        return;
+      }
+      auto font_surface = font->draw(text, color);
+      rect.width = font_surface->w;
+      rect.height = font_surface->h;
+      auto result = get_pixels(rect.width, rect.height);
+      SDL_ConvertPixels(rect.width,
+                        rect.height,
+                        font_surface->format->format,
+                        font_surface->pixels,
+                        font_surface->pitch,
+                        SDL_PIXELFORMAT_ABGR8888,
+                        result.data(),
+                        rect.width * color_size);
+      auto length = rect.height / 2;
+      auto begin = result.begin();
+      auto end = result.end();
+      auto width = rect.width * color_size;
+      for (int y = 0; y < length; y++) {
+        auto src_start = begin + y * width;
+        auto src_end = src_start + width;
+        auto dst_start = end - width - width * y;
+        std::swap_ranges(src_start, src_end, dst_start);
+      }
+      update(result);
+    });
 }
 
 void
@@ -217,6 +312,7 @@ render_system(App& app)
       render_generic_objects(app, *scene);
       render_particles(app, *scene);
     } else {
+      update_font_texture(*scene);
       render_ui(*scene);
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

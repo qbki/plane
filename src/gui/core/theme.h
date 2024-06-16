@@ -1,10 +1,21 @@
 #pragma once
 #include <memory>
 
-#include "src/gui/font.h"
+#include "src/gui/core/font.h"
 #include "src/utils/types.h"
 
 namespace GUI {
+
+struct Palette
+{
+  constexpr static const Core::Color WHITE{ 0x7f'7d'7e'ff };
+  constexpr static const Core::Color WHITE_ACCENT{ 0xff'fd'fe'ff };
+  constexpr static const Core::Color GRAY{ 0x43'43'43'ff };
+
+  Core::Color white{ WHITE };
+  Core::Color white_accent{ WHITE_ACCENT };
+  Core::Color gray{ GRAY };
+};
 
 struct Typography
 {
@@ -17,8 +28,6 @@ struct Typography
   constexpr static const unsigned int SIZE_BODY_1{ 16 };
   constexpr static const unsigned int SIZE_BODY_2{ 14 };
 
-  constexpr static const Core::Color DEFAULT_FONT_COLOR{ 0xff'ff'ff'ff };
-
   std::shared_ptr<Font> h1;
   std::shared_ptr<Font> h2;
   std::shared_ptr<Font> h3;
@@ -29,9 +38,25 @@ struct Typography
   std::shared_ptr<Font> body2;
 };
 
+struct Components
+{
+  struct Text
+  {
+    Core::Color color{ Palette::WHITE };
+  } text;
+  struct TextButton
+  {
+    Text active{ .color{ Palette::WHITE } };
+    Text hover{ .color{ Palette::WHITE_ACCENT } };
+    Text disabled{ .color{ Palette::GRAY } };
+  } text_button;
+};
+
 struct Theme
 {
   Typography typography;
+  Components components;
+  Palette palette;
 };
 
 }

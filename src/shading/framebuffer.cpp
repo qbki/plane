@@ -1,5 +1,4 @@
 #include <GL/glew.h>
-#include <array>
 
 #include "src/shading/framebuffer.h"
 #include "src/utils/gl.h"

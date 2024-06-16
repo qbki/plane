@@ -18,7 +18,7 @@ struct NewType
 {
   T value;
   explicit NewType(T v)
-    : value(v){};
+    : value(std::move(v)){};
 };
 
 template<typename T>
@@ -58,9 +58,14 @@ namespace Core {
 union Color
 {
   std::uint32_t value;
-  std::uint8_t r;
-  std::uint8_t g;
-  std::uint8_t b;
-  std::uint8_t a;
+  struct Component
+  {
+    std::uint8_t a;
+    std::uint8_t b;
+    std::uint8_t g;
+    std::uint8_t r;
+  } com;
+
+  bool operator==(const Color& other) const { return value == other.value; }
 };
 }

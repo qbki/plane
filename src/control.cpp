@@ -39,12 +39,14 @@ Control::update(const SDL_Event& event)
     case SDL_MOUSEBUTTONDOWN: {
       if (event.button.button == 1) {
         this->is_player_shooting = true;
+        this->is_pointer_down = true;
       }
       break;
     }
     case SDL_MOUSEBUTTONUP: {
       if (event.button.button == 1) {
         this->is_player_shooting = false;
+        this->is_pointer_down = false;
       }
       break;
     }

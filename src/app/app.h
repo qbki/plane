@@ -1,10 +1,10 @@
 #pragma once
 #include <functional>
 #include <glm/vec2.hpp> // IWYU pragma: export
-#include <memory>
 #include <vector>
 
 #include "src/app/app_info.h" // IWYU pragma: export
+#include "src/app/system.h"   // IWYU pragma: export
 #include "src/control.h"      // IWYU pragma: export
 #include "src/scene/scene.h"
 #include "src/sdl_init.h"
@@ -26,9 +26,10 @@ private:
   AppInfo _info{};
   WindowPtr _window;
   ContextPtr _gl_context;
+  System _system{};
   std::vector<std::unique_ptr<Scene>> _scenes{};
   std::unique_ptr<Control> _control;
-  std::unique_ptr<RectSize> _screen_size;
+  RectSize _screen_size;
   std::unique_ptr<DeferredShading> _deferred_shading;
   std::unique_ptr<FrameBuffer> _intermediate_fb =
     std::make_unique<FrameBuffer>();
@@ -40,7 +41,7 @@ private:
 
 public:
   App(std::unique_ptr<Control> control,
-      std::unique_ptr<RectSize> screen_size,
+      RectSize screen_size,
       std::unique_ptr<DeferredShading> deferred_shading,
       std::unique_ptr<Shader> particle_shader,
       std::unique_ptr<Shader> intermediate_shader,
@@ -70,10 +71,12 @@ public:
   [[nodiscard]] std::vector<std::unique_ptr<Scene>>& scenes();
 
   [[nodiscard]] AppInfo& info();
+  [[nodiscard]] const System& system() const;
 
   void add_handler(Handler handler);
   void add_once_handler(Handler handler);
   void update(unsigned long time_since_start_of_program);
 
-  [[nodiscard]] RectSize& screen_size() const;
+  void screen_size(const RectSize& size);
+  [[nodiscard]] RectSize screen_size() const;
 };

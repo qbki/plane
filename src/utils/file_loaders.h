@@ -8,7 +8,6 @@
 
 #include "src/sound/sound.h"
 #include "src/utils/data_holder.h"
-#include "src/utils/types.h"
 
 tinygltf::Model
 load_gltf_model(const std::string& file_name);

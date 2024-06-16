@@ -32,7 +32,7 @@ player_rotation_system(Scene& scene)
 void
 player_shooting_system(const Scene& scene)
 {
-  const auto& control = app().control();
+  const auto& control = Services::app().control();
   if (!control.is_player_shooting) {
     return;
   }
@@ -45,7 +45,8 @@ player_shooting_system(const Scene& scene)
           emitter.value.value()(entity);
         }
         if (sound.value.has_value()) {
-          events<const Events::ShootEvent>().emit({ sound.value.value() });
+          Services::events<const Events::ShootEvent>().emit(
+            { sound.value.value() });
         }
       });
 };
@@ -53,7 +54,7 @@ player_shooting_system(const Scene& scene)
 void
 player_moving_system(const Scene& scene)
 {
-  const auto& control = app().control();
+  const auto& control = Services::app().control();
   glm::vec3 move_direction{ 0, 0, 0 };
   if (control.left) {
     move_direction.x -= 1;

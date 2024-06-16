@@ -23,17 +23,23 @@ resize_cameras(const std::vector<std::unique_ptr<Scene>>& scenes,
   }
 }
 
+void
+resize_screens(App& app, int width, int height)
+{
+  app.screen_size({ width, height });
+  resize_cameras(app.scenes(), width, height);
+  app.deferred_shading().g_buffer().update(width, height);
+  app.intermediate_fb().update(width, height);
+  glViewport(0, 0, width, height);
+}
+
 #ifdef __EMSCRIPTEN__
 void
 wasm_resize_window(App& app, int width, int height)
 {
   auto& window = app.window();
   SDL_SetWindowSize(&window, width, height);
-  app.deferred_shading().g_buffer().update(width, height);
-  app.screen_size().width = width;
-  app.screen_size().height = height;
-  resize_cameras(app.scenes(), width, height);
-  glViewport(0, 0, width, height);
+  resize_screens(app, width, height);
 }
 
 EMSCRIPTEN_RESULT
@@ -73,12 +79,7 @@ inner_game_loop(App& app)
         if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
           auto width = event.window.data1;
           auto height = event.window.data2;
-          app.screen_size().width = width;
-          app.screen_size().height = height;
-          resize_cameras(app.scenes(), width, height);
-          glViewport(0, 0, width, height);
-          app.deferred_shading().g_buffer().update(width, height);
-          app.intermediate_fb().update(width, height);
+          resize_screens(app, width, height);
         }
         break;
       }
@@ -119,7 +120,7 @@ game_loop()
 void
 game_loop()
 {
-  auto& application = app();
+  auto& application = Services::app();
   while (application.is_running()) {
     inner_game_loop(application);
   }

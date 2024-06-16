@@ -20,5 +20,7 @@ public:
   bool right = false;
   bool is_player_shooting = false;
 
+  bool is_pointer_down = false;
+
   void update(const SDL_Event& event);
 };

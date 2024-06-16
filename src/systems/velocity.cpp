@@ -13,7 +13,7 @@ velocity_system(const Scene& scene)
 {
   scene.state().registry().view<Transform, Velocity>().each(
     [&](Transform& transform, Velocity& velocity) {
-      auto delta_time = app().delta_time();
+      auto delta_time = Services::app().delta_time();
       velocity.velocity += velocity.acceleration * delta_time;
       velocity.velocity = damp(velocity.velocity, velocity.damping, delta_time);
       transform.add_translation(velocity.velocity * delta_time);

@@ -98,7 +98,7 @@ enemy_sinking_system(Scene& scene)
     [&](entt::entity id, Transform& transform, EnemyStateEnum& state) {
       if (state == EnemyStateEnum::SINKING) {
         transform.add_rotation_z(SINKING_ROTATION_SPEED_PER_SEC *
-                                 app().delta_time());
+                                 Services::app().delta_time());
         if (transform.translation().z < INACTIVE_ALTITUDE) {
           registry.remove<Available>(id);
           state = EnemyStateEnum::INACTIVE;

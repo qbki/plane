@@ -87,10 +87,19 @@ Transform::translation() const
   return _translation;
 }
 
+Transform&
+Transform::scale(const glm::vec3& value)
+{
+  _scale = value;
+  return *this;
+}
+
 glm::mat4
 Transform::matrix() const
 {
-  auto translation_matrix = glm::translate(glm::mat4(1), _translation);
+  auto identity = glm::mat4(1);
+  auto translation_matrix = glm::translate(identity, _translation);
   auto rotation_matrix = glm::mat4_cast(_rotation);
-  return translation_matrix * rotation_matrix;
+  auto scale_matrix = glm::scale(identity, _scale);
+  return translation_matrix * rotation_matrix * scale_matrix;
 }

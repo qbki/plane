@@ -79,18 +79,18 @@ print_opengl_errors(const std::string& place)
         break;
       }
     }
-    logger().error(ss.str());
+    Services::logger().error(ss.str());
   }
 }
 
 void
 print_opengl_info()
 {
-  logger().info(std::format("OpenGL version: {}",
-                            glubyte_to_string(glGetString(GL_VERSION))));
-  logger().info(
+  Services::logger().info(std::format(
+    "OpenGL version: {}", glubyte_to_string(glGetString(GL_VERSION))));
+  Services::logger().info(
     std::format("Vendor: {}", glubyte_to_string(glGetString(GL_VENDOR))));
-  logger().info(
+  Services::logger().info(
     std::format("Renderer: {}", glubyte_to_string(glGetString(GL_RENDERER))));
 }
 
@@ -102,11 +102,11 @@ print_extension_support(std::string extension_name)
   for (int i = 0; i < quantity; i++) {
     std::string extension(glubyte_to_string(glGetStringi(GL_EXTENSIONS, i)));
     if (extension_name == extension) {
-      logger().info(std::format("{}: is supported", extension_name));
+      Services::logger().info(std::format("{}: is supported", extension_name));
       return;
     }
   }
-  logger().info(std::format("{}: is not supported", extension_name));
+  Services::logger().info(std::format("{}: is not supported", extension_name));
   return;
 }
 
@@ -155,7 +155,7 @@ gen_render_buffer(unsigned int width, unsigned int height)
   if (status != GL_FRAMEBUFFER_COMPLETE) {
     std::array<GLint, 4> dimentions{ 0, 0, 0, 0 };
     glGetIntegerv(GL_VIEWPORT, dimentions.data());
-    logger().error(std::format(
+    Services::logger().error(std::format(
       "Viewport dimentions: {}x{}", dimentions.at(2), dimentions.at(3)));
     auto status_text =
       std::format("Framebuffer status ({}x{}): {}", width, height, status);

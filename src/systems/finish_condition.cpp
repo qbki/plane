@@ -17,7 +17,7 @@ check_finish_condition(Scene& scene)
       }
     });
   if (enemy_quantity == 0) {
-    app().add_once_handler(
-      [](auto&) { events<const Events::LoadLevelEvent>().emit({}); });
+    Services::app().add_once_handler(
+      [](auto&) { Services::events<const Events::LoadLevelEvent>().emit({}); });
   }
 }

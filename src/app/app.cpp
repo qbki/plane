@@ -1,4 +1,3 @@
-#include <SDL_mouse.h>
 #include <SDL_timer.h>
 #include <algorithm>
 #include <utility>
@@ -6,7 +5,7 @@
 #include "app.h"
 
 App::App(std::unique_ptr<Control> control,
-         std::unique_ptr<RectSize> screen_size,
+         RectSize screen_size,
          std::unique_ptr<DeferredShading> deferred_shading,
          std::unique_ptr<Shader> particle_shader,
          std::unique_ptr<Shader> intermediate_shader,
@@ -16,7 +15,7 @@ App::App(std::unique_ptr<Control> control,
   , _window(std::move(window))
   , _gl_context(std::move(gl_context))
   , _control(std::move(control))
-  , _screen_size(std::move(screen_size))
+  , _screen_size(screen_size)
   , _deferred_shading(std::move(deferred_shading))
   , _particle_shader(std::move(particle_shader))
   , _intermediate_shader(std::move(intermediate_shader))
@@ -29,10 +28,16 @@ App::control() const
   return *_control;
 }
 
-RectSize&
+void
+App::screen_size(const RectSize& size)
+{
+  _screen_size = size;
+}
+
+RectSize
 App::screen_size() const
 {
-  return *_screen_size;
+  return _screen_size;
 }
 
 DeferredShading&
@@ -113,6 +118,12 @@ AppInfo&
 App::info()
 {
   return _info;
+}
+
+const System&
+App::system() const
+{
+  return _system;
 }
 
 void

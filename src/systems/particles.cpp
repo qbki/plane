@@ -13,6 +13,6 @@ particle_handler_system(Scene& scene)
       registry.remove<Available>(id);
       return;
     }
-    lifetime.value -= app().delta_time();
+    lifetime.value -= Services::app().delta_time();
   });
 }

@@ -1,9 +1,6 @@
-#include <GL/glew.h>
-#include <SDL_video.h>
 #include <algorithm>
 #include <compare>
 #include <filesystem>
-#include <memory>
 #include <optional>
 #include <utility>
 #include <vector>
@@ -12,8 +9,8 @@
 #include "src/cameras/ortho_camera.h"
 #include "src/consts.h"
 #include "src/gui/game_screen_factory.h"
-#include "src/gui/loading_screen.h"
-#include "src/gui/types.h"
+#include "src/gui/loading_factory.h"
+#include "src/gui/main_menu_factory.h"
 #include "src/loader/level_loader.h"
 #include "src/loader/levels_meta_loader.h"
 #include "src/scene/scene.h"
@@ -46,25 +43,33 @@ make_game_camera(const App& app)
 }
 
 void
-show_loading_screen()
+load_loading_screen()
 {
-  auto camera = make_gui_camera(app());
+  auto camera = make_gui_camera(Services::app());
   auto scene = std::make_unique<Scene>(std::move(camera));
   scene->is_deferred(false);
-  auto& registry = scene->state().registry();
-  auto entity = registry.create();
-  GUI::Component loading_screen{ GUI::LoadingScreen{} };
-  registry.emplace<GUI::Component>(entity, std::move(loading_screen));
-  app().push_scene(std::move(scene));
+  scene->handlers().once(GUI::loading_factory);
+  Services::app().push_scene(std::move(scene));
+}
+
+void
+load_main_menu()
+{
+  auto camera = make_gui_camera(Services::app());
+  auto scene = std::make_unique<Scene>(std::move(camera));
+  scene->is_deferred(false);
+  scene->handlers().once(GUI::main_menu_factory);
+  scene->handlers().add(update_gui);
+  Services::app().push_scene(std::move(scene));
 }
 
 void
 load_next_level(const Events::LoadLevelEvent&)
 {
-  auto& current_level = app().info().current_level;
+  auto& current_level = Services::app().info().current_level;
   auto levels_meta = load_levels_meta(LEVELS_DIR / "levels.json");
   if (levels_meta.levels.empty()) {
-    logger().error("No levels found");
+    Services::logger().error("No levels found");
     return;
   }
   std::vector<std::filesystem::path>::iterator next_level_it;
@@ -77,9 +82,10 @@ load_next_level(const Events::LoadLevelEvent&)
     next_level_it = levels_meta.levels.begin();
   }
   if (next_level_it < levels_meta.levels.end()) {
-    show_loading_screen();
+    Services::app().scenes().clear();
+    load_loading_screen();
 
-    auto camera = make_game_camera(app());
+    auto camera = make_game_camera(Services::app());
     auto game = std::make_unique<Scene>(std::move(camera));
     game->is_deferred(true);
     game->handlers().once(calculate_world_bbox);
@@ -101,31 +107,30 @@ load_next_level(const Events::LoadLevelEvent&)
     game->handlers().add(update_gui_calculate_hostiles);
     load_level(LEVELS_DIR / "entities.json", *next_level_it, *game);
     calculate_world_bbox(*game);
-    app().info().current_level = *next_level_it;
+    Services::app().info().current_level = *next_level_it;
 
-    auto gui_camera = make_gui_camera(app());
+    auto gui_camera = make_gui_camera(Services::app());
     auto ui = std::make_unique<Scene>(std::move(gui_camera));
-    ui->handlers().once(game_screen_factory);
+    ui->handlers().once(GUI::game_screen_factory);
     ui->handlers().add(update_gui);
     ui->is_deferred(false);
 
-    app().scenes().clear();
-    app().push_scene(std::move(game));
-    app().push_scene(std::move(ui));
+    Services::app().scenes().clear();
+    Services::app().push_scene(std::move(game));
+    Services::app().push_scene(std::move(ui));
   }
 }
 
 void
 play_sound(const Events::ShootEvent& sound_event)
 {
-  cache().get_sound(sound_event.sound_path)->play();
+  Services::cache().get_sound(sound_event.sound_path)->play();
 }
 
 void
 register_common_handlers()
 {
-  events<const Events::ShootEvent>().add(play_sound);
-  events<const Events::LoadLevelEvent>().add(load_next_level);
-  app().add_once_handler(
-    [](auto&) { events<const Events::LoadLevelEvent>().emit({}); });
+  Services::events<const Events::ShootEvent>().add(play_sound);
+  Services::events<const Events::LoadLevelEvent>().add(load_next_level);
+  Services::app().add_once_handler([](auto&) { load_main_menu(); });
 }

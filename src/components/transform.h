@@ -11,6 +11,7 @@ class Transform
 private:
   glm::quat _rotation = glm::identity<glm::quat>();
   glm::vec3 _translation = glm::zero<glm::vec3>();
+  glm::vec3 _scale{ 1, 1, 1 };
 
 public:
   Transform& add_rotation_x(float radians);
@@ -25,6 +26,7 @@ public:
 
   Transform& add_translation(const glm::vec3& value);
   Transform& translate(const glm::vec3& value);
+  Transform& scale(const glm::vec3& value);
   [[nodiscard]] glm::vec3 translation() const;
 
   [[nodiscard]] glm::mat4 matrix() const;

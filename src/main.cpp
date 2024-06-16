@@ -3,18 +3,18 @@
 #include <utility>
 
 #include "app/app_builder.h"
-#include "cache/cache.h"
 #include "common_handlers.h"
 #include "consts.h"
 #include "game_loop.h"
-#include "gui/theme.h"
+#include "gui/core/theme.h"
 #include "loader/theme_loader.h"
-#include "logger/abstract_logger.h"
 #include "logger/logger.h"
 #include "mesh.h"
 #include "scene/scene.h"
 #include "sdl_init.h"
 #include "service.h"
+#include "services.h"
+#include "src/utils/types.h"
 #include "systems/render.h"
 #include "utils/file_loaders.h"
 
@@ -82,6 +82,9 @@ main()
   });
   app->add_handler(render_system);
   Service<App>::install(std::move(app));
+
+  auto quad = std::make_unique<Services::GuiQuad>(Mesh::quad(HALF, HALF, 0));
+  Service<const Services::GuiQuad>::install(std::move(quad));
 
   register_common_handlers();
   game_loop();

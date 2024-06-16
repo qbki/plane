@@ -15,7 +15,7 @@ entt::entity
 make_player(entt::registry& registry, const std::string& file_path)
 {
   auto entity = registry.create();
-  auto [mesh, textures] = cache().get_model(file_path);
+  auto [mesh, textures] = Services::cache().get_model(file_path);
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<PlayerKind>(entity);
@@ -29,7 +29,7 @@ make_player(entt::registry& registry, const std::string& file_path)
 entt::entity
 make_enemy(entt::registry& registry, const std::string& file_path)
 {
-  auto [mesh, textures] = cache().get_model(file_path);
+  auto [mesh, textures] = Services::cache().get_model(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<EnemyKind>(entity);
@@ -45,7 +45,7 @@ make_enemy(entt::registry& registry, const std::string& file_path)
 entt::entity
 make_projectile(entt::registry& registry, const std::string& file_path)
 {
-  auto [mesh, textures] = cache().get_model(file_path);
+  auto [mesh, textures] = Services::cache().get_model(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<InitialPosition>(entity, glm::zero<glm::vec3>());
@@ -63,7 +63,7 @@ make_projectile(entt::registry& registry, const std::string& file_path)
 entt::entity
 make_static(entt::registry& registry, const std::string& file_path)
 {
-  auto [mesh, textures] = cache().get_model(file_path);
+  auto [mesh, textures] = Services::cache().get_model(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
@@ -76,7 +76,7 @@ make_static(entt::registry& registry, const std::string& file_path)
 entt::entity
 make_tutorial_button(entt::registry& registry, const std::string& file_path)
 {
-  auto [mesh, textures] = cache().get_model(file_path);
+  auto [mesh, textures] = Services::cache().get_model(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
@@ -91,7 +91,7 @@ make_tutorial_button(entt::registry& registry, const std::string& file_path)
 entt::entity
 make_particle(entt::registry& registry, const std::string& file_path)
 {
-  auto [mesh, textures] = cache().get_model(file_path);
+  auto [mesh, textures] = Services::cache().get_model(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<Color>(entity, glm::zero<glm::vec3>());

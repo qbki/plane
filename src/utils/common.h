@@ -1,10 +1,12 @@
-#define GLM_ENABLE_EXPERIMENTAL
 #pragma once
+#define GLM_ENABLE_EXPERIMENTAL
 #include <cmath>
-#include <glm/ext/vector_float3.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <glm/vec3.hpp>
 #include <limits>
 #include <ostream>
+#include <string>
+#include <vector>
 
 template<typename T>
 bool
@@ -18,3 +20,6 @@ operator<<(std::ostream& os, const glm::vec3& vec)
 {
   return os << glm::to_string(vec);
 }
+
+std::vector<unsigned char>
+get_pixels(int width, int height, unsigned int size = 4);

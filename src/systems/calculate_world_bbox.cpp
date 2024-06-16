@@ -23,9 +23,9 @@ calculate_world_bbox(Scene& scene)
       game_state.extend_world_bbox(bounding_volume);
     });
   auto world_bbox = game_state.world_bbox();
-  logger().info(std::format("World bounding box: {} x {}",
-                            glm::to_string(world_bbox.min),
-                            glm::to_string(world_bbox.max)));
-  logger().info(std::format("World size: {}",
-                            glm::to_string(world_bbox.max - world_bbox.min)));
+  Services::logger().info(std::format("World bounding box: {} x {}",
+                                      glm::to_string(world_bbox.min),
+                                      glm::to_string(world_bbox.max)));
+  auto world_size = glm::to_string(world_bbox.max - world_bbox.min);
+  Services::logger().info(std::format("World size: {}", world_size));
 }

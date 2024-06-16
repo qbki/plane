@@ -11,14 +11,15 @@ namespace TextureType {
 Type
 handle_unknown_type()
 {
-  logger().warn("Unknown type of a texture");
+  Services::logger().warn("Unknown type of a texture");
   return DEFAULT_TYPE;
 }
 
 Type
 handle_unknown_type(const std::string& message)
 {
-  logger().warn(std::format("Unknown type of a texture: {}", message));
+  Services::logger().warn(
+    std::format("Unknown type of a texture: {}", message));
   return DEFAULT_TYPE;
 }
 

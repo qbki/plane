@@ -6,9 +6,11 @@
 #include <glm/vec3.hpp>
 #include <memory>
 #include <optional> // IWYU pragma: export
+#include <vector>
 
 #include "src/control.h"
-#include "src/mesh.h"        // IWYU pragma: export
+#include "src/mesh.h" // IWYU pragma: export
+#include "src/texture.h"
 #include "src/utils/types.h" // IWYU pragma: export
 
 enum class EnemyStateEnum
@@ -18,16 +20,23 @@ enum class EnemyStateEnum
   INACTIVE,
 };
 
+using Children = NewType<std::vector<entt::entity>, struct ChildrenTab>;
 using Color = NewType<glm::vec3, struct ColorTag>;
 using Direction = NewType<glm::vec3, struct DirectionTag>;
 using InitialPosition = NewType<glm::vec3, struct InitialPositionTag>;
+using IsDirty = NewType<bool, struct IsDirtyTag>;
 using Lifetime = NewType<float, struct LifeTimeTag>;
 using LifetimeMax = NewType<float, struct LifeTimeMaxTag>;
 using MeshPointer = std::shared_ptr<Mesh>;
+using Parent = NewType<std::optional<entt::entity>, struct ParentTag>;
 using Range = NewType<float, struct RangeTag>;
 using ShotSound = NewType<std::optional<std::string>, struct ShotSoundTag>;
 using Speed = NewType<float, struct SpeedTag>;
+using Text = NewType<std::string, struct TextTab>;
 using TutorialButton = NewType<Control::Action, struct TutorialButtonTag>;
+using UniqueTexturePtr = std::unique_ptr<Texture>;
+
+using IsPointerInside = NewType<bool, struct IsPointerInsideTag>;
 
 struct Available
 {};
@@ -49,6 +58,8 @@ struct PointLightKind
 struct ProjectileKind
 {};
 struct TutorialButtonKind
+{};
+struct GUIKind
 {};
 
 using ParticlesEmitter = std::function<void(glm::vec3 position)>;

@@ -5,9 +5,11 @@ RUN apt-get update \
     cmake \
     curl \
     make \
+    ninja-build \
     nodejs \
     npm \
     pkg-config \
+    python3-jinja2 \
     sudo \
     tar \
     unzip \

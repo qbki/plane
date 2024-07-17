@@ -3,7 +3,7 @@
   "configurePresets": [
     {
       "name": "x86_64-linux-release",
-      "generator": "Unix Makefiles",
+      "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/tools/vcpkg/scripts/buildsystems/vcpkg.cmake",
@@ -13,7 +13,7 @@
     },
     {
       "name": "x86_64-linux-debug",
-      "generator": "Unix Makefiles",
+      "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/tools/vcpkg/scripts/buildsystems/vcpkg.cmake",
@@ -23,7 +23,7 @@
     },
     {
       "name": "x86_64-linux-tests",
-      "generator": "Unix Makefiles",
+      "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/tools/vcpkg/scripts/buildsystems/vcpkg.cmake",
@@ -34,7 +34,7 @@
     },
     {
       "name": "wasm32-emscripten-release",
-      "generator": "Unix Makefiles",
+      "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/tools/vcpkg/scripts/buildsystems/vcpkg.cmake",

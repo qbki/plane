@@ -42,7 +42,7 @@ wasm_resize_window(App& app, int width, int height)
   resize_screens(app, width, height);
 }
 
-EMSCRIPTEN_RESULT
+EM_BOOL
 wasm_resize_window_cb(int /* eventType */,
                       const EmscriptenUiEvent* uiEvent,
                       void* data)

@@ -32,6 +32,13 @@ struct PositionStrategySingle
   std::string entity_id;
 };
 
+struct PositionStrategyMany
+{
+  BehaviourEnum behaviour;
+  std::vector<glm::vec3> positions;
+  std::string entity_id;
+};
+
 struct PositionStrategySquare
 {
   BehaviourEnum behaviour;
@@ -50,6 +57,7 @@ struct PositionStrategyVoid
 using PositionStrategy = std::variant<PositionStrategyUndefined,
                                       PositionStrategyRound,
                                       PositionStrategySingle,
+                                      PositionStrategyMany,
                                       PositionStrategySquare,
                                       PositionStrategyVoid>;
 

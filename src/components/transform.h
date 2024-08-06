@@ -13,7 +13,7 @@ private:
   glm::vec3 _translation = glm::zero<glm::vec3>();
   glm::vec3 _scale{ 1, 1, 1 };
 
-  mutable glm::mat4 _matrix{}; // for cache purpose
+  mutable glm::mat4 _matrix{};   // for cache purpose
   mutable bool _is_dirty = true; // for cache purpose
 
 public:

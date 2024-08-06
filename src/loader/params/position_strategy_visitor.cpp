@@ -1,13 +1,13 @@
 #include <cstddef>
 #include <functional>
 #include <glm/geometric.hpp>
+#include <glm/vec2.hpp>
 #include <ranges>
 #include <stdexcept>
 #include <string>
 #include <tuple>
 #include <vector>
 
-#include "src/app/app.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
 #include "src/game_state/factory.h"
@@ -87,6 +87,18 @@ PositionStrategyVisitor::operator()(
   Transform transform;
   transform.translate(strategy.position);
   registry.emplace_or_replace<Transform>(entity, transform);
+}
+
+void
+PositionStrategyVisitor::operator()(const PositionStrategyMany& strategy) const
+{
+  auto& registry = _scene->state().registry();
+  for (const auto& position : strategy.positions) {
+    auto entity = handle_single(strategy.entity_id);
+    Transform transform;
+    transform.translate(position);
+    registry.emplace_or_replace<Transform>(entity, transform);
+  }
 }
 
 void

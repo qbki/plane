@@ -5,7 +5,6 @@
 #include <SDL_ttf.h>
 #include <SDL_video.h>
 #include <format>
-#include <memory>
 #include <stdexcept>
 #include <string>
 #ifdef __EMSCRIPTEN__

@@ -23,6 +23,7 @@ public:
                           ModelFactory::MakerFn* maker_fn);
   void operator()(const PositionStrategyRound& strategy) const;
   void operator()(const PositionStrategySingle& strategy) const;
+  void operator()(const PositionStrategyMany& strategy) const;
   void operator()(const PositionStrategySquare& strategy) const;
   void operator()(const PositionStrategyUndefined& strategy) const;
   void operator()(const PositionStrategyVoid& strategy) const;

@@ -4,8 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <optional>
 #include <stdexcept>
-#include <type_traits>
-#include <utility>
+#include <vector>
 
 #include "src/consts.h"
 #include "src/control.h"
@@ -24,6 +23,7 @@ set_optional(std::optional<T>& value,
 
 // cppcheck-suppress unknownMacro
 NLOHMANN_JSON_NAMESPACE_BEGIN
+
 template<>
 struct adl_serializer<BehaviourEnum>
 {
@@ -45,9 +45,7 @@ struct adl_serializer<BehaviourEnum>
     }
   }
 };
-NLOHMANN_JSON_NAMESPACE_END
 
-NLOHMANN_JSON_NAMESPACE_BEGIN
 template<>
 struct adl_serializer<Control::Action>
 {
@@ -69,9 +67,7 @@ struct adl_serializer<Control::Action>
     }
   }
 };
-NLOHMANN_JSON_NAMESPACE_END
 
-NLOHMANN_JSON_NAMESPACE_BEGIN
 template<>
 struct adl_serializer<glm::vec3>
 {
@@ -82,9 +78,24 @@ struct adl_serializer<glm::vec3>
     json_obj.at(2).get_to(value.z);
   }
 };
-NLOHMANN_JSON_NAMESPACE_END
 
-NLOHMANN_JSON_NAMESPACE_BEGIN
+template<>
+struct adl_serializer<std::vector<glm::vec3>>
+{
+  static void from_json(const nlohmann::json& json_obj,
+                        std::vector<glm::vec3>& value)
+  {
+    const auto length = json_obj.size() / 3;
+    for (unsigned int i = 0; i < length; i++) {
+      glm::vec3 point;
+      json_obj.at(i * 3 + 0).get_to(point.x);
+      json_obj.at(i * 3 + 1).get_to(point.y);
+      json_obj.at(i * 3 + 2).get_to(point.z);
+      value.push_back(point);
+    }
+  }
+};
+
 template<>
 struct adl_serializer<CameraParams>
 {
@@ -93,9 +104,7 @@ struct adl_serializer<CameraParams>
     json_obj.at("position").get_to(value.position);
   }
 };
-NLOHMANN_JSON_NAMESPACE_END
 
-NLOHMANN_JSON_NAMESPACE_BEGIN
 template<>
 struct adl_serializer<VelocityParams>
 {
@@ -109,9 +118,7 @@ struct adl_serializer<VelocityParams>
     value.damping = json_obj.at("damping");
   }
 };
-NLOHMANN_JSON_NAMESPACE_END
 
-NLOHMANN_JSON_NAMESPACE_BEGIN
 template<>
 struct adl_serializer<PositionStrategy>
 {
@@ -144,14 +151,18 @@ struct adl_serializer<PositionStrategy>
       json_obj.at("position").get_to(strategy.position);
       json_obj.at("entity_id").get_to(strategy.entity_id);
       value = strategy;
+    } else if (kind == "many") {
+      PositionStrategyMany strategy{};
+      json_obj.at("behaviour").get_to(strategy.behaviour);
+      json_obj.at("positions").get_to(strategy.positions);
+      json_obj.at("entity_id").get_to(strategy.entity_id);
+      value = strategy;
     } else {
       throw std::runtime_error(std::format("Unknown strategy: {}", kind));
     }
   }
 };
-NLOHMANN_JSON_NAMESPACE_END
 
-NLOHMANN_JSON_NAMESPACE_BEGIN
 template<>
 struct adl_serializer<EntityParams>
 {
@@ -205,9 +216,7 @@ struct adl_serializer<EntityParams>
     }
   };
 };
-NLOHMANN_JSON_NAMESPACE_END
 
-NLOHMANN_JSON_NAMESPACE_BEGIN
 template<>
 struct adl_serializer<EntityParamsMap>
 {
@@ -216,4 +225,5 @@ struct adl_serializer<EntityParamsMap>
     value.set(json_obj.get<EntityParamsMap::Mapping>());
   }
 };
+
 NLOHMANN_JSON_NAMESPACE_END

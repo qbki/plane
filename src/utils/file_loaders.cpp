@@ -1,5 +1,4 @@
 #include <SDL_mixer.h>
-#include <algorithm>
 #include <filesystem>
 #include <format>
 #include <fstream>

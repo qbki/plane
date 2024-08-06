@@ -1,5 +1,4 @@
 #include <SDL_timer.h>
-#include <algorithm>
 #include <utility>
 
 #include "app.h"

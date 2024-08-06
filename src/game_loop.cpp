@@ -103,10 +103,8 @@ game_loop()
 {
   auto& app = Services::app();
   wasm_resize_window(app, get_js_window_width(), get_js_window_height());
-  emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,
-                                 &app,
-                                 EM_FALSE,
-                                 wasm_resize_window_cb);
+  emscripten_set_resize_callback(
+    EMSCRIPTEN_EVENT_TARGET_WINDOW, &app, EM_FALSE, wasm_resize_window_cb);
   // The simulate_infinite_loop argument should be false. It is because I have
   // nothing on the stack what should be kept. And it helps me avoid
   // unnecessary exception that is thrown intentionally by emscripten. More

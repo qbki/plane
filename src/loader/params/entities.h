@@ -22,7 +22,7 @@ struct EntityParamsModel
 
 struct EntityParamsActor
 {
-  VelocityParams velocity;
+  float speed;
   std::string model_id;
   std::optional<std::string> gun_id;
   std::optional<std::string> debris_id;
@@ -45,14 +45,14 @@ struct EntityParamsParticles
   std::string model_id;
   float lifetime;
   size_t quantity;
-  VelocityParams velocity;
+  float speed;
 };
 
 struct EntityParamsGun
 {
   std::string model_id;
   float range;
-  VelocityParams velocity;
+  float speed;
   std::filesystem::path sound_shot;
 };
 

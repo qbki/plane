@@ -2,8 +2,8 @@
 #include <glm/gtc/constants.hpp>
 
 #include "src/components/common.h"
+#include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
-#include "src/components/velocity.h"
 #include "src/services.h"
 
 #include "factory.h"
@@ -21,7 +21,7 @@ make_player(entt::registry& registry, const std::string& file_path)
   registry.emplace<ProjectileEmitter>(entity, std::nullopt);
   registry.emplace<TexturePointer>(entity, texture);
   registry.emplace<Transform>(entity);
-  registry.emplace<Velocity>(entity);
+  registry.emplace<LinearVelocity>(entity);
   return entity;
 }
 
@@ -37,7 +37,7 @@ make_enemy(entt::registry& registry, const std::string& file_path)
   registry.emplace<Opaque>(entity);
   registry.emplace<TexturePointer>(entity, texture);
   registry.emplace<Transform>(entity);
-  registry.emplace<Velocity>(entity);
+  registry.emplace<LinearVelocity>(entity);
   return entity;
 }
 
@@ -46,8 +46,6 @@ make_debris(entt::registry& registry, const std::string& file_path)
 {
   auto [mesh, texture] = Services::cache().get_model(file_path);
   auto entity = registry.create();
-  Velocity velocity{};
-  velocity.damping = 1.0;
   registry.emplace<Available>(entity);
   registry.emplace<DebrisKind>(entity);
   registry.emplace<Gravity>(entity);
@@ -55,7 +53,7 @@ make_debris(entt::registry& registry, const std::string& file_path)
   registry.emplace<Opaque>(entity);
   registry.emplace<TexturePointer>(entity, texture);
   registry.emplace<Transform>(entity);
-  registry.emplace<Velocity>(entity, velocity);
+  registry.emplace<LinearVelocity>(entity);
   return entity;
 }
 
@@ -70,10 +68,9 @@ make_projectile(entt::registry& registry, const std::string& file_path)
   registry.emplace<ParticleKind>(entity);
   registry.emplace<ProjectileKind>(entity);
   registry.emplace<Range>(entity, 0);
-  registry.emplace<Speed>(entity, 0);
   registry.emplace<TexturePointer>(entity, texture);
   registry.emplace<Transform>(entity);
-  registry.emplace<Velocity>(entity);
+  registry.emplace<LinearVelocity>(entity);
   return entity;
 }
 
@@ -116,10 +113,9 @@ make_particle(entt::registry& registry, const std::string& file_path)
   registry.emplace<LifetimeMax>(entity, 0);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<ParticleKind>(entity);
-  registry.emplace<Speed>(entity, 0);
   registry.emplace<TexturePointer>(entity, texture);
   registry.emplace<Transform>(entity);
-  registry.emplace<Velocity>(entity);
+  registry.emplace<LinearVelocity>(entity);
   return entity;
 }
 

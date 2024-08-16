@@ -2,8 +2,8 @@
 #include <glm/gtc/constants.hpp>
 
 #include "src/components/common.h"
+#include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
-#include "src/components/velocity.h"
 #include "src/game_state/factory.h"
 #include "src/game_state/state.h"
 #include "src/utils/random.h"
@@ -43,14 +43,14 @@ emit_particles(State& state,
   const float step = glm::two_pi<float>() / static_cast<float>(params.quantity);
   auto particles =
     registry
-      .view<Transform, Lifetime, LifetimeMax, Velocity, Speed, ParticleKind>(
+      .view<Transform, Lifetime, LifetimeMax, LinearVelocity, ParticleKind>(
         entt::exclude<Available>);
 
-  for (auto [id, transform, lifetime, lifetime_max, velocity, speed] :
+  for (auto [id, transform, lifetime, lifetime_max, velocity] :
        particles.each()) {
     auto rotation = calc_rotation(idx, step);
     transform.translate(initial_position).rotate(rotation);
-    velocity.velocity = rotation * glm::vec3(1, 0, 0) * speed.value;
+    velocity.velocity = rotation * glm::vec3(1, 0, 0) * velocity.speed;
     registry.emplace<Available>(id);
     lifetime.value = lifetime_max.value;
     idx += 1;
@@ -64,14 +64,12 @@ emit_particles(State& state,
     auto rotation = calc_rotation(idx, step);
     Transform transform;
     transform.translate(initial_position).rotate(rotation);
+    LinearVelocity velocity(params.speed);
+    velocity.velocity = rotation * glm::vec3(1, 0, 0) * params.speed;
     registry.replace<Lifetime>(entity, params.lifetime);
     registry.replace<LifetimeMax>(entity, params.lifetime);
-    registry.replace<Speed>(entity, params.velocity.speed);
     registry.replace<Transform>(entity, transform);
-    registry.replace<Velocity>(
-      entity,
-      Velocity(rotation * glm::vec3(1, 0, 0) * params.velocity.speed,
-               params.velocity.damping));
+    registry.replace<LinearVelocity>(entity, velocity);
   }
 }
 
@@ -87,7 +85,7 @@ emit_projectile(State& state,
   auto projectile_id = projectiles_view.front();
 
   auto [owner_transform, owner_velocity] =
-    registry.get<Transform, Velocity>(owner);
+    registry.get<Transform, LinearVelocity>(owner);
   auto player_z_rotation =
     glm::angleAxis(owner_transform.euler().z, glm::vec3(0, 0, 1));
   auto rotation = player_z_rotation * calc_spread_angle();
@@ -98,21 +96,19 @@ emit_projectile(State& state,
     auto entity = ModelFactory::make_projectile(registry, file_path);
     Transform transform;
     transform.translate(owner_transform.translation()).rotate(rotation);
-    Velocity velocity(move_direction * params.velocity.speed +
-                        owner_velocity.velocity,
-                      params.velocity.damping);
+    LinearVelocity velocity(params.speed);
+    velocity.velocity = move_direction * params.speed + owner_velocity.velocity;
     registry.replace<Transform>(entity, transform);
     registry.replace<InitialPosition>(entity, owner_transform.translation());
-    registry.replace<Speed>(entity, params.velocity.speed);
     registry.replace<Range>(entity, params.range);
-    registry.replace<Velocity>(entity, velocity);
+    registry.replace<LinearVelocity>(entity, velocity);
   } else {
-    auto [prj_transform, prj_initial_position, prj_velocity, prj_speed] =
-      registry.get<Transform, InitialPosition, Velocity, Speed>(projectile_id);
+    auto [prj_transform, prj_initial_position, prj_velocity] =
+      registry.get<Transform, InitialPosition, LinearVelocity>(projectile_id);
     prj_transform.translate(owner_transform.translation()).rotate(rotation);
     prj_initial_position.value = owner_transform.translation();
     prj_velocity.velocity =
-      move_direction * prj_speed.value + owner_velocity.velocity;
+      move_direction * prj_velocity.speed + owner_velocity.velocity;
     registry.emplace_or_replace<Available>(projectile_id);
   }
 }

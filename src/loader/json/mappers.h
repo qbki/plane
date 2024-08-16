@@ -179,12 +179,12 @@ struct adl_serializer<EntityParams>
       json_obj.at("lifetime").get_to(params.lifetime);
       json_obj.at("model_id").get_to(params.model_id);
       json_obj.at("quantity").get_to(params.quantity);
-      json_obj.at("velocity").get_to(params.velocity);
+      json_obj.at("speed").get_to(params.speed);
       value = params;
     } else if (kind == "actor") {
       EntityParamsActor params{};
       json_obj.at("model_id").get_to(params.model_id);
-      json_obj.at("velocity").get_to(params.velocity);
+      json_obj.at("speed").get_to(params.speed);
       set_optional(params.gun_id, json_obj, "gun_id");
       set_optional(params.debris_id, json_obj, "debris_id");
       set_optional(params.hit_particles_id, json_obj, "hit_particles_id");
@@ -194,7 +194,7 @@ struct adl_serializer<EntityParams>
       std::string sound_shot_path;
       json_obj.at("model_id").get_to(params.model_id);
       json_obj.at("range").get_to(params.range);
-      json_obj.at("velocity").get_to(params.velocity);
+      json_obj.at("speed").get_to(params.speed);
       json_obj.at("sound_shot").get_to(sound_shot_path);
       params.sound_shot = ASSETS_DIR / sound_shot_path;
       value = params;

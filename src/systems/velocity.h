@@ -5,4 +5,7 @@ void
 velocity_system(const Scene& scene);
 
 void
+linear_velocity_system(const Scene& scene);
+
+void
 velocity_gravity_system(const Scene& scene);

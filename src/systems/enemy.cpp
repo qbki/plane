@@ -6,6 +6,7 @@
 
 #include "src/collections/octree.h"
 #include "src/components/common.h"
+#include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
 #include "src/math/intersection.h"
@@ -37,7 +38,7 @@ enemy_hunting_system(Scene& scene)
   auto player_position = player_transform.translation();
   auto enemies_view = registry
                         .view<Transform,
-                              Velocity,
+                              LinearVelocity,
                               EnemyStateEnum,
                               MeshPointer,
                               EnemyKind,
@@ -82,7 +83,7 @@ enemy_hunting_system(Scene& scene)
     const auto direction_weight = 0.05f;
     sum = glm::normalize(sum + glm::normalize(player_position - position_a) *
                                  direction_weight);
-    velocity_a.acceleration += sum * velocity_a.scalar_acceleration;
+    velocity_a.velocity = sum * velocity_a.speed;
   }
 }
 

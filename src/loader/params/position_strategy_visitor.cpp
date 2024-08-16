@@ -8,6 +8,7 @@
 #include <tuple>
 #include <vector>
 
+#include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
 #include "src/game_state/factory.h"
@@ -42,12 +43,12 @@ PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy) const
   auto& registry = _scene->state().registry();
   auto& center = strategy.center;
   auto& radius = strategy.radius;
-  auto velocity_items_view =
+  auto speed_items_view =
     strategy.entity_ids | std::views::transform([&](const auto& id) {
-      return _entities->actor(id).velocity;
+      return _entities->actor(id).speed;
     });
-  std::vector<VelocityParams> velocity_items(velocity_items_view.begin(),
-                                             velocity_items_view.end());
+  std::vector<float> speed_items(speed_items_view.begin(),
+                                 speed_items_view.end());
   auto get_random_int =
     make_random_fn(static_cast<size_t>(0), strategy.entity_ids.size() - 1);
   auto radius_float = static_cast<float>(radius);
@@ -67,14 +68,14 @@ PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy) const
     auto entity_id = strategy.entity_ids.at(entity_index);
     auto entity_params = _entities->params(entity_id);
     auto entity = _entity_maker.get(entity_params);
-    auto velocity = velocity_items.at(entity_index);
+    auto speed = speed_items.at(entity_index);
     ComponetsAttacher(_scene, entity, _entities).attach(entity_params);
     Transform transform;
     transform.translate(glm::vec3(center.x + static_cast<float>(coord.x),
                                   center.y + static_cast<float>(coord.y),
                                   center.z));
     registry.replace<Transform>(entity, transform);
-    registry.replace<Velocity>(entity, velocity.acceleration, velocity.damping);
+    registry.replace<LinearVelocity>(entity, speed);
   }
 }
 

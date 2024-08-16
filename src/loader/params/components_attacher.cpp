@@ -1,6 +1,7 @@
 #include <variant>
 
 #include "src/components/common.h"
+#include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
 #include "src/game_state/factory.h"
@@ -23,7 +24,7 @@ ComponetsAttacher::ComponetsAttacher(Scene* scene,
 void
 ComponetsAttacher::operator()(const EntityParamsActor& params) const
 {
-  attach_velocity(params.velocity);
+  attach_linear_velocity(params.speed);
   attach_particles_emmiter_by_hit(params);
   attach_debris_emmiter(params);
   attach_projectile_emitter(params);
@@ -73,6 +74,12 @@ void
 ComponetsAttacher::attach(const EntityParams& params) const
 {
   std::visit(*this, params);
+}
+
+void
+ComponetsAttacher::attach_linear_velocity(const float& speed) const
+{
+  _registry->emplace_or_replace<LinearVelocity>(_entity, speed);
 }
 
 void

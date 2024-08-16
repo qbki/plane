@@ -6,6 +6,7 @@
 #include <string>
 
 #include "src/components/common.h"
+#include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
 #include "src/scene/scene.h"
@@ -16,11 +17,11 @@ void
 player_rotation_system(Scene& scene)
 {
   static const auto tilt_angle = glm::pi<float>() / 4.0f;
-  scene.state().registry().view<Transform, Velocity, PlayerKind>().each(
-    [&scene](auto& transform, const auto& velocity) {
+  scene.state().registry().view<Transform, LinearVelocity, PlayerKind>().each(
+    [&scene](Transform& transform, const LinearVelocity& velocity) {
       auto direction = scene.state().cursor() - transform.translation();
-      auto x_tilt = -velocity.velocity.y / velocity.max_speed;
-      auto y_tilt = velocity.velocity.x / velocity.max_speed;
+      auto x_tilt = -velocity.velocity.y / velocity.speed;
+      auto y_tilt = velocity.velocity.x / velocity.speed;
       auto x = glm::angleAxis(tilt_angle * x_tilt, glm::vec3(1, 0, 0));
       auto y = glm::angleAxis(tilt_angle * y_tilt, glm::vec3(0, 1, 0));
       auto z =
@@ -71,8 +72,8 @@ player_moving_system(const Scene& scene)
   auto direction = is_approx_equal(glm::length2(move_direction), 0.0f)
                      ? move_direction
                      : glm::normalize(move_direction);
-  scene.state().registry().view<Velocity, PlayerKind>().each(
-    [&direction](Velocity& velocity) {
-      velocity.acceleration = direction * velocity.scalar_acceleration;
+  scene.state().registry().view<LinearVelocity, PlayerKind>().each(
+    [&direction](LinearVelocity& velocity) {
+      velocity.velocity = direction * velocity.speed;
     });
 }

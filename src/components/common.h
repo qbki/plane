@@ -1,6 +1,5 @@
 #pragma once
 #include <entt/entity/fwd.hpp>
-#include <filesystem>
 #include <functional> // IWYU pragma: export
 #include <glm/gtc/constants.hpp>
 #include <glm/vec3.hpp>
@@ -16,7 +15,6 @@
 enum class EnemyStateEnum
 {
   HUNTING = 0,
-  SINKING,
   INACTIVE,
 };
 
@@ -33,6 +31,7 @@ using Range = NewType<float, struct RangeTag>;
 using ShotSound = NewType<std::optional<std::string>, struct ShotSoundTag>;
 using Speed = NewType<float, struct SpeedTag>;
 using Text = NewType<std::string, struct TextTab>;
+using TexturePointer = std::shared_ptr<Texture>;
 using TutorialButton = NewType<Control::Action, struct TutorialButtonTag>;
 using UniqueTexturePtr = std::unique_ptr<Texture>;
 
@@ -49,6 +48,8 @@ struct DirectionalLightKind
 {};
 struct EnemyKind
 {};
+struct DebrisKind
+{};
 struct ParticleKind
 {};
 struct PlayerKind
@@ -63,6 +64,9 @@ struct GUIKind
 {};
 
 using ParticlesEmitter = std::function<void(glm::vec3 position)>;
+using DebrisEmitter = NewType<
+  std::function<void(entt::registry& registry, const glm::vec3& position)>,
+  struct DebrisEmitterTag>;
 using ProjectileEmitter =
   NewType<std::optional<std::function<void(entt::entity entity)>>,
           struct ProjectileEmitterTag>;

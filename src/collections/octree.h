@@ -3,16 +3,12 @@
 #include <entt/entt.hpp>
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
-#include <iostream>
 #include <memory>
-#include <optional>
-#include <ranges>
 #include <vector>
 
 #include "src/consts.h"
 #include "src/math/intersection.h"
 #include "src/math/shapes.h"
-#include "src/utils/common.h"
 
 /**
  * An implementation of an octree data structure.

@@ -7,7 +7,6 @@
 #include <unordered_map>
 
 #include "src/components/common.h"
-#include "src/components/textures.h"
 #include "src/components/transform.h"
 #include "src/consts.h"
 #include "src/gui/core/font.h"
@@ -30,7 +29,7 @@ static const Material COMMON_MATERIAL(glm::vec3(0.05, 0.05, 0.05),
 struct TransformHolder
 {
   Mesh* mesh = nullptr;
-  const Textures* textures = nullptr;
+  const Texture* texture = nullptr;
   Mesh::DrawParams draw_params;
 };
 
@@ -38,7 +37,7 @@ void
 draw(std::unordered_map<Mesh*, TransformHolder>& transform_holders)
 {
   for (auto& [_, holder] : transform_holders) {
-    holder.textures->use();
+    holder.texture->use(0);
     holder.mesh->draw(holder.draw_params);
   }
 }
@@ -47,22 +46,17 @@ void
 update_transform_mapping(
   std::unordered_map<Mesh*, TransformHolder>& transform_mapping,
   Mesh* mesh_pointer,
-  const Textures* textures_pointer,
+  const Texture* texture_pointer,
   glm::mat4& transform)
 {
   if (transform_mapping.contains(mesh_pointer)) {
     auto& holder = transform_mapping[mesh_pointer];
     holder.draw_params.transforms.push_back(transform);
-    holder.draw_params.texture_indices.push_back(
-      textures_pointer->texture_type());
   } else {
     transform_mapping[mesh_pointer] = { .mesh = mesh_pointer,
-                                        .textures = textures_pointer,
+                                        .texture = texture_pointer,
                                         .draw_params{
-                                          .transforms{ transform },
-                                          .texture_indices{
-                                            textures_pointer->texture_type() },
-                                        } };
+                                          .transforms{ transform } } };
   }
 }
 
@@ -88,12 +82,12 @@ render_generic_objects(App& app, const Scene& scene)
   registry
     .view<const Transform,
           const MeshPointer,
-          const Textures,
+          const TexturePointer,
           const Opaque,
           const Available>()
     .each([&](const Transform& transform,
               const MeshPointer& mesh,
-              const Textures& textures) {
+              const TexturePointer& texture) {
       const auto transformed_collider =
         apply_transform_to_collider(transform, mesh->bounding_volume());
       if (!is_in_frustum(frustum, transformed_collider)) {
@@ -101,7 +95,7 @@ render_generic_objects(App& app, const Scene& scene)
       }
       auto& matrix = transform.matrix();
       update_transform_mapping(
-        transform_mapping, mesh.get(), &textures, matrix);
+        transform_mapping, mesh.get(), texture.get(), matrix);
     });
   geometry_pass_shader.uniform("u_primary_texture", 0);
   geometry_pass_shader.uniform("u_secondary_texture", 1);
@@ -181,15 +175,15 @@ render_particles(App& app, const Scene& scene)
   registry
     .view<const Transform,
           const MeshPointer,
-          const Textures,
+          const TexturePointer,
           const Available,
           const ParticleKind>()
     .each([&transform_mapping](const Transform& transform,
                                const MeshPointer& mesh,
-                               const Textures& textures) {
+                               const TexturePointer& texture) {
       auto& matrix = transform.matrix();
       update_transform_mapping(
-        transform_mapping, mesh.get(), &textures, matrix);
+        transform_mapping, mesh.get(), texture.get(), matrix);
     });
   particle_shader.uniform("u_main_texture", 0);
   draw(transform_mapping);
@@ -224,11 +218,8 @@ render_ui(const Scene& scene)
 
       glm::mat4 global_matrix =
         get_global_matrix(registry, parent) * transform.matrix();
-      Services::gui_quad().draw({
-        .transforms = std::vector<glm::mat4>{ global_matrix },
-        .texture_indices =
-          std::vector<TextureType::Type>{ TextureType::Type::PRIMARY },
-      });
+      Services::gui_quad().draw(
+        { .transforms = std::vector<glm::mat4>{ global_matrix } });
     });
 }
 

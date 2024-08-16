@@ -1,12 +1,11 @@
 #include <filesystem>
 #include <glm/vec3.hpp>
+#include <optional>
 #include <tiny_gltf.h>
 #include <tuple>
 #include <unordered_map>
-#include <utility>
 
 #include "src/consts.h"
-#include "src/game_state/texture_type.h"
 #include "src/sound/sound.h"
 #include "src/texture.h"
 #include "src/utils/file_loaders.h"
@@ -25,8 +24,8 @@ exctract_material_color(tinygltf::Model& model)
   return { color.at(0), color.at(1), color.at(2) };
 }
 
-Cache::TexturesPtr
-generate_textures(tinygltf::Model& model)
+Cache::TexturePtr
+generate_texture(tinygltf::Model& model)
 {
   auto color = exctract_material_color(model);
   auto to_integer_value = [&](float value) {
@@ -37,46 +36,40 @@ generate_textures(tinygltf::Model& model)
                                    to_integer_value(color.y),
                                    to_integer_value(color.z),
                                    to_integer_value(1.0) };
-  auto textures =
-    std::make_shared<std::unordered_map<TextureType::Type, Texture>>();
-  textures->emplace(TextureType::Type::PRIMARY, Texture{ 1, 1, data });
-  textures->emplace(TextureType::Type::SECONDARY, Texture{ 1, 1, data });
-  return textures;
+  return std::make_shared<Texture>(1, 1, data);
 }
 
-Cache::TexturesPtr
-extract_textures(const tinygltf::Model& model)
+std::optional<Cache::TexturePtr>
+extract_texture(const tinygltf::Model& model)
 {
-  auto textures =
-    std::make_shared<std::unordered_map<TextureType::Type, Texture>>();
-  for (const auto& image : model.images) {
-    auto texture_type = TextureType::map_to_type(image.name);
-    textures->emplace(texture_type,
-                      Texture(image.width, image.height, image.image));
+  if (model.images.size() == 0) {
+    return std::nullopt;
   }
-  return textures;
+  auto& image = model.images[0];
+  auto texture =
+    std::make_shared<Texture>(image.width, image.height, image.image);
+  return std::make_optional(texture);
 }
 
 Cache::Cache()
-  : _meshes(std::unordered_map<std::string, std::tuple<MeshPtr, TexturesPtr>>())
+  : _meshes(std::unordered_map<std::string, std::tuple<MeshPtr, TexturePtr>>())
 {
 }
 
-std::tuple<Cache::MeshPtr, Cache::TexturesPtr>
+std::tuple<Cache::MeshPtr, Cache::TexturePtr>
 Cache::get_model(const std::filesystem::path& mesh_file_name)
 {
   if (_meshes.contains(mesh_file_name)) {
     return _meshes[mesh_file_name];
   }
   auto gltf_model = load_gltf_model(ASSETS_DIR / mesh_file_name);
-  auto extracted_textures = extract_textures(gltf_model);
+  auto extracted_texture_opt = extract_texture(gltf_model);
+  auto texture = extracted_texture_opt.has_value()
+                   ? extracted_texture_opt.value()
+                   : generate_texture(gltf_model);
   auto mesh = std::make_shared<Mesh>(gltf_model);
-  auto textures = generate_textures(gltf_model);
-  for (auto& [idx, texture] : *extracted_textures) {
-    textures->at(idx) = std::move(texture);
-  }
-  _meshes[mesh_file_name] = std::make_tuple(mesh, textures);
-  return { mesh, textures };
+  _meshes[mesh_file_name] = std::make_tuple(mesh, texture);
+  return { mesh, texture };
 }
 
 Cache::SoundPtr

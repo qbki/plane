@@ -14,9 +14,9 @@
 #include "sdl_init.h"
 #include "service.h"
 #include "services.h"
-#include "src/utils/types.h"
 #include "systems/render.h"
 #include "utils/file_loaders.h"
+#include "utils/types.h"
 
 int
 main()

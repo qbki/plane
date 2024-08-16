@@ -4,7 +4,6 @@
 #include <tuple>
 #include <unordered_map>
 
-#include "src/game_state/texture_type.h"
 #include "src/mesh.h"
 #include "src/sound/sound.h"
 #include "src/texture.h"
@@ -16,18 +15,17 @@ class Cache
 {
 public:
   using MeshPtr = std::shared_ptr<Mesh>;
-  using TexturesPtr =
-    std::shared_ptr<std::unordered_map<TextureType::Type, Texture>>;
+  using TexturePtr = std::shared_ptr<Texture>;
   using SoundPtr = std::shared_ptr<Sound::Sound>;
 
 private:
-  std::unordered_map<std::string, std::tuple<MeshPtr, TexturesPtr>> _meshes;
+  std::unordered_map<std::string, std::tuple<MeshPtr, TexturePtr>> _meshes;
   std::unordered_map<std::string, SoundPtr> _sounds;
 
 public:
   Cache();
 
-  std::tuple<MeshPtr, TexturesPtr> get_model(
+  std::tuple<MeshPtr, TexturePtr> get_model(
     const std::filesystem::path& mesh_file_name);
   SoundPtr get_sound(const std::filesystem::path& sound_file_name);
 };

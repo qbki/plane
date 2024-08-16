@@ -34,5 +34,6 @@ public:
   void attach_tutorial_button_value(Control::Action action) const;
   void attach_particles_emmiter_by_hit(
     const EntityParamsActor& actor_params) const;
+  void attach_debris_emmiter(const EntityParamsActor& actor_params) const;
   void attach_projectile_emitter(const EntityParamsActor& actor_params) const;
 };

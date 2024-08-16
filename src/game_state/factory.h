@@ -17,6 +17,8 @@ entt::entity
 make_projectile(entt::registry& registry, const std::string& file_path);
 entt::entity
 make_static(entt::registry& registry, const std::string& file_path);
+entt::entity
+make_debris(entt::registry& registry, const std::string& file_path);
 
 entt::entity
 make_directional_light(entt::registry& registry, const std::string&);

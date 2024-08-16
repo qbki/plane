@@ -19,6 +19,7 @@
 #include "src/systems/calculate_world_bbox.h"
 #include "src/systems/camera.h"
 #include "src/systems/cursor.h"
+#include "src/systems/debris.h"
 #include "src/systems/enemy.h"
 #include "src/systems/finish_condition.h"
 #include "src/systems/particles.h"
@@ -95,10 +96,10 @@ load_next_level(const Events::LoadLevelEvent&)
     game->handlers().add(player_shooting_system);
     game->handlers().add(enemy_hunting_system);
     game->handlers().add(enemy_rotation_system);
-    game->handlers().add(enemy_sinking_system);
     game->handlers().add(particle_handler_system);
     game->handlers().add(velocity_gravity_system);
     game->handlers().add(velocity_system);
+    game->handlers().add(remove_debris_system);
     game->handlers().add(camera_move_system);
     game->handlers().add(projectile_handler_system);
     game->handlers().add(tutorial_buttons_system);

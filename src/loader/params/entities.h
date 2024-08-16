@@ -4,7 +4,6 @@
 #include <optional> // IWYU pragma: export
 #include <string>
 #include <variant>
-#include <vector>
 
 #include "src/control.h"
 
@@ -26,6 +25,7 @@ struct EntityParamsActor
   VelocityParams velocity;
   std::string model_id;
   std::optional<std::string> gun_id;
+  std::optional<std::string> debris_id;
   std::optional<std::string> hit_particles_id;
 };
 

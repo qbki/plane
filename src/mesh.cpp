@@ -12,7 +12,6 @@
 #include <tuple>
 #include <vector>
 
-#include "src/game_state/texture_type.h"
 #include "src/math/shapes.h"
 #include "src/utils/gl.h"
 
@@ -21,11 +20,10 @@
 const int VERTEX_LOCATION = 0;
 const int NORMAL_LOCATION = 1;
 const int TEXCOORD_LOCATION = 2;
-const int TEXTURE_INDICES_LOCATION = 3;
-const int MODEL_TRANSFORM_1_LOCATION = 4;
-const int MODEL_TRANSFORM_2_LOCATION = 5;
-const int MODEL_TRANSFORM_3_LOCATION = 6;
-const int MODEL_TRANSFORM_4_LOCATION = 7;
+const int MODEL_TRANSFORM_1_LOCATION = 3;
+const int MODEL_TRANSFORM_2_LOCATION = 4;
+const int MODEL_TRANSFORM_3_LOCATION = 5;
+const int MODEL_TRANSFORM_4_LOCATION = 6;
 
 const auto TEXT_COORD_NAME = "TEXCOORD_0";
 
@@ -92,25 +90,6 @@ create_buffer_from_gltf(GLuint& buffer_handle,
                static_cast<GLsizeiptr>(buffer_data.size()),
                buffer_data.data(),
                GL_STATIC_DRAW);
-}
-
-void
-create_texture_indices_attribute(GLuint& buffer_object,
-                                 size_t instance_quantity)
-{
-  std::vector<TextureType::Type> texture_indeces(instance_quantity,
-                                                 TextureType::Type::PRIMARY);
-  create_buffer(
-    buffer_object, GL_ARRAY_BUFFER, texture_indeces, GL_DYNAMIC_DRAW);
-  glVertexAttribIPointer(TEXTURE_INDICES_LOCATION,
-                         1,
-                         GL_UNSIGNED_BYTE,
-                         sizeof(TextureType::Type),
-                         nullptr);
-  glVertexAttribDivisor(TEXTURE_INDICES_LOCATION, 1);
-  glEnableVertexAttribArray(TEXTURE_INDICES_LOCATION);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  print_opengl_errors("create_texture_indices_attribute");
 }
 
 void
@@ -240,8 +219,6 @@ Mesh::Mesh(tinygltf::Model& model)
 
     print_opengl_errors("Mesh::Mesh");
 
-    create_texture_indices_attribute(_texture_indices_buffer_object,
-                                     _instance_quantity);
     create_transform_attribute(_transform_buffer_object, _instance_quantity);
   } catch (...) {
     free();
@@ -284,8 +261,6 @@ Mesh::Mesh(std::vector<float>& vertices,
 
   create_buffer(_element_buffer_object, GL_ELEMENT_ARRAY_BUFFER, indices);
 
-  create_texture_indices_attribute(_texture_indices_buffer_object,
-                                   _instance_quantity);
   create_transform_attribute(_transform_buffer_object, _instance_quantity);
 }
 
@@ -310,17 +285,11 @@ Mesh::~Mesh()
 void
 Mesh::draw(const DrawParams& draw_params)
 {
-  auto& [transforms, texture_indices] = draw_params;
+  auto& transforms = draw_params.transforms;
   if (transforms.size() > _instance_quantity) {
-    auto indices_size = resize_buffer_data(_texture_indices_buffer_object,
-                                           GL_ARRAY_BUFFER,
-                                           texture_indices,
-                                           TextureType::DEFAULT_TYPE);
-    auto transforms_size = resize_buffer_data(
+    _instance_quantity = resize_buffer_data(
       _transform_buffer_object, GL_ARRAY_BUFFER, transforms, glm::mat4(1.0));
-    _instance_quantity = std::min(indices_size, transforms_size);
   } else {
-    populate_buffer(_texture_indices_buffer_object, texture_indices);
     populate_buffer(_transform_buffer_object, transforms);
   }
   glBindVertexArray(_vertex_array_object);

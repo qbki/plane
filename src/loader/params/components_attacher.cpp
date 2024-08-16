@@ -1,7 +1,9 @@
 #include <variant>
 
 #include "src/components/common.h"
+#include "src/components/transform.h"
 #include "src/components/velocity.h"
+#include "src/game_state/factory.h"
 #include "src/utils/noop.h"
 
 #include "components_attacher.h"
@@ -23,6 +25,7 @@ ComponetsAttacher::operator()(const EntityParamsActor& params) const
 {
   attach_velocity(params.velocity);
   attach_particles_emmiter_by_hit(params);
+  attach_debris_emmiter(params);
   attach_projectile_emitter(params);
   auto model = _entities->model(params.model_id);
   (*this)(model);
@@ -123,6 +126,24 @@ ComponetsAttacher::attach_particles_emmiter_by_hit(
       scene->state(), position, particles_params, model_params.path);
   } };
   _registry->emplace_or_replace<ParticlesEmitter>(_entity, emitter);
+}
+
+void
+ComponetsAttacher::attach_debris_emmiter(
+  const EntityParamsActor& actor_params) const
+{
+  if (!actor_params.debris_id.has_value()) {
+    return;
+  }
+  auto& debris_id = actor_params.debris_id.value();
+  auto model_path = _entities->model(debris_id).path;
+  DebrisEmitter emitter{ [model_path](entt::registry& registry,
+                                      glm::vec3 position) {
+    auto entity = ModelFactory::make_debris(registry, model_path);
+    auto& transform = registry.get<Transform>(entity);
+    transform.translate(position);
+  } };
+  _registry->emplace_or_replace<DebrisEmitter>(_entity, emitter);
 }
 
 void

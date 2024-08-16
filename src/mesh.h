@@ -6,7 +6,6 @@
 #include <tiny_gltf.h>
 #include <vector> // IWYU pragma: export
 
-#include "src/game_state/texture_type.h"
 #include "src/math/shapes.h"
 
 class Mesh
@@ -15,7 +14,6 @@ public:
   struct DrawParams
   {
     std::vector<glm::mat4> transforms;
-    std::vector<TextureType::Type> texture_indices;
   };
 
 private:
@@ -23,7 +21,6 @@ private:
   GLuint _vertex_buffer_object = 0;
   GLuint _normal_buffer_object = 0;
   GLuint _transform_buffer_object = 0;
-  GLuint _texture_indices_buffer_object = 0;
   GLuint _element_buffer_object = 0;
   GLuint _texcoord_buffer_object = 0;
 

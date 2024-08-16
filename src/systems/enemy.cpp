@@ -1,5 +1,4 @@
 #include <glm/geometric.hpp>
-#include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
 #include <ranges>
 #include <tuple>
@@ -12,13 +11,10 @@
 #include "src/math/intersection.h"
 #include "src/math/shapes.h"
 #include "src/scene/scene.h"
-#include "src/services.h"
 
 #include "enemy.h"
 
-const float INACTIVE_ALTITUDE = -2.0;
 const unsigned int MAX_OCTREE_DEPTH = 12;
-const float SINKING_ROTATION_SPEED_PER_SEC = glm::two_pi<float>();
 
 bool
 are_siblings_close(glm::vec3 a, glm::vec3 b)
@@ -88,23 +84,6 @@ enemy_hunting_system(Scene& scene)
                                  direction_weight);
     velocity_a.acceleration += sum * velocity_a.scalar_acceleration;
   }
-}
-
-void
-enemy_sinking_system(Scene& scene)
-{
-  auto& registry = scene.state().registry();
-  registry.view<Transform, EnemyStateEnum, EnemyKind, Available>().each(
-    [&](entt::entity id, Transform& transform, EnemyStateEnum& state) {
-      if (state == EnemyStateEnum::SINKING) {
-        transform.add_rotation_z(SINKING_ROTATION_SPEED_PER_SEC *
-                                 Services::app().delta_time());
-        if (transform.translation().z < INACTIVE_ALTITUDE) {
-          registry.remove<Available>(id);
-          state = EnemyStateEnum::INACTIVE;
-        }
-      }
-    });
 }
 
 void

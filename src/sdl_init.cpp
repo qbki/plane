@@ -102,6 +102,11 @@ init_context(SDL_Window* window)
   }
   Services::logger().info("Context has been created.");
 
+  auto swap_interwal_error = SDL_GL_SetSwapInterval(1);
+  if (swap_interwal_error < 0) {
+    throw_sdl_error("Unable to enable VSync");
+  }
+
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
   if (GLEW_OK != err) {

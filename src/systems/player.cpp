@@ -20,8 +20,12 @@ player_rotation_system(Scene& scene)
   scene.state().registry().view<Transform, LinearVelocity, PlayerKind>().each(
     [&scene](Transform& transform, const LinearVelocity& velocity) {
       auto direction = scene.state().cursor() - transform.translation();
-      auto x_tilt = -velocity.velocity.y / velocity.speed;
-      auto y_tilt = velocity.velocity.x / velocity.speed;
+      float x_tilt = 0;
+      float y_tilt = 0;
+      if (velocity.speed > 0) {
+        x_tilt = -velocity.velocity.y / velocity.speed;
+        y_tilt = velocity.velocity.x / velocity.speed;
+      }
       auto x = glm::angleAxis(tilt_angle * x_tilt, glm::vec3(1, 0, 0));
       auto y = glm::angleAxis(tilt_angle * y_tilt, glm::vec3(0, 1, 0));
       auto z =

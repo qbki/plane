@@ -196,7 +196,6 @@ struct adl_serializer<EntityParams>
       json_obj.at("bullet_speed").get_to(params.bullet_speed);
       json_obj.at("lifetime").get_to(params.lifetime);
       json_obj.at("spread").get_to(params.spread);
-      json_obj.at("range").get_to(params.range);
       json_obj.at("fire_rate").get_to(params.fire_rate);
       json_obj.at("shot_sound_path").get_to(shot_sound_path);
       params.shot_sound_path = ASSETS_DIR / shot_sound_path;

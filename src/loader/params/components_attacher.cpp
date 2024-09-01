@@ -132,7 +132,6 @@ ComponetsAttacher::attach_weapon(const EntityParamsActor& actor_params) const
   gun.shot_sound_path = gun_params.shot_sound_path;
   gun.lifetime = gun_params.lifetime;
   gun.fire_rate = gun_params.fire_rate;
-  gun.range = gun_params.range;
   _registry->emplace_or_replace<Weapon>(_entity, gun);
 }
 

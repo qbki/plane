@@ -53,7 +53,6 @@ struct EntityParamsWeapon
   float bullet_speed;
   float fire_rate;
   float lifetime;
-  float range;
   float spread;
   std::string bullet_model_id;
   std::filesystem::path shot_sound_path;

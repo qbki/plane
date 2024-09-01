@@ -75,6 +75,9 @@ App::gl_context() const
   return _gl_context.get();
 }
 
+/**
+ * Returns seconds since the last frame.
+ */
 float
 App::delta_time() const
 {

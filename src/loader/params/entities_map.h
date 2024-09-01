@@ -53,7 +53,7 @@ public:
   EntityParams params(const std::string& key) const;
   EntityParamsActor actor(const std::string& key) const;
   EntityParamsDirectionalLight directional_light(const std::string& key) const;
-  EntityParamsGun gun(const std::string& key) const;
+  EntityParamsWeapon weapon(const std::string& key) const;
   EntityParamsModel model(const std::string& key) const;
   EntityParamsParticles particles(const std::string& key) const;
   EntityParamsPointLight point_light(const std::string& key) const;

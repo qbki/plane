@@ -22,6 +22,7 @@
 #include "src/systems/debris.h"
 #include "src/systems/enemy.h"
 #include "src/systems/finish_condition.h"
+#include "src/systems/gun.h"
 #include "src/systems/particles.h"
 #include "src/systems/player.h"
 #include "src/systems/projectiles.h"
@@ -102,6 +103,7 @@ load_next_level(const Events::LoadLevelEvent&)
     game->handlers().add(velocity_system);
     game->handlers().add(remove_debris_system);
     game->handlers().add(camera_move_system);
+    game->handlers().add(gun_shooting_system);
     game->handlers().add(projectile_handler_system);
     game->handlers().add(tutorial_buttons_system);
     game->handlers().add(tutorial_buttons_system);

@@ -3,12 +3,11 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/trigonometric.hpp>
-#include <string>
 
 #include "src/components/common.h"
 #include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
-#include "src/components/velocity.h"
+#include "src/components/weapon.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/utils/common.h"
@@ -38,22 +37,10 @@ void
 player_shooting_system(const Scene& scene)
 {
   const auto& control = Services::app().control();
-  if (!control.is_player_shooting) {
-    return;
-  }
-  scene.state()
-    .registry()
-    .view<ProjectileEmitter, ShotSound, PlayerKind>()
-    .each(
-      [](entt::entity entity, ProjectileEmitter& emitter, ShotSound& sound) {
-        if (emitter.value.has_value()) {
-          emitter.value.value()(entity);
-        }
-        if (sound.value.has_value()) {
-          Services::events<const Events::ShootEvent>().emit(
-            { sound.value.value() });
-        }
-      });
+  scene.state().registry().view<Weapon, PlayerKind>().each(
+    [&control](Weapon& weapon) {
+      weapon.is_shooting = control.is_player_shooting;
+    });
 };
 
 void

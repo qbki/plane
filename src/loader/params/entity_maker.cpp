@@ -30,9 +30,9 @@ EntityMaker::operator()(const EntityParamsDirectionalLight&) const
 }
 
 entt::entity
-EntityMaker::operator()(const EntityParamsGun& params) const
+EntityMaker::operator()(const EntityParamsWeapon& params) const
 {
-  auto path = _mapping->model(params.model_id).path;
+  auto path = _mapping->model(params.bullet_model_id).path;
   return (*_maker_fn)(*_registry, path);
 }
 

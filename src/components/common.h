@@ -18,7 +18,7 @@ enum class EnemyStateEnum
   INACTIVE,
 };
 
-using Children = NewType<std::vector<entt::entity>, struct ChildrenTab>;
+using Children = NewType<std::vector<entt::entity>, struct ChildrenTag>;
 using Color = NewType<glm::vec3, struct ColorTag>;
 using Direction = NewType<glm::vec3, struct DirectionTag>;
 using InitialPosition = NewType<glm::vec3, struct InitialPositionTag>;
@@ -26,11 +26,12 @@ using IsDirty = NewType<bool, struct IsDirtyTag>;
 using Lifetime = NewType<float, struct LifeTimeTag>;
 using LifetimeMax = NewType<float, struct LifeTimeMaxTag>;
 using MeshPointer = std::shared_ptr<Mesh>;
+using Owner = NewType<entt::entity, struct OwnerTag>;
 using Parent = NewType<std::optional<entt::entity>, struct ParentTag>;
 using Range = NewType<float, struct RangeTag>;
 using ShotSound = NewType<std::optional<std::string>, struct ShotSoundTag>;
 using Speed = NewType<float, struct SpeedTag>;
-using Text = NewType<std::string, struct TextTab>;
+using Text = NewType<std::string, struct TextTag>;
 using TexturePointer = std::shared_ptr<Texture>;
 using TutorialButton = NewType<Control::Action, struct TutorialButtonTag>;
 using UniqueTexturePtr = std::unique_ptr<Texture>;
@@ -67,9 +68,6 @@ using ParticlesEmitter = std::function<void(glm::vec3 position)>;
 using DebrisEmitter = NewType<
   std::function<void(entt::registry& registry, const glm::vec3& position)>,
   struct DebrisEmitterTag>;
-using ProjectileEmitter =
-  NewType<std::optional<std::function<void(entt::entity entity)>>,
-          struct ProjectileEmitterTag>;
 
 struct PointLightParams
 {

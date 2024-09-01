@@ -4,6 +4,7 @@
 #include "src/components/common.h"
 #include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
+#include "src/components/weapon.h"
 #include "src/services.h"
 
 #include "factory.h"
@@ -16,12 +17,12 @@ make_player(entt::registry& registry, const std::string& file_path)
   auto entity = registry.create();
   auto [mesh, texture] = Services::cache().get_model(file_path);
   registry.emplace<Available>(entity);
+  registry.emplace<Weapon>(entity);
+  registry.emplace<LinearVelocity>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<PlayerKind>(entity);
-  registry.emplace<ProjectileEmitter>(entity, std::nullopt);
   registry.emplace<TexturePointer>(entity, texture);
   registry.emplace<Transform>(entity);
-  registry.emplace<LinearVelocity>(entity);
   return entity;
 }
 
@@ -63,14 +64,15 @@ make_projectile(entt::registry& registry, const std::string& file_path)
   auto [mesh, texture] = Services::cache().get_model(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
-  registry.emplace<InitialPosition>(entity, glm::zero<glm::vec3>());
+  registry.emplace<Lifetime>(entity, 0);
+  registry.emplace<LinearVelocity>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
+  registry.emplace<Owner>(entity, static_cast<entt::entity>(entt::null));
   registry.emplace<ParticleKind>(entity);
   registry.emplace<ProjectileKind>(entity);
   registry.emplace<Range>(entity, 0);
   registry.emplace<TexturePointer>(entity, texture);
   registry.emplace<Transform>(entity);
-  registry.emplace<LinearVelocity>(entity);
   return entity;
 }
 

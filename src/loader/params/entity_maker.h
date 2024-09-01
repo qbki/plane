@@ -18,7 +18,7 @@ public:
               const ModelFactory::MakerFn* maker_fn);
   entt::entity operator()(const EntityParamsActor& params) const;
   entt::entity operator()(const EntityParamsDirectionalLight&) const;
-  entt::entity operator()(const EntityParamsGun& params) const;
+  entt::entity operator()(const EntityParamsWeapon& params) const;
   entt::entity operator()(const EntityParamsModel& params) const;
   entt::entity operator()(const EntityParamsParticles& params) const;
   entt::entity operator()(const EntityParamsPointLight&) const;

@@ -8,7 +8,6 @@
 #include "src/components/common.h"
 #include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
-#include "src/components/velocity.h"
 #include "src/math/intersection.h"
 #include "src/math/shapes.h"
 #include "src/scene/scene.h"

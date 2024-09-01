@@ -20,7 +20,7 @@ public:
                     const EntityParamsMap* params_map);
   void operator()(const EntityParamsActor& params) const;
   void operator()(const EntityParamsDirectionalLight& params) const;
-  void operator()(const EntityParamsGun& params) const;
+  void operator()(const EntityParamsWeapon& params) const;
   void operator()(const EntityParamsModel& params) const;
   void operator()(const EntityParamsParticles& params) const;
   void operator()(const EntityParamsPointLight& params) const;
@@ -32,9 +32,9 @@ public:
   void attach_direction(const glm::vec3& direction) const;
   void attach_color(const glm::vec3& color) const;
   void attach_tutorial_button_value(Control::Action action) const;
+  void attach_weapon(const EntityParamsActor& actor_params) const;
   void attach_particles_emmiter_by_hit(
     const EntityParamsActor& actor_params) const;
   void attach_linear_velocity(const float& speed) const;
   void attach_debris_emmiter(const EntityParamsActor& actor_params) const;
-  void attach_projectile_emitter(const EntityParamsActor& actor_params) const;
 };

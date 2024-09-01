@@ -11,9 +11,3 @@ emit_particles(State& state,
                glm::vec3 initial_position,
                const EntityParamsParticles& params,
                const std::string& file_path);
-
-void
-emit_projectile(State& state,
-                const entt::entity owner,
-                const EntityParamsGun& params,
-                const std::string& file_path);

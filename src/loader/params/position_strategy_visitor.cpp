@@ -10,7 +10,6 @@
 
 #include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
-#include "src/components/velocity.h"
 #include "src/game_state/factory.h"
 #include "src/utils/random.h"
 

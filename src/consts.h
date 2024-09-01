@@ -8,7 +8,7 @@ const float FARTHEST_NDS_Z_COORD = 0.99999;
 const int DEFAULT_SCREEN_WIDTH = 800;
 const int DEFAULT_SCREEN_HEIGHT = 600;
 
-const int DEFAULT_AUDIO_CHUNKSIZE = 2048;
+const int DEFAULT_AUDIO_CHUNKSIZE = 256;
 const int DEFAULT_MAX_CHANNELS = 100;
 
 const float HALF = 0.5;

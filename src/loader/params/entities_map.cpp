@@ -42,10 +42,10 @@ EntityParamsMap::point_light(const std::string& key) const
   return get<EntityParamsPointLight>(key);
 }
 
-EntityParamsGun
-EntityParamsMap::gun(const std::string& key) const
+EntityParamsWeapon
+EntityParamsMap::weapon(const std::string& key) const
 {
-  return get<EntityParamsGun>(key);
+  return get<EntityParamsWeapon>(key);
 }
 
 EntityParamsParticles

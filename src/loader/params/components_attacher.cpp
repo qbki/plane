@@ -4,6 +4,7 @@
 #include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
 #include "src/components/velocity.h"
+#include "src/components/weapon.h"
 #include "src/game_state/factory.h"
 #include "src/utils/noop.h"
 
@@ -27,7 +28,7 @@ ComponetsAttacher::operator()(const EntityParamsActor& params) const
   attach_linear_velocity(params.speed);
   attach_particles_emmiter_by_hit(params);
   attach_debris_emmiter(params);
-  attach_projectile_emitter(params);
+  attach_weapon(params);
   auto model = _entities->model(params.model_id);
   (*this)(model);
 }
@@ -46,7 +47,7 @@ ComponetsAttacher::operator()(const EntityParamsPointLight& params) const
 }
 
 void
-ComponetsAttacher::operator()(const EntityParamsGun&) const
+ComponetsAttacher::operator()(const EntityParamsWeapon&) const
 {
   noop();
 }
@@ -116,6 +117,26 @@ ComponetsAttacher::attach_tutorial_button_value(Control::Action action) const
 }
 
 void
+ComponetsAttacher::attach_weapon(const EntityParamsActor& actor_params) const
+{
+  if (!actor_params.weapon_id.has_value()) {
+    return;
+  }
+  const auto gun_params = _entities->weapon(actor_params.weapon_id.value());
+  const auto bullet_model_path =
+    _entities->model(gun_params.bullet_model_id).path;
+  Weapon gun{};
+  gun.bullet_speed = gun_params.bullet_speed;
+  gun.bullet_model_path = bullet_model_path;
+  gun.spread = gun_params.spread;
+  gun.shot_sound_path = gun_params.shot_sound_path;
+  gun.lifetime = gun_params.lifetime;
+  gun.fire_rate = gun_params.fire_rate;
+  gun.range = gun_params.range;
+  _registry->emplace_or_replace<Weapon>(_entity, gun);
+}
+
+void
 ComponetsAttacher::attach_particles_emmiter_by_hit(
   const EntityParamsActor& actor_params) const
 {
@@ -151,24 +172,4 @@ ComponetsAttacher::attach_debris_emmiter(
     transform.translate(position);
   } };
   _registry->emplace_or_replace<DebrisEmitter>(_entity, emitter);
-}
-
-void
-ComponetsAttacher::attach_projectile_emitter(
-  const EntityParamsActor& actor_params) const
-{
-  if (!actor_params.gun_id.has_value()) {
-    _registry->emplace_or_replace<ShotSound>(_entity, std::nullopt);
-    _registry->emplace_or_replace<ProjectileEmitter>(_entity, std::nullopt);
-    return;
-  }
-  auto gun_params = _entities->gun(actor_params.gun_id.value());
-  auto model_params = _entities->model(gun_params.model_id);
-  auto scene = _scene; // The App should outlive everything in the game, so it
-                       // should be safe enough
-  ProjectileEmitter emitter{ [scene, gun_params, model_params](auto entity) {
-    emit_projectile(scene->state(), entity, gun_params, model_params.path);
-  } };
-  _registry->emplace_or_replace<ShotSound>(_entity, gun_params.sound_shot);
-  _registry->emplace_or_replace<ProjectileEmitter>(_entity, emitter);
 }

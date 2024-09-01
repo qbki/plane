@@ -48,8 +48,9 @@ get_entity_maker(const PositionStrategy& strategy,
         auto entity_id = std::visit(
           Overloaded{
             [](auto&) -> std::string {
-              throw std::runtime_error("Non single strategy for light behaviour"
-                                       " is not supported at this moment");
+              throw std::runtime_error(
+                "No a single strategy for a light behaviour,"
+                " it is not supported at this moment");
             },
             [](const PositionStrategySingle& value) { return value.entity_id; },
             [](const PositionStrategyVoid& value) { return value.entity_id; } },

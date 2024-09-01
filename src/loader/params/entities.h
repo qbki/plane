@@ -24,7 +24,7 @@ struct EntityParamsActor
 {
   float speed;
   std::string model_id;
-  std::optional<std::string> gun_id;
+  std::optional<std::string> weapon_id;
   std::optional<std::string> debris_id;
   std::optional<std::string> hit_particles_id;
 };
@@ -48,12 +48,15 @@ struct EntityParamsParticles
   float speed;
 };
 
-struct EntityParamsGun
+struct EntityParamsWeapon
 {
-  std::string model_id;
+  float bullet_speed;
+  float fire_rate;
+  float lifetime;
   float range;
-  float speed;
-  std::filesystem::path sound_shot;
+  float spread;
+  std::string bullet_model_id;
+  std::filesystem::path shot_sound_path;
 };
 
 struct EntityParamsTutorialButton
@@ -64,7 +67,7 @@ struct EntityParamsTutorialButton
 
 using EntityParams = std::variant<EntityParamsActor,
                                   EntityParamsDirectionalLight,
-                                  EntityParamsGun,
+                                  EntityParamsWeapon,
                                   EntityParamsModel,
                                   EntityParamsParticles,
                                   EntityParamsPointLight,

@@ -185,18 +185,21 @@ struct adl_serializer<EntityParams>
       EntityParamsActor params{};
       json_obj.at("model_id").get_to(params.model_id);
       json_obj.at("speed").get_to(params.speed);
-      set_optional(params.gun_id, json_obj, "gun_id");
+      set_optional(params.weapon_id, json_obj, "weapon_id");
       set_optional(params.debris_id, json_obj, "debris_id");
       set_optional(params.hit_particles_id, json_obj, "hit_particles_id");
       value = params;
-    } else if (kind == "gun") {
-      EntityParamsGun params{};
-      std::string sound_shot_path;
-      json_obj.at("model_id").get_to(params.model_id);
+    } else if (kind == "weapon") {
+      EntityParamsWeapon params{};
+      std::string shot_sound_path;
+      json_obj.at("bullet_model_id").get_to(params.bullet_model_id);
+      json_obj.at("bullet_speed").get_to(params.bullet_speed);
+      json_obj.at("lifetime").get_to(params.lifetime);
+      json_obj.at("spread").get_to(params.spread);
       json_obj.at("range").get_to(params.range);
-      json_obj.at("speed").get_to(params.speed);
-      json_obj.at("sound_shot").get_to(sound_shot_path);
-      params.sound_shot = ASSETS_DIR / sound_shot_path;
+      json_obj.at("fire_rate").get_to(params.fire_rate);
+      json_obj.at("shot_sound_path").get_to(shot_sound_path);
+      params.shot_sound_path = ASSETS_DIR / shot_sound_path;
       value = params;
     } else if (kind == "point_light") {
       EntityParamsPointLight params{};

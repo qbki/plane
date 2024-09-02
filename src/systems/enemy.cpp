@@ -8,6 +8,7 @@
 #include "src/components/common.h"
 #include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
+#include "src/components/weapon.h"
 #include "src/math/intersection.h"
 #include "src/math/shapes.h"
 #include "src/scene/scene.h"
@@ -104,4 +105,20 @@ enemy_rotation_system(Scene& scene)
         enemy_transform.rotate_z(glm::atan(dir_vector.y, dir_vector.x));
       }
     });
+}
+
+void
+enemy_shoot_near_player_system(Scene& scene)
+{
+  auto& registry = scene.state().registry();
+  auto players_view = registry.view<Transform, PlayerKind>();
+  auto enemies_view = registry.view<Transform, Weapon, EnemyKind>();
+  const auto shooting_distance = 8.0;
+  players_view.each([&](const Transform& player_transform) {
+    enemies_view.each([&](const Transform& enemy_transform, Weapon& weapon) {
+      auto distance = glm::distance(player_transform.translation(),
+                                    enemy_transform.translation());
+      weapon.is_shooting = distance < shooting_distance;
+    });
+  });
 }

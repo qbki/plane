@@ -28,6 +28,7 @@ ComponetsAttacher::operator()(const EntityParamsActor& params) const
   attach_linear_velocity(params.speed);
   attach_particles_emmiter_by_hit(params);
   attach_debris_emmiter(params);
+  attach_lives(params.lives);
   attach_weapon(params);
   auto model = _entities->model(params.model_id);
   (*this)(model);
@@ -84,6 +85,12 @@ ComponetsAttacher::attach_linear_velocity(const float& speed) const
 }
 
 void
+ComponetsAttacher::attach_lives(int lives) const
+{
+  _registry->emplace_or_replace<Lives>(_entity, lives);
+}
+
+void
 ComponetsAttacher::attach_velocity(const VelocityParams& velocity) const
 {
   _registry->emplace_or_replace<Velocity>(
@@ -125,14 +132,13 @@ ComponetsAttacher::attach_weapon(const EntityParamsActor& actor_params) const
   const auto gun_params = _entities->weapon(actor_params.weapon_id.value());
   const auto bullet_model_path =
     _entities->model(gun_params.bullet_model_id).path;
-  Weapon gun{};
+  auto& gun = _registry->get<Weapon>(_entity);
   gun.bullet_speed = gun_params.bullet_speed;
   gun.bullet_model_path = bullet_model_path;
   gun.spread = gun_params.spread;
   gun.shot_sound_path = gun_params.shot_sound_path;
   gun.lifetime = gun_params.lifetime;
   gun.fire_rate = gun_params.fire_rate;
-  _registry->emplace_or_replace<Weapon>(_entity, gun);
 }
 
 void

@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "src/cameras/gui_camera.h"
-#include "src/cameras/ortho_camera.h"
+#include "src/cameras/perspective_camera.h"
 #include "src/consts.h"
 #include "src/gui/game_screen_factory.h"
 #include "src/gui/loading_factory.h"
@@ -41,7 +41,8 @@ std::unique_ptr<Camera>
 make_game_camera(const App& app)
 {
   auto screen_size = app.screen_size();
-  return std::make_unique<OrthoCamera>(screen_size.width, screen_size.height);
+  return std::make_unique<PerspectiveCamera>(screen_size.width,
+                                             screen_size.height);
 }
 
 void
@@ -97,6 +98,7 @@ load_next_level(const Events::LoadLevelEvent&)
     game->handlers().add(player_shooting_system);
     game->handlers().add(enemy_hunting_system);
     game->handlers().add(enemy_rotation_system);
+    game->handlers().add(enemy_shoot_near_player_system);
     game->handlers().add(particle_handler_system);
     game->handlers().add(linear_velocity_system);
     game->handlers().add(velocity_gravity_system);

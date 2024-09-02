@@ -30,6 +30,7 @@ public:
   void attach_velocity(const VelocityParams& velocity) const;
   void attach_opaque(bool is_opaque) const;
   void attach_direction(const glm::vec3& direction) const;
+  void attach_lives(int lives) const;
   void attach_color(const glm::vec3& color) const;
   void attach_tutorial_button_value(Control::Action action) const;
   void attach_weapon(const EntityParamsActor& actor_params) const;

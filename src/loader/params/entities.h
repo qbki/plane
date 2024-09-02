@@ -23,6 +23,7 @@ struct EntityParamsModel
 struct EntityParamsActor
 {
   float speed;
+  int lives;
   std::string model_id;
   std::optional<std::string> weapon_id;
   std::optional<std::string> debris_id;

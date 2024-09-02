@@ -25,6 +25,7 @@ using InitialPosition = NewType<glm::vec3, struct InitialPositionTag>;
 using IsDirty = NewType<bool, struct IsDirtyTag>;
 using Lifetime = NewType<float, struct LifeTimeTag>;
 using LifetimeMax = NewType<float, struct LifeTimeMaxTag>;
+using Lives = NewType<int, struct LivesTag>;
 using MeshPointer = std::shared_ptr<Mesh>;
 using Owner = NewType<entt::entity, struct OwnerTag>;
 using Parent = NewType<std::optional<entt::entity>, struct ParentTag>;

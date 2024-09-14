@@ -1,6 +1,8 @@
+#include <utility>
+
 #include "src/components/common.h"
-#include "src/gui/components/block.h"
-#include "src/gui/components/text_button.h"
+#include "src/gui/components/ui.h"
+#include "src/gui/screens/settings_screen.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 
@@ -9,39 +11,47 @@
 namespace GUI {
 
 void
-main_menu_factory(Scene& scene)
+main_menu_factory(const Scene& scene)
 {
-  auto& shared_registry = scene.state().shared_registry();
+  auto ui = Factory::make_ui(scene.state().shared_registry());
+  auto children = Children({});
 
-  auto block = Factory::make_block(shared_registry);
-  auto new_button_entity =
-    GUI::Factory::make_text_button(shared_registry, "New Game");
-  shared_registry->replace<Parent>(new_button_entity, block);
-
-  auto& new_pointer_down =
-    shared_registry->get<Events::EventEmitter<Events::PointerDown>>(
-      new_button_entity);
-  new_pointer_down.once([](auto&) {
-    Services::app().add_once_handler([](auto&) {
-      Events::LoadLevelEvent dummy;
-      Services::events<const Events::LoadLevelEvent>().emit(dummy);
-    });
+  auto new_button_entity = ui.text_button({
+    .text = "New Game",
+    .on_pointer_down_once =
+      [](auto&) {
+        Services::app().add_once_handler([](auto&) {
+          Events::LoadLevelEvent dummy;
+          Services::events<const Events::LoadLevelEvent>().emit(dummy);
+        });
+      },
   });
+  children.value.push_back(new_button_entity);
 
-  auto& block_children = shared_registry->get<Children>(block);
-  block_children.value.push_back(new_button_entity);
+  auto settings_button_entity = ui.text_button({
+    .text = "Settings",
+    .on_pointer_down =
+      [](auto&) {
+        Services::app().add_once_handler([](auto&) {
+          for (auto& scene : Services::app().scenes()) {
+            scene->is_paused(true);
+          }
+          auto scene = load_settings_screen();
+          Services::app().push_scene(std::move(scene));
+        });
+      },
+  });
+  children.value.push_back(settings_button_entity);
 
   if (Services::app().system().is_pc) {
     auto exit_button_entity =
-      GUI::Factory::make_text_button(shared_registry, "Exit");
-    shared_registry->replace<Parent>(exit_button_entity, block);
-    auto& exit_pointer_down =
-      shared_registry->get<Events::EventEmitter<Events::PointerDown>>(
-        exit_button_entity);
-    exit_pointer_down.once(
-      [shared_registry](auto&) { Services::app().is_running(false); });
-    block_children.value.push_back(exit_button_entity);
+      ui.text_button({ .text = "Exit", .on_pointer_down_once = [](auto&) {
+                        Services::app().is_running(false);
+                      } });
+    children.value.push_back(exit_button_entity);
   }
+
+  ui.block({ .children = children });
 }
 
 }

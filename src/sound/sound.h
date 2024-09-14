@@ -18,6 +18,9 @@ public:
   Sound& operator=(Sound&&) = delete;
   ~Sound();
 
+  void volume(float value);
+  float volume();
+
   void play();
 };
 

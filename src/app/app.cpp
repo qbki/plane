@@ -128,6 +128,12 @@ App::system() const
   return _system;
 }
 
+Settings&
+App::settings()
+{
+  return _settings;
+}
+
 void
 App::add_handler(Handler handler)
 {

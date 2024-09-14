@@ -12,7 +12,9 @@ Scene::Scene(std::unique_ptr<Camera> camera)
 void
 Scene::update()
 {
-  _events.emit(*this);
+  if (!_is_paused) {
+    _events.emit(*this);
+  }
 }
 
 Events::EventEmitter<Scene>&
@@ -37,4 +39,16 @@ bool
 Scene::is_deferred() const
 {
   return _is_deferred;
+}
+
+void
+Scene::is_paused(bool value)
+{
+  _is_paused = value;
+}
+
+bool
+Scene::is_paused() const
+{
+  return _is_paused;
 }

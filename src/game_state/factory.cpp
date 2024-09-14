@@ -71,7 +71,6 @@ make_projectile(entt::registry& registry, const std::string& file_path)
   registry.emplace<Owner>(entity, static_cast<entt::entity>(entt::null));
   registry.emplace<ParticleKind>(entity);
   registry.emplace<ProjectileKind>(entity);
-  registry.emplace<Range>(entity, 0);
   registry.emplace<TexturePointer>(entity, texture);
   registry.emplace<Transform>(entity);
   return entity;

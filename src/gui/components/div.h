@@ -5,13 +5,15 @@
 
 namespace GUI::Factory {
 
-struct BlockConfig
+struct DivConfig
 {
+  float width = 0;
+  float height = 0;
+  Parent parent = Parent{ std::nullopt };
   Children children = Children{ std::vector<entt::entity>() };
 };
 
 entt::entity
-block(std::shared_ptr<entt::registry>& registry,
-      const BlockConfig& config = {});
+div(std::shared_ptr<entt::registry>& registry, const DivConfig& config);
 
 }

@@ -16,10 +16,12 @@ void
 game_screen_factory(Scene& scene)
 {
   auto& theme = Services::theme();
-  auto& registry = scene.state().registry();
-  auto text = GUI::Factory::make_text(registry, "Hostiles: 0");
-  auto& color = registry.get<Core::Color>(text);
-  color = theme.palette.white_accent;
+  auto& registry = scene.state().shared_registry();
+  auto text = GUI::Factory::text(registry,
+                                 {
+                                   .color = theme.palette.white_accent,
+                                   .text = "Hostiles: 0",
+                                 });
   scene.handlers().add([text](Scene& scene) {
     auto hostiles_quantity = Services::app().info().hostiles;
     auto& registry = scene.state().registry();

@@ -1,5 +1,5 @@
 #pragma once
-#include <entt/entity/fwd.hpp>
+#include <entt/entt.hpp>
 #include <functional>
 #include <glm/vec2.hpp>
 #include <string_view>

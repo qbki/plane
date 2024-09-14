@@ -4,6 +4,6 @@
 namespace GUI {
 
 void
-main_menu_factory(const Scene& scene);
+settings_screen_factory(Scene& scene);
 
 }

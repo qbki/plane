@@ -4,26 +4,28 @@
 #include "src/services.h"
 
 #include "components/text.h"
-#include "types.h"
 
 namespace GUI {
 
 void
 loading_factory(Scene& scene)
 {
-  auto& registry = scene.state().registry();
+  auto& registry = scene.state().shared_registry();
 
-  auto loading_text_entity = GUI::Factory::make_text(registry, "Loading...");
-  registry.replace<GUI::FontPtr>(loading_text_entity,
-                                 Services::theme().typography.h1);
+  auto loading_text_entity =
+    Factory::text(registry,
+                  {
+                    .font = Services::theme().typography.h1,
+                    .text = "Loading...",
+                  });
   scene.handlers().add([loading_text_entity](Scene& scene) {
     auto& registry = scene.state().registry();
-    auto [transform, button_size] =
+    auto [transform, size] =
       registry.get<Transform, RectSize>(loading_text_entity);
     const int offset = 16;
     auto screen_size = Services::app().screen_size();
     transform.translate({
-      screen_size.width - button_size.width - offset,
+      screen_size.width - size.width - offset,
       offset,
       transform.translation().z,
     });

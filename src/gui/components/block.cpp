@@ -7,21 +7,23 @@
 #include "src/services.h"
 
 #include "block.h"
+#include "utils.h"
 
 namespace GUI::Factory {
 
 entt::entity
-make_block(std::shared_ptr<entt::registry>& registry)
+block(std::shared_ptr<entt::registry>& registry, const BlockConfig& config)
 {
   auto entity = registry->create();
-  Children children{ std::vector<entt::entity>() };
 
   registry->emplace<RectSize>(entity, 0, 0);
   registry->emplace<Transform>(entity);
   registry->emplace<Parent>(entity, std::nullopt);
-  registry->emplace<Children>(entity, children);
+  registry->emplace<Children>(entity, config.children);
   auto& layout =
     registry->emplace<Events::EventEmitter<Events::GUILayout>>(entity);
+
+  reparent(registry, config.children.value, entity);
 
   layout.add([registry, entity](auto&) {
     auto [children, transform, rect_size, parent] =

@@ -5,13 +5,12 @@
 
 namespace GUI::Factory {
 
-struct BlockConfig
+struct RowConfig
 {
   Children children = Children{ std::vector<entt::entity>() };
 };
 
 entt::entity
-block(std::shared_ptr<entt::registry>& registry,
-      const BlockConfig& config = {});
+row(std::shared_ptr<entt::registry>& registry, const RowConfig& config = {});
 
 }

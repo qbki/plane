@@ -36,7 +36,8 @@ update_gui(Scene& scene)
           Transform,
           RectSize,
           Parent,
-          IsPointerInside>()
+          IsPointerInside,
+          IsPointerDownEventAccepted>()
     .each([&registry,
            &pointer_move_event_data,
            &pointer_enter_event_data,
@@ -49,9 +50,11 @@ update_gui(Scene& scene)
             Transform& transform,
             RectSize& rect_size,
             Parent& parent,
-            IsPointerInside& _is_pointer_inside) {
-      auto& was_pointer_inside = _is_pointer_inside.value;
+            IsPointerInside& was_pointer_inside,
+            IsPointerDownEventAccepted& is_down_event_accepted) {
       auto global_matrix = get_global_matrix(registry, parent);
+      auto is_pointer_down = Services::app().control().is_pointer_down;
+      auto is_pointer_up = !is_pointer_down;
       auto point = global_matrix * glm::vec4(transform.translation(), 1);
       Rect<int> rect{
         .x = static_cast<int>(point.x),
@@ -64,18 +67,19 @@ update_gui(Scene& scene)
       if (is_pointer_inside) {
         pointer_move.emit(pointer_move_event_data);
       }
+      if (!was_pointer_inside.value && is_pointer_inside) {
+        pointer_enter.emit(pointer_enter_event_data);
+        was_pointer_inside.value = true;
+      } else if (was_pointer_inside.value && !is_pointer_inside) {
+        pointer_leave.emit(pointer_leave_event_data);
+        was_pointer_inside.value = false;
+      }
       auto should_emit_down_event =
-        Services::app().control().is_pointer_down && is_pointer_inside;
+        is_pointer_down && is_down_event_accepted.value && is_pointer_inside;
       if (should_emit_down_event) {
         pointer_down.emit(pointer_down_event_data);
       }
-      if (!was_pointer_inside && is_pointer_inside) {
-        pointer_enter.emit(pointer_enter_event_data);
-        was_pointer_inside = true;
-      } else if (was_pointer_inside && !is_pointer_inside) {
-        pointer_leave.emit(pointer_leave_event_data);
-        was_pointer_inside = false;
-      }
+      is_down_event_accepted.value = is_pointer_inside && is_pointer_up;
     });
 }
 

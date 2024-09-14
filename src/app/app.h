@@ -4,8 +4,9 @@
 #include <vector>
 
 #include "src/app/app_info.h" // IWYU pragma: export
-#include "src/app/system.h"   // IWYU pragma: export
-#include "src/control.h"      // IWYU pragma: export
+#include "src/app/settings.h"
+#include "src/app/system.h" // IWYU pragma: export
+#include "src/control.h"    // IWYU pragma: export
 #include "src/scene/scene.h"
 #include "src/sdl_init.h"
 #include "src/shader.h"                   // IWYU pragma: export
@@ -27,6 +28,7 @@ private:
   WindowPtr _window;
   ContextPtr _gl_context;
   System _system{};
+  Settings _settings{};
   std::vector<std::unique_ptr<Scene>> _scenes{};
   std::unique_ptr<Control> _control;
   RectSize _screen_size;
@@ -60,6 +62,7 @@ public:
   [[nodiscard]] Shader& intermediate_shader() const;
   [[nodiscard]] SDL_Window& window() const;
   [[nodiscard]] SDL_GLContext gl_context() const;
+  [[nodiscard]] Settings& settings();
 
   [[nodiscard]] float delta_time() const;
 

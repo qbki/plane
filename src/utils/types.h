@@ -67,5 +67,9 @@ union Color
   } com;
 
   bool operator==(const Color& other) const { return value == other.value; }
+  [[nodiscard]] std::vector<unsigned char> to_array() const
+  {
+    return { com.r, com.g, com.b, com.a };
+  };
 };
 }

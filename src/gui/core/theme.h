@@ -42,7 +42,7 @@ struct Components
 {
   struct Text
   {
-    Core::Color color{ Palette::WHITE };
+    Core::Color color{ Palette::WHITE_ACCENT };
   } text;
   struct TextButton
   {

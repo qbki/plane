@@ -29,7 +29,6 @@ using Lives = NewType<int, struct LivesTag>;
 using MeshPointer = std::shared_ptr<Mesh>;
 using Owner = NewType<entt::entity, struct OwnerTag>;
 using Parent = NewType<std::optional<entt::entity>, struct ParentTag>;
-using Range = NewType<float, struct RangeTag>;
 using ShotSound = NewType<std::optional<std::string>, struct ShotSoundTag>;
 using Speed = NewType<float, struct SpeedTag>;
 using Text = NewType<std::string, struct TextTag>;
@@ -38,6 +37,8 @@ using TutorialButton = NewType<Control::Action, struct TutorialButtonTag>;
 using UniqueTexturePtr = std::unique_ptr<Texture>;
 
 using IsPointerInside = NewType<bool, struct IsPointerInsideTag>;
+using IsPointerDownEventAccepted =
+  NewType<bool, struct IsPointerDownEventAcceptedTag>;
 
 struct Available
 {};

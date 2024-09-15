@@ -17,7 +17,6 @@ make_player(entt::registry& registry, const std::string& file_path)
   auto entity = registry.create();
   auto [mesh, texture] = Services::cache().get_model(file_path);
   registry.emplace<Available>(entity);
-  registry.emplace<Weapon>(entity);
   registry.emplace<LinearVelocity>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<PlayerKind>(entity);
@@ -32,7 +31,6 @@ make_enemy(entt::registry& registry, const std::string& file_path)
   auto [mesh, texture] = Services::cache().get_model(file_path);
   auto entity = registry.create();
   registry.emplace<Available>(entity);
-  registry.emplace<Weapon>(entity);
   registry.emplace<EnemyKind>(entity);
   registry.emplace<EnemyStateEnum>(entity, EnemyStateEnum::HUNTING);
   registry.emplace<MeshPointer>(entity, mesh);

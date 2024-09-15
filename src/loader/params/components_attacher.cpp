@@ -132,7 +132,7 @@ ComponetsAttacher::attach_weapon(const EntityParamsActor& actor_params) const
   const auto gun_params = _entities->weapon(actor_params.weapon_id.value());
   const auto bullet_model_path =
     _entities->model(gun_params.bullet_model_id).path;
-  auto& gun = _registry->get<Weapon>(_entity);
+  auto& gun = _registry->emplace_or_replace<Weapon>(_entity);
   gun.bullet_speed = gun_params.bullet_speed;
   gun.bullet_model_path = bullet_model_path;
   gun.spread = gun_params.spread;

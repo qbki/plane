@@ -113,8 +113,8 @@ struct adl_serializer<VelocityParams>
     value.acceleration = json_obj.contains("acceleration")
                            ? json_obj.at("acceleration").get<float>()
                            : 0;
-    value.speed =
-      json_obj.contains("speed") ? json_obj.at("speed").get<float>() : 0;
+    value.speed = json_obj.contains("speed") ? json_obj.at("speed").get<float>()
+                                             : 0;
     value.damping = json_obj.at("damping");
   }
 };
@@ -126,19 +126,19 @@ struct adl_serializer<PositionStrategy>
   {
     auto kind = json_obj.at("kind").get<std::string>();
     if (kind == "void") {
-      PositionStrategyVoid strategy{};
+      PositionStrategyVoid strategy {};
       json_obj.at("behaviour").get_to(strategy.behaviour);
       json_obj.at("entity_id").get_to(strategy.entity_id);
       value = strategy;
     } else if (kind == "round") {
-      PositionStrategyRound strategy{};
+      PositionStrategyRound strategy {};
       json_obj.at("behaviour").get_to(strategy.behaviour);
       json_obj.at("radius").get_to(strategy.radius);
       json_obj.at("center").get_to(strategy.center);
       json_obj.at("entity_ids").get_to(strategy.entity_ids);
       value = strategy;
     } else if (kind == "square") {
-      PositionStrategySquare strategy{};
+      PositionStrategySquare strategy {};
       json_obj.at("behaviour").get_to(strategy.behaviour);
       json_obj.at("width").get_to(strategy.width);
       json_obj.at("height").get_to(strategy.height);
@@ -146,13 +146,13 @@ struct adl_serializer<PositionStrategy>
       json_obj.at("entity_ids").get_to(strategy.entity_ids);
       value = strategy;
     } else if (kind == "single") {
-      PositionStrategySingle strategy{};
+      PositionStrategySingle strategy {};
       json_obj.at("behaviour").get_to(strategy.behaviour);
       json_obj.at("position").get_to(strategy.position);
       json_obj.at("entity_id").get_to(strategy.entity_id);
       value = strategy;
     } else if (kind == "many") {
-      PositionStrategyMany strategy{};
+      PositionStrategyMany strategy {};
       json_obj.at("behaviour").get_to(strategy.behaviour);
       json_obj.at("positions").get_to(strategy.positions);
       json_obj.at("entity_id").get_to(strategy.entity_id);
@@ -170,19 +170,19 @@ struct adl_serializer<EntityParams>
   {
     auto kind = json_obj.at("kind").get<std::string>();
     if (kind == "model") {
-      EntityParamsModel params{};
+      EntityParamsModel params {};
       json_obj.at("path").get_to(params.path);
       json_obj.at("is_opaque").get_to(params.is_opaque);
       value = params;
     } else if (kind == "particles") {
-      EntityParamsParticles params{};
+      EntityParamsParticles params {};
       json_obj.at("lifetime").get_to(params.lifetime);
       json_obj.at("model_id").get_to(params.model_id);
       json_obj.at("quantity").get_to(params.quantity);
       json_obj.at("speed").get_to(params.speed);
       value = params;
     } else if (kind == "actor") {
-      EntityParamsActor params{};
+      EntityParamsActor params {};
       json_obj.at("model_id").get_to(params.model_id);
       json_obj.at("speed").get_to(params.speed);
       json_obj.at("lives").get_to(params.lives);
@@ -191,7 +191,7 @@ struct adl_serializer<EntityParams>
       set_optional(params.hit_particles_id, json_obj, "hit_particles_id");
       value = params;
     } else if (kind == "weapon") {
-      EntityParamsWeapon params{};
+      EntityParamsWeapon params {};
       std::string shot_sound_path;
       json_obj.at("bullet_model_id").get_to(params.bullet_model_id);
       json_obj.at("bullet_speed").get_to(params.bullet_speed);
@@ -202,16 +202,16 @@ struct adl_serializer<EntityParams>
       params.shot_sound_path = ASSETS_DIR / shot_sound_path;
       value = params;
     } else if (kind == "point_light") {
-      EntityParamsPointLight params{};
+      EntityParamsPointLight params {};
       json_obj.at("color").get_to(params.color);
       value = params;
     } else if (kind == "directional_light") {
-      EntityParamsDirectionalLight params{};
+      EntityParamsDirectionalLight params {};
       json_obj.at("color").get_to(params.color);
       json_obj.at("direction").get_to(params.direction);
       value = params;
     } else if (kind == "tutorial_button") {
-      EntityParamsTutorialButton params{};
+      EntityParamsTutorialButton params {};
       json_obj.at("model_id").get_to(params.model_id);
       json_obj.at("button").get_to(params.button);
       value = params;

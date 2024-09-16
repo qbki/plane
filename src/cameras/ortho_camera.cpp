@@ -44,27 +44,27 @@ OrthoCamera::frustum() const
   auto forward_norm = Camera::forward_norm();
   auto position = Camera::position();
   return {
-    .near{
+    .near {
       .point = position + forward_norm * near,
       .normal = forward_norm,
     },
-    .far{
+    .far {
       .point = position + forward_norm * far,
       .normal = -forward_norm,
     },
-    .left{
+    .left {
       .point = position + glm::vec3(-_half_width, 0, 0),
       .normal = { 1, 0, 0 },
     },
-    .right{
+    .right {
       .point = position + glm::vec3(_half_width, 0, 0),
       .normal = { -1, 0, 0 },
     },
-    .top{
+    .top {
       .point = position + glm::vec3(0, _half_height, 0),
       .normal = { 0, -1, 0 },
     },
-    .bottom{
+    .bottom {
       .point = position + glm::vec3(0, -_half_height, 0),
       .normal = { 0, 1, 0 },
     },

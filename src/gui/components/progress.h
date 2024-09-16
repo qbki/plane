@@ -9,7 +9,7 @@ struct ProgressConfig
 {
   float width = 100.f; // NOLINT(cppcoreguidelines-avoid-magic-numbers)
   float height = 10.f; // NOLINT(cppcoreguidelines-avoid-magic-numbers)
-  Parent parent = Parent{ std::nullopt };
+  Parent parent = Parent { std::nullopt };
   float value = 0.0f;
 };
 

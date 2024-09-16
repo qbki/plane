@@ -79,8 +79,9 @@ init_window(int screen_width, int screen_height)
                                  SDL_WINDOWPOS_CENTERED,
                                  screen_width,
                                  screen_height,
-                                 SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL |
-                                   SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
+                                 SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL
+                                   | SDL_WINDOW_RESIZABLE
+                                   | SDL_WINDOW_MAXIMIZED);
   if (window == nullptr) {
     throw_sdl_error("Unable to create window");
   }

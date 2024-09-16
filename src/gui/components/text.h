@@ -13,7 +13,7 @@ struct TextConfig
 {
   Core::Color color = Services::theme().components.text.color;
   FontPtr font = Services::theme().typography.body1;
-  Parent parent = Parent{ std::nullopt };
+  Parent parent = Parent { std::nullopt };
   std::string text = "";
 };
 

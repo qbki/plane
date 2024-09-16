@@ -36,8 +36,8 @@ private:
   static const size_t BBOX_MIN_MIN_BOTTOM = 6;
   static const size_t BBOX_MAX_MIN_BOTTOM = 7;
 
-  using ChildrenType =
-    std::array<std::unique_ptr<Octree>, Octree::CHILDREN_SIZE>;
+  using ChildrenType = std::array<std::unique_ptr<Octree>,
+                                  Octree::CHILDREN_SIZE>;
 
   std::vector<T> _data;
   std::array<Shape::AABB, CHILDREN_SIZE> _partitioning;
@@ -105,11 +105,10 @@ Octree<T>::insert(Shape::Sphere collider, const T& value)
 {
   const auto collider_size = collider.radius * 2.0f;
   const auto bbox_child_size = (_bbox.max - _bbox.min) * HALF;
-  if (collider_size >= bbox_child_size.x ||
-      collider_size >= bbox_child_size.y ||
-      collider_size >= bbox_child_size.z || _depth >= _max_depth ||
-      on_axis(collider, _bbox.min) || on_axis(collider, _bbox.max) ||
-      on_axis(collider, _center)) {
+  if (collider_size >= bbox_child_size.x || collider_size >= bbox_child_size.y
+      || collider_size >= bbox_child_size.z || _depth >= _max_depth
+      || on_axis(collider, _bbox.min) || on_axis(collider, _bbox.max)
+      || on_axis(collider, _center)) {
     _data.push_back(value);
     return;
   }

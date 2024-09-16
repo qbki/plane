@@ -43,7 +43,7 @@ void
 State::extend_world_bbox(const Shape::Collider& value)
 {
   std::visit(
-    Overloaded{
+    Overloaded {
       [&](const Shape::Sphere& collider) {
         auto min_vector = collider.center - glm::vec3(collider.radius);
         auto max_vector = collider.center + glm::vec3(collider.radius);

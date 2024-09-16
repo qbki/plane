@@ -13,7 +13,7 @@ namespace GUI::Factory {
 struct TextButtonConfig
 {
   FontPtr font = Services::theme().typography.h4;
-  Parent parent = Parent{ std::nullopt };
+  Parent parent = Parent { std::nullopt };
   std::string text = "";
   Events::EventEmitter<Events::PointerDown>::Handler on_pointer_down =
     [](auto&) {};

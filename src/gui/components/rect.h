@@ -12,7 +12,7 @@ struct RectConfig
   float width = 0;
   float height = 0;
   Core::Color color = Services::theme().components.text.color;
-  Parent parent = Parent{ std::nullopt };
+  Parent parent = Parent { std::nullopt };
 };
 
 entt::entity

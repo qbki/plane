@@ -27,8 +27,8 @@ player_rotation_system(Scene& scene)
       }
       auto x = glm::angleAxis(tilt_angle * x_tilt, glm::vec3(1, 0, 0));
       auto y = glm::angleAxis(tilt_angle * y_tilt, glm::vec3(0, 1, 0));
-      auto z =
-        glm::angleAxis(glm::atan(direction.y, direction.x), glm::vec3(0, 0, 1));
+      auto z = glm::angleAxis(glm::atan(direction.y, direction.x),
+                              glm::vec3(0, 0, 1));
       transform.rotate(x * y * z);
     });
 }
@@ -47,7 +47,7 @@ void
 player_moving_system(const Scene& scene)
 {
   const auto& control = Services::app().control();
-  glm::vec3 move_direction{ 0, 0, 0 };
+  glm::vec3 move_direction { 0, 0, 0 };
   if (control.left) {
     move_direction.x -= 1;
   }

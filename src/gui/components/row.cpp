@@ -19,19 +19,22 @@ row(std::shared_ptr<entt::registry>& registry, const RowConfig& config)
   registry->emplace<Transform>(entity);
   registry->emplace<Parent>(entity, std::nullopt);
   registry->emplace<Children>(entity, config.children);
-  auto& layout =
-    registry->emplace<Events::EventEmitter<Events::GUILayout>>(entity);
+  auto& layout = registry->emplace<Events::EventEmitter<Events::GUILayout>>(
+    entity);
 
   reparent(registry, config.children.value, entity);
 
   layout.add([registry, entity](auto&) {
-    auto [children_ids, transform, rect_size, parent] =
-      registry->get<Children, Transform, RectSize, Parent>(entity);
+    auto [children_ids,
+          transform,
+          rect_size,
+          parent] = registry
+                      ->get<Children, Transform, RectSize, Parent>(entity);
 
-    auto children =
-      children_ids.value | std::views::transform([registry](const auto& child) {
-        return registry->get<Transform, RectSize>(child);
-      });
+    auto children = children_ids.value
+                    | std::views::transform([registry](const auto& child) {
+                        return registry->get<Transform, RectSize>(child);
+                      });
 
     int max_height = 0;
     for (auto [_, child_rect_size] : children) {

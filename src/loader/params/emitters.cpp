@@ -26,10 +26,11 @@ emit_particles(State& state,
   auto& registry = state.registry();
   unsigned int idx = 0;
   const float step = glm::two_pi<float>() / static_cast<float>(params.quantity);
-  auto particles =
-    registry
-      .view<Transform, Lifetime, LifetimeMax, LinearVelocity, ParticleKind>(
-        entt::exclude<Available>);
+  auto particles = registry.view<Transform,
+                                 Lifetime,
+                                 LifetimeMax,
+                                 LinearVelocity,
+                                 ParticleKind>(entt::exclude<Available>);
 
   for (auto [id, transform, lifetime, lifetime_max, velocity] :
        particles.each()) {

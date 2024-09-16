@@ -56,8 +56,8 @@ resize_buffer_data(GLuint buffer_handle,
                    const std::vector<T>& data,
                    const T& default_item)
 {
-  auto new_size = static_cast<size_t>(static_cast<float>(data.size()) *
-                                      GL_BUFFER_MULTIPLAYER);
+  auto new_size = static_cast<size_t>(static_cast<float>(data.size())
+                                      * GL_BUFFER_MULTIPLAYER);
   std::vector<T> new_data(new_size, default_item);
   std::ranges::copy(data, begin(new_data));
   replace_buffer_data(buffer_handle, target, new_data, GL_DYNAMIC_DRAW);
@@ -84,8 +84,8 @@ create_buffer_from_gltf(GLuint& buffer_handle,
 
   glGenBuffers(1, &buffer_handle);
   glBindBuffer(buffer_view.target, buffer_handle);
-  auto buffer_data = std::span{ buffer.data }.subspan(buffer_view.byteOffset,
-                                                      buffer_view.byteLength);
+  auto buffer_data = std::span { buffer.data }.subspan(buffer_view.byteOffset,
+                                                       buffer_view.byteLength);
   glBufferData(buffer_view.target,
                static_cast<GLsizeiptr>(buffer_data.size()),
                buffer_data.data(),
@@ -137,7 +137,7 @@ populate_buffer(GLuint buffer_object, const std::vector<T>& data)
 void
 Mesh::calculate_bounding_volume(tinygltf::Model& model)
 {
-  Shape::Sphere volume{
+  Shape::Sphere volume {
     .center = { 0, 0, 0 },
     .radius = 0,
   };

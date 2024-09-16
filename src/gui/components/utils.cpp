@@ -14,10 +14,9 @@ remove_child(std::shared_ptr<entt::registry>& registry,
              entt::entity child)
 {
   auto& parents_children = registry->get<Children>(parent).value;
-  auto [rm_begin, rm_end] =
-    std::ranges::remove_if(parents_children, [&](const auto& parents_child) {
-      return parents_child == child;
-    });
+  auto [rm_begin, rm_end] = std::ranges::remove_if(
+    parents_children,
+    [&](const auto& parents_child) { return parents_child == child; });
   parents_children.erase(rm_begin, rm_end);
 }
 
@@ -31,7 +30,7 @@ reparent(std::shared_ptr<entt::registry>& registry,
     if (parent.value.has_value()) {
       remove_child(registry, parent.value.value(), child);
     }
-    registry->replace<Parent>(child, Parent{ new_parent_entity });
+    registry->replace<Parent>(child, Parent { new_parent_entity });
   }
 }
 

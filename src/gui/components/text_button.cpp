@@ -23,7 +23,7 @@ text_button(std::shared_ptr<entt::registry>& registry,
                                      {
                                        .color = button_theme.active.color,
                                        .font = config.font,
-                                       .parent = Parent{ entity },
+                                       .parent = Parent { entity },
                                        .text = config.text,
                                      });
 
@@ -31,7 +31,7 @@ text_button(std::shared_ptr<entt::registry>& registry,
                                     {
                                       .color = button_theme.hover.color,
                                       .font = config.font,
-                                      .parent = Parent{ entity },
+                                      .parent = Parent { entity },
                                       .text = config.text,
                                     });
 
@@ -39,14 +39,14 @@ text_button(std::shared_ptr<entt::registry>& registry,
                                        {
                                          .color = button_theme.disabled.color,
                                          .font = config.font,
-                                         .parent = Parent{ entity },
+                                         .parent = Parent { entity },
                                          .text = config.text,
                                        });
 
-  ButtonState button_state{ active_entity, hover_entity, disabled_entity };
+  ButtonState button_state { active_entity, hover_entity, disabled_entity };
   button_state.apply(*registry);
 
-  Children children{ std::vector<entt::entity>{ button_state.current() } };
+  Children children { std::vector<entt::entity> { button_state.current() } };
   registry->emplace<ButtonState>(entity, button_state);
   registry->emplace<Children>(entity, children);
   registry->emplace<IsPointerDownEventAccepted>(entity, false);
@@ -56,21 +56,24 @@ text_button(std::shared_ptr<entt::registry>& registry,
   registry->emplace<Transform>(entity);
 
   registry->emplace<Events::EventEmitter<Events::PointerMove>>(entity);
-  auto& pointer_down =
-    registry->emplace<Events::EventEmitter<Events::PointerDown>>(entity);
-  auto& pointer_enter =
-    registry->emplace<Events::EventEmitter<Events::PointerEnter>>(entity);
-  auto& pointer_leave =
-    registry->emplace<Events::EventEmitter<Events::PointerLeave>>(entity);
-  auto& layout =
-    registry->emplace<Events::EventEmitter<Events::GUILayout>>(entity);
+  auto& pointer_down = registry
+                         ->emplace<Events::EventEmitter<Events::PointerDown>>(
+                           entity);
+  auto& pointer_enter = registry
+                          ->emplace<Events::EventEmitter<Events::PointerEnter>>(
+                            entity);
+  auto& pointer_leave = registry
+                          ->emplace<Events::EventEmitter<Events::PointerLeave>>(
+                            entity);
+  auto& layout = registry->emplace<Events::EventEmitter<Events::GUILayout>>(
+    entity);
 
   pointer_down.add(config.on_pointer_down);
   pointer_down.once(config.on_pointer_down_once);
 
   layout.add([registry, entity](auto&) {
-    auto [state, parent_rect_size] =
-      registry->get<ButtonState, RectSize>(entity);
+    auto [state,
+          parent_rect_size] = registry->get<ButtonState, RectSize>(entity);
     const auto& child_rect_size = registry->get<RectSize>(state.current());
     parent_rect_size = child_rect_size;
   });

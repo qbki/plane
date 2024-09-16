@@ -65,8 +65,8 @@ AppBuilder::build()
   auto screen_size_obj = or_throw(_screen_size, "Screen Size");
   auto deferred_shading_obj = or_throw(_deferred_shading, "Deferred Shading");
   auto particle_shader_obj = or_throw(_particle_shader, "Particle Shader");
-  auto intermediate_shader_obj =
-    or_throw(_intermediate_shader, "Intermediate Shader");
+  auto intermediate_shader_obj = or_throw(_intermediate_shader,
+                                          "Intermediate Shader");
   auto window_obj = or_throw(_window, "Window");
   auto context_obj = or_throw(_context, "Context");
 

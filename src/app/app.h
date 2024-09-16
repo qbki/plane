@@ -20,21 +20,21 @@ public:
   using Handler = std::function<void(App& app)>;
 
 private:
-  unsigned long _last_time_point{};
-  float _delta_time{};
-  float _time{};
+  unsigned long _last_time_point {};
+  float _delta_time {};
+  float _time {};
   bool _is_game_running = true;
-  AppInfo _info{};
+  AppInfo _info {};
   WindowPtr _window;
   ContextPtr _gl_context;
-  System _system{};
-  Settings _settings{};
-  std::vector<std::unique_ptr<Scene>> _scenes{};
+  System _system {};
+  Settings _settings {};
+  std::vector<std::unique_ptr<Scene>> _scenes {};
   std::unique_ptr<Control> _control;
   RectSize _screen_size;
   std::unique_ptr<DeferredShading> _deferred_shading;
-  std::unique_ptr<FrameBuffer> _intermediate_fb =
-    std::make_unique<FrameBuffer>();
+  std::unique_ptr<FrameBuffer>
+    _intermediate_fb = std::make_unique<FrameBuffer>();
   std::unique_ptr<Shader> _particle_shader;
   std::unique_ptr<Shader> _intermediate_shader;
 

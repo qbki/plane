@@ -14,12 +14,12 @@ update_gui(Scene& scene)
 {
   auto mouse_pos = mouse_position();
   auto screen_size = Services::app().screen_size();
-  glm::ivec2 position{ mouse_pos.x, screen_size.height - mouse_pos.y };
-  Events::GUILayout gui_layout_event_data{};
-  Events::PointerMove pointer_move_event_data{ .position = position };
-  Events::PointerEnter pointer_enter_event_data{};
-  Events::PointerLeave pointer_leave_event_data{};
-  Events::PointerDown pointer_down_event_data{ .position = position };
+  glm::ivec2 position { mouse_pos.x, screen_size.height - mouse_pos.y };
+  Events::GUILayout gui_layout_event_data {};
+  Events::PointerMove pointer_move_event_data { .position = position };
+  Events::PointerEnter pointer_enter_event_data {};
+  Events::PointerLeave pointer_leave_event_data {};
+  Events::PointerDown pointer_down_event_data { .position = position };
   auto& registry = scene.state().registry();
 
   registry.view<Events::EventEmitter<Events::GUILayout>>().each(
@@ -56,14 +56,14 @@ update_gui(Scene& scene)
       auto is_pointer_down = Services::app().control().is_pointer_down;
       auto is_pointer_up = !is_pointer_down;
       auto point = global_matrix * glm::vec4(transform.translation(), 1);
-      Rect<int> rect{
+      Rect<int> rect {
         .x = static_cast<int>(point.x),
         .y = static_cast<int>(point.y),
         .width = rect_size.width,
         .height = rect_size.height,
       };
-      auto is_pointer_inside =
-        is_inside(rect, pointer_move_event_data.position);
+      auto is_pointer_inside = is_inside(rect,
+                                         pointer_move_event_data.position);
       if (is_pointer_inside) {
         pointer_move.emit(pointer_move_event_data);
       }
@@ -74,8 +74,9 @@ update_gui(Scene& scene)
         pointer_leave.emit(pointer_leave_event_data);
         was_pointer_inside.value = false;
       }
-      auto should_emit_down_event =
-        is_pointer_down && is_down_event_accepted.value && is_pointer_inside;
+      auto should_emit_down_event = is_pointer_down
+                                    && is_down_event_accepted.value
+                                    && is_pointer_inside;
       if (should_emit_down_event) {
         pointer_down.emit(pointer_down_event_data);
       }

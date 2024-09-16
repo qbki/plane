@@ -36,14 +36,14 @@ main()
 
   auto geometry_pass_shader = std::make_unique<Shader>();
   auto geometry_pass_vertex_shader = load_text(SHADERS_DIR / "main_v.glsl");
-  auto geometry_pass_fragment_shader =
-    load_text(SHADERS_DIR / "deferred_geometry_pass_f.glsl");
+  auto geometry_pass_fragment_shader = load_text(
+    SHADERS_DIR / "deferred_geometry_pass_f.glsl");
   geometry_pass_shader->compile(geometry_pass_vertex_shader,
                                 geometry_pass_fragment_shader);
 
   auto light_pass_shader = std::make_unique<Shader>();
-  auto light_pass_fragment_shader =
-    load_text(SHADERS_DIR / "deferred_light_pass_f.glsl");
+  auto light_pass_fragment_shader = load_text(SHADERS_DIR
+                                              / "deferred_light_pass_f.glsl");
   light_pass_shader->compile(output_vertex_shader, light_pass_fragment_shader);
 
   auto particle_shader = std::make_unique<Shader>();
@@ -74,7 +74,7 @@ main()
   app_builder.intermediate_shader(std::move(inter_shader));
   app_builder.window(std::move(window));
 
-  std::unique_ptr<App> app{ app_builder.build() };
+  std::unique_ptr<App> app { app_builder.build() };
   app->add_handler([](App& app) {
     for (auto& scene : app.scenes()) {
       scene->update();

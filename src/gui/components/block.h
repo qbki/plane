@@ -7,7 +7,7 @@ namespace GUI::Factory {
 
 struct BlockConfig
 {
-  Children children = Children{ std::vector<entt::entity>() };
+  Children children = Children { std::vector<entt::entity>() };
 };
 
 entt::entity

@@ -123,7 +123,7 @@ load_text(const std::string& file_name)
   return load_string_by_emscripten(file_name);
 #else
   throw_error_if_file_not_found(file_name);
-  std::fstream file_stream{ file_name };
+  std::fstream file_stream { file_name };
   throw_error_if_file_is_not_readable(file_stream, file_name);
   return { std::istreambuf_iterator<char>(file_stream),
            std::istreambuf_iterator<char>() };
@@ -137,7 +137,7 @@ load_binary(const std::string& file_name)
   return load_binary_by_emscripten(file_name);
 #else
   throw_error_if_file_not_found(file_name);
-  std::ifstream file_stream{ file_name, std::ios::binary };
+  std::ifstream file_stream { file_name, std::ios::binary };
   throw_error_if_file_is_not_readable(file_stream, file_name);
   return { std::istreambuf_iterator<char>(file_stream),
            std::istreambuf_iterator<char>() };

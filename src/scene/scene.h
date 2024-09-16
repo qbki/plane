@@ -10,7 +10,7 @@ class Scene
 private:
   bool _is_deferred = true;
   bool _is_paused = false;
-  Events::EventEmitter<Scene> _events{};
+  Events::EventEmitter<Scene> _events {};
   std::unique_ptr<State> _state = std::make_unique<State>();
 
 public:

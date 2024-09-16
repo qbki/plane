@@ -16,12 +16,12 @@ calculate_world_bbox(Scene& scene)
 {
   auto& game_state = scene.state();
   auto& registry = game_state.registry();
-  registry.view<MeshPointer, Transform>().each(
-    [&](const MeshPointer& mesh, const Transform& transform) {
-      auto bounding_volume =
-        apply_transform_to_collider(transform, mesh->bounding_volume());
-      game_state.extend_world_bbox(bounding_volume);
-    });
+  registry.view<MeshPointer, Transform>().each([&](const MeshPointer& mesh,
+                                                   const Transform& transform) {
+    auto bounding_volume = apply_transform_to_collider(transform,
+                                                       mesh->bounding_volume());
+    game_state.extend_world_bbox(bounding_volume);
+  });
   auto world_bbox = game_state.world_bbox();
   Services::logger().info(std::format("World bounding box: {} x {}",
                                       glm::to_string(world_bbox.min),

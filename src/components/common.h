@@ -37,8 +37,9 @@ using TutorialButton = NewType<Control::Action, struct TutorialButtonTag>;
 using UniqueTexturePtr = std::unique_ptr<Texture>;
 
 using IsPointerInside = NewType<bool, struct IsPointerInsideTag>;
-using IsPointerDownEventAccepted =
-  NewType<bool, struct IsPointerDownEventAcceptedTag>;
+using IsPointerDownEventAccepted = NewType<
+  bool,
+  struct IsPointerDownEventAcceptedTag>;
 
 struct Available
 {};

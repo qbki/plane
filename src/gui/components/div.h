@@ -9,8 +9,8 @@ struct DivConfig
 {
   float width = 0;
   float height = 0;
-  Parent parent = Parent{ std::nullopt };
-  Children children = Children{ std::vector<entt::entity>() };
+  Parent parent = Parent { std::nullopt };
+  Children children = Children { std::vector<entt::entity>() };
 };
 
 entt::entity

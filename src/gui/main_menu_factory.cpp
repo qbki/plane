@@ -44,10 +44,10 @@ main_menu_factory(const Scene& scene)
   children.value.push_back(settings_button_entity);
 
   if (Services::app().system().is_pc) {
-    auto exit_button_entity =
-      ui.text_button({ .text = "Exit", .on_pointer_down_once = [](auto&) {
-                        Services::app().is_running(false);
-                      } });
+    auto exit_button_entity = ui.text_button({
+      .text = "Exit",
+      .on_pointer_down_once = [](auto&) { Services::app().is_running(false); },
+    });
     children.value.push_back(exit_button_entity);
   }
 

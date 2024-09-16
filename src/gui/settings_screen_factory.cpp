@@ -33,45 +33,44 @@ settings_screen_factory(Scene& scene)
     };
   };
 
-  ui.block(
-    {
-      .children =
-        Children({
-          ui.text({
-            .color = Services::theme().components.text.color,
-            .font = Services::theme().typography.h2,
-            .text = "Settings",
+  ui.block({
+    .children = Children({
+      ui.text({
+        .color = Services::theme().components.text.color,
+        .font = Services::theme().typography.h2,
+        .text = "Settings",
+      }),
+
+      ui.row({
+        .children = Children({
+          ui.text_button({
+            .text = "< ",
+            .on_pointer_down = make_volume_changer(-step),
           }),
 
-          ui.row({
-            .children = Children({
-              ui.text_button({
-                .text = "< ",
-                .on_pointer_down = make_volume_changer(-step),
-              }),
+          progress,
 
-              progress,
-
-              ui.text_button(
-                { .text = " >", .on_pointer_down = make_volume_changer(step) }),
-            }),
+          ui.text_button({
+            .text = " >",
+            .on_pointer_down = make_volume_changer(step),
           }),
-
-          ui.text_button(
-            {
-              .text = "Back",
-              .on_pointer_down =
-                [](auto&) {
-                  Services::app().add_once_handler([](auto&) {
-                    Services::app().pop_scene();
-                    for (auto& scene : Services::app().scenes()) {
-                      scene->is_paused(false);
-                    }
-                  });
-                },
-            }),
         }),
-    });
+      }),
+
+      ui.text_button({
+        .text = "Back",
+        .on_pointer_down =
+          [](auto&) {
+            Services::app().add_once_handler([](auto&) {
+              Services::app().pop_scene();
+              for (auto& scene : Services::app().scenes()) {
+                scene->is_paused(false);
+              }
+            });
+          },
+      }),
+    }),
+  });
 }
 
 }

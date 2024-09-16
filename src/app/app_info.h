@@ -4,6 +4,6 @@
 
 struct AppInfo
 {
-  std::optional<std::filesystem::path> current_level{ std::nullopt };
-  int hostiles{ 0 };
+  std::optional<std::filesystem::path> current_level { std::nullopt };
+  int hostiles { 0 };
 };

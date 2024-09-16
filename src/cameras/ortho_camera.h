@@ -6,8 +6,8 @@
 class OrthoCamera : public Camera
 {
 private:
-  float _half_width{};
-  float _half_height{};
+  float _half_width {};
+  float _half_height {};
   float _scale_factor;
 
   constexpr static const float DEFAULT_SCALE_FACTOR = 40;

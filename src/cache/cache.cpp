@@ -32,10 +32,10 @@ generate_texture(tinygltf::Model& model)
     const float max_color_value = 255.0;
     return static_cast<unsigned char>(value * max_color_value);
   };
-  std::vector<unsigned char> data{ to_integer_value(color.x),
-                                   to_integer_value(color.y),
-                                   to_integer_value(color.z),
-                                   to_integer_value(1.0) };
+  std::vector<unsigned char> data { to_integer_value(color.x),
+                                    to_integer_value(color.y),
+                                    to_integer_value(color.z),
+                                    to_integer_value(1.0) };
   return std::make_shared<Texture>(1, 1, data);
 }
 
@@ -46,8 +46,8 @@ extract_texture(const tinygltf::Model& model)
     return std::nullopt;
   }
   auto& image = model.images[0];
-  auto texture =
-    std::make_shared<Texture>(image.width, image.height, image.image);
+  auto texture = std::make_shared<Texture>(
+    image.width, image.height, image.image);
   return std::make_optional(texture);
 }
 

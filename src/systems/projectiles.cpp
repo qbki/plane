@@ -9,11 +9,14 @@ void
 projectile_handler_system(Scene& scene)
 {
   auto& registry = scene.state().registry();
-  auto shooter_view =
-    registry
-      .view<Transform, Lives, ParticlesEmitter, DebrisEmitter, Available>();
-  auto projectiles_view =
-    registry.view<Transform, Owner, Available, ProjectileKind>();
+  auto shooter_view = registry.view<Transform,
+                                    Lives,
+                                    ParticlesEmitter,
+                                    DebrisEmitter,
+                                    Available>();
+  auto
+    projectiles_view = registry
+                         .view<Transform, Owner, Available, ProjectileKind>();
   projectiles_view.each(
     [&](entt::entity prj_id, Transform& prj_transform, const Owner& owner) {
       shooter_view.each([&](entt::entity enemy_id,

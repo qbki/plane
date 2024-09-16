@@ -26,16 +26,16 @@ gun_shooting_system(Scene& scene)
       if (!weapon.is_shooting || (weapon.left_time_to_shoot > 0.0)) {
         return;
       }
-      auto projectile_entity =
-        ModelFactory::make_projectile(registry, weapon.bullet_model_path);
+      auto projectile_entity = ModelFactory::make_projectile(
+        registry, weapon.bullet_model_path);
       auto spread = weapon.spread * get_random_float() - weapon.spread * HALF;
 
-      LinearVelocity velocity{ weapon.bullet_speed };
-      auto direction = owner_transform.rotation() *
-                       glm::quat(glm::vec3{ 0, 0, spread }) *
-                       glm::vec3(1, 0, 0);
-      auto xy_direction =
-        glm::normalize(glm::vec3(direction.x, direction.y, 0));
+      LinearVelocity velocity { weapon.bullet_speed };
+      auto direction = owner_transform.rotation()
+                       * glm::quat(glm::vec3 { 0, 0, spread })
+                       * glm::vec3(1, 0, 0);
+      auto xy_direction = glm::normalize(
+        glm::vec3(direction.x, direction.y, 0));
       velocity.velocity = xy_direction * weapon.bullet_speed;
 
       registry.replace<LinearVelocity>(projectile_entity, velocity);

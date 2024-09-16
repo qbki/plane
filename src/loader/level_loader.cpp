@@ -46,7 +46,7 @@ get_entity_maker(const PositionStrategy& strategy,
       }
       case BehaviourEnum::LIGHT: {
         auto entity_id = std::visit(
-          Overloaded{
+          Overloaded {
             [](auto&) -> std::string {
               throw std::runtime_error(
                 "No a single strategy for a light behaviour,"
@@ -90,8 +90,9 @@ load_level(const std::string& entities_file_path,
            const std::string& level_file_path,
            Scene& scene)
 {
-  auto entities =
-    load_json(entities_file_path).at("entities").get<EntityParamsMap>();
+  auto entities = load_json(entities_file_path)
+                    .at("entities")
+                    .get<EntityParamsMap>();
   auto json_level = load_json(level_file_path);
   auto camera = json_level.at("camera").get<CameraParams>();
   auto strategies = json_level.at("map").get<std::vector<PositionStrategy>>();

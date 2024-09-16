@@ -55,8 +55,8 @@ update_transform_mapping(
   } else {
     transform_mapping[mesh_pointer] = { .mesh = mesh_pointer,
                                         .texture = texture_pointer,
-                                        .draw_params{
-                                          .transforms{ transform } } };
+                                        .draw_params {
+                                          .transforms { transform } } };
   }
 }
 
@@ -88,8 +88,8 @@ render_generic_objects(App& app, const Scene& scene)
     .each([&](const Transform& transform,
               const MeshPointer& mesh,
               const TexturePointer& texture) {
-      const auto transformed_collider =
-        apply_transform_to_collider(transform, mesh->bounding_volume());
+      const auto transformed_collider = apply_transform_to_collider(
+        transform, mesh->bounding_volume());
       if (!is_in_frustum(frustum, transformed_collider)) {
         return;
       }
@@ -207,7 +207,7 @@ render_ui(const Scene& scene)
                       UniqueTexturePtr& texture,
                       RectSize& rect,
                       Parent& parent) {
-      Transform transform{};
+      Transform transform {};
       transform.translate({
         orig_transform.translation().x + static_cast<float>(rect.width) * HALF,
         orig_transform.translation().y + static_cast<float>(rect.height) * HALF,
@@ -216,10 +216,10 @@ render_ui(const Scene& scene)
       transform.scale({ rect.width, rect.height, 1 });
       texture->use(0);
 
-      glm::mat4 global_matrix =
-        get_global_matrix(registry, parent) * transform.matrix();
+      glm::mat4 global_matrix = get_global_matrix(registry, parent)
+                                * transform.matrix();
       Services::gui_quad().draw(
-        { .transforms = std::vector<glm::mat4>{ global_matrix } });
+        { .transforms = std::vector<glm::mat4> { global_matrix } });
     });
 }
 
@@ -249,8 +249,8 @@ update_font_texture(const Scene& scene)
       }
       is_dirty = false;
       auto update = [&](const std::vector<unsigned char>& data) {
-        if (texture->width() == rect.width &&
-            texture->height() == rect.height) {
+        if (texture->width() == rect.width
+            && texture->height() == rect.height) {
           texture->data(data);
         } else {
           texture->data(data, rect.width, rect.height);

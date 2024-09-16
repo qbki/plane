@@ -37,8 +37,8 @@ progress(std::shared_ptr<entt::registry>& registry,
 
   registry->emplace<Percent>(entity, config.value);
 
-  auto& layout =
-    registry->emplace<Events::EventEmitter<Events::GUILayout>>(entity);
+  auto& layout = registry->emplace<Events::EventEmitter<Events::GUILayout>>(
+    entity);
 
   layout.add(
     [registry, entity, line, progress, line_height_coefficient](auto&) {
@@ -48,8 +48,8 @@ progress(std::shared_ptr<entt::registry>& registry,
       progress_rect.width = static_cast<int>(rect.width * percent.value());
       progress_rect.height = rect.height;
       line_rect.width = rect.width;
-      line_rect.height = static_cast<int>(static_cast<float>(rect.height) *
-                                          line_height_coefficient);
+      line_rect.height = static_cast<int>(static_cast<float>(rect.height)
+                                          * line_height_coefficient);
     });
 
   return entity;

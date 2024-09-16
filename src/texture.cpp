@@ -73,8 +73,8 @@ Texture::operator=(Texture&& other) noexcept
   }
   _width = other._width;
   _height = other._height;
-  _texture_object =
-    std::exchange(other._texture_object, DEFAULT_TEXTURE_OBJECT);
+  _texture_object = std::exchange(other._texture_object,
+                                  DEFAULT_TEXTURE_OBJECT);
   return *this;
 }
 

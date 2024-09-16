@@ -13,8 +13,8 @@ class State
 private:
   std::unique_ptr<Camera> _camera;
   glm::vec3 _cursor = glm::zero<glm::vec3>();
-  std::shared_ptr<entt::registry> _registry =
-    std::make_shared<entt::registry>();
+  std::shared_ptr<entt::registry>
+    _registry = std::make_shared<entt::registry>();
   Shape::AABB _world_bbox;
 
 public:

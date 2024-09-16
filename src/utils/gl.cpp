@@ -153,12 +153,12 @@ gen_render_buffer(unsigned int width, unsigned int height)
 
   auto status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
   if (status != GL_FRAMEBUFFER_COMPLETE) {
-    std::array<GLint, 4> dimentions{ 0, 0, 0, 0 };
+    std::array<GLint, 4> dimentions { 0, 0, 0, 0 };
     glGetIntegerv(GL_VIEWPORT, dimentions.data());
     Services::logger().error(std::format(
       "Viewport dimentions: {}x{}", dimentions.at(2), dimentions.at(3)));
-    auto status_text =
-      std::format("Framebuffer status ({}x{}): {}", width, height, status);
+    auto status_text = std::format(
+      "Framebuffer status ({}x{}): {}", width, height, status);
     throw std::runtime_error(status_text);
   }
   return render_buffer;

@@ -150,9 +150,9 @@ void
 App::update(unsigned long time_since_start_of_program)
 {
   const auto second_coeficient = 0.001f;
-  _delta_time =
-    static_cast<float>(time_since_start_of_program - _last_time_point) *
-    second_coeficient;
+  _delta_time = static_cast<float>(time_since_start_of_program
+                                   - _last_time_point)
+                * second_coeficient;
   _time = static_cast<float>(_last_time_point) * second_coeficient;
   _last_time_point = time_since_start_of_program;
   for (const auto& handler : _once_handlers) {

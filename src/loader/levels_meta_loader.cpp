@@ -15,5 +15,5 @@ load_levels_meta(const std::filesystem::path& levels_meta_path)
   auto files_view = files | std::views::transform([](const auto& path) {
                       return ASSETS_DIR / path;
                     });
-  return { .levels{ files_view.begin(), files_view.end() } };
+  return { .levels { files_view.begin(), files_view.end() } };
 }

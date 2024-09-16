@@ -20,8 +20,8 @@ public:
 
 private:
   unsigned int _current_event_id = 0;
-  std::unordered_set<unsigned int> _should_be_called_once_ids{};
-  std::map<unsigned int, Handler> _handlers{};
+  std::unordered_set<unsigned int> _should_be_called_once_ids {};
+  std::map<unsigned int, Handler> _handlers {};
 
   void remove_by_id(unsigned int event_id)
   {

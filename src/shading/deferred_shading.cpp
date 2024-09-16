@@ -44,7 +44,7 @@ DeferredShading::light_path()
 void
 DeferredShading::draw_quad()
 {
-  Mesh::DrawParams draw_params{ .transforms{ glm::mat4(1) } };
+  Mesh::DrawParams draw_params { .transforms { glm::mat4(1) } };
   _quad->draw(draw_params);
 }
 

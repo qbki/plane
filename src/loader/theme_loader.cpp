@@ -15,7 +15,7 @@ std::unique_ptr<GUI::Theme>
 load_theme(const std::filesystem::path& theme_file_path)
 {
   auto json_theme = load_json(theme_file_path);
-  std::filesystem::path font_path{ json_theme.at("font").get<std::string>() };
+  std::filesystem::path font_path { json_theme.at("font").get<std::string>() };
   font_path = ASSETS_DIR / font_path;
   auto data_holder = load_sdl_rw_data(font_path);
   auto theme = std::make_unique<GUI::Theme>();

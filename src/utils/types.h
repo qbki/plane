@@ -18,7 +18,7 @@ struct NewType
 {
   T value;
   explicit NewType(T v)
-    : value(std::move(v)){};
+    : value(std::move(v)) {};
 };
 
 template<typename T>
@@ -28,7 +28,7 @@ demangled_name()
   int status = 0;
   auto name = std::make_unique<char*>(
     abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status));
-  std::string result{ *name };
+  std::string result { *name };
   switch (status) {
     case 0:
       noop();

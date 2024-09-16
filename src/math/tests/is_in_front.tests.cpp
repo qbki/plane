@@ -6,9 +6,9 @@
 #include "../intersection.h"
 #include "../shapes.h"
 
-const Shape::Plane PLANE{
-  .point{ 0, 0, 0 },
-  .normal{ 0, 1, 0 },
+const Shape::Plane PLANE {
+  .point { 0, 0, 0 },
+  .normal { 0, 1, 0 },
 };
 
 Shape::Sphere

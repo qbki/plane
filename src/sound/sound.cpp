@@ -5,7 +5,7 @@
 namespace Sound {
 
 Sound::Sound(Mix_Chunk* chunk)
-  : _chunk(chunk){};
+  : _chunk(chunk) {};
 
 Sound::~Sound()
 {

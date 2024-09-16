@@ -4,8 +4,8 @@
 #include <string>
 
 namespace ModelFactory {
-using MakerFn =
-  std::function<entt::entity(entt::registry&, const std::string&)>;
+using MakerFn = std::function<entt::entity(entt::registry&,
+                                           const std::string&)>;
 
 entt::entity
 make_enemy(entt::registry& registry, const std::string& file_path);

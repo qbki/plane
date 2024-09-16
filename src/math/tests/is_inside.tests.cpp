@@ -8,7 +8,7 @@
 
 TEST_CASE("is_inside")
 {
-  Rect<int> rect{
+  Rect<int> rect {
     .x = 0,
     .y = 0,
     .width = 2,

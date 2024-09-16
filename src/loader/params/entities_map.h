@@ -38,13 +38,12 @@ public:
   std::vector<T> get_all() const
   {
     std::vector<T> result;
-    auto data = _mapping | std::views::values |
-                std::views::filter([](auto& value) {
-                  return std::holds_alternative<T>(value);
-                }) |
-                std::views::transform([](auto& value) {
-                  return std::get<EntityParamsModel>(value);
-                });
+    auto data = _mapping | std::views::values
+                | std::views::filter(
+                  [](auto& value) { return std::holds_alternative<T>(value); })
+                | std::views::transform([](auto& value) {
+                    return std::get<EntityParamsModel>(value);
+                  });
     std::ranges::copy(data, std::back_inserter(result));
     return result;
   }

@@ -30,7 +30,7 @@ enemy_hunting_system(Scene& scene)
   // TODO Replace by a real AI
   auto& state = scene.state();
   auto& registry = state.registry();
-  Transform player_transform{};
+  Transform player_transform {};
   registry.view<Transform, PlayerKind>().each(
     [&player_transform](const auto& transform) {
       player_transform = transform;
@@ -44,19 +44,19 @@ enemy_hunting_system(Scene& scene)
                               EnemyKind,
                               Available>()
                         .each();
-  auto enemies = std::ranges::subrange(enemies_view) |
-                 std::ranges::views::filter([](const auto& tuple) {
-                   return std::get<3>(tuple) == EnemyStateEnum::HUNTING;
-                 });
+  auto enemies = std::ranges::subrange(enemies_view)
+                 | std::ranges::views::filter([](const auto& tuple) {
+                     return std::get<3>(tuple) == EnemyStateEnum::HUNTING;
+                   });
   Octree<entt::entity> octree(state.world_bbox(), MAX_OCTREE_DEPTH);
   for (auto [id_a, transform_a, velocity_a, _state_a, mesh_a] : enemies) {
-    auto a =
-      apply_transform_to_collider(transform_a, mesh_a->bounding_volume());
+    auto a = apply_transform_to_collider(transform_a,
+                                         mesh_a->bounding_volume());
     octree.insert(std::get<Shape::Sphere>(a), id_a);
   }
 
   for (auto [id_a, transform_a, velocity_a, _state_a, mesh_a] : enemies) {
-    glm::vec3 sum{ 0, 0, 0 };
+    glm::vec3 sum { 0, 0, 0 };
     auto position_a = transform_a.translation();
     auto bvolume_a = std::get_if<Shape::Sphere>(&mesh_a->bounding_volume());
     if (bvolume_a == nullptr) {
@@ -81,8 +81,8 @@ enemy_hunting_system(Scene& scene)
     // found by experiments, it reduces force of attraction to the player and
     // it helps avoiding collapsing enemies during movement
     const auto direction_weight = 0.05f;
-    sum = glm::normalize(sum + glm::normalize(player_position - position_a) *
-                                 direction_weight);
+    sum = glm::normalize(
+      sum + glm::normalize(player_position - position_a) * direction_weight);
     velocity_a.velocity = sum * velocity_a.speed;
   }
 }
@@ -90,7 +90,7 @@ enemy_hunting_system(Scene& scene)
 void
 enemy_rotation_system(Scene& scene)
 {
-  Transform player_transform{};
+  Transform player_transform {};
   auto& registry = scene.state().registry();
   registry.view<Transform, PlayerKind>().each(
     [&player_transform](const auto& transform) {
@@ -100,8 +100,8 @@ enemy_rotation_system(Scene& scene)
     [&player_transform](Transform& enemy_transform,
                         EnemyStateEnum& enemy_state) {
       if (enemy_state == EnemyStateEnum::HUNTING) {
-        auto dir_vector =
-          player_transform.translation() - enemy_transform.translation();
+        auto dir_vector = player_transform.translation()
+                          - enemy_transform.translation();
         enemy_transform.rotate_z(glm::atan(dir_vector.y, dir_vector.x));
       }
     });

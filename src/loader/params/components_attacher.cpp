@@ -129,9 +129,8 @@ ComponetsAttacher::attach_weapon(const EntityParamsActor& actor_params) const
   if (!actor_params.weapon_id.has_value()) {
     return;
   }
-  const auto gun_params = _entities->weapon(actor_params.weapon_id.value());
-  const auto bullet_model_path =
-    _entities->model(gun_params.bullet_model_id).path;
+  auto gun_params = _entities->weapon(actor_params.weapon_id.value());
+  auto bullet_model_path = _entities->model(gun_params.bullet_model_id).path;
   auto& gun = _registry->emplace_or_replace<Weapon>(_entity);
   gun.bullet_speed = gun_params.bullet_speed;
   gun.bullet_model_path = bullet_model_path;
@@ -148,13 +147,13 @@ ComponetsAttacher::attach_particles_emmiter_by_hit(
   if (!actor_params.hit_particles_id.has_value()) {
     return;
   }
-  const auto particles_params =
-    _entities->particles(actor_params.hit_particles_id.value());
+  const auto particles_params = _entities->particles(
+    actor_params.hit_particles_id.value());
   auto model_params = _entities->model(particles_params.model_id);
   auto scene = _scene; // The App should outlive everything in the game, so it
                        // should be safe enough
-  ParticlesEmitter emitter{ [scene, particles_params, model_params](
-                              glm::vec3 position) {
+  ParticlesEmitter emitter { [scene, particles_params, model_params](
+                               glm::vec3 position) {
     emit_particles(
       scene->state(), position, particles_params, model_params.path);
   } };
@@ -170,8 +169,8 @@ ComponetsAttacher::attach_debris_emmiter(
   }
   auto& debris_id = actor_params.debris_id.value();
   auto model_path = _entities->model(debris_id).path;
-  DebrisEmitter emitter{ [model_path](entt::registry& registry,
-                                      glm::vec3 position) {
+  DebrisEmitter emitter { [model_path](entt::registry& registry,
+                                       glm::vec3 position) {
     auto entity = ModelFactory::make_debris(registry, model_path);
     auto& transform = registry.get<Transform>(entity);
     transform.translate(position);

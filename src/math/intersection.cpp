@@ -22,14 +22,14 @@ bool
 is_in_front(const Shape::Plane& plane, const Shape::AABB& aabb)
 {
   // Brute force...
-  return is_in_front(plane, aabb.min) ||
-         is_in_front(plane, { aabb.max.x, aabb.min.y, aabb.min.z }) ||
-         is_in_front(plane, { aabb.max.x, aabb.max.y, aabb.min.z }) ||
-         is_in_front(plane, { aabb.min.x, aabb.max.y, aabb.min.z }) ||
-         is_in_front(plane, aabb.max) ||
-         is_in_front(plane, { aabb.max.x, aabb.min.y, aabb.max.z }) ||
-         is_in_front(plane, { aabb.min.x, aabb.min.y, aabb.max.z }) ||
-         is_in_front(plane, { aabb.min.x, aabb.max.y, aabb.max.z });
+  return is_in_front(plane, aabb.min)
+         || is_in_front(plane, { aabb.max.x, aabb.min.y, aabb.min.z })
+         || is_in_front(plane, { aabb.max.x, aabb.max.y, aabb.min.z })
+         || is_in_front(plane, { aabb.min.x, aabb.max.y, aabb.min.z })
+         || is_in_front(plane, aabb.max)
+         || is_in_front(plane, { aabb.max.x, aabb.min.y, aabb.max.z })
+         || is_in_front(plane, { aabb.min.x, aabb.min.y, aabb.max.z })
+         || is_in_front(plane, { aabb.min.x, aabb.max.y, aabb.max.z });
 }
 
 bool
@@ -42,9 +42,9 @@ is_in_front(const Shape::Plane& plane, const glm::vec3& point)
 bool
 are_intersected(const Shape::AABB& a, const Shape::AABB& b)
 {
-  return (a.min.x <= b.max.x && a.max.x >= b.min.x) &&
-         (a.min.y <= b.max.y && a.max.y >= b.min.y) &&
-         (a.min.z <= b.max.z && a.max.z >= b.min.z);
+  return (a.min.x <= b.max.x && a.max.x >= b.min.x)
+         && (a.min.y <= b.max.y && a.max.y >= b.min.y)
+         && (a.min.z <= b.max.z && a.max.z >= b.min.z);
 }
 
 struct InFrustumVisitor
@@ -59,12 +59,12 @@ struct InFrustumVisitor
   template<typename T>
   [[nodiscard]] bool is_collider_in_front_of_plane(const T& collider) const
   {
-    return is_in_front(_frustum->left, collider) &&
-           is_in_front(_frustum->right, collider) &&
-           is_in_front(_frustum->top, collider) &&
-           is_in_front(_frustum->bottom, collider) &&
-           is_in_front(_frustum->near, collider) &&
-           is_in_front(_frustum->far, collider);
+    return is_in_front(_frustum->left, collider)
+           && is_in_front(_frustum->right, collider)
+           && is_in_front(_frustum->top, collider)
+           && is_in_front(_frustum->bottom, collider)
+           && is_in_front(_frustum->near, collider)
+           && is_in_front(_frustum->far, collider);
   }
 
   bool operator()(const Shape::Sphere& collider) const
@@ -88,24 +88,24 @@ struct InFrustumVisitor
 bool
 is_inside(const Shape::AABB& collider, const glm::vec3& point)
 {
-  return collider.min.x <= point.x && collider.min.y <= point.y &&
-         collider.min.z <= point.z && collider.max.x >= point.x &&
-         collider.max.y >= point.y && collider.max.z >= point.z;
+  return collider.min.x <= point.x && collider.min.y <= point.y
+         && collider.min.z <= point.z && collider.max.x >= point.x
+         && collider.max.y >= point.y && collider.max.z >= point.z;
 }
 
 bool
 is_inside(const Rect<int>& collider, const glm::ivec2& point)
 {
-  return collider.x <= point.x && point.x <= (collider.x + collider.width) &&
-         collider.y <= point.y && point.y <= (collider.y + collider.height);
+  return collider.x <= point.x && point.x <= (collider.x + collider.width)
+         && collider.y <= point.y && point.y <= (collider.y + collider.height);
 }
 
 bool
 on_axis(const Shape::Sphere& collider, const glm::vec3& point)
 {
-  return glm::abs(point.x - collider.center.x) <= collider.radius ||
-         glm::abs(point.y - collider.center.y) <= collider.radius ||
-         glm::abs(point.z - collider.center.z) <= collider.radius;
+  return glm::abs(point.x - collider.center.x) <= collider.radius
+         || glm::abs(point.y - collider.center.y) <= collider.radius
+         || glm::abs(point.z - collider.center.z) <= collider.radius;
 }
 
 struct TransformApplyierVisitor
@@ -119,7 +119,7 @@ struct TransformApplyierVisitor
 
   Shape::Collider operator()(const Shape::Sphere& collider) const
   {
-    return Shape::Sphere{
+    return Shape::Sphere {
       .center = _transform->translation() + collider.center,
       .radius = collider.radius,
     };
@@ -127,7 +127,7 @@ struct TransformApplyierVisitor
 
   Shape::Collider operator()(const Shape::AABB& collider) const
   {
-    return Shape::AABB{
+    return Shape::AABB {
       .min = _transform->translation() + collider.min,
       .max = _transform->translation() + collider.max,
     };
@@ -140,7 +140,7 @@ struct TransformApplyierVisitor
 
   Shape::Collider operator()(const Shape::Point& collider) const
   {
-    return Shape::Point{
+    return Shape::Point {
       .point = _transform->translation() + collider.point,
     };
   }
@@ -149,7 +149,7 @@ struct TransformApplyierVisitor
 bool
 is_in_frustum(const Shape::Frustum& frustum, const Shape::Collider& collider)
 {
-  InFrustumVisitor visitor{ &frustum };
+  InFrustumVisitor visitor { &frustum };
   return std::visit(visitor, collider);
 }
 
@@ -157,6 +157,6 @@ Shape::Collider
 apply_transform_to_collider(const Transform& transform,
                             const Shape::Collider& collider)
 {
-  TransformApplyierVisitor visitor{ &transform };
+  TransformApplyierVisitor visitor { &transform };
   return std::visit(visitor, collider);
 }

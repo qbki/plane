@@ -51,37 +51,37 @@ PerspectiveCamera::frustum() const
 
   const auto half_vertical = far * glm::tan(_fovy * 0.5f);
   const auto half_horizontal = half_vertical * _aspect_ratio;
-  const auto right_norm =
-    glm::normalize(glm::cross(forward_norm, DEFAULT_UP_NORM));
+  const auto right_norm = glm::normalize(
+    glm::cross(forward_norm, DEFAULT_UP_NORM));
   const auto central_far_point = position + forward_norm * far;
   return {
-    .near{
+    .near {
       .point = position + forward_norm * near,
       .normal = forward_norm,
     },
-    .far{
+    .far {
       .point = position + forward_norm * far,
       .normal = -forward_norm,
     },
-    .left{
+    .left {
       .point = position,
       .normal = glm::normalize(glm::cross(
         DEFAULT_UP_NORM,
         position - (central_far_point - half_horizontal * right_norm))),
     },
-    .right{
+    .right {
       .point = position,
       .normal = glm::normalize(glm::cross(
         position - (central_far_point + half_horizontal * right_norm),
         DEFAULT_UP_NORM)),
     },
-    .top{
+    .top {
       .point = position,
       .normal = glm::normalize(glm::cross(
         right_norm,
         position - (central_far_point + half_vertical * DEFAULT_UP_NORM))),
     },
-    .bottom{
+    .bottom {
       .point = position,
       .normal = glm::normalize(glm::cross(
         position - (central_far_point - half_vertical * DEFAULT_UP_NORM),

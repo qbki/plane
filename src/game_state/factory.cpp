@@ -122,7 +122,7 @@ make_particle(entt::registry& registry, const std::string& file_path)
 entt::entity
 make_point_light(entt::registry& registry, const std::string&)
 {
-  const PointLightParams point_light_params{
+  const PointLightParams point_light_params {
     .constant = 1.0,
     .linear = 0.045,
     .quadratic = 0.0075,

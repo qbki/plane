@@ -11,8 +11,8 @@ private:
   static void rwops_deleter(SDL_RWops* rwops);
 
 public:
-  using RWopsPtrType =
-    std::unique_ptr<SDL_RWops, std::function<void(SDL_RWops*)>>;
+  using RWopsPtrType = std::unique_ptr<SDL_RWops,
+                                       std::function<void(SDL_RWops*)>>;
 
   explicit DataHolder(const std::vector<unsigned char>&& data);
 

@@ -25,7 +25,7 @@ PositionStrategyVisitor::PositionStrategyVisitor(
   ModelFactory::MakerFn* maker_fn)
   : _entities(entities)
   , _scene(scene)
-  , _entity_maker(&scene->state().registry(), entities, maker_fn){};
+  , _entity_maker(&scene->state().registry(), entities, maker_fn) {};
 
 entt::entity
 PositionStrategyVisitor::handle_single(const std::string& entity_id) const
@@ -42,14 +42,14 @@ PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy) const
   auto& registry = _scene->state().registry();
   auto& center = strategy.center;
   auto& radius = strategy.radius;
-  auto speed_items_view =
-    strategy.entity_ids | std::views::transform([&](const auto& id) {
-      return _entities->actor(id).speed;
-    });
+  auto speed_items_view = strategy.entity_ids
+                          | std::views::transform([&](const auto& id) {
+                              return _entities->actor(id).speed;
+                            });
   std::vector<float> speed_items(speed_items_view.begin(),
                                  speed_items_view.end());
-  auto get_random_int =
-    make_random_fn(static_cast<size_t>(0), strategy.entity_ids.size() - 1);
+  auto get_random_int = make_random_fn(static_cast<size_t>(0),
+                                       strategy.entity_ids.size() - 1);
   auto radius_float = static_cast<float>(radius);
 
   std::vector<glm::ivec2> coords;
@@ -109,8 +109,8 @@ PositionStrategyVisitor::operator()(
   auto& center = strategy.center;
   auto& width = strategy.width;
   auto& height = strategy.height;
-  auto get_random_int =
-    make_random_fn(static_cast<size_t>(0), strategy.entity_ids.size() - 1);
+  auto get_random_int = make_random_fn(static_cast<size_t>(0),
+                                       strategy.entity_ids.size() - 1);
   const auto half = 2.0f;
   auto start_x = center.x - static_cast<float>(width) / half;
   auto start_y = center.y - static_cast<float>(height) / half;

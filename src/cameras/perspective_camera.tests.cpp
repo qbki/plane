@@ -22,27 +22,27 @@ const glm::vec3 ORIGIN = glm::zero<glm::vec3>();
 const float TERM = glm::normalize(glm::vec2(1, 1)).x;
 
 const Shape::Frustum EXPECTED_FRUSTUM = {
-  .near{
+  .near {
     .point = { 0, 0, -NEAR },
     .normal = { 0, 0, -1 },
   },
-  .far{
+  .far {
     .point = { 0, 0, -FAR },
     .normal = { 0, 0, 1 },
   },
-  .left{
+  .left {
     .point = ORIGIN,
     .normal = { TERM, 0, -TERM },
   },
-  .right{
+  .right {
     .point = ORIGIN,
     .normal = { -TERM, 0, -TERM },
   },
-  .top{
+  .top {
     .point = ORIGIN,
     .normal = { 0, -TERM, -TERM },
   },
-  .bottom{
+  .bottom {
     .point = ORIGIN,
     .normal = { 0, TERM, -TERM },
   },

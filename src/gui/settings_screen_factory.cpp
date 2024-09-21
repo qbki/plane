@@ -43,6 +43,12 @@ settings_screen_factory(Scene& scene)
 
       ui.row({
         .children = Children({
+          ui.text({
+            .color = Services::theme().components.text.color,
+            .font = Services::theme().typography.h4,
+            .text = "Sound: ",
+          }),
+
           ui.text_button({
             .text = "< ",
             .on_pointer_down = make_volume_changer(-step),
@@ -63,13 +69,19 @@ settings_screen_factory(Scene& scene)
           [](auto&) {
             Services::app().add_once_handler([](auto&) {
               Services::app().pop_scene();
-              for (auto& scene : Services::app().scenes()) {
-                scene->is_paused(false);
+              auto scenes_quantity = Services::app().scenes().size();
+              if (scenes_quantity > 0) {
+                Services::app().scenes()[scenes_quantity - 1]->is_paused(false);
               }
             });
           },
       }),
     }),
+  });
+
+  ui.background({
+    .color = Services::theme().components.menu_screen.background_color,
+    .z = -0.1, // NOLINT
   });
 }
 

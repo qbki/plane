@@ -10,7 +10,11 @@ class Scene
 private:
   bool _is_deferred = true;
   bool _is_paused = false;
+
+  bool _is_allowed_to_cancel = false;
+
   Events::EventEmitter<Scene> _events {};
+  Events::EventEmitter<Scene> _cancel_events {};
   std::unique_ptr<State> _state = std::make_unique<State>();
 
 public:
@@ -18,6 +22,7 @@ public:
 
   void update();
   Events::EventEmitter<Scene>& handlers();
+  Events::EventEmitter<Scene>& cancel_handlers();
   State& state() const;
 
   void is_deferred(bool value);

@@ -53,7 +53,7 @@ update_gui(Scene& scene)
             IsPointerInside& was_pointer_inside,
             IsPointerDownEventAccepted& is_down_event_accepted) {
       auto global_matrix = get_global_matrix(registry, parent);
-      auto is_pointer_down = Services::app().control().is_pointer_down;
+      auto is_pointer_down = Services::app().control().pointer_pressed;
       auto is_pointer_up = !is_pointer_down;
       auto point = global_matrix * glm::vec4(transform.translation(), 1);
       Rect<int> rect {

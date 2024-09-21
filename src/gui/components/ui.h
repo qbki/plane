@@ -6,6 +6,7 @@
 #include "block.h"
 #include "progress.h"
 #include "rect.h"
+#include "src/gui/components/background.h"
 #include "src/gui/components/row.h"
 #include "text.h"
 #include "text_button.h"
@@ -17,6 +18,7 @@ struct UIComponents
   template<typename T>
   using UIComponent = std::function<entt::entity(const T& config)>;
 
+  UIComponent<Factory::BackgroundConfig> background;
   UIComponent<Factory::BlockConfig> block;
   UIComponent<Factory::ProgressConfig> progress;
   UIComponent<Factory::RectConfig> rect;

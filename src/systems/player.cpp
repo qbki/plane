@@ -38,9 +38,7 @@ player_shooting_system(const Scene& scene)
 {
   const auto& control = Services::app().control();
   scene.state().registry().view<Weapon, PlayerKind>().each(
-    [&control](Weapon& weapon) {
-      weapon.is_shooting = control.is_player_shooting;
-    });
+    [&control](Weapon& weapon) { weapon.is_shooting = control.shooting; });
 };
 
 void

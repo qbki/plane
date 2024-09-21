@@ -194,33 +194,65 @@ render_ui(const Scene& scene)
 {
   auto& registry = scene.state().registry();
   const auto& camera = scene.state().camera();
+  GLint stored_gl_depth_func = 0;
+
   auto& particle_shader = Services::app().particle_shader();
-  auto inter_fb = Services::app().intermediate_fb().handle();
   particle_shader.use();
   particle_shader.uniform("u_PV", camera.pv());
   particle_shader.uniform("u_main_texture", 0);
-  glBindFramebuffer(GL_FRAMEBUFFER, inter_fb);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glEnable(GL_BLEND);
+  glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+  glGetIntegerv(GL_DEPTH_FUNC, &stored_gl_depth_func);
+  glDepthFunc(GL_ALWAYS);
+  struct Bearer
+  {
+    Transform* transform;
+    Texture* texture;
+    RectSize* rect;
+    Parent* parent;
+  };
+
+  std::vector<Bearer> gui_items {};
+
   registry
     .view<Transform, UniqueTexturePtr, RectSize, Parent, Available, GUIKind>()
-    .each([&registry](Transform& orig_transform,
-                      UniqueTexturePtr& texture,
-                      RectSize& rect,
-                      Parent& parent) {
-      Transform transform {};
-      transform.translate({
-        orig_transform.translation().x + static_cast<float>(rect.width) * HALF,
-        orig_transform.translation().y + static_cast<float>(rect.height) * HALF,
-        transform.translation().z,
+    .each([&gui_items](Transform& orig_transform,
+                       UniqueTexturePtr& texture,
+                       RectSize& rect,
+                       Parent& parent) {
+      gui_items.push_back({
+        .transform = &orig_transform,
+        .texture = texture.get(),
+        .rect = &rect,
+        .parent = &parent,
       });
-      transform.scale({ rect.width, rect.height, 1 });
-      texture->use(0);
-
-      glm::mat4 global_matrix = get_global_matrix(registry, parent)
-                                * transform.matrix();
-      Services::gui_quad().draw(
-        { .transforms = std::vector<glm::mat4> { global_matrix } });
     });
+
+  std::ranges::sort(gui_items, [](const Bearer& a, const Bearer& b) {
+    return a.transform->translation().z < b.transform->translation().z;
+  });
+
+  for (const auto& item : gui_items) {
+    Transform transform {};
+    auto rect = item.rect;
+    transform.translate({
+      item.transform->translation().x + static_cast<float>(rect->width) * HALF,
+      item.transform->translation().y + static_cast<float>(rect->height) * HALF,
+      transform.translation().z,
+    });
+    transform.scale({ rect->width, rect->height, 1 });
+    item.texture->use(0);
+
+    glm::mat4 global_matrix = get_global_matrix(registry, *item.parent)
+                              * transform.matrix();
+    Services::gui_quad().draw({
+      .transforms = std::vector<glm::mat4> { global_matrix },
+    });
+  }
+  glDepthFunc(stored_gl_depth_func);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glDisable(GL_BLEND);
 }
 
 void
@@ -314,5 +346,6 @@ render_system(App& app)
     inter_shader.uniform("u_gamma", GAMMA);
     inter_shader.uniform("u_main_texture", 0);
     app.deferred_shading().draw_quad();
+    glDisable(GL_BLEND);
   }
 }

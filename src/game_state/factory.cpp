@@ -4,7 +4,6 @@
 #include "src/components/common.h"
 #include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
-#include "src/components/weapon.h"
 #include "src/services.h"
 
 #include "factory.h"

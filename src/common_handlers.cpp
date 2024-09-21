@@ -9,8 +9,9 @@
 #include "src/cameras/perspective_camera.h"
 #include "src/consts.h"
 #include "src/gui/game_screen_factory.h"
+#include "src/gui/in_game_main_menu_factory.h"
 #include "src/gui/loading_factory.h"
-#include "src/gui/main_menu_factory.h"
+#include "src/gui/screens/main_menu_screen.h"
 #include "src/loader/level_loader.h"
 #include "src/loader/levels_meta_loader.h"
 #include "src/scene/scene.h"
@@ -56,12 +57,12 @@ load_loading_screen()
 }
 
 void
-load_main_menu()
+load_in_game_main_menu()
 {
   auto camera = make_gui_camera(Services::app());
   auto scene = std::make_unique<Scene>(std::move(camera));
   scene->is_deferred(false);
-  scene->handlers().once(GUI::main_menu_factory);
+  scene->handlers().once(GUI::in_game_main_menu_factory);
   scene->handlers().add(update_gui);
   Services::app().push_scene(std::move(scene));
 }
@@ -115,6 +116,11 @@ load_next_level(const Events::LoadLevelEvent&)
     calculate_world_bbox(*game);
     Services::app().info().current_level = *next_level_it;
 
+    game->cancel_handlers().add([](Scene& scene) {
+      scene.is_paused(true);
+      Services::app().add_once_handler([](auto&) { load_in_game_main_menu(); });
+    });
+
     auto gui_camera = make_gui_camera(Services::app());
     auto ui = std::make_unique<Scene>(std::move(gui_camera));
     ui->handlers().once(GUI::game_screen_factory);
@@ -138,5 +144,8 @@ register_common_handlers()
 {
   Services::events<const Events::ShootEvent>().add(play_sound);
   Services::events<const Events::LoadLevelEvent>().add(load_next_level);
-  Services::app().add_once_handler([](auto&) { load_main_menu(); });
+  Services::app().add_once_handler([](auto&) {
+    auto scene = load_main_menu();
+    Services::app().push_scene(std::move(scene));
+  });
 }

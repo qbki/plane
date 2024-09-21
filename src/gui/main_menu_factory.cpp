@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <utility>
 
 #include "src/components/common.h"
@@ -21,8 +22,8 @@ main_menu_factory(const Scene& scene)
     .on_pointer_down_once =
       [](auto&) {
         Services::app().add_once_handler([](auto&) {
-          Events::LoadLevelEvent dummy;
-          Services::events<const Events::LoadLevelEvent>().emit(dummy);
+          Services::app().info().current_level = std::nullopt;
+          Services::events<const Events::LoadLevelEvent>().emit({});
         });
       },
   });

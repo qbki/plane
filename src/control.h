@@ -18,9 +18,9 @@ public:
   bool down = false;
   bool left = false;
   bool right = false;
-  bool is_player_shooting = false;
-
-  bool is_pointer_down = false;
+  bool shooting = false;
+  bool cancel = false;
+  bool pointer_pressed = false;
 
   void update(const SDL_Event& event);
 };

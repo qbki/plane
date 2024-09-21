@@ -1,3 +1,4 @@
+#include "background.h"
 #include "block.h"
 #include "progress.h"
 #include "rect.h"
@@ -13,6 +14,10 @@ UIComponents
 make_ui(std::shared_ptr<entt::registry>& registry)
 {
   return {
+    .background =
+      [registry](const auto& config) mutable {
+        return Factory::background(registry, config);
+      },
     .block =
       [registry](const auto& config) mutable {
         return Factory::block(registry, config);

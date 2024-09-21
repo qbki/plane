@@ -44,12 +44,18 @@ struct Components
   {
     Core::Color color { Palette::WHITE_ACCENT };
   } text;
+
   struct TextButton
   {
     Text active { .color { Palette::WHITE } };
     Text hover { .color { Palette::WHITE_ACCENT } };
     Text disabled { .color { Palette::GRAY } };
   } text_button;
+
+  struct MenuScreen
+  {
+    Core::Color background_color { 0x00'00'00'bb }; // NOLINT
+  } menu_screen;
 };
 
 struct Theme

@@ -16,7 +16,13 @@ std::string
 load_text(const std::string& file_name);
 
 nlohmann::basic_json<>
-load_json(const std::string& file_name);
+load_json(const std::string& file_path);
+
+nlohmann::basic_json<>
+load_local_json(const std::filesystem::path& file_path);
+
+void
+save_local_json(const std::filesystem::path& file_path, nlohmann::json json);
 
 std::shared_ptr<DataHolder>
 load_sdl_rw_data(const std::filesystem::path& path);

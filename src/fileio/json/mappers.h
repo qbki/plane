@@ -8,7 +8,8 @@
 
 #include "src/consts.h"
 #include "src/control.h"
-#include "src/loader/params.h"
+
+#include "../params.h"
 
 template<typename T>
 void

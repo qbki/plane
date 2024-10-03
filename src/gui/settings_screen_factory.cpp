@@ -15,16 +15,15 @@ settings_screen_factory(Scene& scene)
 {
   auto& registry = scene.state().shared_registry();
   auto ui = Factory::make_ui(registry);
-  const float step = 0.1;
-  auto volume = Services::app().settings().master_volume().value();
+  const int step = 5;
 
   auto progress = ui.progress({
     .width = 200, // NOLINT(cppcoreguidelines-avoid-magic-numbers)
     .height = 20, // NOLINT(cppcoreguidelines-avoid-magic-numbers)
-    .value = static_cast<float>(volume),
+    .value = Services::app().settings().master_volume().value(),
   });
 
-  auto make_volume_changer = [registry, progress](float step) {
+  auto make_volume_changer = [registry, progress](int step) {
     return [registry, progress, step](auto&) {
       auto& settings = Services::app().settings();
       settings.master_volume().add(step);
@@ -68,11 +67,13 @@ settings_screen_factory(Scene& scene)
         .on_pointer_down =
           [](auto&) {
             Services::app().add_once_handler([](auto&) {
-              Services::app().pop_scene();
-              auto scenes_quantity = Services::app().scenes().size();
+              auto& app = Services::app();
+              app.pop_scene();
+              auto scenes_quantity = app.scenes().size();
               if (scenes_quantity > 0) {
-                Services::app().scenes()[scenes_quantity - 1]->is_paused(false);
+                app.scenes()[scenes_quantity - 1]->is_paused(false);
               }
+              app.settings().save();
             });
           },
       }),

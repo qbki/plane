@@ -2,7 +2,6 @@
 #include <SDL_rwops.h>
 #include <cstdint>
 #include <cxxabi.h>
-#include <functional>
 #include <memory>
 #include <optional>
 #include <string>

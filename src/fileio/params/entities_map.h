@@ -9,7 +9,7 @@
 #include <variant>
 #include <vector>
 
-#include "src/loader/params/entities.h" // IWYU pragma: export
+#include "src/fileio/params/entities.h" // IWYU pragma: export
 #include "src/utils/types.h"
 
 class EntityParamsMap

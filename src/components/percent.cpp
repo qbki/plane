@@ -1,36 +1,41 @@
 #include <algorithm>
 
 #include "percent.h"
-#include "src/utils/common.h"
 
-Percent::Percent(double value)
+Percent::Percent(int value)
   : _value(std::clamp(value, BOTTOM, TOP))
 {
 }
 
 void
-Percent::value(double value)
+Percent::value(int value)
 {
   auto new_value = std::clamp(value, BOTTOM, TOP);
-  if (!is_approx_equal(new_value, _value)) {
+  if (new_value != _value) {
     _value = new_value;
     _emitter.emit(_value);
   }
 }
 
-double
+int
 Percent::value() const
 {
   return _value;
 }
 
 void
-Percent::add(double term)
+Percent::add(int term)
 {
   value(_value + term);
 }
 
-Events::EventEmitter<double>&
+double
+Percent::norm() const
+{
+  return static_cast<double>(_value) / static_cast<double>(TOP);
+}
+
+Events::EventEmitter<int>&
 Percent::on_changed()
 {
   return _emitter;

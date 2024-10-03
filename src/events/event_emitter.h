@@ -2,9 +2,7 @@
 #include <functional>
 #include <map>
 #include <ranges>
-#include <typeindex>
 #include <unordered_set>
-#include <vector>
 
 #include "event.h" // IWYU pragma: export
 

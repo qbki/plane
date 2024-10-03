@@ -1,4 +1,5 @@
 #pragma once
+#include <filesystem>
 #include <functional>
 #include <glm/vec2.hpp> // IWYU pragma: export
 #include <vector>
@@ -6,6 +7,7 @@
 #include "src/app/app_info.h" // IWYU pragma: export
 #include "src/app/settings.h"
 #include "src/app/system.h" // IWYU pragma: export
+#include "src/consts.h"
 #include "src/control.h"    // IWYU pragma: export
 #include "src/scene/scene.h"
 #include "src/sdl_init.h"
@@ -28,7 +30,7 @@ private:
   WindowPtr _window;
   ContextPtr _gl_context;
   System _system {};
-  Settings _settings {};
+  Settings _settings {SETTINGS_FILE};
   std::vector<std::unique_ptr<Scene>> _scenes {};
   std::unique_ptr<Control> _control;
   RectSize _screen_size;

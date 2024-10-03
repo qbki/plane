@@ -45,7 +45,7 @@ progress(std::shared_ptr<entt::registry>& registry,
       auto [percent, rect] = registry->get<Percent, RectSize>(entity);
       auto& line_rect = registry->get<RectSize>(line);
       auto& progress_rect = registry->get<RectSize>(progress);
-      progress_rect.width = static_cast<int>(rect.width * percent.value());
+      progress_rect.width = static_cast<int>(rect.width * percent.norm());
       progress_rect.height = rect.height;
       line_rect.width = rect.width;
       line_rect.height = static_cast<int>(static_cast<float>(rect.height)

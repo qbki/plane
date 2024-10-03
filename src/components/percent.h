@@ -4,19 +4,21 @@
 class Percent
 {
 private:
-  double _value = 0.0;
-  Events::EventEmitter<double> _emitter;
+  int _value = 0;
+  Events::EventEmitter<int> _emitter;
 
 public:
-  constexpr static const double TOP = 1.0;
-  constexpr static const double BOTTOM = 0.0;
+  constexpr static int TOP = 100;
+  constexpr static int BOTTOM = 0;
 
-  explicit Percent(double value);
+  explicit Percent(int value);
 
-  void value(double value);
-  double value() const;
+  void value(int value);
+  int value() const;
 
-  void add(double term);
+  void add(int term);
 
-  Events::EventEmitter<double>& on_changed();
+  double norm() const;
+
+  Events::EventEmitter<int>& on_changed();
 };

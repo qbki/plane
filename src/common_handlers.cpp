@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <compare>
 #include <filesystem>
+#include <iterator>
 #include <optional>
 #include <utility>
 #include <vector>
@@ -8,12 +9,12 @@
 #include "src/cameras/gui_camera.h"
 #include "src/cameras/perspective_camera.h"
 #include "src/consts.h"
+#include "src/fileio/level_loader.h"
+#include "src/fileio/levels_meta_loader.h"
 #include "src/gui/game_screen_factory.h"
 #include "src/gui/in_game_main_menu_factory.h"
 #include "src/gui/loading_factory.h"
 #include "src/gui/screens/main_menu_screen.h"
-#include "src/loader/level_loader.h"
-#include "src/loader/levels_meta_loader.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/sound/sound.h"
@@ -85,6 +86,7 @@ load_next_level(const Events::LoadLevelEvent&)
   } else {
     next_level_it = levels_meta.levels.begin();
   }
+  bool is_last_level = std::distance(next_level_it, levels_meta.levels.end()) == 1;
   if (next_level_it < levels_meta.levels.end()) {
     Services::app().scenes().clear();
     load_loading_screen();
@@ -110,7 +112,9 @@ load_next_level(const Events::LoadLevelEvent&)
     game->handlers().add(projectile_handler_system);
     game->handlers().add(tutorial_buttons_system);
     game->handlers().add(tutorial_buttons_system);
-    game->handlers().add(check_finish_condition);
+    if (!is_last_level) {
+      game->handlers().add(check_finish_condition);
+    }
     game->handlers().add(update_gui_calculate_hostiles);
     load_level(LEVELS_DIR / "entities.json", *next_level_it, *game);
     calculate_world_bbox(*game);

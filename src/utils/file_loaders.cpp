@@ -145,16 +145,104 @@ load_binary(const std::string& file_name)
 }
 
 nlohmann::basic_json<>
-load_json(const std::string& file_name)
+load_json(const std::string& file_path)
 {
 #ifdef __EMSCRIPTEN__
-  auto data = load_string_by_emscripten(file_name);
+  auto data = load_string_by_emscripten(file_path);
   return nlohmann::json::parse(begin(data), end(data));
 #else
-  throw_error_if_file_not_found(file_name);
-  auto file_stream = std::fstream(file_name);
-  throw_error_if_file_is_not_readable(file_stream, file_name);
+  throw_error_if_file_not_found(file_path);
+  auto file_stream = std::fstream(file_path);
+  throw_error_if_file_is_not_readable(file_stream, file_path);
   return nlohmann::json::parse(file_stream);
+#endif
+}
+
+#ifdef __EMSCRIPTEN__
+// cppcheck-suppress-begin internalAstError
+EM_ASYNC_JS(char*, em_read_file, (const char* file_path_cstr, const char* parent_path_cstr), {
+  const file_path = UTF8ToString(file_path_cstr);
+  const parent_path = UTF8ToString(parent_path_cstr);
+  const parent_info = FS.analyzePath(parent_path, true);
+  async function sync() {
+    return new Promise((resolve, reject) => {
+      FS.syncfs(true, (err) => {
+        if (err) {
+          reject();
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+  if (!parent_info.exists) {
+    FS.mkdir(parent_path);
+  }
+  FS.mount(IDBFS, {}, parent_path);
+  return await sync()
+    .then(() => FS.readFile(file_path, { encoding: 'utf8' }))
+    .then((content) => stringToNewUTF8(content))
+    .finally(() => FS.unmount(parent_path));
+});
+// cppcheck-suppress-end internalAstError
+#endif
+
+nlohmann::basic_json<>
+load_local_json(const std::filesystem::path& file_path)
+{
+#ifdef __EMSCRIPTEN__
+  auto parent_path = file_path.parent_path();
+  auto settings_raw_data = em_read_file(file_path.c_str(), parent_path.c_str());
+  auto json = nlohmann::json::parse(settings_raw_data);
+  free(settings_raw_data);
+  return json;
+#else
+  return load_json(file_path);
+#endif
+}
+
+void
+save_local_json(const std::filesystem::path& file_path, nlohmann::json json)
+{
+  auto dump = json.dump();
+  auto parent_path = file_path.parent_path();
+#ifdef __EMSCRIPTEN__
+  EM_ASM({
+    const file_path = UTF8ToString($0);
+    const parent_path = UTF8ToString($1);
+    const data = UTF8ToString($2);
+    const parent_info = FS.analyzePath(parent_path, true);
+    if (!parent_info.exists) {
+      FS.mkdir(parent_path);
+    }
+    FS.mount(IDBFS, {}, parent_path);
+    FS.syncfs((err) => {
+      if (err) {
+        console.error(err);
+      } else {
+        FS.writeFile(file_path, data);
+        FS.syncfs((err) => {
+          if (err) {
+            console.error(err);
+          } else {
+            FS.unmount(parent_path);
+          }
+        });
+      }
+    });
+  }, file_path.c_str(), parent_path.c_str(), dump.c_str());
+#else
+  if (!std::filesystem::exists(parent_path)
+      && !std::filesystem::create_directories(parent_path))
+  {
+    auto message = std::format("Can't create a directory: {}", parent_path.string());
+    Services::logger().error(message);
+    return;
+  }
+  std::ofstream file {file_path};
+  if (file) {
+    file << dump;
+  }
 #endif
 }
 

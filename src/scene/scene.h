@@ -23,11 +23,11 @@ public:
   void update();
   Events::EventEmitter<Scene>& handlers();
   Events::EventEmitter<Scene>& cancel_handlers();
-  State& state() const;
+  [[nodiscard]] State& state() const;
 
   void is_deferred(bool value);
-  bool is_deferred() const;
+  [[nodiscard]] bool is_deferred() const;
 
   void is_paused(bool value);
-  bool is_paused() const;
+  [[nodiscard]] bool is_paused() const;
 };

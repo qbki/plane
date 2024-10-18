@@ -2,6 +2,7 @@
 #include <utility>
 
 #include "src/components/common.h"
+#include "src/fileio/save_data_io.h"
 #include "src/gui/components/ui.h"
 #include "src/gui/screens/settings_screen.h"
 #include "src/scene/scene.h"
@@ -14,16 +15,33 @@ namespace GUI {
 void
 main_menu_factory(const Scene& scene)
 {
-  auto ui = Factory::make_ui(scene.state().shared_registry());
+  auto registry = scene.state().shared_registry();
+  auto ui = Factory::make_ui(registry);
   auto children = Children({});
+  auto save_data = Services::app().save_data().load();
+
+  if (save_data.current_level.has_value()) {
+    auto continue_button_entity = ui.text_button({
+      .text = "Continue",
+      .on_pointer_down_once =
+        [](auto&) {
+          Services::app().add_once_handler([](auto&) {
+            Services::events<const Events::LoadCurrentLevelEvent>().emit({});
+          });
+        },
+    });
+    children.value.push_back(continue_button_entity);
+  }
 
   auto new_button_entity = ui.text_button({
     .text = "New Game",
     .on_pointer_down_once =
       [](auto&) {
         Services::app().add_once_handler([](auto&) {
-          Services::app().info().current_level = std::nullopt;
-          Services::events<const Events::LoadLevelEvent>().emit({});
+          auto& app = Services::app();
+          app.info().current_level = std::nullopt;
+          app.save_data().save({ .current_level = "" });
+          Services::events<const Events::LoadNextLevelEvent>().emit({});
         });
       },
   });

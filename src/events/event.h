@@ -31,7 +31,10 @@ struct PointerDown
   glm::ivec2 position;
 };
 
-struct LoadLevelEvent
+struct LoadNextLevelEvent
+{};
+
+struct LoadCurrentLevelEvent
 {};
 
 template<typename T>

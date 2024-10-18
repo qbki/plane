@@ -1,5 +1,5 @@
 SHELL=/bin/bash
-CPP_SOURCE_FILES_LIST=$(shell git ls-files | egrep '(\.h|\.cpp)$$')
+CPP_SOURCE_FILES_LIST=$(shell git ls-files | egrep '(\.h|\.cpp|\.ipp)$$')
 PROJECT_NAME=plane
 BUILD_DIR=$(shell pwd)/build
 SRC_DIR=$(shell pwd)/src

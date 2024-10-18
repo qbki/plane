@@ -134,6 +134,12 @@ App::settings()
   return _settings;
 }
 
+Save&
+App::save_data()
+{
+  return _save;
+}
+
 void
 App::add_handler(Handler handler)
 {

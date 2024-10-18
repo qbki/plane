@@ -25,8 +25,11 @@ main()
   Service<Cache>::install(std::make_unique<Cache>());
   Service<Events::EventEmitter<const Events::ShootEvent>>::install(
     std::make_unique<Events::EventEmitter<const Events::ShootEvent>>());
-  Service<Events::EventEmitter<const Events::LoadLevelEvent>>::install(
-    std::make_unique<Events::EventEmitter<const Events::LoadLevelEvent>>());
+  Service<Events::EventEmitter<const Events::LoadNextLevelEvent>>::install(
+    std::make_unique<Events::EventEmitter<const Events::LoadNextLevelEvent>>());
+  Service<Events::EventEmitter<const Events::LoadCurrentLevelEvent>>::install(
+    std::make_unique<
+      Events::EventEmitter<const Events::LoadCurrentLevelEvent>>());
 
   auto window = init_window(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
   auto context = init_context(window.get());

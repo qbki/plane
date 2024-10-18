@@ -1,5 +1,4 @@
 #include <SDL_mixer.h>
-#include <optional>
 #include <utility>
 
 #include "src/components/percent.h"
@@ -31,19 +30,16 @@ void
 Settings::load()
 {
   auto exec_path = get_excutable_path();
-  if (exec_path.has_value()) {
-    const auto settings = load_settings(exec_path.value() / _settings_path);
-    _master_volume.value(settings.volume);
-  }
+  const auto settings = load_settings(exec_path / _settings_path);
+  _master_volume.value(settings.volume);
 }
 
 void
 Settings::save() const
 {
   auto exec_path = get_excutable_path();
-  if (exec_path.has_value()) {
-    save_settings(exec_path.value() / _settings_path, {
-      .volume = _master_volume.value(),
-    });
-  }
+  save_settings(exec_path / _settings_path,
+                {
+                  .volume = _master_volume.value(),
+                });
 }

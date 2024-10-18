@@ -3,7 +3,7 @@ include(${CMAKE_SOURCE_DIR}/configs/cmake/utils.cmake)
 include(${CMAKE_SOURCE_DIR}/configs/cmake/license.cmake)
 
 set(CMAKE_TOOLCHAIN_FILE
-    "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tools/vcpkg/scripts/buildsystems/vcpkg.cmake"
     CACHE STRING "Vcpkg toolchain file")
 
 project(plane VERSION 0.1.7)
@@ -76,10 +76,11 @@ add_flag("-Wpedantic")
 add_flag("-pedantic-errors")
 if(DEFINED EMSCRIPTEN)
   add_flag("-fexceptions")
-  add_flag("-sUSE_SDL=2")
-  add_flag("-sUSE_SDL_TTF=2")
-  add_flag("-sUSE_SDL_MIXER=2")
-  #add_flag("-gsource-map")
+  add_exe_flag("-sUSE_SDL=2")
+  add_exe_flag("-sUSE_SDL_TTF=2")
+  add_exe_flag("-sUSE_SDL_MIXER=2")
+  #add_exe_flag("-g3")
+  #add_exe_flag("-gsource-map")
   add_exe_flag("-sEXPORT_NAME=moduleFactory")
   add_exe_flag("-sMODULARIZE")
   add_exe_flag("-sEXPORT_ES6=1")
@@ -111,6 +112,12 @@ if(BUILD_EXECUTABLE)
   if(DEFINED EMSCRIPTEN)
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "index")
     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".js")
+    # <> It helps generate the right compile_commangs.json file for clangd
+    set(ARGS --cflags -sUSE_SDL=2 -sUSE_SDL_TTF=2 -sUSE_SDL_MIXER=2)
+    execute_process(COMMAND ${CMAKE_CXX_COMPILER} ${ARGS}
+                    OUTPUT_VARIABLE EMSCRIPTEN_FLAGS)
+    set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${EMSCRIPTEN_FLAGS}")
+    # </>
   else()
     add_custom_command(
       TARGET ${PROJECT_NAME} PRE_LINK

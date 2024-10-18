@@ -19,7 +19,7 @@ check_finish_condition(Scene& scene)
 
   if (enemy_quantity == 0) {
     Services::app().add_once_handler([](auto&) {
-      Services::events<const Events::LoadLevelEvent>().emit({});
+      Services::events<const Events::LoadNextLevelEvent>().emit({});
     });
   }
 }

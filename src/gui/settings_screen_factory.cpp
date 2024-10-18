@@ -1,4 +1,3 @@
-#include "src/app/settings.h"
 #include "src/components/common.h"
 #include "src/components/percent.h"
 #include "src/gui/components/ui.h"

@@ -49,11 +49,13 @@ public:
   }
 
   void set(Mapping&& mapping);
-  EntityParams params(const std::string& key) const;
-  EntityParamsActor actor(const std::string& key) const;
-  EntityParamsDirectionalLight directional_light(const std::string& key) const;
-  EntityParamsWeapon weapon(const std::string& key) const;
-  EntityParamsModel model(const std::string& key) const;
-  EntityParamsParticles particles(const std::string& key) const;
-  EntityParamsPointLight point_light(const std::string& key) const;
+  [[nodiscard]] EntityParams params(const std::string& key) const;
+  [[nodiscard]] EntityParamsActor actor(const std::string& key) const;
+  [[nodiscard]] EntityParamsDirectionalLight directional_light(
+    const std::string& key) const;
+  [[nodiscard]] EntityParamsWeapon weapon(const std::string& key) const;
+  [[nodiscard]] EntityParamsModel model(const std::string& key) const;
+  [[nodiscard]] EntityParamsParticles particles(const std::string& key) const;
+  [[nodiscard]] EntityParamsPointLight point_light(
+    const std::string& key) const;
 };

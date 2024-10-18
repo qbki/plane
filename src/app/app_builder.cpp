@@ -5,7 +5,6 @@
 #include <utility>
 
 #include "app_builder.h"
-#include "settings.h"
 
 template<typename T>
 T
@@ -72,12 +71,12 @@ AppBuilder::build()
   auto context_obj = or_throw(_context, "Context");
 
   auto app = new App(std::move(control_obj),
-                 screen_size_obj,
-                 std::move(deferred_shading_obj),
-                 std::move(particle_shader_obj),
-                 std::move(intermediate_shader_obj),
-                 std::move(window_obj),
-                 std::move(context_obj));
+                     screen_size_obj,
+                     std::move(deferred_shading_obj),
+                     std::move(particle_shader_obj),
+                     std::move(intermediate_shader_obj),
+                     std::move(window_obj),
+                     std::move(context_obj));
   app->settings().load();
   return app;
 }

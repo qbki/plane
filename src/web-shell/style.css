@@ -43,6 +43,7 @@ body {
   color: #dddddd;
   z-index: 1000;
   white-space: pre-wrap;
+  overflow: auto;
 }
 
 .hidden {

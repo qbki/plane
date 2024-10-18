@@ -14,11 +14,11 @@ public:
   explicit Percent(int value);
 
   void value(int value);
-  int value() const;
+  [[nodiscard]] int value() const;
 
   void add(int term);
 
-  double norm() const;
+  [[nodiscard]] double norm() const;
 
   Events::EventEmitter<int>& on_changed();
 };

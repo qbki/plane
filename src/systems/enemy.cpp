@@ -1,7 +1,9 @@
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/ext/scalar_constants.hpp>
 #include <glm/geometric.hpp>
+#include <glm/gtx/intersect.hpp>
 #include <glm/trigonometric.hpp>
 #include <ranges>
-#include <tuple>
 #include <variant>
 
 #include "src/collections/octree.h"
@@ -17,17 +19,9 @@
 
 const unsigned int MAX_OCTREE_DEPTH = 12;
 
-bool
-are_siblings_close(glm::vec3 a, glm::vec3 b)
-{
-  const float hit_distance = 0.8;
-  return glm::distance(a, b) < hit_distance;
-}
-
 void
 enemy_hunting_system(Scene& scene)
 {
-  // TODO Replace by a real AI
   auto& state = scene.state();
   auto& registry = state.registry();
   Transform player_transform {};
@@ -35,12 +29,12 @@ enemy_hunting_system(Scene& scene)
     [&player_transform](const auto& transform) {
       player_transform = transform;
     });
-  auto player_position = player_transform.translation();
   auto enemies_view = registry
                         .view<Transform,
                               LinearVelocity,
                               EnemyStateEnum,
                               MeshPointer,
+                              Weapon,
                               EnemyKind,
                               Available>()
                         .each();
@@ -49,41 +43,59 @@ enemy_hunting_system(Scene& scene)
                      return std::get<3>(tuple) == EnemyStateEnum::HUNTING;
                    });
   Octree<entt::entity> octree(state.world_bbox(), MAX_OCTREE_DEPTH);
-  for (auto [id_a, transform_a, velocity_a, _state_a, mesh_a] : enemies) {
+  for (auto [id_a, transform_a, velocity_a, _state_a, mesh_a, weapon_a] :
+       enemies) {
     auto a = apply_transform_to_collider(transform_a,
                                          mesh_a->bounding_volume());
     octree.insert(std::get<Shape::Sphere>(a), id_a);
   }
 
-  for (auto [id_a, transform_a, velocity_a, _state_a, mesh_a] : enemies) {
-    glm::vec3 sum { 0, 0, 0 };
+  for (auto [id_a, transform_a, velocity_a, _state_a, mesh_a, weapon_a] :
+       enemies) {
     auto position_a = transform_a.translation();
+    const auto shooting_distance = weapon_a.bullet_speed * weapon_a.lifetime;
     auto bvolume_a = std::get_if<Shape::Sphere>(&mesh_a->bounding_volume());
+    weapon_a.is_shooting = false;
     if (bvolume_a == nullptr) {
       continue;
     }
     auto found_ids = octree.at({
-      .min = transform_a.translation() - glm::vec3(-bvolume_a->radius),
-      .max = transform_a.translation() + glm::vec3(bvolume_a->radius),
+      .min = position_a - glm::vec3(shooting_distance),
+      .max = position_a + glm::vec3(shooting_distance),
     });
+
+    if (found_ids.empty()) {
+      continue;
+    }
+
+    auto distance = glm::distance(player_transform.translation(),
+                                  transform_a.translation());
+    if (distance >= shooting_distance) {
+      continue;
+    }
+
+    auto direction = glm::normalize(transform_a.rotation()
+                                    * glm::vec3(1, 0, 0));
+    auto is_shooting = true;
+
     for (const auto& id_b : found_ids) {
-      auto [transform_b, mesh_b] = registry.get<Transform, MeshPointer>(id_b);
-      auto position_b = transform_b.translation();
-      auto bvolume_b = std::get_if<Shape::Sphere>(&mesh_b->bounding_volume());
-      if (bvolume_b == nullptr) {
+      if (id_a == id_b) {
         continue;
       }
-      auto collapse_distance = bvolume_a->radius + bvolume_b->radius;
-      if (glm::distance(position_a, position_b) < collapse_distance) {
-        sum += position_a - position_b;
+      auto [transform_b, mesh_b] = registry.get<Transform, MeshPointer>(id_b);
+      auto bvolume_b = std::get_if<Shape::Sphere>(&mesh_b->bounding_volume());
+      float hit_distance = 0.0;
+      auto result = glm::intersectRaySphere(transform_a.translation(),
+                                            direction,
+                                            transform_b.translation(),
+                                            bvolume_b->radius,
+                                            hit_distance);
+      if (result) {
+        is_shooting = false;
+        break;
       }
     }
-    // found by experiments, it reduces force of attraction to the player and
-    // it helps avoiding collapsing enemies during movement
-    const auto direction_weight = 0.05f;
-    sum = glm::normalize(
-      sum + glm::normalize(player_position - position_a) * direction_weight);
-    velocity_a.velocity = sum * velocity_a.speed;
+    weapon_a.is_shooting = is_shooting;
   }
 }
 
@@ -105,20 +117,4 @@ enemy_rotation_system(Scene& scene)
         enemy_transform.rotate_z(glm::atan(dir_vector.y, dir_vector.x));
       }
     });
-}
-
-void
-enemy_shoot_near_player_system(Scene& scene)
-{
-  auto& registry = scene.state().registry();
-  auto players_view = registry.view<Transform, PlayerKind>();
-  auto enemies_view = registry.view<Transform, Weapon, EnemyKind>();
-  const auto shooting_distance = 8.0;
-  players_view.each([&](const Transform& player_transform) {
-    enemies_view.each([&](const Transform& enemy_transform, Weapon& weapon) {
-      auto distance = glm::distance(player_transform.translation(),
-                                    enemy_transform.translation());
-      weapon.is_shooting = distance < shooting_distance;
-    });
-  });
 }

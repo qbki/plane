@@ -2,7 +2,6 @@
 #include <glm/gtc/constants.hpp>
 
 #include "src/components/common.h"
-#include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
 #include "src/services.h"
 
@@ -15,12 +14,15 @@ make_player(entt::registry& registry, const std::string& file_path)
 {
   auto entity = registry.create();
   auto [mesh, texture] = Services::cache().get_model(file_path);
+  registry.emplace<Acceleration>(entity, glm::vec3(0, 0, 0));
+  registry.emplace<AccelerationScalar>(entity, 0);
   registry.emplace<Available>(entity);
-  registry.emplace<LinearVelocity>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<PlayerKind>(entity);
   registry.emplace<TexturePointer>(entity, texture);
   registry.emplace<Transform>(entity);
+  registry.emplace<Velocity>(entity, glm::vec3(0, 0, 0));
+  registry.emplace<VelocityDamping>(entity, 0);
   return entity;
 }
 
@@ -36,7 +38,6 @@ make_enemy(entt::registry& registry, const std::string& file_path)
   registry.emplace<Opaque>(entity);
   registry.emplace<TexturePointer>(entity, texture);
   registry.emplace<Transform>(entity);
-  registry.emplace<LinearVelocity>(entity);
   return entity;
 }
 
@@ -45,14 +46,15 @@ make_debris(entt::registry& registry, const std::string& file_path)
 {
   auto [mesh, texture] = Services::cache().get_model(file_path);
   auto entity = registry.create();
-  registry.emplace<Available>(entity);
+  registry.emplace<Acceleration>(entity, glm::vec3(0, 0, 0));
+  registry.emplace<Available>(entity, glm::vec3(0, 0, 0));
   registry.emplace<DebrisKind>(entity);
   registry.emplace<Gravity>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<Opaque>(entity);
   registry.emplace<TexturePointer>(entity, texture);
   registry.emplace<Transform>(entity);
-  registry.emplace<LinearVelocity>(entity);
+  registry.emplace<Velocity>(entity, glm::vec3(0, 0, 0));
   return entity;
 }
 
@@ -63,13 +65,13 @@ make_projectile(entt::registry& registry, const std::string& file_path)
   auto entity = registry.create();
   registry.emplace<Available>(entity);
   registry.emplace<Lifetime>(entity, 0);
-  registry.emplace<LinearVelocity>(entity);
   registry.emplace<MeshPointer>(entity, mesh);
   registry.emplace<Owner>(entity, static_cast<entt::entity>(entt::null));
   registry.emplace<ParticleKind>(entity);
   registry.emplace<ProjectileKind>(entity);
   registry.emplace<TexturePointer>(entity, texture);
   registry.emplace<Transform>(entity);
+  registry.emplace<Velocity>(entity, glm::vec3(0, 0, 0));
   return entity;
 }
 
@@ -114,7 +116,7 @@ make_particle(entt::registry& registry, const std::string& file_path)
   registry.emplace<ParticleKind>(entity);
   registry.emplace<TexturePointer>(entity, texture);
   registry.emplace<Transform>(entity);
-  registry.emplace<LinearVelocity>(entity);
+  registry.emplace<Velocity>(entity, glm::vec3(0, 0, 0));
   return entity;
 }
 

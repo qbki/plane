@@ -1,9 +1,7 @@
 #include <variant>
 
 #include "src/components/common.h"
-#include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
-#include "src/components/velocity.h"
 #include "src/components/weapon.h"
 #include "src/game_state/factory.h"
 #include "src/utils/noop.h"
@@ -25,7 +23,7 @@ ComponetsAttacher::ComponetsAttacher(Scene* scene,
 void
 ComponetsAttacher::operator()(const EntityParamsActor& params) const
 {
-  attach_linear_velocity(params.speed);
+  attach_velocity(params.speed);
   attach_particles_emmiter_by_hit(params);
   attach_debris_emmiter(params);
   attach_lives(params.lives);
@@ -79,12 +77,6 @@ ComponetsAttacher::attach(const EntityParams& params) const
 }
 
 void
-ComponetsAttacher::attach_linear_velocity(const float& speed) const
-{
-  _registry->emplace_or_replace<LinearVelocity>(_entity, speed);
-}
-
-void
 ComponetsAttacher::attach_lives(int lives) const
 {
   _registry->emplace_or_replace<Lives>(_entity, lives);
@@ -93,8 +85,17 @@ ComponetsAttacher::attach_lives(int lives) const
 void
 ComponetsAttacher::attach_velocity(const VelocityParams& velocity) const
 {
-  _registry->emplace_or_replace<Velocity>(
-    _entity, velocity.acceleration, velocity.damping);
+  if (velocity.acceleration.has_value()) {
+    _registry->emplace_or_replace<AccelerationScalar>(
+      _entity, velocity.acceleration.value());
+  }
+  if (velocity.speed.has_value()) {
+    _registry->emplace_or_replace<Speed>(_entity, velocity.speed.value());
+  }
+  if (velocity.damping.has_value()) {
+    _registry->emplace_or_replace<VelocityDamping>(_entity,
+                                                   velocity.damping.value());
+  }
 }
 
 void

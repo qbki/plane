@@ -2,7 +2,6 @@
 #include <glm/gtc/constants.hpp>
 
 #include "src/components/common.h"
-#include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
 #include "src/game_state/factory.h"
 #include "src/game_state/state.h"
@@ -29,14 +28,15 @@ emit_particles(State& state,
   auto particles = registry.view<Transform,
                                  Lifetime,
                                  LifetimeMax,
-                                 LinearVelocity,
+                                 Speed,
+                                 Velocity,
                                  ParticleKind>(entt::exclude<Available>);
 
-  for (auto [id, transform, lifetime, lifetime_max, velocity] :
+  for (auto [id, transform, lifetime, lifetime_max, speed, velocity] :
        particles.each()) {
     auto rotation = calc_rotation(idx, step);
     transform.translate(initial_position).rotate(rotation);
-    velocity.velocity = rotation * glm::vec3(1, 0, 0) * velocity.speed;
+    velocity.value = rotation * glm::vec3(1, 0, 0) * speed.value;
     registry.emplace<Available>(id);
     lifetime.value = lifetime_max.value;
     idx += 1;
@@ -50,11 +50,10 @@ emit_particles(State& state,
     auto rotation = calc_rotation(idx, step);
     Transform transform;
     transform.translate(initial_position).rotate(rotation);
-    LinearVelocity velocity(params.speed);
-    velocity.velocity = rotation * glm::vec3(1, 0, 0) * params.speed;
+    Velocity velocity { rotation * glm::vec3(1, 0, 0) * params.speed };
     registry.replace<Lifetime>(entity, params.lifetime);
     registry.replace<LifetimeMax>(entity, params.lifetime);
     registry.replace<Transform>(entity, transform);
-    registry.replace<LinearVelocity>(entity, velocity);
+    registry.replace<Velocity>(entity, velocity);
   }
 }

@@ -88,9 +88,12 @@ load_level_scene(bool is_last_level)
   game->handlers().add(enemy_hunting_system);
   game->handlers().add(enemy_rotation_system);
   game->handlers().add(particle_handler_system);
-  game->handlers().add(linear_velocity_system);
+
   game->handlers().add(velocity_gravity_system);
+  game->handlers().add(acceleration_system);
+  game->handlers().add(damping_system);
   game->handlers().add(velocity_system);
+
   game->handlers().add(remove_debris_system);
   game->handlers().add(camera_move_system);
   game->handlers().add(gun_shooting_system);

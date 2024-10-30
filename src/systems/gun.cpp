@@ -3,7 +3,6 @@
 #include <string>
 
 #include "src/components/common.h"
-#include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
 #include "src/components/weapon.h"
 #include "src/consts.h"
@@ -30,15 +29,15 @@ gun_shooting_system(Scene& scene)
         registry, weapon.bullet_model_path);
       auto spread = weapon.spread * get_random_float() - weapon.spread * HALF;
 
-      LinearVelocity velocity { weapon.bullet_speed };
+      ;
       auto direction = owner_transform.rotation()
                        * glm::quat(glm::vec3 { 0, 0, spread })
                        * glm::vec3(1, 0, 0);
       auto xy_direction = glm::normalize(
         glm::vec3(direction.x, direction.y, 0));
-      velocity.velocity = xy_direction * weapon.bullet_speed;
+      Velocity velocity { xy_direction * weapon.bullet_speed };
 
-      registry.replace<LinearVelocity>(projectile_entity, velocity);
+      registry.replace<Velocity>(projectile_entity, velocity);
       registry.replace<Owner>(projectile_entity, owner_entity);
       registry.replace<Lifetime>(projectile_entity, weapon.lifetime);
 

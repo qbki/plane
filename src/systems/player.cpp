@@ -5,7 +5,6 @@
 #include <glm/trigonometric.hpp>
 
 #include "src/components/common.h"
-#include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
 #include "src/components/weapon.h"
 #include "src/scene/scene.h"
@@ -16,14 +15,20 @@ void
 player_rotation_system(Scene& scene)
 {
   static const auto tilt_angle = glm::pi<float>() / 4.0f;
-  scene.state().registry().view<Transform, LinearVelocity, PlayerKind>().each(
-    [&scene](Transform& transform, const LinearVelocity& velocity) {
+  static const auto max_speed_coeficient = 0.4f;
+  scene.state()
+    .registry()
+    .view<Transform, Velocity, AccelerationScalar, PlayerKind>()
+    .each([&](Transform& transform,
+              const Velocity& velocity,
+              const AccelerationScalar& accel) {
       auto direction = scene.state().cursor() - transform.translation();
       float x_tilt = 0;
       float y_tilt = 0;
-      if (velocity.speed > 0) {
-        x_tilt = -velocity.velocity.y / velocity.speed;
-        y_tilt = velocity.velocity.x / velocity.speed;
+      auto max_speed = accel.value * max_speed_coeficient;
+      if (max_speed > 0) {
+        x_tilt = -velocity.value.y / max_speed;
+        y_tilt = velocity.value.x / max_speed;
       }
       auto x = glm::angleAxis(tilt_angle * x_tilt, glm::vec3(1, 0, 0));
       auto y = glm::angleAxis(tilt_angle * y_tilt, glm::vec3(0, 1, 0));
@@ -61,8 +66,11 @@ player_moving_system(const Scene& scene)
   auto direction = is_approx_equal(glm::length2(move_direction), 0.0f)
                      ? move_direction
                      : glm::normalize(move_direction);
-  scene.state().registry().view<LinearVelocity, PlayerKind>().each(
-    [&direction](LinearVelocity& velocity) {
-      velocity.velocity = direction * velocity.speed;
+  scene.state()
+    .registry()
+    .view<Acceleration, AccelerationScalar, PlayerKind>()
+    .each([&direction](Acceleration& accel,
+                       const AccelerationScalar& accel_scalar) {
+      accel.value += direction * accel_scalar.value;
     });
 }

@@ -36,6 +36,5 @@ public:
   void attach_weapon(const EntityParamsActor& actor_params) const;
   void attach_particles_emmiter_by_hit(
     const EntityParamsActor& actor_params) const;
-  void attach_linear_velocity(const float& speed) const;
   void attach_debris_emmiter(const EntityParamsActor& actor_params) const;
 };

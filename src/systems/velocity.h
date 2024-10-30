@@ -2,10 +2,13 @@
 #include "src/scene/scene.h"
 
 void
+acceleration_system(const Scene& scene);
+
+void
 velocity_system(const Scene& scene);
 
 void
-linear_velocity_system(const Scene& scene);
+velocity_gravity_system(const Scene& scene);
 
 void
-velocity_gravity_system(const Scene& scene);
+damping_system(const Scene& scene);

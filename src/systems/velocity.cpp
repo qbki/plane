@@ -1,6 +1,4 @@
-#include "src/components/velocity.h"
 #include "src/components/common.h"
-#include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
 #include "src/consts.h"
 #include "src/scene/scene.h"
@@ -10,39 +8,41 @@
 #include "velocity.h"
 
 void
-velocity_system(const Scene& scene)
+acceleration_system(const Scene& scene)
 {
-  scene.state().registry().view<Transform, Velocity>().each(
-    [&](Transform& transform, Velocity& velocity) {
+  scene.state().registry().view<Velocity, Acceleration>().each(
+    [&](Velocity& velocity, Acceleration& acceleration) {
       auto delta_time = Services::app().delta_time();
-      velocity.velocity += velocity.acceleration * delta_time;
-      velocity.velocity = damp(velocity.velocity, velocity.damping, delta_time);
-      transform.add_translation(velocity.velocity * delta_time);
-      velocity.acceleration = glm::vec3(0.0);
+      velocity.value += acceleration.value * delta_time;
+      acceleration.value = { 0, 0, 0 };
     });
 }
 
 void
-linear_velocity_system(const Scene& scene)
+damping_system(const Scene& scene)
 {
-  auto delta_time = Services::app().delta_time();
-  scene.state().registry().view<Transform, LinearVelocity>().each(
-    [&](Transform& transform, const LinearVelocity& velocity) {
-      transform.add_translation(velocity.velocity * delta_time);
+  scene.state().registry().view<Velocity, VelocityDamping>().each(
+    [&](Velocity& velocity, const VelocityDamping& damping) {
+      auto delta_time = Services::app().delta_time();
+      velocity.value = damp(velocity.value, damping.value, delta_time);
+    });
+}
+
+void
+velocity_system(const Scene& scene)
+{
+  scene.state().registry().view<Transform, Velocity>().each(
+    [&](Transform& transform, const Velocity& velocity) {
+      auto delta_time = Services::app().delta_time();
+      transform.add_translation(velocity.value * delta_time);
     });
 }
 
 void
 velocity_gravity_system(const Scene& scene)
 {
-  scene.state().registry().view<Velocity, Gravity>().each(
-    [&](Velocity& velocity) {
-      velocity.acceleration += glm::vec3(0.0, 0.0, -GRAVITY);
-    });
-
-  auto delta_time = -GRAVITY * Services::app().delta_time();
-  scene.state().registry().view<LinearVelocity, Gravity>().each(
-    [&](LinearVelocity& velocity) {
-      velocity.velocity += glm::vec3(0.0, 0.0, delta_time);
+  scene.state().registry().view<Acceleration, Gravity>().each(
+    [&](Acceleration& acceleration) {
+      acceleration.value += glm::vec3(0.0, 0.0, -GRAVITY);
     });
 }

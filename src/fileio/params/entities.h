@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include <filesystem> // IWYU pragma: export
 #include <glm/vec3.hpp>
 #include <optional> // IWYU pragma: export
@@ -9,9 +10,9 @@
 
 struct VelocityParams
 {
-  float acceleration;
-  float speed;
-  float damping;
+  std::optional<float> acceleration = std::nullopt;
+  std::optional<float> speed = std::nullopt;
+  std::optional<float> damping = std::nullopt;
 };
 
 struct EntityParamsModel
@@ -22,12 +23,12 @@ struct EntityParamsModel
 
 struct EntityParamsActor
 {
-  float speed;
+  VelocityParams speed;
   int lives;
   std::string model_id;
-  std::optional<std::string> weapon_id;
-  std::optional<std::string> debris_id;
-  std::optional<std::string> hit_particles_id;
+  std::optional<std::string> weapon_id = std::nullopt;
+  std::optional<std::string> debris_id = std::nullopt;
+  std::optional<std::string> hit_particles_id = std::nullopt;
 };
 
 struct EntityParamsPointLight

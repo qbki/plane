@@ -111,12 +111,18 @@ struct adl_serializer<VelocityParams>
 {
   static void from_json(const nlohmann::json& json_obj, VelocityParams& value)
   {
-    value.acceleration = json_obj.contains("acceleration")
-                           ? json_obj.at("acceleration").get<float>()
-                           : 0;
-    value.speed = json_obj.contains("speed") ? json_obj.at("speed").get<float>()
-                                             : 0;
-    value.damping = json_obj.at("damping");
+    if (json_obj.is_number()) {
+      value.speed = json_obj.get<double>();
+      return;
+    }
+    auto get = [&](const std::string& name) {
+      return json_obj.contains(name)
+               ? std::make_optional(json_obj.at(name).get<float>())
+               : std::nullopt;
+    };
+    value.acceleration = get("acceleration");
+    value.speed = get("speed");
+    value.damping = get("damping");
   }
 };
 

@@ -1,14 +1,14 @@
 #define GLM_ENABLE_EXPERIMENTAL
-#include <glm/ext/scalar_constants.hpp>
+#include <glm/common.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtx/intersect.hpp>
 #include <glm/trigonometric.hpp>
 #include <ranges>
+#include <tuple>
 #include <variant>
 
 #include "src/collections/octree.h"
 #include "src/components/common.h"
-#include "src/components/linear_velocity.h"
 #include "src/components/transform.h"
 #include "src/components/weapon.h"
 #include "src/math/intersection.h"
@@ -31,7 +31,6 @@ enemy_hunting_system(Scene& scene)
     });
   auto enemies_view = registry
                         .view<Transform,
-                              LinearVelocity,
                               EnemyStateEnum,
                               MeshPointer,
                               Weapon,
@@ -40,18 +39,16 @@ enemy_hunting_system(Scene& scene)
                         .each();
   auto enemies = std::ranges::subrange(enemies_view)
                  | std::ranges::views::filter([](const auto& tuple) {
-                     return std::get<3>(tuple) == EnemyStateEnum::HUNTING;
+                     return std::get<2>(tuple) == EnemyStateEnum::HUNTING;
                    });
   Octree<entt::entity> octree(state.world_bbox(), MAX_OCTREE_DEPTH);
-  for (auto [id_a, transform_a, velocity_a, _state_a, mesh_a, weapon_a] :
-       enemies) {
+  for (auto [id_a, transform_a, _state_a, mesh_a, weapon_a] : enemies) {
     auto a = apply_transform_to_collider(transform_a,
                                          mesh_a->bounding_volume());
     octree.insert(std::get<Shape::Sphere>(a), id_a);
   }
 
-  for (auto [id_a, transform_a, velocity_a, _state_a, mesh_a, weapon_a] :
-       enemies) {
+  for (auto [id_a, transform_a, _state_a, mesh_a, weapon_a] : enemies) {
     auto position_a = transform_a.translation();
     const auto shooting_distance = weapon_a.bullet_speed * weapon_a.lifetime;
     auto bvolume_a = std::get_if<Shape::Sphere>(&mesh_a->bounding_volume());

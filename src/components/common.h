@@ -1,6 +1,7 @@
 #pragma once
 #include <entt/entity/fwd.hpp>
 #include <functional> // IWYU pragma: export
+#include <glm/ext/vector_float3.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/vec3.hpp>
 #include <memory>
@@ -30,11 +31,16 @@ using MeshPointer = std::shared_ptr<Mesh>;
 using Owner = NewType<entt::entity, struct OwnerTag>;
 using Parent = NewType<std::optional<entt::entity>, struct ParentTag>;
 using ShotSound = NewType<std::optional<std::string>, struct ShotSoundTag>;
-using Speed = NewType<float, struct SpeedTag>;
 using Text = NewType<std::string, struct TextTag>;
 using TexturePointer = std::shared_ptr<Texture>;
 using TutorialButton = NewType<Control::Action, struct TutorialButtonTag>;
 using UniqueTexturePtr = std::unique_ptr<Texture>;
+
+using Acceleration = NewType<glm::vec3, struct AccelerationTag>;
+using AccelerationScalar = NewType<float, struct AccelerationScalarTag>;
+using Speed = NewType<float, struct SpeedTag>;
+using Velocity = NewType<glm::vec3, struct VelocityTag>;
+using VelocityDamping = NewType<float, struct VelocityDampingTag>;
 
 using IsPointerInside = NewType<bool, struct IsPointerInsideTag>;
 using IsPointerDownEventAccepted = NewType<

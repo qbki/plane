@@ -1,5 +1,7 @@
 #include <filesystem>
 #include <format>
+#include <istream>
+#include <stdexcept>
 #include <string>
 
 void

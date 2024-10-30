@@ -1,7 +1,7 @@
-#include <stdexcept>
 #ifdef __linux__
 #include <array>
 #include <linux/limits.h> // IWYU pragma: keep
+#include <stdexcept>
 #include <unistd.h>
 
 #include "system.h"

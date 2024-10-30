@@ -1,14 +1,12 @@
 #include <cstddef>
-#include <functional>
 #include <glm/geometric.hpp>
 #include <glm/vec2.hpp>
 #include <ranges>
 #include <stdexcept>
 #include <string>
 #include <tuple>
-#include <vector>
 
-#include "src/components/linear_velocity.h"
+#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/game_state/factory.h"
 #include "src/utils/random.h"
@@ -46,8 +44,8 @@ PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy) const
                           | std::views::transform([&](const auto& id) {
                               return _entities->actor(id).speed;
                             });
-  std::vector<float> speed_items(speed_items_view.begin(),
-                                 speed_items_view.end());
+  std::vector<VelocityParams> speed_items(speed_items_view.begin(),
+                                          speed_items_view.end());
   auto get_random_int = make_random_fn(static_cast<size_t>(0),
                                        strategy.entity_ids.size() - 1);
   auto radius_float = static_cast<float>(radius);
@@ -74,7 +72,9 @@ PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy) const
                                   center.y + static_cast<float>(coord.y),
                                   center.z));
     registry.replace<Transform>(entity, transform);
-    registry.replace<LinearVelocity>(entity, speed);
+    if (speed.speed.has_value()) {
+      registry.replace<Speed>(entity, speed.speed.value());
+    }
   }
 }
 

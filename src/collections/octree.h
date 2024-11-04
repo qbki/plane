@@ -48,13 +48,24 @@ private:
   ChildrenType _children;
 
 public:
+  Octree();
   explicit Octree(const Shape::AABB& bbox,
                   unsigned int max_depth = DEFAULT_MAX_DEPTH,
                   unsigned int depth = 0);
   void insert(Shape::Sphere collider, const T& value);
   std::vector<T> at(const Shape::AABB& bbox) const;
   void at(const Shape::AABB& bbox, std::vector<T>& acc) const;
+
+  std::vector<T> at(const Shape::Sphere& sphere) const;
 };
+
+template<typename T>
+Octree<T>::Octree()
+  : _bbox(Shape::AABB {})
+  , _depth(0)
+  , _max_depth(0)
+{
+}
 
 template<typename T>
 Octree<T>::Octree(const Shape::AABB& bbox,
@@ -132,6 +143,17 @@ Octree<T>::at(const Shape::AABB& bbox) const
   std::vector<T> result;
   at(bbox, result);
   return result;
+}
+
+template<typename T>
+std::vector<T>
+Octree<T>::at(const Shape::Sphere& sphere) const
+{
+  auto bbox = Shape::AABB {
+    .min = sphere.center - glm::vec3(sphere.radius),
+    .max = sphere.center + glm::vec3(sphere.radius),
+  };
+  return at(bbox);
 }
 
 template<typename T>

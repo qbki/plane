@@ -22,9 +22,11 @@
 #include "src/sound/sound.h"
 #include "src/systems/calculate_world_bbox.h"
 #include "src/systems/camera.h"
+#include "src/systems/collision.h"
 #include "src/systems/cursor.h"
 #include "src/systems/debris.h"
 #include "src/systems/enemy.h"
+#include "src/systems/entities_collector.h"
 #include "src/systems/finish_condition.h"
 #include "src/systems/gun.h"
 #include "src/systems/particles.h"
@@ -81,6 +83,14 @@ load_level_scene(bool is_last_level)
   auto game = std::make_unique<Scene>(std::move(camera));
   game->is_deferred(true);
   game->handlers().once(calculate_world_bbox);
+  game->handlers().add(collect_entities_system);
+
+  game->handlers().add(velocity_gravity_system);
+  game->handlers().add(acceleration_system);
+  game->handlers().add(damping_system);
+  game->handlers().add(collision_system);
+  game->handlers().add(velocity_system);
+
   game->handlers().add(cursor_handler_system);
   game->handlers().add(player_moving_system);
   game->handlers().add(player_rotation_system);
@@ -88,11 +98,6 @@ load_level_scene(bool is_last_level)
   game->handlers().add(enemy_hunting_system);
   game->handlers().add(enemy_rotation_system);
   game->handlers().add(particle_handler_system);
-
-  game->handlers().add(velocity_gravity_system);
-  game->handlers().add(acceleration_system);
-  game->handlers().add(damping_system);
-  game->handlers().add(velocity_system);
 
   game->handlers().add(remove_debris_system);
   game->handlers().add(camera_move_system);

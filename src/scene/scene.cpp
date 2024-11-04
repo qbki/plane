@@ -69,3 +69,15 @@ Scene::is_paused() const
 {
   return _is_paused;
 }
+
+void
+Scene::entities(std::unique_ptr<Octree<entt::entity>> value)
+{
+  _entities = std::move(value);
+}
+
+std::unique_ptr<Octree<entt::entity>>&
+Scene::entities()
+{
+  return _entities;
+}

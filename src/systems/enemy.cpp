@@ -11,13 +11,10 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/weapon.h"
-#include "src/math/intersection.h"
 #include "src/math/shapes.h"
 #include "src/scene/scene.h"
 
 #include "enemy.h"
-
-const unsigned int MAX_OCTREE_DEPTH = 12;
 
 void
 enemy_hunting_system(Scene& scene)
@@ -25,9 +22,11 @@ enemy_hunting_system(Scene& scene)
   auto& state = scene.state();
   auto& registry = state.registry();
   Transform player_transform {};
+  entt::entity player_id = entt::null;
   registry.view<Transform, PlayerKind>().each(
-    [&player_transform](const auto& transform) {
+    [&](entt::entity entity, const auto& transform) {
       player_transform = transform;
+      player_id = entity;
     });
   auto enemies_view = registry
                         .view<Transform,
@@ -41,12 +40,6 @@ enemy_hunting_system(Scene& scene)
                  | std::ranges::views::filter([](const auto& tuple) {
                      return std::get<2>(tuple) == EnemyStateEnum::HUNTING;
                    });
-  Octree<entt::entity> octree(state.world_bbox(), MAX_OCTREE_DEPTH);
-  for (auto [id_a, transform_a, _state_a, mesh_a, weapon_a] : enemies) {
-    auto a = apply_transform_to_collider(transform_a,
-                                         mesh_a->bounding_volume());
-    octree.insert(std::get<Shape::Sphere>(a), id_a);
-  }
 
   for (auto [id_a, transform_a, _state_a, mesh_a, weapon_a] : enemies) {
     auto position_a = transform_a.translation();
@@ -56,9 +49,9 @@ enemy_hunting_system(Scene& scene)
     if (bvolume_a == nullptr) {
       continue;
     }
-    auto found_ids = octree.at({
-      .min = position_a - glm::vec3(shooting_distance),
-      .max = position_a + glm::vec3(shooting_distance),
+    auto found_ids = scene.entities()->at(Shape::Sphere {
+      .center = position_a,
+      .radius = shooting_distance,
     });
 
     if (found_ids.empty()) {
@@ -76,7 +69,7 @@ enemy_hunting_system(Scene& scene)
     auto is_shooting = true;
 
     for (const auto& id_b : found_ids) {
-      if (id_a == id_b) {
+      if (id_a == id_b || player_id == id_b) {
         continue;
       }
       auto [transform_b, mesh_b] = registry.get<Transform, MeshPointer>(id_b);

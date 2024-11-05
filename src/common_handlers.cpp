@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <compare>
 #include <filesystem>
 #include <iterator>
@@ -29,6 +28,7 @@
 #include "src/systems/entities_collector.h"
 #include "src/systems/finish_condition.h"
 #include "src/systems/gun.h"
+#include "src/systems/level.h"
 #include "src/systems/particles.h"
 #include "src/systems/player.h"
 #include "src/systems/projectiles.h"
@@ -90,6 +90,7 @@ load_level_scene(bool is_last_level)
   game->handlers().add(damping_system);
   game->handlers().add(collision_system);
   game->handlers().add(velocity_system);
+  game->handlers().add(level_boundaries_system);
 
   game->handlers().add(cursor_handler_system);
   game->handlers().add(player_moving_system);
@@ -165,9 +166,8 @@ load_next_level(const Events::LoadNextLevelEvent&)
   }
   std::vector<std::filesystem::path>::iterator next_level_it;
   if (current_level.has_value()) {
-    auto found_level_it = std::find(levels_meta.levels.begin(),
-                                    levels_meta.levels.end(),
-                                    current_level.value());
+    auto found_level_it = std::ranges::find(levels_meta.levels,
+                                            current_level.value());
     next_level_it = found_level_it + 1;
   } else {
     next_level_it = levels_meta.levels.begin();

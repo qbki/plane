@@ -5,7 +5,6 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/math/intersection.h"
-#include "src/math/shapes.h"
 
 #include "entities_collector.h"
 

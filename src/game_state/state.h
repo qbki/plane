@@ -5,8 +5,7 @@
 #include <memory> // IWYU pragma: export
 
 #include "src/cameras/camera.h" // IWYU pragma: export
-
-#include "src/math/shapes.h"
+#include "src/math/shapes.h"    // IWYU pragma: export
 
 class State
 {

@@ -13,7 +13,6 @@
 #include "src/gui/types.h"
 #include "src/material.h"
 #include "src/math/intersection.h"
-#include "src/math/shapes.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/texture.h"

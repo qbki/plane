@@ -11,7 +11,6 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/weapon.h"
-#include "src/math/shapes.h"
 #include "src/scene/scene.h"
 
 #include "enemy.h"

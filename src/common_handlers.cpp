@@ -10,7 +10,7 @@
 #include "src/cameras/perspective_camera.h"
 #include "src/consts.h"
 #include "src/fileio/level_loader.h"
-#include "src/fileio/levels_meta_loader.h"
+#include "src/fileio/levels_order_loader.h"
 #include "src/fileio/save_data_io.h"
 #include "src/gui/game_screen_factory.h"
 #include "src/gui/in_game_main_menu_factory.h"
@@ -19,7 +19,6 @@
 #include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/sound/sound.h"
-#include "src/systems/calculate_world_bbox.h"
 #include "src/systems/camera.h"
 #include "src/systems/collision.h"
 #include "src/systems/cursor.h"
@@ -82,7 +81,6 @@ load_level_scene(bool is_last_level)
   auto camera = make_game_camera(Services::app());
   auto game = std::make_unique<Scene>(std::move(camera));
   game->is_deferred(true);
-  game->handlers().once(calculate_world_bbox);
   game->handlers().add(collect_entities_system);
 
   game->handlers().add(velocity_gravity_system);
@@ -133,25 +131,24 @@ load_current_level(const Events::LoadCurrentLevelEvent&)
 {
   auto exec_path = get_excutable_path();
   auto save_data = load_save_data(exec_path / SAVE_DATA_FILE);
-  auto levels_meta = load_levels_meta(LEVELS_DIR / "levels.json");
+  auto levels_order = load_levels_order(LEVELS_DIR / "levels.json");
   if (!save_data.current_level.has_value()) {
     Services::events<const Events::LoadNextLevelEvent>().emit({});
     Services::logger().info(
       "Can't get save data, a default level will be used");
     return;
   }
-  auto current_level = std::ranges::find(levels_meta.levels,
+  auto current_level = std::ranges::find(levels_order.levels,
                                          save_data.current_level.value());
-  if (current_level == levels_meta.levels.end()) {
+  if (current_level == levels_order.levels.end()) {
     Services::events<const Events::LoadNextLevelEvent>().emit({});
     Services::logger().info(
       "The user's progress not found, a default level will be used");
     return;
   }
   auto& scene = load_level_scene(
-    std::distance(current_level, levels_meta.levels.end()) <= 1);
+    std::distance(current_level, levels_order.levels.end()) <= 1);
   load_level(LEVELS_DIR / "entities.json", *current_level, scene);
-  calculate_world_bbox(scene);
   Services::app().info().current_level = *current_level;
 }
 
@@ -159,25 +156,24 @@ void
 load_next_level(const Events::LoadNextLevelEvent&)
 {
   auto& current_level = Services::app().info().current_level;
-  auto levels_meta = load_levels_meta(LEVELS_DIR / "levels.json");
-  if (levels_meta.levels.empty()) {
+  auto levels_order = load_levels_order(LEVELS_DIR / "levels.json");
+  if (levels_order.levels.empty()) {
     Services::logger().error("No levels found");
     return;
   }
   std::vector<std::filesystem::path>::iterator next_level_it;
   if (current_level.has_value()) {
-    auto found_level_it = std::ranges::find(levels_meta.levels,
+    auto found_level_it = std::ranges::find(levels_order.levels,
                                             current_level.value());
     next_level_it = found_level_it + 1;
   } else {
-    next_level_it = levels_meta.levels.begin();
+    next_level_it = levels_order.levels.begin();
   }
-  bool is_last_level = std::distance(next_level_it, levels_meta.levels.end())
+  bool is_last_level = std::distance(next_level_it, levels_order.levels.end())
                        == 1;
-  if (next_level_it < levels_meta.levels.end()) {
+  if (next_level_it < levels_order.levels.end()) {
     auto& scene = load_level_scene(is_last_level);
     load_level(LEVELS_DIR / "entities.json", *next_level_it, scene);
-    calculate_world_bbox(scene);
     Services::app().info().current_level = *next_level_it;
     Services::app().save_data().save({ .current_level = *next_level_it });
   }

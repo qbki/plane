@@ -10,6 +10,7 @@
 #include "src/control.h"
 
 #include "../params.h"
+#include "src/fileio/params/meta.h"
 
 template<typename T>
 void
@@ -100,9 +101,29 @@ struct adl_serializer<std::vector<glm::vec3>>
 template<>
 struct adl_serializer<CameraParams>
 {
-  static void from_json(const nlohmann::json& json_obj, CameraParams& value)
+  static void from_json(const nlohmann::json& json, CameraParams& value)
   {
-    json_obj.at("position").get_to(value.position);
+    json.at("position").get_to(value.position);
+  }
+};
+
+template<>
+struct adl_serializer<BoundaryParams>
+{
+  static void from_json(const nlohmann::json& json, BoundaryParams& value)
+  {
+    json.at("min").get_to(value.min);
+    json.at("max").get_to(value.max);
+  }
+};
+
+template<>
+struct adl_serializer<LevelMetaParams>
+{
+  static void from_json(const nlohmann::json& json, LevelMetaParams& value)
+  {
+    json.at("camera").get_to(value.camera);
+    json.at("boundaries").get_to(value.boundaries);
   }
 };
 

@@ -31,7 +31,6 @@ public:
   [[nodiscard]] glm::vec3 cursor() const;
 
   void world_bbox(const Shape::AABB& value);
-  void extend_world_bbox(const Shape::Collider& value);
   [[nodiscard]] const Shape::AABB& world_bbox() const;
 
   entt::registry& registry();

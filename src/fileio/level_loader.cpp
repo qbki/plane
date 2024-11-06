@@ -5,6 +5,7 @@
 #include <variant>
 #include <vector>
 
+#include "src/fileio/params/meta.h"
 #include "src/game_state/factory.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
@@ -19,6 +20,21 @@ void
 setup_camera(CameraParams& camera_params, Scene& scene)
 {
   scene.state().camera().position(camera_params.position);
+}
+
+void
+setup_boundaries(BoundaryParams& boundaries, Scene& scene)
+{
+  auto is_valid = boundaries.min.x < boundaries.max.x
+                  && boundaries.min.y < boundaries.max.y
+                  && boundaries.min.z < boundaries.max.z;
+  if (!is_valid) {
+    throw std::runtime_error("Incorrect world boundaries: wrong ordering");
+  }
+  scene.state().world_bbox({
+    .min = boundaries.min,
+    .max = boundaries.max,
+  });
 }
 
 ModelFactory::MakerFn
@@ -94,11 +110,12 @@ load_level(const std::string& entities_file_path,
                     .at("entities")
                     .get<EntityParamsMap>();
   auto json_level = load_json(level_file_path);
-  auto camera = json_level.at("camera").get<CameraParams>();
+  auto meta = json_level.at("meta").get<LevelMetaParams>();
   auto strategies = json_level.at("map").get<std::vector<PositionStrategy>>();
   auto models = entities.get_all<EntityParamsModel>();
   preload_models(models);
-  setup_camera(camera, scene);
+  setup_camera(meta.camera, scene);
+  setup_boundaries(meta.boundaries, scene);
   for (auto& strategy : strategies) {
     auto maker = get_entity_maker(strategy, entities);
     PositionStrategyVisitor strategy_handler(&entities, &scene, &maker);

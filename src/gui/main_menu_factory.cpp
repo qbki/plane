@@ -52,9 +52,7 @@ main_menu_factory(const Scene& scene)
     .on_pointer_down =
       [](auto&) {
         Services::app().add_once_handler([](auto&) {
-          for (auto& scene : Services::app().scenes()) {
-            scene->is_paused(true);
-          }
+          Services::app().pause_scenes();
           auto scene = load_settings_screen();
           Services::app().push_scene(std::move(scene));
         });

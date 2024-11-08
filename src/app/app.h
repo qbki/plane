@@ -76,6 +76,7 @@ public:
 
   void push_scene(std::unique_ptr<Scene> scene);
   void pop_scene();
+  void pause_scenes(bool value = true);
   [[nodiscard]] std::vector<std::unique_ptr<Scene>>& scenes();
 
   [[nodiscard]] AppInfo& info();

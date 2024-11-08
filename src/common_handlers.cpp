@@ -15,7 +15,8 @@
 #include "src/gui/game_screen_factory.h"
 #include "src/gui/in_game_main_menu_factory.h"
 #include "src/gui/loading_factory.h"
-#include "src/gui/screens/main_menu_screen.h"
+#include "src/gui/lose_menu_factory.h"
+#include "src/gui/utils/utils.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/sound/sound.h"
@@ -72,6 +73,17 @@ load_in_game_main_menu()
   Services::app().push_scene(std::move(scene));
 }
 
+void
+load_lose_menu(const Events::LoseEvent&)
+{
+  auto camera = make_gui_camera(Services::app());
+  auto scene = std::make_unique<Scene>(std::move(camera));
+  scene->is_deferred(false);
+  scene->handlers().once(GUI::lose_menu_factory);
+  scene->handlers().add(update_gui);
+  Services::app().push_scene(std::move(scene));
+}
+
 Scene&
 load_level_scene(bool is_last_level)
 {
@@ -107,6 +119,7 @@ load_level_scene(bool is_last_level)
   if (!is_last_level) {
     game->handlers().add(check_finish_condition);
   }
+  game->handlers().add(LoseSystem {});
   game->handlers().add(update_gui_calculate_hostiles);
   game->cancel_handlers().add([](Scene& scene) {
     scene.is_paused(true);
@@ -191,9 +204,7 @@ register_common_handlers()
   Services::events<const Events::ShootEvent>().add(play_sound);
   Services::events<const Events::LoadCurrentLevelEvent>().add(
     load_current_level);
+  Services::events<const Events::LoseEvent>().add(load_lose_menu);
   Services::events<const Events::LoadNextLevelEvent>().add(load_next_level);
-  Services::app().add_once_handler([](auto&) {
-    auto scene = load_main_menu();
-    Services::app().push_scene(std::move(scene));
-  });
+  Services::app().add_once_handler(GUI::setup_main_menu);
 }

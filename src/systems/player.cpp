@@ -11,6 +11,8 @@
 #include "src/services.h"
 #include "src/utils/common.h"
 
+#include "player.h"
+
 void
 player_rotation_system(Scene& scene)
 {
@@ -73,4 +75,21 @@ player_moving_system(const Scene& scene)
                        const AccelerationScalar& accel_scalar) {
       accel.value += direction * accel_scalar.value;
     });
+}
+
+void
+LoseSystem::operator()(const Scene& scene)
+{
+  if (is_fired) {
+    return;
+  }
+
+  auto players_quantity = scene.state().registry().view<PlayerKind>().size();
+
+  if (players_quantity == 0) {
+    Services::app().pause_scenes();
+    Services::app().add_once_handler(
+      [](auto&) { Services::events<const Events::LoseEvent>().emit({}); });
+    is_fired = true;
+  }
 }

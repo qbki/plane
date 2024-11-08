@@ -3,12 +3,12 @@
 #include "src/components/common.h"
 #include "src/gui/components/ui.h"
 #include "src/gui/core/theme.h"
-#include "src/gui/screens/main_menu_screen.h"
 #include "src/gui/screens/settings_screen.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 
 #include "in_game_main_menu_factory.h"
+#include "utils/utils.h"
 
 namespace GUI {
 
@@ -25,9 +25,7 @@ in_game_main_menu_factory(Scene& scene)
           [](auto&) {
             Services::app().add_once_handler([](App& app) {
               app.scenes().pop_back();
-              for (auto& scene : app.scenes()) {
-                scene->is_paused(false);
-              }
+              app.pause_scenes(false);
             });
           },
       }),
@@ -52,13 +50,7 @@ in_game_main_menu_factory(Scene& scene)
       ui.text_button({
         .text = "Title screen",
         .on_pointer_down_once =
-          [](auto&) {
-            Services::app().add_once_handler([](App& app) {
-              app.scenes().clear();
-              auto scene = load_main_menu();
-              app.push_scene(std::move(scene));
-            });
-          },
+          [](auto&) { Services::app().add_once_handler(setup_main_menu); },
       }),
     }),
   });
@@ -71,9 +63,7 @@ in_game_main_menu_factory(Scene& scene)
   scene.cancel_handlers().add([](auto&) {
     Services::app().add_once_handler([](App& app) {
       app.scenes().pop_back();
-      for (auto& scene : app.scenes()) {
-        scene->is_paused(false);
-      }
+      app.pause_scenes(false);
     });
   });
 }

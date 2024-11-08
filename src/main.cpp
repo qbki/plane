@@ -27,6 +27,8 @@ main()
     std::make_unique<Events::EventEmitter<const Events::ShootEvent>>());
   Service<Events::EventEmitter<const Events::LoadNextLevelEvent>>::install(
     std::make_unique<Events::EventEmitter<const Events::LoadNextLevelEvent>>());
+  Service<Events::EventEmitter<const Events::LoseEvent>>::install(
+    std::make_unique<Events::EventEmitter<const Events::LoseEvent>>());
   Service<Events::EventEmitter<const Events::LoadCurrentLevelEvent>>::install(
     std::make_unique<
       Events::EventEmitter<const Events::LoadCurrentLevelEvent>>());

@@ -19,12 +19,12 @@ projectile_handler_system(Scene& scene)
                          .view<Transform, Owner, Available, ProjectileKind>();
   projectiles_view.each(
     [&](entt::entity prj_id, Transform& prj_transform, const Owner& owner) {
-      shooter_view.each([&](entt::entity enemy_id,
+      shooter_view.each([&](entt::entity id,
                             const Transform& enemy_position,
                             Lives& lives,
                             const ParticlesEmitter& particles_emitter,
                             const DebrisEmitter& debris_emitter) {
-        auto is_owner = owner.value == enemy_id;
+        auto is_owner = owner.value == id;
         if (is_owner) {
           return;
         }
@@ -39,9 +39,8 @@ projectile_handler_system(Scene& scene)
           if (lives.value <= 0) {
             lives.value = 0;
             debris_emitter.value(registry, enemy_position.translation());
-            scene.handlers().once([enemy_id](const Scene& s) {
-              s.state().registry().destroy(enemy_id);
-            });
+            scene.handlers().once(
+              [id](const Scene& s) { s.state().registry().destroy(id); });
           }
         }
       });

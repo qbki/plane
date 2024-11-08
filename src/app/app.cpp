@@ -110,6 +110,14 @@ App::pop_scene()
   }
 }
 
+void
+App::pause_scenes(bool value)
+{
+  for (auto& scene : _scenes) {
+    scene->is_paused(value);
+  }
+}
+
 std::vector<std::unique_ptr<Scene>>&
 App::scenes()
 {

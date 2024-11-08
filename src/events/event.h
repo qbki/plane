@@ -37,6 +37,9 @@ struct LoadNextLevelEvent
 struct LoadCurrentLevelEvent
 {};
 
+struct LoseEvent
+{};
+
 template<typename T>
 using CB = std::function<void(const T&)>;
 

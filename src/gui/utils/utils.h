@@ -4,6 +4,9 @@
 namespace GUI {
 
 void
-setup_main_menu(App& app);
+go_to_main_menu(App& app);
+
+void
+clear_user_progress(App& app);
 
 }

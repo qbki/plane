@@ -4,7 +4,6 @@
 #include <memory>
 #include <string>
 #include <tuple>
-#include <vector>
 
 #include "src/utils/data_holder.h"
 #include "src/utils/types.h"
@@ -20,7 +19,7 @@ private:
   static void surface_pointer_deleter(SDL_Surface* pointer);
 
   std::shared_ptr<DataHolder> _font_data_holder;
-  FontBearer _font = { nullptr, Font::font_pointer_deleter };
+  FontBearer _font { nullptr, Font::font_pointer_deleter };
   int _size;
 
 public:
@@ -32,13 +31,6 @@ public:
   ~Font() = default;
 
   using SurfaceBearer = std::unique_ptr<SDL_Surface, void (*)(SDL_Surface*)>;
-
-  struct DrawResult
-  {
-    std::vector<unsigned char> data;
-    int width;
-    int height;
-  };
 
   Font::SurfaceBearer draw(const std::string& text, const Core::Color& color);
   [[nodiscard]] int size() const;

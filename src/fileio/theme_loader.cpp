@@ -4,7 +4,6 @@
 #include <string>
 
 #include "src/consts.h"
-#include "src/gui/core/font.h"
 #include "src/gui/core/theme.h"
 #include "src/utils/data_holder.h"
 #include "src/utils/file_loaders.h"

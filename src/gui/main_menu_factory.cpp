@@ -5,6 +5,7 @@
 #include "src/fileio/save_data_io.h"
 #include "src/gui/components/ui.h"
 #include "src/gui/screens/settings_screen.h"
+#include "src/gui/utils/utils.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 
@@ -38,9 +39,7 @@ main_menu_factory(const Scene& scene)
     .on_pointer_down_once =
       [](auto&) {
         Services::app().add_once_handler([](auto&) {
-          auto& app = Services::app();
-          app.info().current_level = std::nullopt;
-          app.save_data().save({ .current_level = "" });
+          clear_user_progress(Services::app());
           Services::events<const Events::LoadNextLevelEvent>().emit({});
         });
       },

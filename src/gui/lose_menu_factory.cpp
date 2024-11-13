@@ -29,7 +29,7 @@ lose_menu_factory(const Scene& scene)
       ui.text_button({
         .text = "Stop struggling",
         .on_pointer_down =
-          [](auto&) { Services::app().add_once_handler(setup_main_menu); },
+          [](auto&) { Services::app().add_once_handler(go_to_main_menu); },
       }),
 
     }),

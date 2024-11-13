@@ -3,7 +3,6 @@
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/gui/core/font.h"
 #include "src/gui/types.h"
 #include "src/services.h"
 #include "src/texture.h"

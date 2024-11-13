@@ -3,6 +3,7 @@
 #include "progress.h"
 #include "rect.h"
 #include "row.h"
+#include "src/gui/components/div.h"
 #include "text.h"
 #include "text_button.h"
 
@@ -21,6 +22,10 @@ make_ui(std::shared_ptr<entt::registry>& registry)
     .block =
       [registry](const auto& config) mutable {
         return Factory::block(registry, config);
+      },
+    .div =
+      [registry](const auto& config) mutable {
+        return Factory::div(registry, config);
       },
     .progress =
       [registry](const auto& config) mutable {

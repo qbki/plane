@@ -7,6 +7,7 @@
 #include "progress.h"
 #include "rect.h"
 #include "src/gui/components/background.h"
+#include "src/gui/components/div.h"
 #include "src/gui/components/row.h"
 #include "text.h"
 #include "text_button.h"
@@ -20,6 +21,7 @@ struct UIComponents
 
   UIComponent<Factory::BackgroundConfig> background;
   UIComponent<Factory::BlockConfig> block;
+  UIComponent<Factory::DivConfig> div;
   UIComponent<Factory::ProgressConfig> progress;
   UIComponent<Factory::RectConfig> rect;
   UIComponent<Factory::RowConfig> row;

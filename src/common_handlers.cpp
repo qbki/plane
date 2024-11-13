@@ -1,6 +1,5 @@
 #include <compare>
 #include <filesystem>
-#include <iterator>
 #include <optional>
 #include <ranges>
 #include <utility>
@@ -16,6 +15,7 @@
 #include "src/gui/in_game_main_menu_factory.h"
 #include "src/gui/loading_factory.h"
 #include "src/gui/lose_menu_factory.h"
+#include "src/gui/screens/load_credits_screen.h"
 #include "src/gui/utils/utils.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
@@ -85,7 +85,7 @@ load_lose_menu(const Events::LoseEvent&)
 }
 
 Scene&
-load_level_scene(bool is_last_level)
+load_level_scene()
 {
   Services::app().scenes().clear();
   load_loading_screen();
@@ -116,9 +116,7 @@ load_level_scene(bool is_last_level)
   game->handlers().add(projectile_handler_system);
   game->handlers().add(tutorial_buttons_system);
   game->handlers().add(tutorial_buttons_system);
-  if (!is_last_level) {
-    game->handlers().add(check_finish_condition);
-  }
+  game->handlers().add(check_finish_condition);
   game->handlers().add(LoseSystem {});
   game->handlers().add(update_gui_calculate_hostiles);
   game->cancel_handlers().add([](Scene& scene) {
@@ -159,8 +157,7 @@ load_current_level(const Events::LoadCurrentLevelEvent&)
       "The user's progress not found, a default level will be used");
     return;
   }
-  auto& scene = load_level_scene(
-    std::distance(current_level, levels_order.levels.end()) <= 1);
+  auto& scene = load_level_scene();
   load_level(LEVELS_DIR / "entities.json", *current_level, scene);
   Services::app().info().current_level = *current_level;
 }
@@ -182,10 +179,15 @@ load_next_level(const Events::LoadNextLevelEvent&)
   } else {
     next_level_it = levels_order.levels.begin();
   }
-  bool is_last_level = std::distance(next_level_it, levels_order.levels.end())
-                       == 1;
+  bool is_game_finished = next_level_it == levels_order.levels.end();
+  if (is_game_finished) {
+    Services::app().scenes().clear();
+    auto scene = load_credits_screen();
+    Services::app().push_scene(std::move(scene));
+    return;
+  }
   if (next_level_it < levels_order.levels.end()) {
-    auto& scene = load_level_scene(is_last_level);
+    auto& scene = load_level_scene();
     load_level(LEVELS_DIR / "entities.json", *next_level_it, scene);
     Services::app().info().current_level = *next_level_it;
     Services::app().save_data().save({ .current_level = *next_level_it });
@@ -206,5 +208,5 @@ register_common_handlers()
     load_current_level);
   Services::events<const Events::LoseEvent>().add(load_lose_menu);
   Services::events<const Events::LoadNextLevelEvent>().add(load_next_level);
-  Services::app().add_once_handler(GUI::setup_main_menu);
+  Services::app().add_once_handler(GUI::go_to_main_menu);
 }

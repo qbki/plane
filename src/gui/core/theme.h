@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-#include "src/gui/core/font.h"
+#include "src/gui/core/font.h" // IWYU pragma: export
 #include "src/utils/types.h"
 
 namespace GUI {

@@ -50,7 +50,7 @@ in_game_main_menu_factory(Scene& scene)
       ui.text_button({
         .text = "Title screen",
         .on_pointer_down_once =
-          [](auto&) { Services::app().add_once_handler(setup_main_menu); },
+          [](auto&) { Services::app().add_once_handler(go_to_main_menu); },
       }),
     }),
   });

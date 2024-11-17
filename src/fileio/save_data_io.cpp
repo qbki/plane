@@ -35,8 +35,10 @@ store_save_data(const std::filesystem::path& path, const SaveData& save_data)
 {
   using namespace std::filesystem;
   auto exec_path = get_excutable_path();
-  auto current_level = relative(save_data.current_level.value(),
-                                exec_path / ASSETS_DIR);
+  auto current_level = save_data.current_level.value().empty()
+                         ? ""
+                         : relative(save_data.current_level.value(),
+                                    exec_path / ASSETS_DIR);
   nlohmann::json json = { { "current_level", current_level } };
   save_local_json(path, json);
 }

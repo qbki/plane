@@ -19,33 +19,65 @@
 
 // clang-format off
 // cppcheck-suppress-begin internalAstError
+EM_JS(void, register_psync, (), {
+  if (!FS.psync) {
+    FS["psync"] = (is_loading = true) => (
+      new Promise((resolve, reject) => {
+        FS.syncfs(is_loading, (err) => {
+          if (err) {
+            console.error("Can't synchronize IDBFS store");
+            reject();
+          } else {
+            resolve();
+          }
+        });
+      })
+    );
+  }
+});
+// cppcheck-suppress-end internalAstError
+// clang-format on
+
+// clang-format off
+// cppcheck-suppress-begin internalAstError
 EM_ASYNC_JS(char*, em_read_file, (const char* file_path_cstr, const char* parent_path_cstr), {
+  register_psync();
   const file_path = UTF8ToString(file_path_cstr);
   const parent_path = UTF8ToString(parent_path_cstr);
   const parent_info = FS.analyzePath(parent_path, true);
-  async function sync() {
-    return new Promise((resolve, reject) => {
-      FS.syncfs(true, (err) => {
-        if (err) {
-          console.error("Can't synchronize IDBFS store");
-          reject();
-        } else {
-          resolve();
-        }
-      });
-    });
-  }
   if (!parent_info.exists) {
     FS.mkdir(parent_path);
   }
   FS.mount(IDBFS, {}, parent_path);
-  return await sync()
+  return await FS.psync()
     .then(() => FS.readFile(file_path, { encoding: 'utf8' }))
     .catch(() => {
-      console.warn(`File not readable: ${file_path}`);
+      console.warn(`File is not readable: ${file_path}`);
       return "{}";
     })
     .then((content) => stringToNewUTF8(content))
+    .finally(() => FS.unmount(parent_path));
+});
+// cppcheck-suppress-end internalAstError
+// clang-format on
+
+// clang-format off
+// cppcheck-suppress-begin internalAstError
+EM_ASYNC_JS(void, em_store_file, (const char* file_path_cstr, const char* parent_path_cstr, const char* data_cstr),
+{
+  register_psync();
+  const file_path = UTF8ToString(file_path_cstr);
+  const parent_path = UTF8ToString(parent_path_cstr);
+  const data = UTF8ToString(data_cstr);
+  const parent_info = FS.analyzePath(parent_path, true);
+  if (!parent_info.exists) {
+    FS.mkdir(parent_path);
+  }
+  FS.mount(IDBFS, {}, parent_path);
+  await FS.psync()
+    .then(() => FS.writeFile(file_path, data))
+    .then(() => FS.psync(false))
+    .catch(() => console.warn(`File is not readable: ${file_path}`))
     .finally(() => FS.unmount(parent_path));
 });
 // cppcheck-suppress-end internalAstError
@@ -159,32 +191,7 @@ save_local_json(const std::filesystem::path& file_path, nlohmann::json json)
 {
   auto dump = json.dump();
   auto parent_path = file_path.parent_path();
-  // clang-format off
-  EM_ASM({
-    const file_path = UTF8ToString($0);
-    const parent_path = UTF8ToString($1);
-    const data = UTF8ToString($2);
-    const parent_info = FS.analyzePath(parent_path, true);
-    if (!parent_info.exists) {
-      FS.mkdir(parent_path);
-    }
-    FS.mount(IDBFS, {}, parent_path);
-    FS.syncfs(true, (err) => {
-      if (err) {
-        console.error(err);
-      } else {
-        FS.writeFile(file_path, data);
-        FS.syncfs((err) => {
-          if (err) {
-            console.error(err);
-          } else {
-            FS.unmount(parent_path);
-          }
-        });
-      }
-    });
-  }, file_path.c_str(), parent_path.c_str(), dump.c_str());
-  // clang-format on
+  em_store_file(file_path.c_str(), parent_path.c_str(), dump.c_str());
 }
 
 #endif

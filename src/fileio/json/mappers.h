@@ -2,6 +2,7 @@
 #include <format>
 #include <glm/vec3.hpp>
 #include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 #include <optional>
 #include <stdexcept>
 #include <vector>
@@ -10,6 +11,8 @@
 #include "src/control.h"
 
 #include "../params.h"
+#include "src/fileio/params/entities.h"
+#include "src/fileio/params/entities_validators.h"
 #include "src/fileio/params/meta.h"
 
 template<typename T>
@@ -19,7 +22,7 @@ set_optional(std::optional<T>& value,
              const std::string& key)
 {
   if (json_obj.contains(key)) {
-    value = make_optional(json_obj.at(key).get<T>());
+    value = std::make_optional(json_obj.at(key).get<T>());
   }
 }
 
@@ -242,6 +245,15 @@ struct adl_serializer<EntityParams>
       EntityParamsTutorialButton params {};
       json_obj.at("model_id").get_to(params.model_id);
       json_obj.at("button").get_to(params.button);
+      value = params;
+    } else if (kind == "text") {
+      EntityParamsText params {};
+      json_obj.at("color").get_to(params.color);
+      json_obj.at("text_id").get_to(params.text_id);
+      json_obj.at("size").get_to(params.size);
+      set_optional(params.width, json_obj, "width");
+      set_optional(params.height, json_obj, "height");
+      validate(params);
       value = params;
     } else {
       throw std::runtime_error(std::format("Unknown entity: {}", kind));

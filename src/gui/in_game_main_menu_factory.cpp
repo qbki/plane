@@ -6,6 +6,7 @@
 #include "src/gui/screens/settings_screen.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
+#include "src/utils/color.h"
 
 #include "in_game_main_menu_factory.h"
 #include "utils/utils.h"

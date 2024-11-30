@@ -16,6 +16,7 @@
 #include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/texture.h"
+#include "src/utils/color.h"
 #include "src/utils/common.h"
 #include "src/utils/ecs.h"
 
@@ -184,6 +185,7 @@ render_particles(App& app, const Scene& scene)
       update_transform_mapping(
         transform_mapping, mesh.get(), texture.get(), matrix);
     });
+  glEnable(GL_BLEND);
   particle_shader.uniform("u_main_texture", 0);
   draw(transform_mapping);
 }
@@ -215,9 +217,9 @@ render_ui(const Scene& scene)
   std::vector<Bearer> gui_items {};
 
   registry
-    .view<Transform, UniqueTexturePtr, RectSize, Parent, Available, GUIKind>()
+    .view<Transform, TexturePointer, RectSize, Parent, Available, GUIKind>()
     .each([&gui_items](Transform& orig_transform,
-                       UniqueTexturePtr& texture,
+                       TexturePointer& texture,
                        RectSize& rect,
                        Parent& parent) {
       gui_items.push_back({
@@ -259,15 +261,9 @@ update_font_texture(const Scene& scene)
 {
   auto& registry = scene.state().registry();
   registry
-    .view<GUI::FontPtr,
-          UniqueTexturePtr,
-          RectSize,
-          Text,
-          Core::Color,
-          IsDirty,
-          GUIKind>()
+    .view<GUI::FontPtr, TexturePointer, RectSize, Text, Core::Color, IsDirty>()
     .each([](GUI::FontPtr& font,
-             UniqueTexturePtr& texture,
+             TexturePointer& texture,
              RectSize& rect,
              Text& _text,
              Core::Color& color,
@@ -330,11 +326,11 @@ render_system(App& app)
   for (const auto& scene : app.scenes()) {
     glBindFramebuffer(GL_FRAMEBUFFER, inter_fb.handle());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    update_font_texture(*scene);
     if (scene->is_deferred()) {
       render_generic_objects(app, *scene);
       render_particles(app, *scene);
     } else {
-      update_font_texture(*scene);
       render_ui(*scene);
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

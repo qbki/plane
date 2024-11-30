@@ -4,12 +4,10 @@
 #include <tuple>
 #include <unordered_map>
 
+#include "src/gui/types.h"
 #include "src/mesh.h"
 #include "src/sound/sound.h"
 #include "src/texture.h"
-
-const int MESH_IDX = 0;
-const int TEXTURE_IDX = 1;
 
 class Cache
 {
@@ -21,11 +19,13 @@ public:
 private:
   std::unordered_map<std::string, std::tuple<MeshPtr, TexturePtr>> _meshes;
   std::unordered_map<std::string, SoundPtr> _sounds;
+  std::unordered_map<std::string, GUI::FontPtr> _fonts;
 
 public:
   Cache();
 
   std::tuple<MeshPtr, TexturePtr> get_model(
-    const std::filesystem::path& mesh_file_name);
-  SoundPtr get_sound(const std::filesystem::path& sound_file_name);
+    const std::filesystem::path& mesh_path);
+  SoundPtr get_sound(const std::filesystem::path& sound_path);
+  GUI::FontPtr get_font(const std::filesystem::path& font_path, int size);
 };

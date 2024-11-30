@@ -1,11 +1,13 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <filesystem>
+#include <string>
 #include <utility>
 
 #include "app/app_builder.h"
 #include "common_handlers.h"
 #include "consts.h"
 #include "fileio/theme_loader.h"
+#include "fileio/translation_loader.h"
 #include "game_loop.h"
 #include "gui/core/theme.h"
 #include "logger/logger.h"
@@ -86,6 +88,10 @@ main()
     }
   });
   app->add_handler(render_system);
+
+  auto translations = load_translations(ASSETS_DIR / "text" / "en.json");
+  app->set_translations(translations);
+
   Service<App>::install(std::move(app));
 
   auto quad = std::make_unique<Services::GuiQuad>(Mesh::quad(HALF, HALF, 0));

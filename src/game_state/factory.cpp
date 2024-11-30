@@ -3,6 +3,7 @@
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
+#include "src/gui/components/text.h"
 #include "src/services.h"
 
 #include "factory.h"
@@ -10,139 +11,156 @@
 namespace ModelFactory {
 
 entt::entity
-make_player(entt::registry& registry, const std::string& file_path)
+make_player(std::shared_ptr<entt::registry>& registry,
+            const std::string& file_path)
 {
-  auto entity = registry.create();
+  auto entity = registry->create();
   auto [mesh, texture] = Services::cache().get_model(file_path);
-  registry.emplace<Acceleration>(entity, glm::vec3(0, 0, 0));
-  registry.emplace<AccelerationScalar>(entity, 0);
-  registry.emplace<Available>(entity);
-  registry.emplace<MeshPointer>(entity, mesh);
-  registry.emplace<PlayerKind>(entity);
-  registry.emplace<TexturePointer>(entity, texture);
-  registry.emplace<Transform>(entity);
-  registry.emplace<Velocity>(entity, glm::vec3(0, 0, 0));
-  registry.emplace<VelocityDamping>(entity, 0);
+  registry->emplace<Acceleration>(entity, glm::vec3(0, 0, 0));
+  registry->emplace<AccelerationScalar>(entity, 0);
+  registry->emplace<Available>(entity);
+  registry->emplace<MeshPointer>(entity, mesh);
+  registry->emplace<PlayerKind>(entity);
+  registry->emplace<TexturePointer>(entity, texture);
+  registry->emplace<Transform>(entity);
+  registry->emplace<Velocity>(entity, glm::vec3(0, 0, 0));
+  registry->emplace<VelocityDamping>(entity, 0);
   return entity;
 }
 
 entt::entity
-make_enemy(entt::registry& registry, const std::string& file_path)
+make_enemy(std::shared_ptr<entt::registry>& registry,
+           const std::string& file_path)
 {
   auto [mesh, texture] = Services::cache().get_model(file_path);
-  auto entity = registry.create();
-  registry.emplace<Available>(entity);
-  registry.emplace<EnemyKind>(entity);
-  registry.emplace<EnemyStateEnum>(entity, EnemyStateEnum::HUNTING);
-  registry.emplace<MeshPointer>(entity, mesh);
-  registry.emplace<Opaque>(entity);
-  registry.emplace<TexturePointer>(entity, texture);
-  registry.emplace<Transform>(entity);
+  auto entity = registry->create();
+  registry->emplace<Available>(entity);
+  registry->emplace<EnemyKind>(entity);
+  registry->emplace<EnemyStateEnum>(entity, EnemyStateEnum::HUNTING);
+  registry->emplace<MeshPointer>(entity, mesh);
+  registry->emplace<Opaque>(entity);
+  registry->emplace<TexturePointer>(entity, texture);
+  registry->emplace<Transform>(entity);
   return entity;
 }
 
 entt::entity
-make_debris(entt::registry& registry, const std::string& file_path)
+make_debris(std::shared_ptr<entt::registry>& registry,
+            const std::string& file_path)
 {
   auto [mesh, texture] = Services::cache().get_model(file_path);
-  auto entity = registry.create();
-  registry.emplace<Acceleration>(entity, glm::vec3(0, 0, 0));
-  registry.emplace<Available>(entity, glm::vec3(0, 0, 0));
-  registry.emplace<DebrisKind>(entity);
-  registry.emplace<Gravity>(entity);
-  registry.emplace<MeshPointer>(entity, mesh);
-  registry.emplace<Opaque>(entity);
-  registry.emplace<TexturePointer>(entity, texture);
-  registry.emplace<Transform>(entity);
-  registry.emplace<Velocity>(entity, glm::vec3(0, 0, 0));
+  auto entity = registry->create();
+  registry->emplace<Acceleration>(entity, glm::vec3(0, 0, 0));
+  registry->emplace<Available>(entity, glm::vec3(0, 0, 0));
+  registry->emplace<DebrisKind>(entity);
+  registry->emplace<Gravity>(entity);
+  registry->emplace<MeshPointer>(entity, mesh);
+  registry->emplace<Opaque>(entity);
+  registry->emplace<TexturePointer>(entity, texture);
+  registry->emplace<Transform>(entity);
+  registry->emplace<Velocity>(entity, glm::vec3(0, 0, 0));
   return entity;
 }
 
 entt::entity
-make_projectile(entt::registry& registry, const std::string& file_path)
+make_projectile(std::shared_ptr<entt::registry>& registry,
+                const std::string& file_path)
 {
   auto [mesh, texture] = Services::cache().get_model(file_path);
-  auto entity = registry.create();
-  registry.emplace<Available>(entity);
-  registry.emplace<Lifetime>(entity, 0);
-  registry.emplace<MeshPointer>(entity, mesh);
-  registry.emplace<Owner>(entity, static_cast<entt::entity>(entt::null));
-  registry.emplace<ParticleKind>(entity);
-  registry.emplace<ProjectileKind>(entity);
-  registry.emplace<TexturePointer>(entity, texture);
-  registry.emplace<Transform>(entity);
-  registry.emplace<Velocity>(entity, glm::vec3(0, 0, 0));
+  auto entity = registry->create();
+  registry->emplace<Available>(entity);
+  registry->emplace<Lifetime>(entity, 0);
+  registry->emplace<MeshPointer>(entity, mesh);
+  registry->emplace<Owner>(entity, static_cast<entt::entity>(entt::null));
+  registry->emplace<ParticleKind>(entity);
+  registry->emplace<ProjectileKind>(entity);
+  registry->emplace<TexturePointer>(entity, texture);
+  registry->emplace<Transform>(entity);
+  registry->emplace<Velocity>(entity, glm::vec3(0, 0, 0));
   return entity;
 }
 
 entt::entity
-make_static(entt::registry& registry, const std::string& file_path)
+make_static(std::shared_ptr<entt::registry>& registry,
+            const std::string& file_path)
 {
   auto [mesh, texture] = Services::cache().get_model(file_path);
-  auto entity = registry.create();
-  registry.emplace<Available>(entity);
-  registry.emplace<MeshPointer>(entity, mesh);
-  registry.emplace<Opaque>(entity);
-  registry.emplace<TexturePointer>(entity, texture);
-  registry.emplace<Transform>(entity);
+  auto entity = registry->create();
+  registry->emplace<Available>(entity);
+  registry->emplace<MeshPointer>(entity, mesh);
+  registry->emplace<Opaque>(entity);
+  registry->emplace<TexturePointer>(entity, texture);
+  registry->emplace<Transform>(entity);
   return entity;
 }
 
 entt::entity
-make_tutorial_button(entt::registry& registry, const std::string& file_path)
+make_text(std::shared_ptr<entt::registry>& registry, const std::string&)
 {
-  auto [mesh, texture] = Services::cache().get_model(file_path);
-  auto entity = registry.create();
-  registry.emplace<Available>(entity);
-  registry.emplace<MeshPointer>(entity, mesh);
-  registry.emplace<Opaque>(entity);
-  registry.emplace<TexturePointer>(entity, texture);
-  registry.emplace<Transform>(entity);
-  registry.emplace<TutorialButton>(entity, Control::Action::UNKNOWN);
-  registry.emplace<TutorialButtonKind>(entity);
+  auto entity = GUI::Factory::text(registry, GUI::Factory::TextConfig {});
+  registry->emplace<ParticleKind>(entity); // TODO Add better type
+  registry->emplace<MeshPointer>(entity, Mesh::quad());
   return entity;
 }
 
 entt::entity
-make_particle(entt::registry& registry, const std::string& file_path)
+make_tutorial_button(std::shared_ptr<entt::registry>& registry,
+                     const std::string& file_path)
 {
   auto [mesh, texture] = Services::cache().get_model(file_path);
-  auto entity = registry.create();
-  registry.emplace<Available>(entity);
-  registry.emplace<Color>(entity, glm::zero<glm::vec3>());
-  registry.emplace<Lifetime>(entity, 0);
-  registry.emplace<LifetimeMax>(entity, 0);
-  registry.emplace<MeshPointer>(entity, mesh);
-  registry.emplace<ParticleKind>(entity);
-  registry.emplace<TexturePointer>(entity, texture);
-  registry.emplace<Transform>(entity);
-  registry.emplace<Velocity>(entity, glm::vec3(0, 0, 0));
+  auto entity = registry->create();
+  registry->emplace<Available>(entity);
+  registry->emplace<MeshPointer>(entity, mesh);
+  registry->emplace<Opaque>(entity);
+  registry->emplace<TexturePointer>(entity, texture);
+  registry->emplace<Transform>(entity);
+  registry->emplace<TutorialButton>(entity, Control::Action::UNKNOWN);
+  registry->emplace<TutorialButtonKind>(entity);
   return entity;
 }
 
 entt::entity
-make_point_light(entt::registry& registry, const std::string&)
+make_particle(std::shared_ptr<entt::registry>& registry,
+              const std::string& file_path)
+{
+  auto [mesh, texture] = Services::cache().get_model(file_path);
+  auto entity = registry->create();
+  registry->emplace<Available>(entity);
+  registry->emplace<Color>(entity, glm::zero<glm::vec3>());
+  registry->emplace<Lifetime>(entity, 0);
+  registry->emplace<LifetimeMax>(entity, 0);
+  registry->emplace<MeshPointer>(entity, mesh);
+  registry->emplace<ParticleKind>(entity);
+  registry->emplace<TexturePointer>(entity, texture);
+  registry->emplace<Transform>(entity);
+  registry->emplace<Velocity>(entity, glm::vec3(0, 0, 0));
+  return entity;
+}
+
+entt::entity
+make_point_light(std::shared_ptr<entt::registry>& registry, const std::string&)
 {
   const PointLightParams point_light_params {
     .constant = 1.0,
     .linear = 0.045,
     .quadratic = 0.0075,
   };
-  auto entity = registry.create();
-  registry.emplace<Color>(entity, glm::zero<glm::vec3>());
-  registry.emplace<PointLightKind>(entity);
-  registry.emplace<PointLightParams>(entity, point_light_params);
-  registry.emplace<Transform>(entity);
+  auto entity = registry->create();
+  registry->emplace<Color>(entity, glm::zero<glm::vec3>());
+  registry->emplace<PointLightKind>(entity);
+  registry->emplace<PointLightParams>(entity, point_light_params);
+  registry->emplace<Transform>(entity);
   return entity;
 }
 
 entt::entity
-make_directional_light(entt::registry& registry, const std::string&)
+make_directional_light(std::shared_ptr<entt::registry>& registry,
+                       const std::string&)
 {
-  auto entity = registry.create();
-  registry.emplace<Direction>(entity, glm::zero<glm::vec3>());
-  registry.emplace<Color>(entity, glm::zero<glm::vec3>());
-  registry.emplace<DirectionalLightKind>(entity);
+  auto entity = registry->create();
+  registry->emplace<Direction>(entity, glm::zero<glm::vec3>());
+  registry->emplace<Color>(entity, glm::zero<glm::vec3>());
+  registry->emplace<DirectionalLightKind>(entity);
   return entity;
 }
 

@@ -4,6 +4,11 @@
 #include "src/components/transform.h"
 #include "src/components/weapon.h"
 #include "src/game_state/factory.h"
+#include "src/gui/core/theme.h"
+#include "src/gui/types.h"
+#include "src/scene/scene.h"
+#include "src/services.h"
+#include "src/utils/color.h"
 #include "src/utils/noop.h"
 
 #include "components_attacher.h"
@@ -15,7 +20,6 @@ ComponetsAttacher::ComponetsAttacher(Scene* scene,
                                      const EntityParamsMap* params_map)
   : _scene(scene)
   , _entity(entity)
-  , _registry(&scene->state().registry())
   , _entities(params_map)
 {
 }
@@ -43,6 +47,43 @@ void
 ComponetsAttacher::operator()(const EntityParamsPointLight& params) const
 {
   attach_color(params.color);
+}
+
+void
+ComponetsAttacher::operator()(const EntityParamsText& params) const
+{
+  auto t = Services::app().translate_fn();
+  auto text = t(params.text_id);
+  attach_color(params.color);
+  attach_text(text);
+  auto [font, transform, color] = _scene->state()
+                                    .registry()
+                                    .get<GUI::FontPtr, Transform, Core::Color>(
+                                      _entity);
+
+  font = Services::cache().get_font(Services::theme().font_path, params.size);
+  auto [text_width, text_height] = font->calculate_size(text);
+  auto ratio = static_cast<double>(text_width)
+               / static_cast<double>(text_height);
+  float height = 0;
+  float width = 0;
+
+  if (params.width.has_value() && params.height.has_value()) {
+    width = params.width.value();
+    height = params.height.value();
+  } else if (params.width.has_value()) {
+    width = params.width.value();
+    height = width / static_cast<float>(ratio);
+  } else if (params.height.has_value()) {
+    height = params.height.value();
+    width = static_cast<float>(ratio) * height;
+  } else {
+    height = 1;
+    width = static_cast<float>(ratio) * height;
+  }
+
+  transform.scale({ width, height, 1 });
+  color = params.color;
 }
 
 void
@@ -79,60 +120,73 @@ ComponetsAttacher::attach(const EntityParams& params) const
 void
 ComponetsAttacher::attach_lives(int lives) const
 {
-  _registry->emplace_or_replace<Lives>(_entity, lives);
+  _scene->state().registry().emplace_or_replace<Lives>(_entity, lives);
 }
 
 void
 ComponetsAttacher::attach_velocity(const VelocityParams& velocity) const
 {
+  auto& registry = _scene->state().registry();
   if (velocity.acceleration.has_value()) {
-    _registry->emplace_or_replace<AccelerationScalar>(
+    registry.emplace_or_replace<AccelerationScalar>(
       _entity, velocity.acceleration.value());
   }
   if (velocity.speed.has_value()) {
-    _registry->emplace_or_replace<Speed>(_entity, velocity.speed.value());
+    registry.emplace_or_replace<Speed>(_entity, velocity.speed.value());
   }
   if (velocity.damping.has_value()) {
-    _registry->emplace_or_replace<VelocityDamping>(_entity,
-                                                   velocity.damping.value());
+    registry.emplace_or_replace<VelocityDamping>(_entity,
+                                                 velocity.damping.value());
   }
 }
 
 void
 ComponetsAttacher::attach_opaque(bool is_opaque) const
 {
+  auto& registry = _scene->state().registry();
   if (is_opaque) {
-    _registry->emplace_or_replace<Opaque>(_entity);
+    registry.emplace_or_replace<Opaque>(_entity);
   }
 }
 
 void
 ComponetsAttacher::attach_direction(const glm::vec3& direction) const
 {
-  _registry->emplace_or_replace<Direction>(_entity, direction);
+  auto& registry = _scene->state().registry();
+  registry.emplace_or_replace<Direction>(_entity, direction);
 }
 
 void
 ComponetsAttacher::attach_color(const glm::vec3& color) const
 {
-  _registry->emplace_or_replace<Color>(_entity, color);
+  auto& registry = _scene->state().registry();
+  registry.emplace_or_replace<Color>(_entity, color);
+}
+
+void
+ComponetsAttacher::attach_text(const std::string& text) const
+{
+  auto& registry = _scene->state().registry();
+  registry.emplace_or_replace<Text>(_entity, text);
 }
 
 void
 ComponetsAttacher::attach_tutorial_button_value(Control::Action action) const
 {
-  _registry->emplace_or_replace<TutorialButton>(_entity, action);
+  auto& registry = _scene->state().registry();
+  registry.emplace_or_replace<TutorialButton>(_entity, action);
 }
 
 void
 ComponetsAttacher::attach_weapon(const EntityParamsActor& actor_params) const
 {
+  auto& registry = _scene->state().registry();
   if (!actor_params.weapon_id.has_value()) {
     return;
   }
   auto gun_params = _entities->weapon(actor_params.weapon_id.value());
   auto bullet_model_path = _entities->model(gun_params.bullet_model_id).path;
-  auto& gun = _registry->emplace_or_replace<Weapon>(_entity);
+  auto& gun = registry.emplace_or_replace<Weapon>(_entity);
   gun.bullet_speed = gun_params.bullet_speed;
   gun.bullet_model_path = bullet_model_path;
   gun.spread = gun_params.spread;
@@ -145,6 +199,7 @@ void
 ComponetsAttacher::attach_particles_emmiter_by_hit(
   const EntityParamsActor& actor_params) const
 {
+  auto& registry = _scene->state().registry();
   if (!actor_params.hit_particles_id.has_value()) {
     return;
   }
@@ -158,23 +213,25 @@ ComponetsAttacher::attach_particles_emmiter_by_hit(
     emit_particles(
       scene->state(), position, particles_params, model_params.path);
   } };
-  _registry->emplace_or_replace<ParticlesEmitter>(_entity, emitter);
+  registry.emplace_or_replace<ParticlesEmitter>(_entity, emitter);
 }
 
 void
 ComponetsAttacher::attach_debris_emmiter(
   const EntityParamsActor& actor_params) const
 {
+  auto& registry = _scene->state().shared_registry();
   if (!actor_params.debris_id.has_value()) {
     return;
   }
   auto& debris_id = actor_params.debris_id.value();
   auto model_path = _entities->model(debris_id).path;
-  DebrisEmitter emitter { [model_path](entt::registry& registry,
-                                       glm::vec3 position) {
+  DebrisEmitter emitter { [model_path](
+                            std::shared_ptr<entt::registry>& registry,
+                            glm::vec3 position) {
     auto entity = ModelFactory::make_debris(registry, model_path);
-    auto& transform = registry.get<Transform>(entity);
+    auto& transform = registry->get<Transform>(entity);
     transform.translate(position);
   } };
-  _registry->emplace_or_replace<DebrisEmitter>(_entity, emitter);
+  registry->emplace_or_replace<DebrisEmitter>(_entity, emitter);
 }

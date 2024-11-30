@@ -23,10 +23,10 @@ PositionStrategyVisitor::PositionStrategyVisitor(
   ModelFactory::MakerFn* maker_fn)
   : _entities(entities)
   , _scene(scene)
-  , _entity_maker(&scene->state().registry(), entities, maker_fn) {};
+  , _entity_maker(scene->state().shared_registry(), entities, *maker_fn) {};
 
 entt::entity
-PositionStrategyVisitor::handle_single(const std::string& entity_id) const
+PositionStrategyVisitor::handle_single(const std::string& entity_id)
 {
   auto entity_params = _entities->params(entity_id);
   auto entity = _entity_maker.get(entity_params);
@@ -35,7 +35,7 @@ PositionStrategyVisitor::handle_single(const std::string& entity_id) const
 }
 
 void
-PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy) const
+PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy)
 {
   auto& registry = _scene->state().registry();
   auto& center = strategy.center;
@@ -79,18 +79,16 @@ PositionStrategyVisitor::operator()(const PositionStrategyRound& strategy) const
 }
 
 void
-PositionStrategyVisitor::operator()(
-  const PositionStrategySingle& strategy) const
+PositionStrategyVisitor::operator()(const PositionStrategySingle& strategy)
 {
   auto& registry = _scene->state().registry();
   auto entity = handle_single(strategy.entity_id);
-  Transform transform;
+  auto& transform = registry.get<Transform>(entity);
   transform.translate(strategy.position);
-  registry.emplace_or_replace<Transform>(entity, transform);
 }
 
 void
-PositionStrategyVisitor::operator()(const PositionStrategyMany& strategy) const
+PositionStrategyVisitor::operator()(const PositionStrategyMany& strategy)
 {
   auto& registry = _scene->state().registry();
   for (const auto& position : strategy.positions) {
@@ -102,8 +100,7 @@ PositionStrategyVisitor::operator()(const PositionStrategyMany& strategy) const
 }
 
 void
-PositionStrategyVisitor::operator()(
-  const PositionStrategySquare& strategy) const
+PositionStrategyVisitor::operator()(const PositionStrategySquare& strategy)
 {
   auto& registry = _scene->state().registry();
   auto& center = strategy.center;
@@ -137,7 +134,7 @@ PositionStrategyVisitor::operator()(const PositionStrategyUndefined&) const
 }
 
 void
-PositionStrategyVisitor::operator()(const PositionStrategyVoid& strategy) const
+PositionStrategyVisitor::operator()(const PositionStrategyVoid& strategy)
 {
   std::ignore = handle_single(strategy.entity_id);
 }

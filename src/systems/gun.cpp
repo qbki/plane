@@ -15,9 +15,9 @@
 void
 gun_shooting_system(Scene& scene)
 {
-  auto& registry = scene.state().registry();
+  auto& registry = scene.state().shared_registry();
   static auto get_random_float = make_random_fn(0.0f, 1.0f);
-  registry.view<entt::entity, Weapon, Transform>().each(
+  registry->view<entt::entity, Weapon, Transform>().each(
     [&](entt::entity owner_entity,
         Weapon& weapon,
         const Transform& owner_transform) {
@@ -37,11 +37,11 @@ gun_shooting_system(Scene& scene)
         glm::vec3(direction.x, direction.y, 0));
       Velocity velocity { xy_direction * weapon.bullet_speed };
 
-      registry.replace<Velocity>(projectile_entity, velocity);
-      registry.replace<Owner>(projectile_entity, owner_entity);
-      registry.replace<Lifetime>(projectile_entity, weapon.lifetime);
+      registry->replace<Velocity>(projectile_entity, velocity);
+      registry->replace<Owner>(projectile_entity, owner_entity);
+      registry->replace<Lifetime>(projectile_entity, weapon.lifetime);
 
-      auto& projectile_transform = registry.get<Transform>(projectile_entity);
+      auto& projectile_transform = registry->get<Transform>(projectile_entity);
       auto owner_euler_rotation = owner_transform.euler() + spread;
       projectile_transform.rotate(glm::vec3(0, 0, owner_euler_rotation.z));
       projectile_transform.translate(owner_transform.translation());

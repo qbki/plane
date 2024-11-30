@@ -1,5 +1,6 @@
 #pragma once
 #include <entt/entt.hpp>
+#include <memory>
 
 #include "src/game_state/factory.h"
 
@@ -9,19 +10,20 @@ class EntityMaker
 {
 private:
   const EntityParamsMap* _mapping;
-  entt::registry* _registry;
-  const ModelFactory::MakerFn* _maker_fn;
+  std::shared_ptr<entt::registry> _registry;
+  ModelFactory::MakerFn _maker_fn;
 
 public:
-  EntityMaker(entt::registry* registry,
+  EntityMaker(std::shared_ptr<entt::registry> registry,
               const EntityParamsMap* mapping,
-              const ModelFactory::MakerFn* maker_fn);
-  entt::entity operator()(const EntityParamsActor& params) const;
-  entt::entity operator()(const EntityParamsDirectionalLight&) const;
-  entt::entity operator()(const EntityParamsWeapon& params) const;
-  entt::entity operator()(const EntityParamsModel& params) const;
-  entt::entity operator()(const EntityParamsParticles& params) const;
-  entt::entity operator()(const EntityParamsPointLight&) const;
-  entt::entity operator()(const EntityParamsTutorialButton& params) const;
-  [[nodiscard]] entt::entity get(const EntityParams& params) const;
+              ModelFactory::MakerFn maker_fn);
+  entt::entity operator()(const EntityParamsActor& params);
+  entt::entity operator()(const EntityParamsDirectionalLight&);
+  entt::entity operator()(const EntityParamsModel& params);
+  entt::entity operator()(const EntityParamsParticles& params);
+  entt::entity operator()(const EntityParamsPointLight&);
+  entt::entity operator()(const EntityParamsText& params);
+  entt::entity operator()(const EntityParamsTutorialButton& params);
+  entt::entity operator()(const EntityParamsWeapon& params);
+  [[nodiscard]] entt::entity get(const EntityParams& params);
 };

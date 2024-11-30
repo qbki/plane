@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <utility>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
@@ -16,7 +15,7 @@ rect(std::shared_ptr<entt::registry>& registry, const RectConfig& config)
   auto valid_width = std::max(config.width, 0.f);
   auto valid_height = std::max(config.height, 0.f);
 
-  auto texture = std::make_unique<Texture>(1, 1, config.color.to_array());
+  auto texture = std::make_shared<Texture>(1, 1, config.color.to_array());
 
   Transform transform;
   transform.scale({ valid_width, valid_height, 1 });
@@ -28,7 +27,7 @@ rect(std::shared_ptr<entt::registry>& registry, const RectConfig& config)
   registry->emplace<Parent>(entity, config.parent);
   registry->emplace<RectSize>(entity, valid_width, valid_height);
   registry->emplace<Transform>(entity, transform);
-  registry->emplace<UniqueTexturePtr>(entity, std::move(texture));
+  registry->emplace<TexturePointer>(entity, texture);
 
   return entity;
 }

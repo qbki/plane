@@ -5,8 +5,8 @@
 #include <string>
 #include <tuple>
 
+#include "src/utils/color.h"
 #include "src/utils/data_holder.h"
-#include "src/utils/types.h"
 
 namespace GUI {
 

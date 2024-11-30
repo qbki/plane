@@ -4,6 +4,7 @@
 #include "src/components/common.h"
 #include "src/gui/core/theme.h"
 #include "src/services.h"
+#include "src/utils/color.h"
 
 namespace GUI::Factory {
 

@@ -6,8 +6,6 @@
 #include <memory>
 #include <stdexcept>
 
-#include "src/utils/types.h"
-
 #include "font.h"
 
 namespace GUI {
@@ -15,7 +13,9 @@ namespace GUI {
 void
 Font::font_pointer_deleter(TTF_Font* pointer)
 {
-  TTF_CloseFont(pointer);
+  if (TTF_WasInit() > 0) {
+    TTF_CloseFont(pointer);
+  }
 };
 
 void
@@ -40,10 +40,10 @@ Font::SurfaceBearer
 Font::draw(const std::string& text, const Core::Color& color)
 {
   SDL_Color sdl_color = {
-    .r = color.com.r,
-    .g = color.com.g,
-    .b = color.com.b,
-    .a = color.com.a,
+    .r = color.r,
+    .g = color.g,
+    .b = color.b,
+    .a = color.a,
   };
   auto font_surface = TTF_RenderUTF8_Blended(
     _font.get(), text.c_str(), sdl_color);

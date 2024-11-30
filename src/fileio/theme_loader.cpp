@@ -5,7 +5,6 @@
 
 #include "src/consts.h"
 #include "src/gui/core/theme.h"
-#include "src/utils/data_holder.h"
 #include "src/utils/file_loaders.h"
 
 #include "theme_loader.h"
@@ -23,6 +22,7 @@ load_theme(const std::filesystem::path& theme_file_path)
   auto make_font = [&data_holder](unsigned int size) {
     return std::make_shared<GUI::Font>(data_holder, size);
   };
+  theme->font_path = font_path;
   theme->typography.body1 = make_font(Typography::SIZE_BODY_1);
   theme->typography.body2 = make_font(Typography::SIZE_BODY_2);
   theme->typography.h1 = make_font(Typography::SIZE_H1);

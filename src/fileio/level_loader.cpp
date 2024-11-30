@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "src/fileio/params/meta.h"
+#include "src/fileio/params/strategies.h"
 #include "src/game_state/factory.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
@@ -53,6 +54,24 @@ get_entity_maker(const PositionStrategy& strategy,
         break;
       }
       case BehaviourEnum::STATIC: {
+        auto entity_id = std::visit(
+          Overloaded {
+            [](auto&) -> std::string {
+              throw std::runtime_error("Strategy not supported");
+            },
+            [](const PositionStrategyMany& value) { return value.entity_id; },
+            [](const PositionStrategySingle& value) { return value.entity_id; },
+            // Temporally, should be removed after completion of the level
+            // editor
+            [](const PositionStrategySquare& value) {
+              return value.entity_ids[0];
+            },
+          },
+          strategy);
+        auto entity_params = entities.params(entity_id);
+        if (std::holds_alternative<EntityParamsText>(entity_params)) {
+          return ModelFactory::make_text(args...);
+        }
         return ModelFactory::make_static(args...);
         break;
       }

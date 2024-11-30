@@ -1,16 +1,19 @@
+#include <cassert>
 #include <filesystem>
 #include <glm/vec3.hpp>
 #include <optional>
+#include <string>
 #include <tiny_gltf.h>
 #include <tuple>
 #include <unordered_map>
 
 #include "src/consts.h"
+#include "src/gui/core/font.h"
 #include "src/sound/sound.h"
 #include "src/texture.h"
 #include "src/utils/file_loaders.h"
 
-#include "cache.h"
+#include "src/cache/cache.h"
 
 glm::vec3
 exctract_material_color(tinygltf::Model& model)
@@ -57,28 +60,44 @@ Cache::Cache()
 }
 
 std::tuple<Cache::MeshPtr, Cache::TexturePtr>
-Cache::get_model(const std::filesystem::path& mesh_file_name)
+Cache::get_model(const std::filesystem::path& mesh_path)
 {
-  if (_meshes.contains(mesh_file_name)) {
-    return _meshes[mesh_file_name];
+  if (_meshes.contains(mesh_path)) {
+    return _meshes[mesh_path];
   }
-  auto gltf_model = load_gltf_model(ASSETS_DIR / mesh_file_name);
+  auto gltf_model = load_gltf_model(ASSETS_DIR / mesh_path);
   auto extracted_texture_opt = extract_texture(gltf_model);
   auto texture = extracted_texture_opt.has_value()
                    ? extracted_texture_opt.value()
                    : generate_texture(gltf_model);
   auto mesh = std::make_shared<Mesh>(gltf_model);
-  _meshes[mesh_file_name] = std::make_tuple(mesh, texture);
+  _meshes[mesh_path] = std::make_tuple(mesh, texture);
   return { mesh, texture };
 }
 
 Cache::SoundPtr
-Cache::get_sound(const std::filesystem::path& sound_file_name)
+Cache::get_sound(const std::filesystem::path& sound_path)
 {
-  if (_sounds.contains(sound_file_name)) {
-    return _sounds[sound_file_name];
+  if (_sounds.contains(sound_path)) {
+    return _sounds[sound_path];
   }
-  std::shared_ptr<Sound::Sound> sound = load_sound(sound_file_name);
-  _sounds[sound_file_name] = sound;
+  std::shared_ptr<Sound::Sound> sound = load_sound(sound_path);
+  _sounds[sound_path] = sound;
   return sound;
+}
+
+GUI::FontPtr
+Cache::get_font(const std::filesystem::path& font_path, int size)
+{
+  auto size_str = std::to_string(size);
+  assert((size > 0)
+         && "Cache::get_font: size should be more than zero, got " + size_str);
+  auto key = font_path.string() + "-" + size_str;
+  if (_fonts.contains(key)) {
+    return _fonts[key];
+  }
+  auto font_data = load_sdl_rw_data(font_path);
+  auto font = std::make_shared<GUI::Font>(font_data, size);
+  _fonts[key] = font;
+  return font;
 }

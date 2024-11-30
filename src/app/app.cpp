@@ -1,4 +1,5 @@
 #include <SDL_timer.h>
+#include <functional>
 #include <utility>
 
 #include "app.h"
@@ -146,6 +147,22 @@ Save&
 App::save_data()
 {
   return _save;
+}
+
+std::function<std::string(const std::string&)>&
+App::translate_fn() const
+{
+  static std::function<std::string(const std::string&)> fn =
+    [&](const std::string& key) {
+      return _translations.contains(key) ? _translations.at(key) : key;
+    };
+  return fn;
+}
+
+void
+App::set_translations(const TranslationsMapping& translations)
+{
+  _translations = translations;
 }
 
 void

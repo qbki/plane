@@ -10,66 +10,76 @@
 
 struct VelocityParams
 {
-  std::optional<float> acceleration = std::nullopt;
-  std::optional<float> speed = std::nullopt;
-  std::optional<float> damping = std::nullopt;
+  std::optional<float> acceleration { std::nullopt };
+  std::optional<float> speed { std::nullopt };
+  std::optional<float> damping { std::nullopt };
 };
 
 struct EntityParamsModel
 {
-  std::filesystem::path path;
-  bool is_opaque;
+  std::filesystem::path path {};
+  bool is_opaque { true };
 };
 
 struct EntityParamsActor
 {
-  VelocityParams speed;
-  int lives;
-  std::string model_id;
-  std::optional<std::string> weapon_id = std::nullopt;
-  std::optional<std::string> debris_id = std::nullopt;
-  std::optional<std::string> hit_particles_id = std::nullopt;
+  VelocityParams speed {};
+  int lives { 0 };
+  std::string model_id { "" };
+  std::optional<std::string> weapon_id { std::nullopt };
+  std::optional<std::string> debris_id { std::nullopt };
+  std::optional<std::string> hit_particles_id { std::nullopt };
 };
 
 struct EntityParamsPointLight
 {
-  glm::vec3 color;
+  glm::vec3 color { 0, 0, 0 };
 };
 
 struct EntityParamsDirectionalLight
 {
-  glm::vec3 color;
-  glm::vec3 direction;
+  glm::vec3 color { 0, 0, 0 };
+  glm::vec3 direction { 0, 0, -1 };
 };
 
 struct EntityParamsParticles
 {
-  std::string model_id;
-  float lifetime;
-  size_t quantity;
-  float speed;
+  std::string model_id { "" };
+  float lifetime { 0 };
+  size_t quantity { 0 };
+  float speed { 0 };
 };
 
 struct EntityParamsWeapon
 {
-  float bullet_speed;
-  float fire_rate;
-  float lifetime;
-  float spread;
-  std::string bullet_model_id;
-  std::filesystem::path shot_sound_path;
+  float bullet_speed { 0 };
+  float fire_rate { 0 };
+  float lifetime { 0 };
+  float spread { 0 };
+  std::string bullet_model_id { "" };
+  std::filesystem::path shot_sound_path {};
 };
 
 struct EntityParamsTutorialButton
 {
-  std::string model_id;
-  Control::Action button;
+  std::string model_id { "" };
+  Control::Action button { Control::Action::UNKNOWN };
+};
+
+struct EntityParamsText
+{
+  glm::vec3 color { 0, 0, 0 };
+  std::string text_id { "" };
+  int size { 1 };
+  std::optional<float> width { std::nullopt };
+  std::optional<float> height { std::nullopt };
 };
 
 using EntityParams = std::variant<EntityParamsActor,
                                   EntityParamsDirectionalLight,
-                                  EntityParamsWeapon,
                                   EntityParamsModel,
                                   EntityParamsParticles,
                                   EntityParamsPointLight,
-                                  EntityParamsTutorialButton>;
+                                  EntityParamsText,
+                                  EntityParamsTutorialButton,
+                                  EntityParamsWeapon>;

@@ -34,7 +34,6 @@ using ShotSound = NewType<std::optional<std::string>, struct ShotSoundTag>;
 using Text = NewType<std::string, struct TextTag>;
 using TexturePointer = std::shared_ptr<Texture>;
 using TutorialButton = NewType<Control::Action, struct TutorialButtonTag>;
-using UniqueTexturePtr = std::unique_ptr<Texture>;
 
 using Acceleration = NewType<glm::vec3, struct AccelerationTag>;
 using AccelerationScalar = NewType<float, struct AccelerationScalarTag>;
@@ -75,7 +74,8 @@ struct GUIKind
 
 using ParticlesEmitter = std::function<void(glm::vec3 position)>;
 using DebrisEmitter = NewType<
-  std::function<void(entt::registry& registry, const glm::vec3& position)>,
+  std::function<void(std::shared_ptr<entt::registry>& registry,
+                     const glm::vec3& position)>,
   struct DebrisEmitterTag>;
 
 struct PointLightParams

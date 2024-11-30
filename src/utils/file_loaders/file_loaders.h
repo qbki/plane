@@ -7,7 +7,7 @@
 #include <tiny_gltf.h>
 
 #include "src/sound/sound.h"
-#include "src/utils/data_holder.h"
+#include "src/utils/data_holder.h" // IWYU pragma: export
 
 tinygltf::Model
 load_gltf_model(const std::string& file_name);

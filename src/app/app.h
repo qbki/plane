@@ -2,6 +2,8 @@
 #include <filesystem>
 #include <functional>
 #include <glm/vec2.hpp> // IWYU pragma: export
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "src/app/app_info.h" // IWYU pragma: export
@@ -21,6 +23,7 @@ class App
 {
 public:
   using Handler = std::function<void(App& app)>;
+  using TranslationsMapping = std::unordered_map<std::string, std::string>;
 
 private:
   unsigned long _last_time_point {};
@@ -41,6 +44,7 @@ private:
     _intermediate_fb = std::make_unique<FrameBuffer>();
   std::unique_ptr<Shader> _particle_shader;
   std::unique_ptr<Shader> _intermediate_shader;
+  TranslationsMapping _translations;
 
   std::vector<Handler> _handlers = std::vector<Handler>();
   std::vector<Handler> _once_handlers = std::vector<Handler>();
@@ -68,6 +72,9 @@ public:
   [[nodiscard]] SDL_GLContext gl_context() const;
   [[nodiscard]] Settings& settings();
   [[nodiscard]] Save& save_data();
+
+  std::function<std::string(const std::string&)>& translate_fn() const;
+  void set_translations(const TranslationsMapping& translations);
 
   [[nodiscard]] float delta_time() const;
 

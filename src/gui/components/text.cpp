@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <utility>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
@@ -21,7 +20,7 @@ text(std::shared_ptr<entt::registry>& registry, const TextConfig& config)
   auto valid_width = std::max(width, 1);
   auto valid_height = std::max(height, 1);
   auto pixels = get_pixels(valid_width, valid_height);
-  auto texture = std::make_unique<Texture>(valid_width, valid_height, pixels);
+  auto texture = std::make_shared<Texture>(valid_width, valid_height, pixels);
 
   auto entity = registry->create();
   registry->emplace<Available>(entity);
@@ -33,7 +32,7 @@ text(std::shared_ptr<entt::registry>& registry, const TextConfig& config)
   registry->emplace<RectSize>(entity, width, height);
   registry->emplace<Text>(entity, config.text);
   registry->emplace<Transform>(entity);
-  registry->emplace<UniqueTexturePtr>(entity, std::move(texture));
+  registry->emplace<TexturePointer>(entity, texture);
 
   return entity;
 }

@@ -1,29 +1,41 @@
 #pragma once
 #include <entt/entt.hpp>
 #include <functional>
+#include <memory>
 #include <string>
 
 namespace ModelFactory {
-using MakerFn = std::function<entt::entity(entt::registry&,
+using MakerFn = std::function<entt::entity(std::shared_ptr<entt::registry>&,
                                            const std::string&)>;
 
 entt::entity
-make_enemy(entt::registry& registry, const std::string& file_path);
+make_enemy(std::shared_ptr<entt::registry>& registry,
+           const std::string& file_path);
 entt::entity
-make_particle(entt::registry& registry, const std::string& file_path);
+make_particle(std::shared_ptr<entt::registry>& registry,
+              const std::string& file_path);
 entt::entity
-make_player(entt::registry& registry, const std::string& file_path);
+make_player(std::shared_ptr<entt::registry>& registry,
+            const std::string& file_path);
 entt::entity
-make_projectile(entt::registry& registry, const std::string& file_path);
+make_projectile(std::shared_ptr<entt::registry>& registry,
+                const std::string& file_path);
 entt::entity
-make_static(entt::registry& registry, const std::string& file_path);
+make_text(std::shared_ptr<entt::registry>& registry,
+          const std::string& file_path);
 entt::entity
-make_debris(entt::registry& registry, const std::string& file_path);
+make_static(std::shared_ptr<entt::registry>& registry,
+            const std::string& file_path);
+entt::entity
+make_debris(std::shared_ptr<entt::registry>& registry,
+            const std::string& file_path);
 
 entt::entity
-make_directional_light(entt::registry& registry, const std::string&);
+make_directional_light(std::shared_ptr<entt::registry>& registry,
+                       const std::string&);
 entt::entity
-make_point_light(entt::registry& registry, const std::string&);
+make_point_light(std::shared_ptr<entt::registry>& registry, const std::string&);
 entt::entity
-make_tutorial_button(entt::registry& registry, const std::string& file_path);
+make_tutorial_button(std::shared_ptr<entt::registry>& registry,
+                     const std::string& file_path);
 };

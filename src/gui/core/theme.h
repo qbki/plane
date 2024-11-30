@@ -1,16 +1,17 @@
 #pragma once
+#include <filesystem>
 #include <memory>
 
 #include "src/gui/core/font.h" // IWYU pragma: export
-#include "src/utils/types.h"
+#include "src/utils/color.h"
 
 namespace GUI {
 
 struct Palette
 {
-  constexpr static const Core::Color WHITE { 0x7f'7d'7e'ff };
-  constexpr static const Core::Color WHITE_ACCENT { 0xff'fd'fe'ff };
-  constexpr static const Core::Color GRAY { 0x43'43'43'ff };
+  constexpr static Core::Color WHITE { 0x7f'7d'7e'ff };
+  constexpr static Core::Color WHITE_ACCENT { 0xff'fd'fe'ff };
+  constexpr static Core::Color GRAY { 0x43'43'43'ff };
 
   Core::Color white { WHITE };
   Core::Color white_accent { WHITE_ACCENT };
@@ -19,14 +20,14 @@ struct Palette
 
 struct Typography
 {
-  constexpr static const unsigned int SIZE_H1 { 96 };
-  constexpr static const unsigned int SIZE_H2 { 60 };
-  constexpr static const unsigned int SIZE_H3 { 48 };
-  constexpr static const unsigned int SIZE_H4 { 34 };
-  constexpr static const unsigned int SIZE_H5 { 24 };
-  constexpr static const unsigned int SIZE_H6 { 20 };
-  constexpr static const unsigned int SIZE_BODY_1 { 16 };
-  constexpr static const unsigned int SIZE_BODY_2 { 14 };
+  constexpr static unsigned int SIZE_H1 { 96 };
+  constexpr static unsigned int SIZE_H2 { 60 };
+  constexpr static unsigned int SIZE_H3 { 48 };
+  constexpr static unsigned int SIZE_H4 { 34 };
+  constexpr static unsigned int SIZE_H5 { 24 };
+  constexpr static unsigned int SIZE_H6 { 20 };
+  constexpr static unsigned int SIZE_BODY_1 { 16 };
+  constexpr static unsigned int SIZE_BODY_2 { 14 };
 
   std::shared_ptr<Font> h1;
   std::shared_ptr<Font> h2;
@@ -63,6 +64,7 @@ struct Theme
   Typography typography;
   Components components;
   Palette palette;
+  std::filesystem::path font_path {};
 };
 
 }

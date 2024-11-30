@@ -8,15 +8,15 @@
 void
 projectile_handler_system(Scene& scene)
 {
-  auto& registry = scene.state().registry();
-  auto shooter_view = registry.view<Transform,
-                                    Lives,
-                                    ParticlesEmitter,
-                                    DebrisEmitter,
-                                    Available>();
+  auto& registry = scene.state().shared_registry();
+  auto shooter_view = registry->view<Transform,
+                                     Lives,
+                                     ParticlesEmitter,
+                                     DebrisEmitter,
+                                     Available>();
   auto
     projectiles_view = registry
-                         .view<Transform, Owner, Available, ProjectileKind>();
+                         ->view<Transform, Owner, Available, ProjectileKind>();
   projectiles_view.each(
     [&](entt::entity prj_id, Transform& prj_transform, const Owner& owner) {
       shooter_view.each([&](entt::entity id,
@@ -35,7 +35,7 @@ projectile_handler_system(Scene& scene)
         if (has_hit) {
           lives.value -= 1;
           particles_emitter(prj_transform.translation());
-          registry.remove<Available>(prj_id);
+          registry->remove<Available>(prj_id);
           if (lives.value <= 0) {
             lives.value = 0;
             debris_emitter.value(registry, enemy_position.translation());

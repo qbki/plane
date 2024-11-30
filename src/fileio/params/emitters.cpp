@@ -22,22 +22,22 @@ emit_particles(State& state,
                const EntityParamsParticles& params,
                const std::string& file_path)
 {
-  auto& registry = state.registry();
+  auto& registry = state.shared_registry();
   unsigned int idx = 0;
   const float step = glm::two_pi<float>() / static_cast<float>(params.quantity);
-  auto particles = registry.view<Transform,
-                                 Lifetime,
-                                 LifetimeMax,
-                                 Speed,
-                                 Velocity,
-                                 ParticleKind>(entt::exclude<Available>);
+  auto particles = registry->view<Transform,
+                                  Lifetime,
+                                  LifetimeMax,
+                                  Speed,
+                                  Velocity,
+                                  ParticleKind>(entt::exclude<Available>);
 
   for (auto [id, transform, lifetime, lifetime_max, speed, velocity] :
        particles.each()) {
     auto rotation = calc_rotation(idx, step);
     transform.translate(initial_position).rotate(rotation);
     velocity.value = rotation * glm::vec3(1, 0, 0) * speed.value;
-    registry.emplace<Available>(id);
+    registry->emplace<Available>(id);
     lifetime.value = lifetime_max.value;
     idx += 1;
     if (idx >= (params.quantity - 1)) {
@@ -51,9 +51,9 @@ emit_particles(State& state,
     Transform transform;
     transform.translate(initial_position).rotate(rotation);
     Velocity velocity { rotation * glm::vec3(1, 0, 0) * params.speed };
-    registry.replace<Lifetime>(entity, params.lifetime);
-    registry.replace<LifetimeMax>(entity, params.lifetime);
-    registry.replace<Transform>(entity, transform);
-    registry.replace<Velocity>(entity, velocity);
+    registry->replace<Lifetime>(entity, params.lifetime);
+    registry->replace<LifetimeMax>(entity, params.lifetime);
+    registry->replace<Transform>(entity, transform);
+    registry->replace<Velocity>(entity, velocity);
   }
 }

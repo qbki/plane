@@ -67,6 +67,7 @@ load_json(const std::string& file_path)
   throw_error_if_file_not_found(file_path);
   auto file_stream = std::fstream(file_path);
   throw_error_if_file_is_not_readable(file_stream, file_path);
+  Services::logger().info(std::format("Loaded json: {}", file_path));
   return nlohmann::json::parse(file_stream);
 }
 

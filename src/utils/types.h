@@ -2,6 +2,9 @@
 #include <SDL_rwops.h>
 #include <cstdint>
 #include <cxxabi.h>
+#include <glm/ext/vector_float3.hpp>
+#include <glm/vec3.hpp>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <string>
@@ -52,23 +55,3 @@ struct Overloaded : Ts...
 {
   using Ts::operator()...;
 };
-
-namespace Core {
-union Color
-{
-  std::uint32_t value;
-  struct Component
-  {
-    std::uint8_t a;
-    std::uint8_t b;
-    std::uint8_t g;
-    std::uint8_t r;
-  } com;
-
-  bool operator==(const Color& other) const { return value == other.value; }
-  [[nodiscard]] std::vector<unsigned char> to_array() const
-  {
-    return { com.r, com.g, com.b, com.a };
-  };
-};
-}

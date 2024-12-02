@@ -3,6 +3,7 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/math/intersection.h"
+#include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/utils/ecs.h"
 #include "src/utils/mouse.h"
@@ -95,4 +96,11 @@ update_gui_calculate_hostiles(const Scene& scene)
       }
     });
   Services::app().info().hostiles = enemy_quantity;
+}
+
+void
+update_gui_lives(const Scene& scene)
+{
+  scene.state().shared_registry()->view<Lives, PlayerKind>().each(
+    [](const Lives& lives) { Services::app().info().lives = lives; });
 }

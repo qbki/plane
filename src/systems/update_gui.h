@@ -6,3 +6,6 @@ update_gui(Scene& scene);
 
 void
 update_gui_calculate_hostiles(const Scene& scene);
+
+void
+update_gui_lives(const Scene& scene);

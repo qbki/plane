@@ -26,7 +26,6 @@ using InitialPosition = NewType<glm::vec3, struct InitialPositionTag>;
 using IsDirty = NewType<bool, struct IsDirtyTag>;
 using Lifetime = NewType<float, struct LifeTimeTag>;
 using LifetimeMax = NewType<float, struct LifeTimeMaxTag>;
-using Lives = NewType<int, struct LivesTag>;
 using MeshPointer = std::shared_ptr<Mesh>;
 using Owner = NewType<entt::entity, struct OwnerTag>;
 using Parent = NewType<std::optional<entt::entity>, struct ParentTag>;
@@ -80,7 +79,13 @@ using DebrisEmitter = NewType<
 
 struct PointLightParams
 {
-  float constant = 1.0;
-  float linear = 1.0;
-  float quadratic = 1.0;
+  float constant { 1.0 };
+  float linear { 1.0 };
+  float quadratic { 1.0 };
+};
+
+struct Lives
+{
+  int max { 0 };
+  int value { 0 };
 };

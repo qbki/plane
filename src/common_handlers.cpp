@@ -119,6 +119,7 @@ load_level_scene()
   game->handlers().add(check_finish_condition);
   game->handlers().add(LoseSystem {});
   game->handlers().add(update_gui_calculate_hostiles);
+  game->handlers().add(update_gui_lives);
   game->cancel_handlers().add([](Scene& scene) {
     scene.is_paused(true);
     Services::app().add_once_handler([](auto&) { load_in_game_main_menu(); });

@@ -120,7 +120,11 @@ ComponetsAttacher::attach(const EntityParams& params) const
 void
 ComponetsAttacher::attach_lives(int lives) const
 {
-  _scene->state().registry().emplace_or_replace<Lives>(_entity, lives);
+  Lives value {
+    .max = lives,
+    .value = lives,
+  };
+  _scene->state().registry().emplace_or_replace<Lives>(_entity, value);
 }
 
 void

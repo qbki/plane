@@ -91,8 +91,8 @@ enemy_hunting_system(Scene& scene)
 void
 enemy_rotation_system(Scene& scene)
 {
-  Transform player_transform {};
   auto& registry = scene.state().registry();
+  Transform player_transform {};
   registry.view<Transform, PlayerKind>().each(
     [&player_transform](const auto& transform) {
       player_transform = transform;

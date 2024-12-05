@@ -7,7 +7,6 @@
 #include "src/components/common.h"
 #include "src/consts.h"
 #include "src/gui/components/ui.h"
-#include "src/gui/core/theme.h"
 #include "src/gui/utils/utils.h"
 #include "src/services.h"
 #include "src/utils/file_loaders/file_loaders.h"

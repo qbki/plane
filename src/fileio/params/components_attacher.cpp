@@ -4,7 +4,6 @@
 #include "src/components/transform.h"
 #include "src/components/weapon.h"
 #include "src/game_state/factory.h"
-#include "src/gui/core/theme.h"
 #include "src/gui/types.h"
 #include "src/scene/scene.h"
 #include "src/services.h"

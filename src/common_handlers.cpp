@@ -106,6 +106,7 @@ load_level_scene()
   game->handlers().add(player_moving_system);
   game->handlers().add(player_rotation_system);
   game->handlers().add(player_shooting_system);
+  game->handlers().add(player_enemy_pointers);
   game->handlers().add(enemy_hunting_system);
   game->handlers().add(enemy_rotation_system);
   game->handlers().add(particle_handler_system);

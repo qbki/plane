@@ -1,7 +1,6 @@
 #include "src/components/common.h"
 #include "src/components/percent.h"
 #include "src/gui/components/ui.h"
-#include "src/gui/core/theme.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/utils/color.h"

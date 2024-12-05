@@ -2,7 +2,7 @@
 #include <memory>
 #include <variant>
 
-#include "src/gui/core/font.h"
+#include "src/gui/core/font.h" // IWYU pragma: export
 
 namespace GUI {
 

@@ -12,6 +12,7 @@ struct Palette
   constexpr static Core::Color WHITE { 0x7f'7d'7e'ff };
   constexpr static Core::Color WHITE_ACCENT { 0xff'fd'fe'ff };
   constexpr static Core::Color GRAY { 0x43'43'43'ff };
+  constexpr static Core::Color RED { 0xcb'00'66'ff };
 
   Core::Color white { WHITE };
   Core::Color white_accent { WHITE_ACCENT };

@@ -7,6 +7,7 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/weapon.h"
+#include "src/game_state/factory.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/utils/common.h"
@@ -75,6 +76,61 @@ player_moving_system(const Scene& scene)
                        const AccelerationScalar& accel_scalar) {
       accel.value += direction * accel_scalar.value;
     });
+}
+
+void
+player_enemy_pointers(const Scene& scene)
+{
+  auto registry = scene.state().shared_registry();
+  glm::vec3 player_position { 0, 0, 0 };
+  std::vector<glm::vec3> enemy_positions;
+  std::vector<entt::entity> destroy_list;
+
+  registry->view<Transform, PlayerKind>().each([&](const Transform& transform) {
+    player_position = transform.translation();
+  });
+  registry->view<Transform, EnemyKind, Available>().each(
+    [&](const Transform& transform) {
+      enemy_positions.push_back(transform.translation());
+    });
+
+  auto it_start = enemy_positions.begin();
+  auto it_end = enemy_positions.end();
+  auto is_finished = [&]() { return it_start == it_end; };
+  auto is_far = [](const glm::vec3& a, const glm::vec3& b) {
+    static const float distance = 15.0;
+    return glm::distance(a, b) > distance;
+  };
+  auto calc_position = [](const glm::vec3& orig, const glm::vec3& enemy) {
+    static const float distance = 2.0;
+    return orig + glm::normalize(enemy - orig) * distance;
+  };
+
+  registry->view<Transform, EnemyPointer>().each(
+    [&](entt::entity entity, Transform& transform) {
+      if (is_finished()) {
+        destroy_list.push_back(entity);
+      } else if (!is_far(player_position, *it_start)) {
+        destroy_list.push_back(entity);
+        it_start++;
+      } else {
+        auto pos = calc_position(player_position, *it_start);
+        transform.translate(pos);
+        it_start++;
+      }
+    });
+  for (auto entity : destroy_list) {
+    registry->destroy(entity);
+  }
+  while (!is_finished()) {
+    if (is_far(player_position, *it_start)) {
+      auto entity = ModelFactory::make_rect(registry, "");
+      auto& transform = registry->get<Transform>(entity);
+      auto pos = calc_position(player_position, *it_start);
+      transform.translate(pos);
+    }
+    it_start++;
+  }
 }
 
 void

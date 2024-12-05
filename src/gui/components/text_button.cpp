@@ -3,7 +3,6 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/core/button_state.h"
-#include "src/gui/core/theme.h"
 #include "src/services.h"
 #include "src/utils/color.h"
 

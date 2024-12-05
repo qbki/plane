@@ -6,7 +6,6 @@
 #include "src/components/transform.h"
 #include "src/gui/components/rect.h"
 #include "src/gui/components/text.h"
-#include "src/gui/core/theme.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/utils/color.h"

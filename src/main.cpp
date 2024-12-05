@@ -9,7 +9,6 @@
 #include "fileio/theme_loader.h"
 #include "fileio/translation_loader.h"
 #include "game_loop.h"
-#include "gui/core/theme.h"
 #include "logger/logger.h"
 #include "mesh.h"
 #include "scene/scene.h"

@@ -51,7 +51,7 @@ make_debris(std::shared_ptr<entt::registry>& registry,
   auto [mesh, texture] = Services::cache().get_model(file_path);
   auto entity = registry->create();
   registry->emplace<Acceleration>(entity, glm::vec3(0, 0, 0));
-  registry->emplace<Available>(entity, glm::vec3(0, 0, 0));
+  registry->emplace<Available>(entity);
   registry->emplace<DebrisKind>(entity);
   registry->emplace<Gravity>(entity);
   registry->emplace<MeshPointer>(entity, mesh);
@@ -59,6 +59,26 @@ make_debris(std::shared_ptr<entt::registry>& registry,
   registry->emplace<TexturePointer>(entity, texture);
   registry->emplace<Transform>(entity);
   registry->emplace<Velocity>(entity, glm::vec3(0, 0, 0));
+  return entity;
+}
+
+entt::entity
+make_rect(std::shared_ptr<entt::registry>& registry, const std::string&)
+{
+  const auto& theme = Services::theme();
+  auto [mesh, texture] = Services::cache().get_rect(theme.palette.WHITE_ACCENT);
+
+  const float size = 0.04;
+  Transform transform {};
+  transform.scale({ size, size, 1 });
+
+  auto entity = registry->create();
+  registry->emplace<Available>(entity);
+  registry->emplace<EnemyPointer>(entity);
+  registry->emplace<MeshPointer>(entity, mesh);
+  registry->emplace<Opaque>(entity);
+  registry->emplace<TexturePointer>(entity, texture);
+  registry->emplace<Transform>(entity, transform);
   return entity;
 }
 

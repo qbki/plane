@@ -8,7 +8,6 @@
 #include <unordered_map>
 
 #include "src/consts.h"
-#include "src/gui/core/font.h"
 #include "src/sound/sound.h"
 #include "src/texture.h"
 #include "src/utils/file_loaders.h"
@@ -59,7 +58,7 @@ Cache::Cache()
 {
 }
 
-std::tuple<Cache::MeshPtr, Cache::TexturePtr>
+Cache::ModelPair
 Cache::get_model(const std::filesystem::path& mesh_path)
 {
   if (_meshes.contains(mesh_path)) {
@@ -73,6 +72,21 @@ Cache::get_model(const std::filesystem::path& mesh_path)
   auto mesh = std::make_shared<Mesh>(gltf_model);
   _meshes[mesh_path] = std::make_tuple(mesh, texture);
   return { mesh, texture };
+}
+
+Cache::ModelPair
+Cache::get_rect(const Core::Color& color)
+{
+  auto rect_id = "#rect";
+  if (_meshes.contains(rect_id)) {
+    return _meshes[rect_id];
+  }
+  std::vector<unsigned char> data { color.r, color.g, color.b, color.a };
+  auto texture = std::make_shared<Texture>(1, 1, data);
+  auto mesh = std::shared_ptr(Mesh::quad());
+  auto pair = std::make_tuple(mesh, texture);
+  _meshes[rect_id] = pair;
+  return pair;
 }
 
 Cache::SoundPtr

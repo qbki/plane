@@ -56,6 +56,8 @@ struct DirectionalLightKind
 {};
 struct EnemyKind
 {};
+struct EnemyPointer
+{};
 struct DebrisKind
 {};
 struct ParticleKind

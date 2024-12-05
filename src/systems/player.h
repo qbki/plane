@@ -10,6 +10,9 @@ player_shooting_system(const Scene& scene);
 void
 player_moving_system(const Scene& scene);
 
+void
+player_enemy_pointers(const Scene& scene);
+
 class LoseSystem
 {
 private:

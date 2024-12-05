@@ -1,5 +1,4 @@
 #include "src/components/transform.h"
-#include "src/gui/core/theme.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 

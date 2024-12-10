@@ -93,9 +93,8 @@ PositionStrategyVisitor::operator()(const PositionStrategyMany& strategy)
   auto& registry = _scene->state().registry();
   for (const auto& position : strategy.positions) {
     auto entity = handle_single(strategy.entity_id);
-    Transform transform;
+    auto& transform = registry.get<Transform>(entity);
     transform.translate(position);
-    registry.emplace_or_replace<Transform>(entity, transform);
   }
 }
 

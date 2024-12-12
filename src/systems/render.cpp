@@ -3,6 +3,8 @@
 #include <SDL_surface.h>
 #include <algorithm>
 #include <format>
+#include <iterator>
+#include <ranges>
 #include <string>
 #include <unordered_map>
 
@@ -31,6 +33,40 @@ struct TransformHolder
   const Texture* texture = nullptr;
   Mesh::DrawParams draw_params;
 };
+
+/**
+ * This is a temporal solution. Fast and easy order dependent render of
+ * transparent objects. I hope it will be soon when I will be able to use
+ * WebGPU and features like Atomic Counter for Order Independent Transparency.
+ *
+ * This solution doesn't fit for geometry instancing.
+ *
+ * At this moment I use WebGL 2 for the web build, and it won't support Atomic
+ * Counter at all.
+ * @see https://registry.khronos.org/webgl/specs/latest/2.0-compute/
+ */
+void
+draw_sorted(const std::unordered_map<Mesh*, TransformHolder>& transform_holders)
+{
+  using namespace std;
+  vector<const TransformHolder*> holders {};
+  auto view = transform_holders
+    | views::values
+    | views::filter([](const TransformHolder& value) {
+        return value.draw_params.transforms.size() > 0;
+      })
+    | views::transform([](auto& item) {
+        return &item;
+      });
+  ranges::copy(view, std::back_inserter(holders));
+  ranges::sort(holders, [](const TransformHolder* a, const TransformHolder* b) {
+    return a->draw_params.transforms[0][3].z < b->draw_params.transforms[0][3].z;
+  });
+  for (auto& holder : holders) {
+    holder->texture->use(0);
+    holder->mesh->draw(holder->draw_params);
+  }
+}
 
 void
 draw(std::unordered_map<Mesh*, TransformHolder>& transform_holders)
@@ -186,7 +222,7 @@ render_particles(App& app, const Scene& scene)
     });
   glEnable(GL_BLEND);
   particle_shader.uniform("u_main_texture", 0);
-  draw(transform_mapping);
+  draw_sorted(transform_mapping);
 }
 
 void

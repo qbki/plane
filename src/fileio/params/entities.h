@@ -57,7 +57,7 @@ struct EntityParamsWeapon
   float lifetime { 0 };
   float spread { 0 };
   std::string bullet_model_id { "" };
-  std::filesystem::path shot_sound_path {};
+  std::optional<std::filesystem::path> shot_sound_path {};
 };
 
 struct EntityParamsTutorialButton

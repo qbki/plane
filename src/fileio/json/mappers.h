@@ -223,14 +223,18 @@ struct adl_serializer<EntityParams>
       value = params;
     } else if (kind == "weapon") {
       EntityParamsWeapon params {};
-      std::string shot_sound_path;
       json_obj.at("bullet_model_id").get_to(params.bullet_model_id);
       json_obj.at("bullet_speed").get_to(params.bullet_speed);
       json_obj.at("lifetime").get_to(params.lifetime);
       json_obj.at("spread").get_to(params.spread);
       json_obj.at("fire_rate").get_to(params.fire_rate);
-      json_obj.at("shot_sound_path").get_to(shot_sound_path);
-      params.shot_sound_path = ASSETS_DIR / shot_sound_path;
+
+      std::optional<std::string> shot_sound_path;
+      set_optional(shot_sound_path, json_obj, "shot_sound_path");
+      if (shot_sound_path.has_value()) {
+        params.shot_sound_path = ASSETS_DIR / shot_sound_path.value();
+      }
+
       value = params;
     } else if (kind == "point_light") {
       EntityParamsPointLight params {};

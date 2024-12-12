@@ -1,6 +1,5 @@
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
-#include <string>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
@@ -46,8 +45,10 @@ gun_shooting_system(Scene& scene)
       projectile_transform.rotate(glm::vec3(0, 0, owner_euler_rotation.z));
       projectile_transform.translate(owner_transform.translation());
 
-      Services::events<const Events::ShootEvent>().emit(
-        { weapon.shot_sound_path });
+      if (weapon.shot_sound_path.has_value()) {
+        Services::events<const Events::ShootEvent>().emit(
+          { weapon.shot_sound_path.value() });
+      }
       weapon.left_time_to_shoot = 1.0f / weapon.fire_rate;
     });
 }

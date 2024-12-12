@@ -1,8 +1,8 @@
 #pragma once
 #include <entt/entt.hpp>
+#include <filesystem>
 #include <functional>
 #include <glm/vec2.hpp>
-#include <string_view>
 #include <variant>
 
 namespace Events {
@@ -12,7 +12,7 @@ struct GUILayout
 
 struct ShootEvent
 {
-  std::string_view sound_path;
+  std::filesystem::path sound_path;
 };
 
 struct PointerEnter

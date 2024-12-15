@@ -5,7 +5,7 @@
 #include "camera.h"
 
 const float Camera::DEFAULT_NEAR = 0.1f;
-const float Camera::DEFAULT_FAR = 30.0f;
+const float Camera::DEFAULT_FAR = 100.0f;
 const glm::vec3 Camera::DEFAULT_UP_NORM = { 0, 1, 0 };
 
 Camera::Camera(float near, float far)

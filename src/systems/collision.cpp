@@ -4,6 +4,7 @@
 #include "src/collections/octree.h"
 #include "src/components/common.h"
 #include "src/components/transform.h"
+#include "src/consts.h"
 #include "src/math/intersection.h"
 #include "src/services.h"
 
@@ -15,13 +16,12 @@ collision_system(Scene& scene)
   auto& registry = scene.state().registry();
   auto delta_time = Services::app().delta_time();
 
-  registry.view<Transform, MeshPointer, Velocity, PlayerKind>().each(
+  registry.view<Transform, Velocity, PlayerKind>().each(
     [&](entt::entity entity,
         Transform& transform_a,
-        const MeshPointer& mesh_a,
         Velocity& velocity_a) {
       auto collider_a = apply_transform_to_collider(transform_a,
-                                                    mesh_a->bounding_volume());
+                                                    DEFAULT_COLLIDER);
       auto shape_a = std::get_if<Shape::Sphere>(&collider_a);
       if (!shape_a) {
         return;
@@ -35,8 +35,8 @@ collision_system(Scene& scene)
         }
         auto [transform_b,
               mesh_b] = registry.get<Transform, MeshPointer>(near_entity);
-        auto collider_b = apply_transform_to_collider(
-          transform_b, mesh_b->bounding_volume());
+        auto collider_b = apply_transform_to_collider(transform_b,
+                                                      DEFAULT_COLLIDER);
         auto shape_b = std::get_if<Shape::Sphere>(&collider_b);
         if (!shape_b) {
           continue;

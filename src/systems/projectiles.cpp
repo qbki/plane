@@ -14,9 +14,10 @@ projectile_handler_system(Scene& scene)
                                      ParticlesEmitter,
                                      DebrisEmitter,
                                      Available>();
-  auto
-    projectiles_view = registry
-                         ->view<Transform, Owner, Available, ProjectileKind>();
+  auto projectiles_view = registry->view<Transform,
+                                         Owner,
+                                         Available,
+                                         ProjectileKind>();
   projectiles_view.each(
     [&](entt::entity prj_id, Transform& prj_transform, const Owner& owner) {
       shooter_view.each([&](entt::entity id,
@@ -28,10 +29,9 @@ projectile_handler_system(Scene& scene)
         if (is_owner) {
           return;
         }
-        const float hit_registration_distance = 0.3;
         auto hit_distance = glm::distance(prj_transform.translation(),
                                           enemy_position.translation());
-        auto has_hit = hit_distance <= hit_registration_distance;
+        auto has_hit = hit_distance <= DEFAULT_COLLIDER.radius;
         if (has_hit) {
           lives.value -= 1;
           particles_emitter(prj_transform.translation());

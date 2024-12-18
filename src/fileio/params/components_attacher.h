@@ -30,6 +30,7 @@ public:
   void attach(const EntityParams& params) const;
   void attach_velocity(const VelocityParams& velocity) const;
   void attach_opaque(bool is_opaque) const;
+  void attach_rotation_speed(std::optional<float> rotation_speed) const;
   void attach_direction(const glm::vec3& direction) const;
   void attach_lives(int lives) const;
   void attach_color(const glm::vec3& color) const;

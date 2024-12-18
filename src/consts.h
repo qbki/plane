@@ -23,4 +23,4 @@ const std::filesystem::path SAVE_DATA_FILE(SAVES_DIR / "save.json");
 const std::filesystem::path LEVELS_DIR(ASSETS_DIR / "levels");
 const std::filesystem::path CREDITS_FILE(ASSETS_DIR / "text" / "credits.txt");
 
-const Shape::Sphere DEFAULT_COLLIDER { .radius = 0.5  };
+const Shape::Sphere DEFAULT_COLLIDER { .radius = 0.5 };

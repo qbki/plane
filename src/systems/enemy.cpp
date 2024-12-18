@@ -2,7 +2,6 @@
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtx/intersect.hpp>
-#include <glm/trigonometric.hpp>
 #include <ranges>
 #include <tuple>
 #include <variant>
@@ -10,8 +9,10 @@
 #include "src/collections/octree.h"
 #include "src/components/common.h"
 #include "src/components/transform.h"
+#include "src/components/turret_rotation.h"
 #include "src/components/weapon.h"
 #include "src/scene/scene.h"
+#include "src/services.h"
 
 #include "enemy.h"
 
@@ -97,13 +98,18 @@ enemy_rotation_system(Scene& scene)
     [&player_transform](const auto& transform) {
       player_transform = transform;
     });
-  registry.view<Transform, EnemyStateEnum, EnemyKind, Available>().each(
-    [&player_transform](Transform& enemy_transform,
-                        EnemyStateEnum& enemy_state) {
+  registry
+    .view<Transform, EnemyStateEnum, TurretRotation, EnemyKind, Available>()
+    .each([&player_transform](Transform& enemy_transform,
+                              EnemyStateEnum& enemy_state,
+                              TurretRotation& turret_rotation) {
       if (enemy_state == EnemyStateEnum::HUNTING) {
-        auto dir_vector = player_transform.translation()
-                          - enemy_transform.translation();
-        enemy_transform.rotate_z(glm::atan(dir_vector.y, dir_vector.x));
+        auto forward_vector = enemy_transform.rotation() * glm::vec3(1, 0, 0);
+        auto target_vector = player_transform.translation()
+                             - enemy_transform.translation();
+        turret_rotation.rotate(
+          forward_vector, target_vector, Services::app().delta_time());
+        enemy_transform.rotate(turret_rotation.quat());
       }
     });
 }

@@ -26,6 +26,7 @@ struct EntityParamsActor
   VelocityParams speed {};
   int lives { 0 };
   std::string model_id { "" };
+  std::optional<float> rotation_speed { 0 };
   std::optional<std::string> weapon_id { std::nullopt };
   std::optional<std::string> debris_id { std::nullopt };
   std::optional<std::string> hit_particles_id { std::nullopt };

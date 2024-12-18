@@ -50,17 +50,15 @@ draw_sorted(const std::unordered_map<Mesh*, TransformHolder>& transform_holders)
 {
   using namespace std;
   vector<const TransformHolder*> holders {};
-  auto view = transform_holders
-    | views::values
-    | views::filter([](const TransformHolder& value) {
-        return value.draw_params.transforms.size() > 0;
-      })
-    | views::transform([](auto& item) {
-        return &item;
-      });
+  auto view = transform_holders | views::values
+              | views::filter([](const TransformHolder& value) {
+                  return value.draw_params.transforms.size() > 0;
+                })
+              | views::transform([](auto& item) { return &item; });
   ranges::copy(view, std::back_inserter(holders));
   ranges::sort(holders, [](const TransformHolder* a, const TransformHolder* b) {
-    return a->draw_params.transforms[0][3].z < b->draw_params.transforms[0][3].z;
+    return a->draw_params.transforms[0][3].z
+           < b->draw_params.transforms[0][3].z;
   });
   for (auto& holder : holders) {
     holder->texture->use(0);

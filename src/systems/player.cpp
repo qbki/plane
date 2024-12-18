@@ -15,7 +15,7 @@
 #include "player.h"
 
 void
-player_rotation_system(Scene& scene)
+player_rotation_system(const Scene& scene)
 {
   static const auto tilt_angle = glm::pi<float>() / 4.0f;
   static const auto max_speed_coeficient = 0.4f;
@@ -25,7 +25,6 @@ player_rotation_system(Scene& scene)
     .each([&](Transform& transform,
               const Velocity& velocity,
               const AccelerationScalar& accel) {
-      auto direction = scene.state().cursor() - transform.translation();
       float x_tilt = 0;
       float y_tilt = 0;
       auto max_speed = accel.value * max_speed_coeficient;
@@ -33,6 +32,8 @@ player_rotation_system(Scene& scene)
         x_tilt = -velocity.value.y / max_speed;
         y_tilt = velocity.value.x / max_speed;
       }
+
+      auto direction = scene.state().cursor() - transform.translation();
       auto x = glm::angleAxis(tilt_angle * x_tilt, glm::vec3(1, 0, 0));
       auto y = glm::angleAxis(tilt_angle * y_tilt, glm::vec3(0, 1, 0));
       auto z = glm::angleAxis(glm::atan(direction.y, direction.x),

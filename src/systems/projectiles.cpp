@@ -2,6 +2,7 @@
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
+#include "src/consts.h"
 
 #include "projectiles.h"
 
@@ -14,10 +15,9 @@ projectile_handler_system(Scene& scene)
                                      ParticlesEmitter,
                                      DebrisEmitter,
                                      Available>();
-  auto projectiles_view = registry->view<Transform,
-                                         Owner,
-                                         Available,
-                                         ProjectileKind>();
+  auto
+    projectiles_view = registry
+                         ->view<Transform, Owner, Available, ProjectileKind>();
   projectiles_view.each(
     [&](entt::entity prj_id, Transform& prj_transform, const Owner& owner) {
       shooter_view.each([&](entt::entity id,

@@ -217,9 +217,10 @@ struct adl_serializer<EntityParams>
       json_obj.at("model_id").get_to(params.model_id);
       json_obj.at("speed").get_to(params.speed);
       json_obj.at("lives").get_to(params.lives);
-      set_optional(params.weapon_id, json_obj, "weapon_id");
       set_optional(params.debris_id, json_obj, "debris_id");
       set_optional(params.hit_particles_id, json_obj, "hit_particles_id");
+      set_optional(params.rotation_speed, json_obj, "rotation_speed");
+      set_optional(params.weapon_id, json_obj, "weapon_id");
       value = params;
     } else if (kind == "weapon") {
       EntityParamsWeapon params {};

@@ -17,9 +17,7 @@ collision_system(Scene& scene)
   auto delta_time = Services::app().delta_time();
 
   registry.view<Transform, Velocity, PlayerKind>().each(
-    [&](entt::entity entity,
-        Transform& transform_a,
-        Velocity& velocity_a) {
+    [&](entt::entity entity, Transform& transform_a, Velocity& velocity_a) {
       auto collider_a = apply_transform_to_collider(transform_a,
                                                     DEFAULT_COLLIDER);
       auto shape_a = std::get_if<Shape::Sphere>(&collider_a);

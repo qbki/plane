@@ -2,6 +2,7 @@
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
+#include "src/components/turret_rotation.h"
 #include "src/components/weapon.h"
 #include "src/game_state/factory.h"
 #include "src/gui/types.h"
@@ -27,6 +28,7 @@ void
 ComponetsAttacher::operator()(const EntityParamsActor& params) const
 {
   attach_velocity(params.speed);
+  attach_rotation_speed(params.rotation_speed);
   attach_particles_emmiter_by_hit(params);
   attach_debris_emmiter(params);
   attach_lives(params.lives);
@@ -140,6 +142,18 @@ ComponetsAttacher::attach_velocity(const VelocityParams& velocity) const
   if (velocity.damping.has_value()) {
     registry.emplace_or_replace<VelocityDamping>(_entity,
                                                  velocity.damping.value());
+  }
+}
+
+void
+ComponetsAttacher::attach_rotation_speed(
+  std::optional<float> rotation_speed) const
+{
+  if (rotation_speed.has_value()) {
+    auto& registry = _scene->state().registry();
+    TurretRotation turret_rotation;
+    turret_rotation.speed(rotation_speed.value());
+    registry.emplace_or_replace<TurretRotation>(_entity, turret_rotation);
   }
 }
 

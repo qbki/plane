@@ -7,6 +7,7 @@
 #include "src/consts.h"
 #include "src/game_state/factory.h"
 #include "src/services.h"
+#include "src/utils/common.h"
 #include "src/utils/random.h"
 
 #include "gun.h"
@@ -51,8 +52,23 @@ gun_shooting_system(Scene& scene)
       projectile_transform.translate(owner_transform.translation());
 
       if (weapon.shot_sound_path.has_value()) {
-        Services::events<const Events::ShootEvent>().emit(
-          { weapon.shot_sound_path.value() });
+        auto player_position = Services::app().info().player_position;
+        auto owner_position = owner_transform.translation();
+        auto distance = glm::distance(owner_position, player_position);
+
+        // <>
+        // Used modified Inverse Square Law for Sound.
+        // The coefficient was lined up empirically.
+        const auto coefficient = 10.0f;
+        auto intencity = is_approx_equal(distance, 0.0f)
+                           ? 1.0f
+                           : coefficient / (distance * distance);
+        // </>
+
+        Services::events<const Events::ShootEvent>().emit({
+          .sound_path { weapon.shot_sound_path.value() },
+          .volume = intencity,
+        });
       }
       weapon.left_time_to_shoot = 1.0f / weapon.fire_rate;
     });

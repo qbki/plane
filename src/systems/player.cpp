@@ -150,3 +150,12 @@ LoseSystem::operator()(const Scene& scene)
     is_fired = true;
   }
 }
+
+void
+player_updating_app_info_system(const Scene& scene)
+{
+  auto registry = scene.state().shared_registry();
+  registry->view<Transform, PlayerKind>().each([&](const Transform& transform) {
+    Services::app().info().player_position = transform.translation();
+  });
+}

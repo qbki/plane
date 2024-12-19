@@ -21,7 +21,10 @@ public:
   void volume(float value);
   float volume();
 
-  void play();
+  void play(float volume = 1.0);
+
+private:
+  static int volume_to_integer(float volume);
 };
 
 }

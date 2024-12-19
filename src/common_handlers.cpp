@@ -100,6 +100,7 @@ load_level_scene()
   game->handlers().add(damping_system);
   game->handlers().add(collision_system);
   game->handlers().add(velocity_system);
+  game->handlers().add(player_updating_app_info_system);
   game->handlers().add(level_boundaries_system);
 
   game->handlers().add(cursor_handler_system);
@@ -199,7 +200,7 @@ load_next_level(const Events::LoadNextLevelEvent&)
 void
 play_sound(const Events::ShootEvent& sound_event)
 {
-  Services::cache().get_sound(sound_event.sound_path)->play();
+  Services::cache().get_sound(sound_event.sound_path)->play(sound_event.volume);
 }
 
 void

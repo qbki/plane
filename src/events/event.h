@@ -13,6 +13,7 @@ struct GUILayout
 struct ShootEvent
 {
   std::filesystem::path sound_path;
+  float volume { 1.0 };
 };
 
 struct PointerEnter

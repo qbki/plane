@@ -13,6 +13,9 @@ player_moving_system(const Scene& scene);
 void
 player_enemy_pointers(const Scene& scene);
 
+void
+player_updating_app_info_system(const Scene& scene);
+
 class LoseSystem
 {
 private:

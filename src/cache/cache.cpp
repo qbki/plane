@@ -104,8 +104,7 @@ GUI::FontPtr
 Cache::get_font(const std::filesystem::path& font_path, int size)
 {
   auto size_str = std::to_string(size);
-  assert((size > 0)
-         && "Cache::get_font: size should be more than zero, got " + size_str);
+  assert((size > 0) && "Cache::get_font: size should be more than zero");
   auto key = font_path.string() + "-" + size_str;
   if (_fonts.contains(key)) {
     return _fonts[key];

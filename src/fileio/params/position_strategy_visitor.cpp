@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <format>
 #include <glm/geometric.hpp>
 #include <glm/vec2.hpp>
 #include <ranges>
@@ -83,8 +84,12 @@ PositionStrategyVisitor::operator()(const PositionStrategySingle& strategy)
 {
   auto& registry = _scene->state().registry();
   auto entity = handle_single(strategy.entity_id);
-  auto& transform = registry.get<Transform>(entity);
-  transform.translate(strategy.position);
+  auto transform = registry.try_get<Transform>(entity);
+  if (transform == nullptr) {
+    constexpr auto message = "Entity {} can't be placed in exact position";
+    throw std::runtime_error(std::format(message, strategy.entity_id));
+  }
+  transform->translate(strategy.position);
 }
 
 void

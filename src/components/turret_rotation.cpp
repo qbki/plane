@@ -1,6 +1,10 @@
+#define GLM_ENABLE_EXPERIMENTAL
+#include <algorithm>
+#include <cmath>
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
-#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/norm.hpp>
+#include <glm/trigonometric.hpp>
 
 #include "src/utils/vectors.h"
 
@@ -37,8 +41,9 @@ TurretRotation::rotate(const glm::vec3& forward,
 {
   auto norm_forward = glm::normalize(forward);
   auto norm_sight = glm::normalize(sight);
-  auto actual_angle = glm::abs(glm::dot(norm_forward, norm_sight));
-  auto actual_speed = glm::min(actual_angle, _speed * delta_time);
+  auto actual_angle = glm::acos(
+    glm::clamp(-1.0f, 1.0f, glm::dot(norm_forward, norm_sight)));
+  auto actual_speed = std::min(actual_angle, _speed) * delta_time;
   auto is_right = is_looking_right_xy(norm_forward, norm_sight);
   _angle += is_right ? -actual_speed : actual_speed;
 }

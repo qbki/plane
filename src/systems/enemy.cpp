@@ -1,7 +1,9 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include <cmath>
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtx/intersect.hpp>
+#include <glm/trigonometric.hpp>
 #include <ranges>
 #include <tuple>
 #include <variant>
@@ -15,6 +17,8 @@
 #include "src/services.h"
 
 #include "enemy.h"
+
+constexpr float SHOOT_ANGLE = 0.3;
 
 void
 enemy_hunting_system(Scene& scene)
@@ -64,10 +68,18 @@ enemy_hunting_system(Scene& scene)
       continue;
     }
 
-    auto direction = glm::normalize(transform_a.rotation()
-                                    * glm::vec3(1, 0, 0));
-    auto is_shooting = true;
+    auto forward_direction = transform_a.rotation() * glm::vec3(1, 0, 0);
 
+    // Angle condition
+    auto player_direction = glm::normalize(player_transform.translation()
+                                           - transform_a.translation());
+    auto angle = glm::acos(glm::dot(player_direction, forward_direction));
+    if (angle > SHOOT_ANGLE) {
+      continue;
+    }
+
+    // Obstacles condition
+    auto is_shooting = true;
     for (const auto& id_b : found_ids) {
       if (id_a == id_b || player_id == id_b) {
         continue;
@@ -76,7 +88,7 @@ enemy_hunting_system(Scene& scene)
       auto bvolume_b = std::get_if<Shape::Sphere>(&mesh_b->bounding_volume());
       float hit_distance = 0.0;
       auto result = glm::intersectRaySphere(transform_a.translation(),
-                                            direction,
+                                            forward_direction,
                                             transform_b.translation(),
                                             bvolume_b->radius,
                                             hit_distance);
@@ -93,20 +105,19 @@ void
 enemy_rotation_system(Scene& scene)
 {
   auto& registry = scene.state().registry();
-  Transform player_transform {};
+  glm::vec3 player_position { 0, 0, 0 };
   registry.view<Transform, PlayerKind>().each(
-    [&player_transform](const auto& transform) {
-      player_transform = transform;
+    [&player_position](const Transform& transform) {
+      player_position = transform.translation();
     });
   registry
     .view<Transform, EnemyStateEnum, TurretRotation, EnemyKind, Available>()
-    .each([&player_transform](Transform& enemy_transform,
-                              EnemyStateEnum& enemy_state,
-                              TurretRotation& turret_rotation) {
+    .each([&player_position](Transform& enemy_transform,
+                             EnemyStateEnum& enemy_state,
+                             TurretRotation& turret_rotation) {
       if (enemy_state == EnemyStateEnum::HUNTING) {
         auto forward_vector = enemy_transform.rotation() * glm::vec3(1, 0, 0);
-        auto target_vector = player_transform.translation()
-                             - enemy_transform.translation();
+        auto target_vector = player_position - enemy_transform.translation();
         turret_rotation.rotate(
           forward_vector, target_vector, Services::app().delta_time());
         enemy_transform.rotate(turret_rotation.quat());

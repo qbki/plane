@@ -32,7 +32,6 @@
 #include "src/systems/particles.h"
 #include "src/systems/player.h"
 #include "src/systems/projectiles.h"
-#include "src/systems/tutorial_buttons.h"
 #include "src/systems/update_gui.h"
 #include "src/systems/velocity.h"
 #include "src/utils/system.h"
@@ -116,8 +115,6 @@ load_level_scene()
   game->handlers().add(camera_move_system);
   game->handlers().add(gun_shooting_system);
   game->handlers().add(projectile_handler_system);
-  game->handlers().add(tutorial_buttons_system);
-  game->handlers().add(tutorial_buttons_system);
   game->handlers().add(check_finish_condition);
   game->handlers().add(LoseSystem {});
   game->handlers().add(update_gui_calculate_hostiles);

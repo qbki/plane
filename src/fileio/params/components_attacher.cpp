@@ -4,6 +4,7 @@
 #include "src/components/transform.h"
 #include "src/components/turret_rotation.h"
 #include "src/components/weapon.h"
+#include "src/consts.h"
 #include "src/game_state/factory.h"
 #include "src/gui/types.h"
 #include "src/scene/scene.h"
@@ -83,7 +84,7 @@ ComponetsAttacher::operator()(const EntityParamsText& params) const
     width = static_cast<float>(ratio) * height;
   }
 
-  transform.scale({ width, height, 1 });
+  transform.scale({ width * HALF, height * HALF, 1 });
   color = params.color;
 }
 

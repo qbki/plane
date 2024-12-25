@@ -15,23 +15,34 @@
 #include "src/components/weapon.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
+#include "src/utils/common.h"
 
 #include "enemy.h"
 
 constexpr float SHOOT_ANGLE = 0.3;
+
+std::tuple<entt::entity, glm::vec3>
+get_player_data(const Scene& scene)
+{
+  entt::entity player_id = entt::null;
+  glm::vec3 position {};
+  scene
+    .state()
+    .shared_registry()
+    ->view<Transform, PlayerKind>()
+    .each([&](entt::entity entity, const auto& transform) {
+      position = transform.translation();
+      player_id = entity;
+    });
+  return {player_id, position};
+}
 
 void
 enemy_hunting_system(Scene& scene)
 {
   auto& state = scene.state();
   auto& registry = state.registry();
-  Transform player_transform {};
-  entt::entity player_id = entt::null;
-  registry.view<Transform, PlayerKind>().each(
-    [&](entt::entity entity, const auto& transform) {
-      player_transform = transform;
-      player_id = entity;
-    });
+  auto [player_id, player_position] = get_player_data(scene);
   auto enemies_view = registry
                         .view<Transform,
                               EnemyStateEnum,
@@ -62,8 +73,7 @@ enemy_hunting_system(Scene& scene)
       continue;
     }
 
-    auto distance = glm::distance(player_transform.translation(),
-                                  transform_a.translation());
+    auto distance = glm::distance(player_position, transform_a.translation());
     if (distance >= shooting_distance) {
       continue;
     }
@@ -71,7 +81,7 @@ enemy_hunting_system(Scene& scene)
     auto forward_direction = transform_a.rotation() * glm::vec3(1, 0, 0);
 
     // Angle condition
-    auto player_direction = glm::normalize(player_transform.translation()
+    auto player_direction = glm::normalize(player_position
                                            - transform_a.translation());
     auto angle = glm::acos(glm::dot(player_direction, forward_direction));
     if (angle > SHOOT_ANGLE) {
@@ -105,11 +115,7 @@ void
 enemy_rotation_system(Scene& scene)
 {
   auto& registry = scene.state().registry();
-  glm::vec3 player_position { 0, 0, 0 };
-  registry.view<Transform, PlayerKind>().each(
-    [&player_position](const Transform& transform) {
-      player_position = transform.translation();
-    });
+  auto [_, player_position] = get_player_data(scene);
   registry
     .view<Transform, EnemyStateEnum, TurretRotation, EnemyKind, Available>()
     .each([&player_position](Transform& enemy_transform,
@@ -122,5 +128,23 @@ enemy_rotation_system(Scene& scene)
           forward_vector, target_vector, Services::app().delta_time());
         enemy_transform.rotate(turret_rotation.quat());
       }
+    });
+}
+
+void
+enemy_initial_rotation(const Scene& scene)
+{
+  auto [_, player_position] = get_player_data(scene);
+  scene
+    .state()
+    .shared_registry()
+    ->view<Transform, TurretRotation, EnemyKind>()
+    .each([&player_position](const Transform& enemy_transform, TurretRotation& rotation) {
+      if (is_approx_equal(rotation.speed(), 0.0f)) {
+        return;
+      }
+      auto player_direction = glm::normalize(player_position - enemy_transform.translation());
+      auto angle = glm::atan(player_direction.y, player_direction.x);
+      rotation.angle(angle);
     });
 }

@@ -6,3 +6,6 @@ enemy_hunting_system(Scene& scene);
 
 void
 enemy_rotation_system(Scene& scene);
+
+void
+enemy_initial_rotation(const Scene& scene);

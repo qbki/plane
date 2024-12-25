@@ -92,6 +92,7 @@ load_level_scene()
   auto camera = make_game_camera(Services::app());
   auto game = std::make_unique<Scene>(std::move(camera));
   game->is_deferred(true);
+  game->handlers().once(enemy_initial_rotation);
   game->handlers().add(collect_entities_system);
 
   game->handlers().add(velocity_gravity_system);

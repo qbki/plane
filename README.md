@@ -27,8 +27,7 @@ Engine Data Structures](https://qbki.github.io/planeds/).
 ## From the author
 
 > What I cannot create I do not understand
-
-  *-- Richard Phillips Feynman*
+  *- Richard Phillips Feynman*
 
 It's my first attempt to create a game engine, so it's not a good idea to learn
 from this project how to implement a game engine. I just learn how to create

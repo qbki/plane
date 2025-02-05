@@ -14,6 +14,7 @@ High level pipeline:
   etc. in json files
 * Run the game
 
+
 ## Documentation
 
 The main source of information is [Plane Game Engine
@@ -22,33 +23,16 @@ Documentation](https://qbki.github.io/planedoc/).
 All the tools in Plane Game Engine ecosystem are centered around [Plane Game
 Engine Data Structures](https://qbki.github.io/planeds/).
 
+
 ## From the author
 
-It's my first attempt to create a game engine, so
-it's not a good idea to learn from this project
-how to implement a game engine architecture. I
-just learn how to create things and it helps me to
-collect requirements through prototyping.
+> What I cannot create I do not understand
 
-The closest goal is to create a game that has
-these constraints:
+  *-- Richard Phillips Feynman*
 
-* A game map that has size of one screen, no
-  borders, just a flat surface;
-* AI sharpened for crowd control;
-* No multiplayer;
-* No touch devices support;
-
-
-## Requirements
-
-| Name | Required | Comment |
-| ---- | -------- | ------- |
-| conan | yes | |
-| cmake | yes | |
-| make | yes | |
-| gcc | yes | if you want to compile a Linux build |
-| docker | no | if you want to try this project and keep your system clean, it could be the only dependency |
+It's my first attempt to create a game engine, so it's not a good idea to learn
+from this project how to implement a game engine. I just learn how to create
+things.
 
 
 ## Examples
@@ -127,4 +111,4 @@ directory.
 
 ## License
 
-Plane Engine is [MIT licensed](./LICENSE).
+Plane Game Engine is [MIT licensed](./LICENSE).

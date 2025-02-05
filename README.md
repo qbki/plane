@@ -56,14 +56,15 @@ dependencies are the dependencies that require
 using _apt-get_ command with super user
 privileges.
 
-An executable will be located in the
-_./build/linux/bin/_ directory.
+An executable will be located in the _build/x86_64-linux-release/bin_
+directory.
+
 
 
 ## Web build
 
 Run this command and install all system
-dependencies that _conan_ will ask you:
+dependencies that _vcpkg_ will ask you:
 
 ```sh
 $ make init-build-pack-wasm
@@ -72,7 +73,8 @@ It installs dependencies, builds the project and creates
 a zip archive that contains a ready to run application,
 just add your assets.
 
-Artifacts will be placed in the _./build/pack/_ directory.
+Artifacts will be placed in the _build/wasm32-emscripten-release/bin_
+directory.
 
 
 ## Using Docker
@@ -102,7 +104,7 @@ $ make docker-build-wasm
 ```
 Take a cup of tea, this is a long process. It
 builds a docker image based on ubuntu, compiles
-_conan_ dependencies, compiles the project itself
+_vcpkg_ dependencies, compiles the project itself
 and creates a zip archive. Artifacts will be
 placed in the _./build/docker_build/pack/_
 directory.

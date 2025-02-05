@@ -8,22 +8,19 @@ top-down shooters.
 
 High level pipeline:
 
-* Download executables or compile the project;
-* Prepare models in 3D editor (Blender for
-  instance);
+* Download executables or compile Plane Game Engine
+* Prepare assets (3D models, sounds, translations)
 * Describe levels, behavior, lights, particles,
-  etc. in json files;
-* Run the game;
-* Try to correct errors;
-* Read documentation and the API specification;
-* Correct errors;
-* ...
-* PROFIT!
+  etc. in json files
+* Run the game
 
-Sources of inspiration are games like
-"Crimsonland", "Alien Shooter", "Earth Defence
-Force".
+## Documentation
 
+The main source of information is [Plane Game Engine
+Documentation](https://qbki.github.io/planedoc/).
+
+All the tools in Plane Game Engine ecosystem are centered around [Plane Game
+Engine Data Structures](https://qbki.github.io/planeds/).
 
 ## From the author
 

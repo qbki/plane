@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "src/services.h"
+#include "src/utils/result.h" // IWYU pragma: export
 
 #include "file_loaders.h"
 #include "utils.h"
@@ -83,7 +84,7 @@ EM_ASYNC_JS(void, em_store_file, (const char* file_path_cstr, const char* parent
 // cppcheck-suppress-end internalAstError
 // clang-format on
 
-std::string
+Result<std::string>
 load_string_by_emscripten(const std::string& file_name)
 {
   gsl::owner<char*> loaded_data = nullptr;
@@ -95,15 +96,16 @@ load_string_by_emscripten(const std::string& file_name)
                        &error);
   if (error > 0) {
     delete loaded_data;
-    throw std::runtime_error(
-      std::format("Can't load a text file: {}", file_name));
+    auto message = std::format("Can't load a text file: {}", file_name);
+    return Result<std::string>::from_error(
+      std::make_shared<std::runtime_error>(message));
   }
   std::string data(loaded_data, loaded_size);
   delete loaded_data;
-  return data;
+  return Result<std::string>::from_payload(data);
 }
 
-std::vector<unsigned char>
+Result<std::vector<unsigned char>>
 load_binary_by_emscripten(const std::string& file_name)
 {
   gsl::owner<unsigned char*> loaded_data = nullptr;
@@ -115,15 +117,16 @@ load_binary_by_emscripten(const std::string& file_name)
                        &error);
   if (error > 0) {
     delete loaded_data;
-    throw std::runtime_error(
-      std::format("Can't load a binary file: {}", file_name));
+    auto message = std::format("Can't load a binary file: {}", file_name);
+    return Result<std::vector<unsigned char>>::from_error(
+      std::make_shared<std::runtime_error>(message));
   }
   std::vector<unsigned char> data(loaded_data, loaded_data + loaded_size);
   delete loaded_data;
-  return data;
+  return Result<std::vector<unsigned char>>::from_payload(data);
 }
 
-tinygltf::Model
+Result<tinygltf::Model>
 load_gltf_model(const std::string& file_name)
 {
   tinygltf::Model model;
@@ -131,7 +134,11 @@ load_gltf_model(const std::string& file_name)
   std::string err;
   std::string warn;
 
-  auto data = load_string_by_emscripten(file_name);
+  auto data_result = load_string_by_emscripten(file_name);
+  if (!data_result.has_payload()) {
+    return Result<tinygltf::Model>::from_error(data_result.error());
+  }
+  auto data = data_result.or_crash();
   bool status = loader.LoadBinaryFromMemory(
     &model,
     &err,
@@ -148,42 +155,45 @@ load_gltf_model(const std::string& file_name)
     Services::logger().error(err);
   }
 
-  if (!status) {
-    throw std::runtime_error(std::format("Failed to load glTF: {}", file_name));
-  } else {
+  if (status) {
     Services::logger().info(std::format("Loaded glTF: {}", file_name));
+    return Result<tinygltf::Model>::from_payload(model);
   }
-
-  return model;
+  auto message = std::format("Failed to load glTF: {}", file_name);
+  return Result<tinygltf::Model>::from_error(
+    std::make_shared<std::runtime_error>(message));
 }
 
-std::string
+Result<std::string>
 load_text(const std::string& file_name)
 {
   return load_string_by_emscripten(file_name);
 }
 
-std::vector<unsigned char>
+Result<std::vector<unsigned char>>
 load_binary(const std::string& file_name)
 {
   return load_binary_by_emscripten(file_name);
 }
 
-nlohmann::basic_json<>
+Result<nlohmann::basic_json<>>
 load_json(const std::string& file_path)
 {
-  auto data = load_string_by_emscripten(file_path);
-  return nlohmann::json::parse(begin(data), end(data));
+  return load_string_by_emscripten(file_path).then<nlohmann::basic_json<>>(
+    [](const std::string& data) {
+      return Result<nlohmann::basic_json<>>::from_payload(
+        nlohmann::json::parse(begin(data), end(data)));
+    });
 }
 
-nlohmann::basic_json<>
+Result<nlohmann::basic_json<>>
 load_local_json(const std::filesystem::path& file_path)
 {
   auto parent_path = file_path.parent_path();
   auto raw_data = std::make_unique<char*>(
     em_read_file(file_path.c_str(), parent_path.c_str()));
   auto json = nlohmann::json::parse(*raw_data);
-  return json;
+  return Result<nlohmann::basic_json<>>::from_payload(json);
 }
 
 void
@@ -192,6 +202,12 @@ save_local_json(const std::filesystem::path& file_path, nlohmann::json json)
   auto dump = json.dump();
   auto parent_path = file_path.parent_path();
   em_store_file(file_path.c_str(), parent_path.c_str(), dump.c_str());
+}
+
+bool
+is_file_exists(const std::filesystem::path&)
+{
+  crash(std::format("{} can't be used in WASM build", __func__));
 }
 
 #endif

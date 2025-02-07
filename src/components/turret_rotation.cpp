@@ -1,6 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <algorithm>
-#include <cmath>
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtx/norm.hpp>

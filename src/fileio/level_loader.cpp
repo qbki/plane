@@ -1,6 +1,5 @@
 #include <format>
 #include <nlohmann/json.hpp>
-#include <stdexcept>
 #include <string>
 #include <variant>
 #include <vector>
@@ -10,7 +9,9 @@
 #include "src/game_state/factory.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
+#include "src/utils/crash.h"
 #include "src/utils/file_loaders.h"
+#include "src/utils/result.h"
 #include "src/utils/types.h"
 
 #include "level_loader.h"
@@ -30,7 +31,7 @@ setup_boundaries(BoundaryParams& boundaries, Scene& scene)
                   && boundaries.min.y < boundaries.max.y
                   && boundaries.min.z < boundaries.max.z;
   if (!is_valid) {
-    throw std::runtime_error("Incorrect world boundaries: wrong ordering");
+    crash("Incorrect world boundaries: wrong ordering");
   }
   scene.state().world_bbox({
     .min = boundaries.min,
@@ -56,9 +57,7 @@ get_entity_maker(const PositionStrategy& strategy,
       case BehaviourEnum::STATIC: {
         auto entity_id = std::visit(
           Overloaded {
-            [](auto&) -> std::string {
-              throw std::runtime_error("Strategy not supported");
-            },
+            [](auto&) -> std::string { crash("Strategy not supported"); },
             [](const PositionStrategyMany& value) { return value.entity_id; },
             [](const PositionStrategySingle& value) { return value.entity_id; },
             // Temporally, should be removed after completion of the level
@@ -83,9 +82,8 @@ get_entity_maker(const PositionStrategy& strategy,
         auto entity_id = std::visit(
           Overloaded {
             [](auto&) -> std::string {
-              throw std::runtime_error(
-                "No a single strategy for a light behaviour,"
-                " it is not supported at this moment");
+              crash("No a single strategy for a light behaviour,"
+                    " it is not supported at this moment");
             },
             [](const PositionStrategySingle& value) { return value.entity_id; },
             [](const PositionStrategyVoid& value) { return value.entity_id; } },
@@ -98,13 +96,13 @@ get_entity_maker(const PositionStrategy& strategy,
                      entity_params)) {
           return ModelFactory::make_point_light(args...);
         } else {
-          throw std::runtime_error(
+          crash(
             std::format("Unknown light type for the entity: {}", entity_id));
         }
         break;
       }
       default: {
-        throw std::runtime_error("Unknown behaviour type???");
+        crash("Unknown behaviour type???");
         break;
       }
     }
@@ -126,11 +124,14 @@ load_level(const std::string& entities_file_path,
            Scene& scene)
 {
   auto entities = load_json(entities_file_path)
+                    .or_crash()
                     .at("entities")
                     .get<EntityParamsMap>();
   auto json_level = load_json(level_file_path);
-  auto meta = json_level.at("meta").get<LevelMetaParams>();
-  auto strategies = json_level.at("map").get<std::vector<PositionStrategy>>();
+  auto meta = json_level.or_crash().at("meta").get<LevelMetaParams>();
+  auto strategies = json_level.or_crash()
+                      .at("map")
+                      .get<std::vector<PositionStrategy>>();
   auto models = entities.get_all<EntityParamsModel>();
   preload_models(models);
   setup_camera(meta.camera, scene);

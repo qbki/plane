@@ -60,6 +60,12 @@ const log = (() => {
 export const moduleConfig: Parameters<typeof createEngineModule>[0] = {
   noExitRuntime: true,
 
+  arguments: (() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const assets = searchParams.get("assets");
+    return assets ? [assets] : [];
+  })(),
+
   print: (text: string) => {
     log(text);
   },

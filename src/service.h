@@ -3,6 +3,7 @@
 #include <memory>
 #include <stdexcept>
 
+#include "src/components/common.h"
 #include "utils/types.h"
 
 template<typename T>
@@ -28,10 +29,9 @@ public:
   static T& get()
   {
     if (!_instance) {
-      throw std::runtime_error(
-        std::format("An instance of {} was not found, you should call the "
-                    "'install' method first",
-                    demangled_name<T>()));
+      crash(std::format("An instance of {} was not found, you should call the "
+                        "'install' method first",
+                        demangled_name<T>()));
     }
     return *Service<T>::_instance.get();
   }

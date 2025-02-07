@@ -3,13 +3,13 @@
 #include <format>
 #include <iterator>
 #include <ranges>
-#include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <variant>
 #include <vector>
 
 #include "src/fileio/params/entities.h" // IWYU pragma: export
+#include "src/utils/crash.h"
 #include "src/utils/types.h"
 
 class EntityParamsMap
@@ -28,7 +28,7 @@ public:
     if (std::holds_alternative<T>(value)) {
       return std::get<T>(value);
     }
-    throw std::runtime_error(
+    crash(
       std::format(R"(Can't find an entity params with key "{}" and type "{}")",
                   key,
                   demangled_name<T>()));

@@ -18,6 +18,7 @@ struct Color
   std::uint8_t b { MAX_COLOR };
   std::uint8_t a { MAX_COLOR };
 
+  // cppcheck-suppress[functionStatic]
   constexpr explicit Color(std::uint32_t _value)
     : r((_value & (MAX_COLOR << THREE_BYTES)) >> THREE_BYTES)
     , g((_value & (MAX_COLOR << TWO_BYTES)) >> TWO_BYTES)
@@ -26,6 +27,7 @@ struct Color
   {
   }
 
+  // cppcheck-suppress[functionStatic]
   constexpr explicit Color(glm::vec3 value)
     : r(denorm(value.r))
     , g(denorm(value.g))
@@ -33,6 +35,7 @@ struct Color
   {
   }
 
+  // cppcheck-suppress[functionStatic]
   constexpr Color(std::uint8_t _r,
                   std::uint8_t _g,
                   std::uint8_t _b,

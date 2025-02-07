@@ -1,7 +1,8 @@
 #include <GL/glew.h>
 #include <cassert>
-#include <stdexcept>
 #include <utility>
+
+#include "src/utils/crash.h"
 
 #include "texture.h"
 
@@ -24,7 +25,7 @@ int_to_texture_index(unsigned int idx)
     case 5: // NOLINT(cppcoreguidelines-avoid-magic-numbers)
       return GL_TEXTURE5;
     default:
-      throw std::runtime_error("Wrong texture index");
+      crash("Wrong texture index");
   }
 }
 

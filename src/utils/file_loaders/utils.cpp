@@ -1,22 +1,19 @@
 #include <filesystem>
 #include <format>
-#include <istream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 
-void
-throw_error_if_file_not_found(const std::string& file_name)
-{
-  if (!std::filesystem::exists(file_name)) {
-    throw std::runtime_error(std::format("File not found: {}", file_name));
-  }
-}
+#include "src/utils/result.h"
 
-void
-throw_error_if_file_is_not_readable(const std::istream& stream,
-                                    const std::string& file_name)
+Result<const std::string>
+does_file_exist(const std::string& file_path)
 {
-  if (stream.fail()) {
-    throw std::runtime_error(std::format("Cannot read a file: {}", file_name));
-  }
+  static auto make_error = [](const std::string& path) {
+    auto message = std::format("File not found: {}", path);
+    return std::make_unique<std::runtime_error>("");
+  };
+  return { std::filesystem::exists(file_path)
+             ? Result<const std::string>::from_payload(file_path)
+             : Result<const std::string>::from_error(make_error(file_path)) };
 }

@@ -21,6 +21,12 @@
   { include: [ '<glm/detail/func_geometric.inl>', private, '<glm/geometric.hpp>', public ] },
   { include: [ '<glm/detail/func_trigonometric.inl>', private, '<glm/trigonometric.hpp>', public ] },
   { include: [ '<glm/detail/func_exponential.inl>', private, '<glm/exponential.hpp>', public ] },
+  { symbol: [ 'glm::tan', private, '<glm/trigonometric.hpp>', public ] },
+  { symbol: [ 'glm::atan', private, '<glm/trigonometric.hpp>', public ] },
+  { symbol: [ 'glm::acos', private, '<glm/trigonometric.hpp>', public ] },
+  { symbol: [ 'std::tan', private, '<glm/trigonometric.hpp>', public ] },
+  { symbol: [ 'std::atan', private, '<glm/trigonometric.hpp>', public ] },
+  { symbol: [ 'std::acos', private, '<glm/trigonometric.hpp>', public ] },
 
   { include: [ '<glm/ext/matrix_clip_space.inl>', private, '<glm/ext/matrix_clip_space.hpp>', public ] },
   { include: [ '<glm/ext/matrix_projection.inl>', private, '<glm/ext/matrix_projection.hpp>', public ] },

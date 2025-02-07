@@ -1,15 +1,13 @@
 #pragma once
 #include <SDL_rwops.h>
-#include <cstdint>
 #include <cxxabi.h>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/vec3.hpp>
-#include <limits>
 #include <memory>
 #include <optional>
 #include <string>
-#include <vector>
 
+#include "crash.h"
 #include "noop.h"
 
 template<typename T>
@@ -36,15 +34,14 @@ demangled_name()
       noop();
       break;
     case -1:
-      throw std::runtime_error(
-        "Demangle. A memory allocation failure occurred.");
+      crash("Demangle. A memory allocation failure occurred.");
     case -2:
-      throw std::runtime_error("Demangle. A mangled_name is not a valid name "
-                               "under the C++ ABI mangling rules.");
+      crash("Demangle. A mangled_name is not a valid name "
+            "under the C++ ABI mangling rules.");
     case -3:
-      throw std::runtime_error("Demangle. One of the arguments is invalid.");
+      crash("Demangle. One of the arguments is invalid.");
     default:
-      throw std::runtime_error("Demangle. Unknown error.");
+      crash("Demangle. Unknown error.");
   }
   return result;
 }

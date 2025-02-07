@@ -3,75 +3,117 @@
 #include <format>
 #include <fstream>
 #include <iterator>
+#include <memory>
 #include <nlohmann/json.hpp>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
+#include "src/mesh.h"
 #include "src/services.h"
+#include "src/utils/result.h" // IWYU pragma: export
 
 #include "file_loaders.h"
 #include "utils.h"
 
-tinygltf::Model
-load_gltf_model(const std::string& file_name)
+using FileStreamPtr = std::shared_ptr<std::fstream>;
+
+Result<FileStreamPtr>
+open_file_stream(const std::string& path, std::ios::openmode mode)
 {
-  tinygltf::Model model;
-  tinygltf::TinyGLTF loader;
-  std::string err;
-  std::string warn;
-
-  throw_error_if_file_not_found(file_name);
-  bool status = loader.LoadBinaryFromFile(&model, &err, &warn, file_name);
-
-  if (!warn.empty()) {
-    Services::logger().warn(warn);
-  }
-
-  if (!err.empty()) {
-    Services::logger().error(err);
-  }
-
-  if (!status) {
-    throw std::runtime_error(std::format("Failed to load glTF: {}", file_name));
-  } else {
-    Services::logger().info(std::format("Loaded glTF: {}", file_name));
-  }
-
-  return model;
+  auto stream = std::make_shared<std::fstream>(path, mode);
+  static auto make_error = [&path]() {
+    auto message = std::format("File \"{}\" is not readable", path);
+    return std::make_shared<std::runtime_error>(message);
+  };
+  return stream->fail()
+           ? Result<std::shared_ptr<std::fstream>>::from_error(make_error())
+           : Result<std::shared_ptr<std::fstream>>::from_payload(
+               std::move(stream));
 }
 
-std::string
-load_text(const std::string& file_name)
+Result<FileStreamPtr>
+open_text_file_stream(const std::string& path)
 {
-  throw_error_if_file_not_found(file_name);
-  std::fstream file_stream { file_name };
-  throw_error_if_file_is_not_readable(file_stream, file_name);
-  return { std::istreambuf_iterator<char>(file_stream),
-           std::istreambuf_iterator<char>() };
+  return open_file_stream(path, std::ios_base::in | std::ios_base::out);
 }
 
-std::vector<unsigned char>
-load_binary(const std::string& file_name)
+Result<FileStreamPtr>
+open_binary_file_stream(const std::string& path)
 {
-  throw_error_if_file_not_found(file_name);
-  std::ifstream file_stream { file_name, std::ios::binary };
-  throw_error_if_file_is_not_readable(file_stream, file_name);
-  return { std::istreambuf_iterator<char>(file_stream),
-           std::istreambuf_iterator<char>() };
+  return open_file_stream(
+    path, std::ios_base::in | std::ios_base::out | std::ios_base::binary);
 }
 
-nlohmann::basic_json<>
+Result<tinygltf::Model>
+load_gltf_model(const std::string& file_path)
+{
+  return does_file_exist(file_path).then<tinygltf::Model>(
+    [](const std::string& path) {
+      std::string err;
+      std::string warn;
+      tinygltf::Model model;
+      tinygltf::TinyGLTF loader;
+      bool status = loader.LoadBinaryFromFile(&model, &err, &warn, path);
+
+      if (!warn.empty()) {
+        Services::logger().warn(warn);
+      }
+      if (!err.empty()) {
+        Services::logger().error(err);
+      }
+
+      if (status) {
+        Services::logger().info(std::format("Loaded glTF: {}", path));
+        return Result<tinygltf::Model>::from_payload(std::move(model));
+      }
+      auto error = std::make_shared<std::runtime_error>(
+        std::format("Failed to load glTF: {}", path));
+      return Result<tinygltf::Model>::from_error(error);
+    });
+}
+
+Result<std::string>
+load_text(const std::string& file_path)
+{
+  auto read_file = [](const FileStreamPtr& stream) {
+    std::string data { std::istreambuf_iterator<char>(*stream),
+                       std::istreambuf_iterator<char>() };
+    return Result<std::string>::from_payload(std::move(data));
+  };
+  return does_file_exist(file_path)
+    .then<FileStreamPtr>(open_text_file_stream)
+    .then<std::string>(read_file);
+}
+
+Result<std::vector<unsigned char>>
+load_binary(const std::string& file_path)
+{
+  auto read_file = [](FileStreamPtr& stream) {
+    std::vector<unsigned char> data { std::istreambuf_iterator<char>(*stream),
+                                      std::istreambuf_iterator<char>() };
+    return Result<std::vector<unsigned char>>::from_payload(std::move(data));
+  };
+  return Result<const std::string>::from_payload(file_path)
+    .then<const std::string>(does_file_exist)
+    .then<FileStreamPtr>(open_binary_file_stream)
+    .then<std::vector<unsigned char>>(read_file);
+}
+
+Result<nlohmann::basic_json<>>
 load_json(const std::string& file_path)
 {
-  throw_error_if_file_not_found(file_path);
-  auto file_stream = std::fstream(file_path);
-  throw_error_if_file_is_not_readable(file_stream, file_path);
-  Services::logger().info(std::format("Loaded json: {}", file_path));
-  return nlohmann::json::parse(file_stream);
+  auto parse = [&file_path](FileStreamPtr& stream) {
+    Services::logger().info(std::format("Loaded json: {}", file_path));
+    return Result<nlohmann::basic_json<>>::from_payload(
+      nlohmann::json::parse(*stream));
+  };
+  return does_file_exist(file_path)
+    .then<FileStreamPtr>(open_text_file_stream)
+    .then<nlohmann::basic_json<>>(parse);
 }
 
-nlohmann::basic_json<>
+Result<nlohmann::basic_json<>>
 load_local_json(const std::filesystem::path& file_path)
 {
   return load_json(file_path);
@@ -93,4 +135,10 @@ save_local_json(const std::filesystem::path& file_path, nlohmann::json json)
   if (file) {
     file << dump;
   }
+}
+
+bool
+is_file_exists(const std::filesystem::path& path)
+{
+  return std::filesystem::exists(path);
 }

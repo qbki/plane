@@ -1,25 +1,23 @@
 #include <filesystem>
+#include <functional>
 #include <nlohmann/json.hpp>
-#include <stdexcept>
 
-#include "src/services.h"
 #include "src/utils/file_loaders.h"
+#include "src/utils/result.h"
 
 #include "settings_io.h"
 
 SettingsData
 load_settings(const std::filesystem::path& settings_path)
 {
-  try {
-    auto settings = load_local_json(settings_path);
-    return {
-      .volume = settings.value("volume", SettingsData::DEFAULT_VOLUME),
-    };
-  } catch (const std::runtime_error& error) {
-    Services::logger().warn("Can't load a settings file, used default values.");
-    Services::logger().warn(error.what());
-  }
-  return {};
+  auto load_settings = [](const nlohmann::basic_json<>& json) {
+    return Result<SettingsData>::from_payload({
+      .volume = json.value("volume", SettingsData::DEFAULT_VOLUME),
+    });
+  };
+  return load_local_json(settings_path)
+    .then<SettingsData>(load_settings)
+    .or_fallback({});
 }
 
 void

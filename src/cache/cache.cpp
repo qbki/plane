@@ -7,10 +7,11 @@
 #include <tuple>
 #include <unordered_map>
 
-#include "src/consts.h"
+#include "src/services.h"
 #include "src/sound/sound.h"
 #include "src/texture.h"
 #include "src/utils/file_loaders.h"
+#include "src/utils/result.h"
 
 #include "src/cache/cache.h"
 
@@ -64,7 +65,8 @@ Cache::get_model(const std::filesystem::path& mesh_path)
   if (_meshes.contains(mesh_path)) {
     return _meshes[mesh_path];
   }
-  auto gltf_model = load_gltf_model(ASSETS_DIR / mesh_path);
+  auto gltf_model = load_gltf_model(Services::app().assets_dir() / mesh_path)
+                      .or_crash();
   auto extracted_texture_opt = extract_texture(gltf_model);
   auto texture = extracted_texture_opt.has_value()
                    ? extracted_texture_opt.value()

@@ -14,8 +14,7 @@ EntityParamsMap::params(const std::string& key) const
   if (_mapping.contains(key)) {
     return _mapping.at(key);
   }
-  throw std::runtime_error(
-    std::format(R"(Can't find entity params with key "{}")", key));
+  crash(std::format(R"(Can't find entity params with key "{}")", key));
 }
 
 EntityParamsActor

@@ -143,7 +143,8 @@ load_current_level(const Events::LoadCurrentLevelEvent&)
 {
   auto exec_path = get_excutable_path();
   auto save_data = load_save_data(exec_path / SAVE_DATA_FILE);
-  auto levels_order = load_levels_order(LEVELS_DIR / "levels.json");
+  auto levels_dir = Services::app().levels_dir();
+  auto levels_order = load_levels_order(levels_dir / "levels.json");
   if (!save_data.current_level.has_value()) {
     Services::events<const Events::LoadNextLevelEvent>().emit({});
     Services::logger().info(
@@ -159,7 +160,7 @@ load_current_level(const Events::LoadCurrentLevelEvent&)
     return;
   }
   auto& scene = load_level_scene();
-  load_level(LEVELS_DIR / "entities.json", *current_level, scene);
+  load_level(levels_dir / "entities.json", *current_level, scene);
   Services::app().info().current_level = *current_level;
 }
 
@@ -167,7 +168,8 @@ void
 load_next_level(const Events::LoadNextLevelEvent&)
 {
   auto& current_level = Services::app().info().current_level;
-  auto levels_order = load_levels_order(LEVELS_DIR / "levels.json");
+  auto levels_dir = Services::app().levels_dir();
+  auto levels_order = load_levels_order(levels_dir / "levels.json");
   if (levels_order.levels.empty()) {
     Services::logger().error("No levels found");
     return;
@@ -189,7 +191,7 @@ load_next_level(const Events::LoadNextLevelEvent&)
   }
   if (next_level_it < levels_order.levels.end()) {
     auto& scene = load_level_scene();
-    load_level(LEVELS_DIR / "entities.json", *next_level_it, scene);
+    load_level(levels_dir / "entities.json", *next_level_it, scene);
     Services::app().info().current_level = *next_level_it;
     Services::app().save_data().save({ .current_level = *next_level_it });
   }

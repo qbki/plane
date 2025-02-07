@@ -1,4 +1,5 @@
 #include <SDL_timer.h>
+#include <filesystem>
 #include <functional>
 #include <utility>
 
@@ -10,7 +11,8 @@ App::App(std::unique_ptr<Control> control,
          std::unique_ptr<Shader> particle_shader,
          std::unique_ptr<Shader> intermediate_shader,
          WindowPtr window,
-         ContextPtr gl_context)
+         ContextPtr gl_context,
+         std::filesystem::path assets_dir)
   : _last_time_point(SDL_GetTicks64())
   , _window(std::move(window))
   , _gl_context(std::move(gl_context))
@@ -19,6 +21,7 @@ App::App(std::unique_ptr<Control> control,
   , _deferred_shading(std::move(deferred_shading))
   , _particle_shader(std::move(particle_shader))
   , _intermediate_shader(std::move(intermediate_shader))
+  , _assets_dir(std::move(assets_dir))
 {
 }
 
@@ -83,6 +86,24 @@ float
 App::delta_time() const
 {
   return _delta_time;
+}
+
+std::filesystem::path
+App::assets_dir() const
+{
+  return _assets_dir;
+}
+
+std::filesystem::path
+App::levels_dir() const
+{
+  return _assets_dir / "levels";
+}
+
+std::filesystem::path
+App::credits_file() const
+{
+  return _assets_dir / "text" / "credits.txt";
 }
 
 void

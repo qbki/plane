@@ -1,5 +1,4 @@
 #define GLM_ENABLE_EXPERIMENTAL
-#include <cmath>
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtx/intersect.hpp>
@@ -26,15 +25,12 @@ get_player_data(const Scene& scene)
 {
   entt::entity player_id = entt::null;
   glm::vec3 position {};
-  scene
-    .state()
-    .shared_registry()
-    ->view<Transform, PlayerKind>()
-    .each([&](entt::entity entity, const auto& transform) {
+  scene.state().shared_registry()->view<Transform, PlayerKind>().each(
+    [&](entt::entity entity, const auto& transform) {
       position = transform.translation();
       player_id = entity;
     });
-  return {player_id, position};
+  return { player_id, position };
 }
 
 void
@@ -135,15 +131,16 @@ void
 enemy_initial_rotation(const Scene& scene)
 {
   auto [_, player_position] = get_player_data(scene);
-  scene
-    .state()
+  scene.state()
     .shared_registry()
     ->view<Transform, TurretRotation, EnemyKind>()
-    .each([&player_position](const Transform& enemy_transform, TurretRotation& rotation) {
+    .each([&player_position](const Transform& enemy_transform,
+                             TurretRotation& rotation) {
       if (is_approx_equal(rotation.speed(), 0.0f)) {
         return;
       }
-      auto player_direction = glm::normalize(player_position - enemy_transform.translation());
+      auto player_direction = glm::normalize(player_position
+                                             - enemy_transform.translation());
       auto angle = glm::atan(player_direction.y, player_direction.x);
       rotation.angle(angle);
     });

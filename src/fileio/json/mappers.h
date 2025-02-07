@@ -7,13 +7,16 @@
 #include <stdexcept>
 #include <vector>
 
+#include "src/components/common.h"
 #include "src/consts.h"
 #include "src/control.h"
-
-#include "../params.h"
 #include "src/fileio/params/entities.h"
 #include "src/fileio/params/entities_validators.h"
 #include "src/fileio/params/meta.h"
+#include "src/services.h"
+#include "src/utils/crash.h"
+
+#include "../params.h"
 
 template<typename T>
 void
@@ -46,7 +49,7 @@ struct adl_serializer<BehaviourEnum>
     } else if (behaviour == "tutorial_button") {
       value = BehaviourEnum::TUTORIAL_BUTTON;
     } else {
-      throw std::runtime_error(std::format("Unknown behaviour: {}", behaviour));
+      crash(std::format("Unknown behaviour: {}", behaviour));
     }
   }
 };
@@ -68,7 +71,7 @@ struct adl_serializer<Control::Action>
     } else if (action == "shooting") {
       value = Control::Action::SHOOTING;
     } else {
-      throw std::runtime_error(std::format("Unknown action: {}", action));
+      crash(std::format("Unknown action: {}", action));
     }
   }
 };
@@ -189,7 +192,7 @@ struct adl_serializer<PositionStrategy>
       json_obj.at("entity_id").get_to(strategy.entity_id);
       value = strategy;
     } else {
-      throw std::runtime_error(std::format("Unknown strategy: {}", kind));
+      crash(std::format("Unknown strategy: {}", kind));
     }
   }
 };
@@ -233,7 +236,8 @@ struct adl_serializer<EntityParams>
       std::optional<std::string> shot_sound_path;
       set_optional(shot_sound_path, json_obj, "shot_sound_path");
       if (shot_sound_path.has_value()) {
-        params.shot_sound_path = ASSETS_DIR / shot_sound_path.value();
+        auto assets_dir = Services::app().assets_dir();
+        params.shot_sound_path = assets_dir / shot_sound_path.value();
       }
 
       value = params;
@@ -261,7 +265,7 @@ struct adl_serializer<EntityParams>
       validate(params);
       value = params;
     } else {
-      throw std::runtime_error(std::format("Unknown entity: {}", kind));
+      crash(std::format("Unknown entity: {}", kind));
     }
   };
 };

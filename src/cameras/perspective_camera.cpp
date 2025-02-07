@@ -1,4 +1,3 @@
-#include <cmath>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/geometric.hpp>
 #include <glm/trigonometric.hpp>

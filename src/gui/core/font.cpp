@@ -4,7 +4,8 @@
 #include <SDL_ttf.h>
 #include <format>
 #include <memory>
-#include <stdexcept>
+
+#include "src/utils/crash.h"
 
 #include "font.h"
 
@@ -31,7 +32,7 @@ Font::Font(const std::shared_ptr<DataHolder>& font_data_holder, int size)
   auto unsafe_rwops = _font_data_holder->unsafe_rwops();
   auto font = TTF_OpenFontRW(unsafe_rwops, SDL_TRUE, _size);
   if (font == nullptr) {
-    throw std::runtime_error(TTF_GetError());
+    crash(TTF_GetError());
   }
   _font = { font, Font::font_pointer_deleter };
 }
@@ -48,7 +49,7 @@ Font::draw(const std::string& text, const Core::Color& color)
   auto font_surface = TTF_RenderUTF8_Blended(
     _font.get(), text.c_str(), sdl_color);
   if (font_surface == nullptr) {
-    throw std::runtime_error(TTF_GetError());
+    crash(TTF_GetError());
   }
   return { font_surface, surface_pointer_deleter };
 }
@@ -66,7 +67,7 @@ Font::calculate_size(const std::string& value)
   int height { 0 };
   auto error = TTF_SizeUTF8(_font.get(), value.c_str(), &width, &height);
   if (error < 0) {
-    throw std::runtime_error(std::format("Can't measure text: {}", value));
+    crash(std::format("Can't measure text: {}", value));
   }
   return { width, height };
 }

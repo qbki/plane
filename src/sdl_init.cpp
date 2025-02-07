@@ -5,22 +5,22 @@
 #include <SDL_ttf.h>
 #include <SDL_video.h>
 #include <format>
-#include <stdexcept>
 #include <string>
 #ifdef __EMSCRIPTEN__
 #include <emscripten/html5.h>
 #endif
 
 #include "src/consts.h"
+#include "src/utils/crash.h"
 #include "src/utils/gl.h"
 
 #include "sdl_init.h"
 #include "services.h"
 
 void
-throw_sdl_error(std::string message)
+crash_with_sdl_error(std::string message)
 {
-  throw std::runtime_error(std::format("{}: {}", message, SDL_GetError()));
+  crash(std::format("{}: {}", message, SDL_GetError()));
 }
 
 void GLAPIENTRY
@@ -42,7 +42,7 @@ init_window(int screen_width, int screen_height)
   int error = 0;
   error = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
   if (error < 0) {
-    throw_sdl_error("Unable to init SDL");
+    crash_with_sdl_error("Unable to init SDL");
   }
   Services::logger().info("SDL has been initialized.");
 
@@ -52,7 +52,7 @@ init_window(int screen_width, int screen_height)
                         MIX_DEFAULT_CHANNELS,
                         DEFAULT_AUDIO_CHUNKSIZE);
   if (error < 0) {
-    throw_sdl_error("Unable to init SDL_mixer");
+    crash_with_sdl_error("Unable to init SDL_mixer");
   }
   Mix_AllocateChannels(DEFAULT_MAX_CHANNELS);
   Services::logger().info("SDL_mixer has been initialized.");
@@ -60,7 +60,7 @@ init_window(int screen_width, int screen_height)
   // Font
   error = TTF_Init();
   if (error < 0) {
-    throw_sdl_error("Unable to init SDL_ttf");
+    crash_with_sdl_error("Unable to init SDL_ttf");
   }
   Services::logger().info("SDL_ttf has been initialized.");
 
@@ -83,7 +83,7 @@ init_window(int screen_width, int screen_height)
                                    | SDL_WINDOW_RESIZABLE
                                    | SDL_WINDOW_MAXIMIZED);
   if (window == nullptr) {
-    throw_sdl_error("Unable to create window");
+    crash_with_sdl_error("Unable to create window");
   }
   Services::logger().info("Window has been created.");
 
@@ -99,21 +99,20 @@ init_context(SDL_Window* window)
 {
   auto ctx = SDL_GL_CreateContext(window);
   if (ctx == nullptr) {
-    throw_sdl_error("Unable to create GL Context");
+    crash_with_sdl_error("Unable to create GL Context");
   }
   Services::logger().info("Context has been created.");
 
   auto swap_interwal_error = SDL_GL_SetSwapInterval(1);
   if (swap_interwal_error < 0) {
-    throw_sdl_error("Unable to enable VSync");
+    crash_with_sdl_error("Unable to enable VSync");
   }
 
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
   if (GLEW_OK != err) {
     auto err_glew = glubyte_to_string(glewGetErrorString(err));
-    throw new std::runtime_error(
-      std::format("Unable to initialize GLEW: {}", err_glew));
+    crash(std::format("Unable to initialize GLEW: {}", err_glew));
   }
   Services::logger().info("GLEW has been inited.");
 

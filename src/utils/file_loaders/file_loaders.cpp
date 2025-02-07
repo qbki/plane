@@ -17,7 +17,7 @@
 std::shared_ptr<DataHolder>
 load_sdl_rw_data(const std::filesystem::path& path)
 {
-  auto raw_data = load_binary(path);
+  auto raw_data = load_binary(path).or_crash();
   Services::logger().info(
     std::format("Loaded: {} ({})", path.c_str(), raw_data.size()));
   return std::make_shared<DataHolder>(std::move(raw_data));

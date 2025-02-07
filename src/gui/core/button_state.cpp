@@ -1,7 +1,7 @@
 #include <entt/entt.hpp>
-#include <stdexcept>
 
 #include "src/components/common.h"
+#include "src/utils/crash.h"
 
 #include "button_state.h"
 
@@ -85,7 +85,7 @@ ButtonState::current() const
     case State::HOVER:
       return _hover;
   }
-  throw std::runtime_error("Encountered an unknown button state");
+  crash("Encountered an unknown button state");
 }
 
 }

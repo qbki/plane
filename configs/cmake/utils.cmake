@@ -12,10 +12,10 @@ function(print_list items)
   endforeach()
 endfunction()
 
-function(add_flag flag)
+function(add_compile_flag flag)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE)
 endfunction()
 
-function(add_exe_flag flag)
+function(add_linker_flag flag)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${flag}" PARENT_SCOPE)
 endfunction()

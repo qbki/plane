@@ -1,10 +1,10 @@
 #include <array>
 #include <format>
 #include <sstream>
-#include <stdexcept>
 #include <string>
 
 #include "src/services.h"
+#include "src/utils/crash.h"
 
 #include "gl.h"
 
@@ -159,7 +159,7 @@ gen_render_buffer(unsigned int width, unsigned int height)
       "Viewport dimentions: {}x{}", dimentions.at(2), dimentions.at(3)));
     auto status_text = std::format(
       "Framebuffer status ({}x{}): {}", width, height, status);
-    throw std::runtime_error(status_text);
+    crash(status_text);
   }
   return render_buffer;
 }

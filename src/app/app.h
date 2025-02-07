@@ -45,6 +45,7 @@ private:
   std::unique_ptr<Shader> _particle_shader;
   std::unique_ptr<Shader> _intermediate_shader;
   TranslationsMapping _translations;
+  std::filesystem::path _assets_dir;
 
   std::vector<Handler> _handlers = std::vector<Handler>();
   std::vector<Handler> _once_handlers = std::vector<Handler>();
@@ -56,7 +57,8 @@ public:
       std::unique_ptr<Shader> particle_shader,
       std::unique_ptr<Shader> intermediate_shader,
       WindowPtr window,
-      ContextPtr gl_context);
+      ContextPtr gl_context,
+      std::filesystem::path assets_dir);
   App(const App&) = delete;
   App& operator=(const App&) = delete;
   App(App&&) = delete;
@@ -73,10 +75,14 @@ public:
   [[nodiscard]] Settings& settings();
   [[nodiscard]] Save& save_data();
 
-  std::function<std::string(const std::string&)>& translate_fn() const;
+  [[nodiscard]] std::function<std::string(const std::string&)>& translate_fn()
+    const;
   void set_translations(const TranslationsMapping& translations);
 
   [[nodiscard]] float delta_time() const;
+  [[nodiscard]] std::filesystem::path assets_dir() const;
+  [[nodiscard]] std::filesystem::path levels_dir() const;
+  [[nodiscard]] std::filesystem::path credits_file() const;
 
   void is_running(bool value);
   [[nodiscard]] bool is_running() const;

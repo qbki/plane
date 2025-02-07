@@ -16,11 +16,9 @@ const int DEFAULT_MAX_CHANNELS = 100;
 const float HALF = 0.5;
 
 const std::filesystem::path SHADERS_DIR("shaders");
-const std::filesystem::path ASSETS_DIR("assets");
+const std::filesystem::path DEFAULT_ASSETS_DIR("assets");
 const std::filesystem::path SAVES_DIR("saves");
 const std::filesystem::path SETTINGS_FILE(SAVES_DIR / "settings.json");
 const std::filesystem::path SAVE_DATA_FILE(SAVES_DIR / "save.json");
-const std::filesystem::path LEVELS_DIR(ASSETS_DIR / "levels");
-const std::filesystem::path CREDITS_FILE(ASSETS_DIR / "text" / "credits.txt");
 
 const Shape::Sphere DEFAULT_COLLIDER { .radius = 0.5 };

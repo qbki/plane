@@ -1,11 +1,9 @@
 #include <filesystem>
 #include <sstream>
-#include <stdexcept>
 #include <string>
 #include <tuple>
 
 #include "src/components/common.h"
-#include "src/consts.h"
 #include "src/gui/components/ui.h"
 #include "src/gui/utils/utils.h"
 #include "src/services.h"
@@ -31,12 +29,8 @@ void
 credits_screen_factory(const Scene& scene)
 {
   auto ui = Factory::make_ui(scene.state().shared_registry());
-  std::string credits_txt { "" };
-  try {
-    credits_txt = load_text(CREDITS_FILE);
-  } catch (const std::runtime_error& error) {
-    Services::logger().warn(error.what());
-  }
+  auto credits_file = Services::app().credits_file();
+  auto credits_txt = load_text(credits_file).or_fallback("");
   auto credits_lines = split_by_line(credits_txt);
   Children children { {} };
 

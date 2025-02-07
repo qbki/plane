@@ -159,71 +159,65 @@ Mesh::calculate_bounding_volume(tinygltf::Model& model)
 
 Mesh::Mesh(tinygltf::Model& model)
 {
-  try {
-    calculate_bounding_volume(model);
+  calculate_bounding_volume(model);
 
-    glGenVertexArrays(1, &_vertex_array_object);
-    glBindVertexArray(_vertex_array_object);
+  glGenVertexArrays(1, &_vertex_array_object);
+  glBindVertexArray(_vertex_array_object);
 
-    auto primitive = model.meshes.at(0).primitives.at(0);
-    this->_mode = primitive.mode;
+  auto primitive = model.meshes.at(0).primitives.at(0);
+  this->_mode = primitive.mode;
 
-    auto accessor = model.accessors.at(primitive.indices);
-    this->_number_of_elements = accessor.count;
-    this->_componentType = accessor.componentType;
+  auto accessor = model.accessors.at(primitive.indices);
+  this->_number_of_elements = accessor.count;
+  this->_componentType = accessor.componentType;
 
-    auto vbo_accessor_id = primitive.attributes.at("POSITION");
-    create_buffer_from_gltf(_vertex_buffer_object, model, vbo_accessor_id);
+  auto vbo_accessor_id = primitive.attributes.at("POSITION");
+  create_buffer_from_gltf(_vertex_buffer_object, model, vbo_accessor_id);
 
-    glVertexAttribPointer(
-      VERTEX_LOCATION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-    glEnableVertexAttribArray(VERTEX_LOCATION);
+  glVertexAttribPointer(
+    VERTEX_LOCATION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+  glEnableVertexAttribArray(VERTEX_LOCATION);
 
-    auto nbo_accessor_id = primitive.attributes.at("NORMAL");
-    create_buffer_from_gltf(_normal_buffer_object, model, nbo_accessor_id);
+  auto nbo_accessor_id = primitive.attributes.at("NORMAL");
+  create_buffer_from_gltf(_normal_buffer_object, model, nbo_accessor_id);
 
-    glVertexAttribPointer(
-      NORMAL_LOCATION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-    glEnableVertexAttribArray(NORMAL_LOCATION);
+  glVertexAttribPointer(
+    NORMAL_LOCATION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+  glEnableVertexAttribArray(NORMAL_LOCATION);
 
-    create_buffer_from_gltf(_element_buffer_object, model, primitive.indices);
+  create_buffer_from_gltf(_element_buffer_object, model, primitive.indices);
 
-    if (primitive.attributes.contains(TEXT_COORD_NAME)) {
-      auto tex_0_accessor_id = primitive.attributes.at(TEXT_COORD_NAME);
-      create_buffer_from_gltf(
-        _texcoord_buffer_object, model, tex_0_accessor_id);
-    } else {
-      auto [bufferView, _] = extract_data_by_accessor(model, vbo_accessor_id);
-      auto triangle_quantity = bufferView.byteLength / (sizeof(float) * 3) / 3;
-      std::vector<float> data;
-      for (unsigned int i = 0; i < triangle_quantity; i++) {
-        data.emplace_back(0.0f);
-        data.emplace_back(0.0f);
-        data.emplace_back(0.0f);
-        data.emplace_back(1.0f);
-        data.emplace_back(1.0f);
-        data.emplace_back(1.0f);
-      }
-      glGenBuffers(1, &_texcoord_buffer_object);
-      glBindBuffer(GL_ARRAY_BUFFER, _texcoord_buffer_object);
-      glBufferData(GL_ARRAY_BUFFER,
-                   static_cast<GLsizeiptr>(data.size() * sizeof(float)),
-                   data.data(),
-                   GL_STATIC_DRAW);
-      glBindBuffer(GL_ARRAY_BUFFER, 0);
+  if (primitive.attributes.contains(TEXT_COORD_NAME)) {
+    auto tex_0_accessor_id = primitive.attributes.at(TEXT_COORD_NAME);
+    create_buffer_from_gltf(_texcoord_buffer_object, model, tex_0_accessor_id);
+  } else {
+    auto [bufferView, _] = extract_data_by_accessor(model, vbo_accessor_id);
+    auto triangle_quantity = bufferView.byteLength / (sizeof(float) * 3) / 3;
+    std::vector<float> data;
+    for (unsigned int i = 0; i < triangle_quantity; i++) {
+      data.emplace_back(0.0f);
+      data.emplace_back(0.0f);
+      data.emplace_back(0.0f);
+      data.emplace_back(1.0f);
+      data.emplace_back(1.0f);
+      data.emplace_back(1.0f);
     }
-
-    glVertexAttribPointer(
-      TEXCOORD_LOCATION, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
-    glEnableVertexAttribArray(TEXCOORD_LOCATION);
-
-    print_opengl_errors("Mesh::Mesh");
-
-    create_transform_attribute(_transform_buffer_object, _instance_quantity);
-  } catch (...) {
-    free();
-    throw;
+    glGenBuffers(1, &_texcoord_buffer_object);
+    glBindBuffer(GL_ARRAY_BUFFER, _texcoord_buffer_object);
+    glBufferData(GL_ARRAY_BUFFER,
+                 static_cast<GLsizeiptr>(data.size() * sizeof(float)),
+                 data.data(),
+                 GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
   }
+
+  glVertexAttribPointer(
+    TEXCOORD_LOCATION, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
+  glEnableVertexAttribArray(TEXCOORD_LOCATION);
+
+  print_opengl_errors("Mesh::Mesh");
+
+  create_transform_attribute(_transform_buffer_object, _instance_quantity);
 }
 
 Mesh::Mesh(std::vector<float>& vertices,

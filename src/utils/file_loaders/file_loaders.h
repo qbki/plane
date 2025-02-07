@@ -8,17 +8,18 @@
 
 #include "src/sound/sound.h"
 #include "src/utils/data_holder.h" // IWYU pragma: export
+#include "src/utils/result.h"      // IWYU pragma: export
 
-tinygltf::Model
-load_gltf_model(const std::string& file_name);
+Result<tinygltf::Model>
+load_gltf_model(const std::string& file_path);
 
-std::string
-load_text(const std::string& file_name);
+Result<std::string>
+load_text(const std::string& file_path);
 
-nlohmann::basic_json<>
+Result<nlohmann::basic_json<>>
 load_json(const std::string& file_path);
 
-nlohmann::basic_json<>
+Result<nlohmann::basic_json<>>
 load_local_json(const std::filesystem::path& file_path);
 
 void
@@ -29,3 +30,6 @@ load_sdl_rw_data(const std::filesystem::path& path);
 
 std::unique_ptr<Sound::Sound>
 load_sound(const std::filesystem::path& sound_file_path);
+
+bool
+is_file_exists(const std::filesystem::path& path);

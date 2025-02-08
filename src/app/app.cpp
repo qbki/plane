@@ -201,11 +201,11 @@ App::add_once_handler(Handler handler)
 void
 App::update(unsigned long time_since_start_of_program)
 {
-  const auto second_coeficient = 0.001f;
+  const auto second_coefficient = 0.001f;
   _delta_time = static_cast<float>(time_since_start_of_program
                                    - _last_time_point)
-                * second_coeficient;
-  _time = static_cast<float>(_last_time_point) * second_coeficient;
+                * second_coefficient;
+  _time = static_cast<float>(_last_time_point) * second_coefficient;
   _last_time_point = time_since_start_of_program;
   for (const auto& handler : _once_handlers) {
     handler(*this);

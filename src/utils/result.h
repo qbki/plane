@@ -7,6 +7,9 @@
 #include "src/utils/crash.h"
 #include "src/utils/types.h"
 
+/**
+ * TODO Should be replaced by std::expected (C++23)
+ */
 template<typename T>
 class Result
 {

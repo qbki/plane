@@ -138,8 +138,7 @@ load_level(const std::string& entities_file_path,
   setup_boundaries(meta.boundaries, scene);
   for (auto& strategy : strategies) {
     auto maker = get_entity_maker(strategy, entities);
-    PositionStrategyVisitor strategy_handler(&entities, &scene, &maker);
-    std::visit(strategy_handler, strategy);
+    PositionStrategyVisitor::visit(strategy, entities, scene, maker);
   }
   Services::logger().info(std::format("Loaded \"{}\" level", level_file_path));
 }

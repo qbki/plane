@@ -11,7 +11,7 @@
 const std::string PATH_NOT_DEFINED = "[path not defined]";
 
 EntityMaker::EntityMaker(std::shared_ptr<entt::registry> registry,
-                         const EntityParamsMap* mapping,
+                         std::reference_wrapper<const EntityParamsMap> mapping,
                          ModelFactory::MakerFn maker_fn)
   : _mapping(mapping)
   , _registry(std::move(registry))
@@ -22,7 +22,7 @@ EntityMaker::EntityMaker(std::shared_ptr<entt::registry> registry,
 entt::entity
 EntityMaker::operator()(const EntityParamsActor& params)
 {
-  auto path = _mapping->model(params.model_id).path;
+  auto path = _mapping.get().model(params.model_id).path;
   return _maker_fn(_registry, path);
 }
 
@@ -35,7 +35,7 @@ EntityMaker::operator()(const EntityParamsDirectionalLight&)
 entt::entity
 EntityMaker::operator()(const EntityParamsWeapon& params)
 {
-  auto path = _mapping->model(params.bullet_model_id).path;
+  auto path = _mapping.get().model(params.bullet_model_id).path;
   return _maker_fn(_registry, path);
 }
 
@@ -49,7 +49,7 @@ EntityMaker::operator()(const EntityParamsModel& params)
 entt::entity
 EntityMaker::operator()(const EntityParamsParticles& params)
 {
-  auto path = _mapping->model(params.model_id).path;
+  auto path = _mapping.get().model(params.model_id).path;
   return _maker_fn(_registry, path);
 }
 
@@ -68,7 +68,7 @@ EntityMaker::operator()(const EntityParamsText&)
 entt::entity
 EntityMaker::operator()(const EntityParamsTutorialButton& params)
 {
-  auto path = _mapping->model(params.model_id).path;
+  auto path = _mapping.get().model(params.model_id).path;
   return _maker_fn(_registry, path);
 }
 
@@ -76,4 +76,13 @@ entt::entity
 EntityMaker::get(const EntityParams& params)
 {
   return std::visit(*this, params);
+}
+
+[[nodiscard]] entt::entity
+EntityMaker::get(const std::shared_ptr<entt::registry>& registry,
+                 const EntityParamsMap& mapping,
+                 const ModelFactory::MakerFn& maker_fn,
+                 const EntityParams& params)
+{
+  return EntityMaker(registry, mapping, maker_fn).get(params);
 }

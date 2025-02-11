@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <glm/vec3.hpp>
 #include <string>
 
@@ -10,14 +11,15 @@
 class ComponetsAttacher
 {
 private:
-  Scene* _scene;
+  std::reference_wrapper<const Scene> _scene;
   entt::entity _entity;
-  const EntityParamsMap* _entities;
+  std::reference_wrapper<const EntityParamsMap> _entities;
+
+  ComponetsAttacher(std::reference_wrapper<const Scene> scene,
+                    const entt::entity entity,
+                    std::reference_wrapper<const EntityParamsMap> params_map);
 
 public:
-  ComponetsAttacher(Scene* scene,
-                    const entt::entity entity,
-                    const EntityParamsMap* params_map);
   void operator()(const EntityParamsActor& params) const;
   void operator()(const EntityParamsDirectionalLight& params) const;
   void operator()(const EntityParamsModel& params) const;
@@ -40,4 +42,9 @@ public:
   void attach_particles_emmiter_by_hit(
     const EntityParamsActor& actor_params) const;
   void attach_debris_emmiter(const EntityParamsActor& actor_params) const;
+
+  static void attach(const Scene& scene,
+                     const entt::entity entity,
+                     const EntityParamsMap& params_map,
+                     const EntityParams& params);
 };

@@ -17,12 +17,11 @@ calc_rotation(unsigned int multiplier, float angle)
 }
 
 void
-emit_particles(State& state,
+emit_particles(std::shared_ptr<entt::registry> registry,
                glm::vec3 initial_position,
                const EntityParamsParticles& params,
                const std::string& file_path)
 {
-  auto& registry = state.shared_registry();
   unsigned int idx = 0;
   const float step = glm::two_pi<float>() / static_cast<float>(params.quantity);
   auto particles = registry->view<Transform,

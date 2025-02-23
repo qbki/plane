@@ -9,3 +9,6 @@ enemy_rotation_system(Scene& scene);
 
 void
 enemy_initial_rotation(const Scene& scene);
+
+void
+enemy_acceleration_system(const Scene& scene);

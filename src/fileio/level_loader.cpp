@@ -140,5 +140,5 @@ load_level(const std::string& entities_file_path,
     auto maker = get_entity_maker(strategy, entities);
     PositionStrategyVisitor::visit(strategy, entities, scene, maker);
   }
-  Services::logger().info(std::format("Loaded \"{}\" level", level_file_path));
+  Services::logger().info(std::format("Loaded level: {}", level_file_path));
 }

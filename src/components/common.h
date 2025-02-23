@@ -52,6 +52,8 @@ struct Gravity
 struct Opaque
 {};
 
+struct ActorKind
+{};
 struct DirectionalLightKind
 {};
 struct EnemyKind

@@ -2,6 +2,7 @@
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtx/intersect.hpp>
+#include <glm/gtx/norm.hpp>
 #include <glm/trigonometric.hpp>
 #include <ranges>
 #include <tuple>
@@ -12,6 +13,7 @@
 #include "src/components/transform.h"
 #include "src/components/turret_rotation.h"
 #include "src/components/weapon.h"
+#include "src/consts.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/utils/common.h"
@@ -143,5 +145,29 @@ enemy_initial_rotation(const Scene& scene)
                                              - enemy_transform.translation());
       auto angle = glm::atan(player_direction.y, player_direction.x);
       rotation.angle(angle);
+    });
+}
+
+void
+enemy_acceleration_system(const Scene& scene)
+{
+  auto [_, player_position] = get_player_data(scene);
+  scene.state()
+    .shared_registry()
+    ->view<Transform, Acceleration, AccelerationScalar, Weapon, EnemyKind>()
+    .each([&](const Transform& transform,
+              Acceleration& accel,
+              const AccelerationScalar& accel_scalar,
+              const Weapon& weapon) {
+      auto max_acceleration_distance = weapon.lifetime * weapon.bullet_speed
+                                       * HALF;
+      auto raw_direction = transform.rotation() * glm::vec3(1, 0, 0);
+      auto direction = glm::vec3(raw_direction.x, raw_direction.y, 0);
+      auto distance_to_target = glm::distance(transform.translation(),
+                                              player_position);
+      if (glm::length2(direction) > 0
+          && distance_to_target > max_acceleration_distance) {
+        accel.value += glm::normalize(direction) * accel_scalar.value;
+      }
     });
 }

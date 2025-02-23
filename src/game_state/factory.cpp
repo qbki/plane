@@ -16,6 +16,7 @@ make_player(std::shared_ptr<entt::registry>& registry,
 {
   auto entity = registry->create();
   auto [mesh, texture] = Services::cache().get_model(file_path);
+  registry->emplace<ActorKind>(entity);
   registry->emplace<Acceleration>(entity, glm::vec3(0, 0, 0));
   registry->emplace<AccelerationScalar>(entity, 0);
   registry->emplace<Available>(entity);
@@ -34,6 +35,8 @@ make_enemy(std::shared_ptr<entt::registry>& registry,
 {
   auto [mesh, texture] = Services::cache().get_model(file_path);
   auto entity = registry->create();
+  registry->emplace<ActorKind>(entity);
+  registry->emplace<Acceleration>(entity, glm::vec3(0, 0, 0));
   registry->emplace<Available>(entity);
   registry->emplace<EnemyKind>(entity);
   registry->emplace<EnemyStateEnum>(entity, EnemyStateEnum::HUNTING);
@@ -41,6 +44,8 @@ make_enemy(std::shared_ptr<entt::registry>& registry,
   registry->emplace<Opaque>(entity);
   registry->emplace<TexturePointer>(entity, texture);
   registry->emplace<Transform>(entity);
+  registry->emplace<Velocity>(entity, glm::vec3(0, 0, 0));
+  registry->emplace<VelocityDamping>(entity, 0);
   return entity;
 }
 

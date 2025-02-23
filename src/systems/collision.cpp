@@ -16,7 +16,7 @@ collision_system(Scene& scene)
   auto& registry = scene.state().registry();
   auto delta_time = Services::app().delta_time();
 
-  registry.view<Transform, Velocity, PlayerKind>().each(
+  registry.view<Transform, Velocity, ActorKind>().each(
     [&](entt::entity entity, Transform& transform_a, Velocity& velocity_a) {
       auto collider_a = apply_transform_to_collider(transform_a,
                                                     DEFAULT_COLLIDER);
@@ -32,7 +32,9 @@ collision_system(Scene& scene)
           continue;
         }
         auto [transform_b,
-              mesh_b] = registry.get<Transform, MeshPointer>(near_entity);
+              velocity_b,
+              mesh_b] = registry
+                          .get<Transform, Velocity, MeshPointer>(near_entity);
         auto collider_b = apply_transform_to_collider(transform_b,
                                                       DEFAULT_COLLIDER);
         auto shape_b = std::get_if<Shape::Sphere>(&collider_b);
@@ -43,11 +45,16 @@ collision_system(Scene& scene)
         auto norm_direction = glm::normalize(ab_direction);
         auto distance = glm::length(ab_direction);
         auto radius_sum = shape_a->radius + shape_b->radius;
-        if (distance >= radius_sum) {
+        if (distance > radius_sum) {
           continue;
         }
-        velocity_a.value = glm::reflect(velocity_a.value, norm_direction);
-        transform_a.translate(shape_b->center + norm_direction * radius_sum);
+
+        velocity_a.value = glm::reflect(velocity_a.value, norm_direction)
+                           * HALF;
+        const float offset = radius_sum + 0.01f;
+        transform_a.translate(shape_b->center + norm_direction * offset);
+
+        velocity_b.value += -velocity_a.value;
       }
     });
 }

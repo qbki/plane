@@ -1,7 +1,7 @@
 #include <compare>
-#include <filesystem>
 #include <optional>
 #include <ranges>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -17,8 +17,8 @@
 #include "src/gui/lose_menu_factory.h"
 #include "src/gui/screens/load_credits_screen.h"
 #include "src/gui/utils/utils.h"
-#include "src/scene/scene.h"
 #include "src/services.h"
+#include "src/services/logger.h"
 #include "src/sound/sound.h"
 #include "src/systems/camera.h"
 #include "src/systems/collision.h"
@@ -32,6 +32,7 @@
 #include "src/systems/particles.h"
 #include "src/systems/player.h"
 #include "src/systems/projectiles.h"
+#include "src/systems/ui.h"
 #include "src/systems/update_gui.h"
 #include "src/systems/velocity.h"
 #include "src/utils/system.h"
@@ -69,6 +70,7 @@ load_in_game_main_menu()
   scene->is_deferred(false);
   scene->handlers().once(GUI::in_game_main_menu_factory);
   scene->handlers().add(update_gui);
+  scene->handlers().add(ui_system);
   Services::app().push_scene(std::move(scene));
 }
 
@@ -80,6 +82,7 @@ load_lose_menu(const Events::LoseEvent&)
   scene->is_deferred(false);
   scene->handlers().once(GUI::lose_menu_factory);
   scene->handlers().add(update_gui);
+  scene->handlers().add(ui_system);
   Services::app().push_scene(std::move(scene));
 }
 
@@ -130,6 +133,7 @@ load_level_scene()
   auto ui = std::make_unique<Scene>(std::move(gui_camera));
   ui->handlers().once(GUI::game_screen_factory);
   ui->handlers().add(update_gui);
+  ui->handlers().add(ui_system);
   ui->is_deferred(false);
 
   auto& game_ref = *game;

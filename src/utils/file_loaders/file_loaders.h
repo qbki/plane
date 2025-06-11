@@ -31,5 +31,8 @@ load_sdl_rw_data(const std::filesystem::path& path);
 std::unique_ptr<Sound::Sound>
 load_sound(const std::filesystem::path& sound_file_path);
 
+void
+load_font(const std::filesystem::path&);
+
 bool
 is_file_exists(const std::filesystem::path& path);

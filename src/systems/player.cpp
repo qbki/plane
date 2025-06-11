@@ -3,6 +3,7 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/trigonometric.hpp>
+#include <string>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"

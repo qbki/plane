@@ -295,22 +295,6 @@ Mesh::draw(const DrawParams& draw_params)
   glBindVertexArray(0);
 }
 
-std::unique_ptr<Mesh>
-Mesh::quad(float x, float y, float z)
-{
-  std::vector<float> vertices = {
-    -x, y, z, x, y, z, -x, -y, z, x, -y, z,
-  };
-  std::vector<float> normals = {
-    0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
-  };
-  std::vector<float> tex_coords = {
-    0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
-  };
-  std::vector<unsigned int> indices = { 2, 1, 0, 2, 3, 1 };
-  return std::make_unique<Mesh>(vertices, normals, tex_coords, indices);
-}
-
 const Shape::Collider&
 Mesh::bounding_volume() const
 {

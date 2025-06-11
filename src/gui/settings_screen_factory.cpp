@@ -1,3 +1,5 @@
+#include <string>
+
 #include "src/components/common.h"
 #include "src/components/percent.h"
 #include "src/gui/components/ui.h"
@@ -26,8 +28,10 @@ settings_screen_factory(Scene& scene)
     return [registry, progress, step](auto&) {
       auto& settings = Services::app().settings();
       settings.master_volume().add(step);
-      auto& percent = registry->get<Percent>(progress);
+      auto [percent,
+            is_percent_dirty] = registry->get<Percent, IsDirty>(progress);
       percent.value(settings.master_volume().value());
+      is_percent_dirty.value = true;
     };
   };
 
@@ -48,14 +52,14 @@ settings_screen_factory(Scene& scene)
           }),
 
           ui.text_button({
-            .text = "< ",
+            .text = "<",
             .on_pointer_down = make_volume_changer(-step),
           }),
 
           progress,
 
           ui.text_button({
-            .text = " >",
+            .text = ">",
             .on_pointer_down = make_volume_changer(step),
           }),
         }),

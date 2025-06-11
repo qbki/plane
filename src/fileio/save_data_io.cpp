@@ -15,7 +15,9 @@ load_save_data(const std::filesystem::path& path)
 {
   auto exec_path = get_excutable_path();
   auto json = load_local_json(path).or_fallback({});
-  auto current_level = json.value<std::string>("current_level", "");
+  auto current_level = json.contains("current_level")
+                         ? json["current_level"].get<std::string>()
+                         : "";
   auto assets_dir = Services::app().assets_dir();
   return { .current_level = current_level.empty()
                               ? std::nullopt

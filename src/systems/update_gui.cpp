@@ -14,8 +14,7 @@ void
 update_gui(Scene& scene)
 {
   auto mouse_pos = mouse_position();
-  auto screen_size = Services::app().screen_size();
-  glm::ivec2 position { mouse_pos.x, screen_size.height - mouse_pos.y };
+  glm::ivec2 position { mouse_pos.x, mouse_pos.y };
   Events::GUILayout gui_layout_event_data {};
   Events::PointerMove pointer_move_event_data { .position = position };
   Events::PointerEnter pointer_enter_event_data {};

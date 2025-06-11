@@ -1,6 +1,4 @@
 #pragma once
-#include "src/math/shapes.h"
-
 #include "camera.h"
 
 class GUICamera : public Camera

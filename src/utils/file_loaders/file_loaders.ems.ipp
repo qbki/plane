@@ -105,10 +105,10 @@ load_string_by_emscripten(const std::string& file_name)
   return Result<std::string>::from_payload(data);
 }
 
-Result<std::vector<unsigned char>>
+Result<std::vector<char>>
 load_binary_by_emscripten(const std::string& file_name)
 {
-  gsl::owner<unsigned char*> loaded_data = nullptr;
+  gsl::owner<char*> loaded_data = nullptr;
   int loaded_size = 0;
   int error = 0;
   emscripten_wget_data(file_name.c_str(),
@@ -118,12 +118,12 @@ load_binary_by_emscripten(const std::string& file_name)
   if (error > 0) {
     delete loaded_data;
     auto message = std::format("Can't load a binary file: {}", file_name);
-    return Result<std::vector<unsigned char>>::from_error(
+    return Result<std::vector<char>>::from_error(
       std::make_shared<std::runtime_error>(message));
   }
-  std::vector<unsigned char> data(loaded_data, loaded_data + loaded_size);
+  std::vector<char> data(loaded_data, loaded_data + loaded_size);
   delete loaded_data;
-  return Result<std::vector<unsigned char>>::from_payload(data);
+  return Result<std::vector<char>>::from_payload(data);
 }
 
 Result<tinygltf::Model>
@@ -170,7 +170,7 @@ load_text(const std::string& file_name)
   return load_string_by_emscripten(file_name);
 }
 
-Result<std::vector<unsigned char>>
+Result<std::vector<char>>
 load_binary(const std::string& file_name)
 {
   return load_binary_by_emscripten(file_name);

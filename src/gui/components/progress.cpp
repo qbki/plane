@@ -1,5 +1,7 @@
 #include "src/components/common.h"
 #include "src/components/percent.h"
+#include "src/components/transform.h"
+#include "src/consts.h"
 #include "src/events/event_emitter.h"
 #include "src/gui/components/div.h"
 #include "src/gui/components/rect.h"
@@ -36,21 +38,31 @@ progress(std::shared_ptr<entt::registry>& registry,
                              });
 
   registry->emplace<Percent>(entity, config.value);
+  registry->emplace<IsDirty>(entity, true);
 
   auto& layout = registry->emplace<Events::EventEmitter<Events::GUILayout>>(
     entity);
 
-  layout.add(
-    [registry, entity, line, progress, line_height_coefficient](auto&) {
-      auto [percent, rect] = registry->get<Percent, RectSize>(entity);
-      auto& line_rect = registry->get<RectSize>(line);
-      auto& progress_rect = registry->get<RectSize>(progress);
-      progress_rect.width = static_cast<int>(rect.width * percent.norm());
-      progress_rect.height = rect.height;
-      line_rect.width = rect.width;
-      line_rect.height = static_cast<int>(static_cast<float>(rect.height)
-                                          * line_height_coefficient);
-    });
+  layout.add([registry, entity, line, progress](auto&) {
+    auto [percent, rect, is_dirty] = registry->get<Percent, RectSize, IsDirty>(
+      entity);
+    if (!is_dirty.value) {
+      return;
+    }
+    auto [progress_size,
+          is_progress_dirty] = registry->get<RectSize, IsDirty>(progress);
+    progress_size.width = static_cast<int>(rect.width * percent.norm());
+
+    auto [line_transform, line_size] = registry->get<Transform, RectSize>(line);
+    auto line_position = line_transform.translation();
+    line_position.y = static_cast<float>(progress_size.height
+                                         - line_size.height)
+                      * HALF;
+    line_transform.translate(line_position);
+
+    is_progress_dirty.value = true;
+    is_dirty.value = false;
+  });
 
   return entity;
 }

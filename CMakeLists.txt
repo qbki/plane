@@ -12,6 +12,7 @@ function(setup_link_libraries target_name)
   target_link_libraries(${target_name} PRIVATE EnTT::EnTT)
   target_link_libraries(${target_name} PRIVATE Microsoft.GSL::GSL)
   target_link_libraries(${target_name} PRIVATE glm::glm-header-only)
+  target_link_libraries(${target_name} PRIVATE PkgConfig::thorvg)
 
   target_link_libraries(${target_name} PRIVATE nlohmann_json::nlohmann_json)
   set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
@@ -26,8 +27,6 @@ function(setup_link_libraries target_name)
     target_link_libraries(${target_name} PRIVATE
       $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
       $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>)
-    target_link_libraries(${target_name} PRIVATE
-      $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>)
     target_link_libraries(${target_name} PRIVATE
       $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>)
   endif()
@@ -59,12 +58,15 @@ find_package(glm CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_path(TINYGLTF_INCLUDE_DIRS "tiny_gltf.h")
 find_package(Catch2 CONFIG REQUIRED)
+# <thorvg>
+find_package(PkgConfig)
+pkg_check_modules(thorvg REQUIRED IMPORTED_TARGET thorvg)
+# </thorvg>
 
 if(NOT DEFINED EMSCRIPTEN)
   find_package(GLEW REQUIRED)
   find_package(SDL2 CONFIG REQUIRED)
   find_package(SDL2_mixer CONFIG REQUIRED)
-  find_package(SDL2_ttf CONFIG REQUIRED)
 endif()
 
 include_directories(${CMAKE_SOURCE_DIR})
@@ -76,17 +78,13 @@ add_compile_flag("-Wpedantic")
 add_compile_flag("-pedantic-errors")
 add_compile_flag("-fno-exceptions")
 if(DEFINED EMSCRIPTEN)
-  add_compile_flag("-Oz")
+  add_compile_flag("-O1")
   add_linker_flag("-sUSE_SDL=2")
-  add_linker_flag("-sUSE_SDL_TTF=2")
   add_linker_flag("-sUSE_SDL_MIXER=2")
-  add_linker_flag("-g3")
-  add_linker_flag("-gsource-map")
   add_linker_flag("-sWASM=1")
   add_linker_flag("-sEXPORT_NAME=moduleFactory")
   add_linker_flag("-sMODULARIZE")
   add_linker_flag("-sEXPORT_ES6=1")
-  add_linker_flag("-sDEMANGLE_SUPPORT=1")
   # Removes node.js support from the wasm build. Without this option
   # webpack tries import node.js modules that can't be found or vite creates
   # unnecessary chunks with modules from node.js.
@@ -100,6 +98,9 @@ if(DEFINED EMSCRIPTEN)
   add_linker_flag("-sFULL_ES3")
   add_linker_flag("-sMAX_WEBGL_VERSION=2")
   add_linker_flag("-sMIN_WEBGL_VERSION=2")
+  #DEBUG
+  #add_linker_flag("-g3")
+  #add_linker_flag("-gsource-map")
 endif()
 
 file(GLOB_RECURSE SOURCES src/*)
@@ -114,7 +115,7 @@ if(BUILD_EXECUTABLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "index")
     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".js")
     # <> It helps generate the right compile_commangs.json file for clangd
-    set(ARGS --cflags -sUSE_SDL=2 -sUSE_SDL_TTF=2 -sUSE_SDL_MIXER=2)
+    set(ARGS --cflags -sUSE_SDL=2 -sUSE_SDL_MIXER=2)
     execute_process(COMMAND ${CMAKE_CXX_COMPILER} ${ARGS}
                     OUTPUT_VARIABLE EMSCRIPTEN_FLAGS)
     set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${EMSCRIPTEN_FLAGS}")

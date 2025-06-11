@@ -13,6 +13,7 @@
 #include "src/fileio/params/entities.h"
 #include "src/fileio/params/entities_validators.h"
 #include "src/fileio/params/meta.h"
+#include "src/fileio/params/theme.h"
 #include "src/services.h"
 #include "src/utils/crash.h"
 
@@ -130,6 +131,16 @@ struct adl_serializer<LevelMetaParams>
   {
     json.at("camera").get_to(value.camera);
     json.at("boundaries").get_to(value.boundaries);
+  }
+};
+
+template<>
+struct adl_serializer<ThemeParams>
+{
+  static void from_json(const nlohmann::json& json, ThemeParams& value)
+  {
+    json.at("font-source").get_to(value.font_source);
+    json.at("font-family").get_to(value.font_family);
   }
 };
 
@@ -260,8 +271,8 @@ struct adl_serializer<EntityParams>
       json_obj.at("color").get_to(params.color);
       json_obj.at("text_id").get_to(params.text_id);
       json_obj.at("size").get_to(params.size);
-      set_optional(params.width, json_obj, "width");
-      set_optional(params.height, json_obj, "height");
+      json_obj.at("width").get_to(params.width);
+      json_obj.at("height").get_to(params.width);
       validate(params);
       value = params;
     } else {

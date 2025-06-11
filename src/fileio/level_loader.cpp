@@ -9,6 +9,7 @@
 #include "src/game_state/factory.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
+#include "src/services/logger.h"
 #include "src/utils/crash.h"
 #include "src/utils/file_loaders.h"
 #include "src/utils/result.h"

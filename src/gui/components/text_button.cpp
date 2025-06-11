@@ -1,5 +1,3 @@
-#include <entt/entt.hpp>
-
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/core/button_state.h"

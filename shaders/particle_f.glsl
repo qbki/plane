@@ -7,8 +7,6 @@ in vec2 i_tex_coord;
 
 out vec4 frag_color;
 
-uniform float u_gamma;
-
 uniform sampler2D u_texture;
 
 void main() {

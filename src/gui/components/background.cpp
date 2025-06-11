@@ -1,5 +1,3 @@
-#include <entt/entt.hpp>
-
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/components/rect.h"
@@ -13,11 +11,20 @@ entt::entity
 background(std::shared_ptr<entt::registry>& registry,
            const BackgroundConfig& config)
 {
-  auto entity = Factory::rect(registry,
-                              {
-                                .color = config.color,
-                                .parent = config.parent,
-                              });
+  auto entity = Factory::rect(
+    registry,
+    {
+      .width = static_cast<float>(
+        config.parent.value.has_value()
+          ? registry->get<RectSize>(config.parent.value.value()).width
+          : Services::app().screen_size().width),
+      .height = static_cast<float>(
+        config.parent.value.has_value()
+          ? registry->get<RectSize>(config.parent.value.value()).height
+          : Services::app().screen_size().height),
+      .color = config.color,
+      .parent = config.parent,
+    });
 
   auto& layout = registry->emplace<Events::EventEmitter<Events::GUILayout>>(
     entity);

@@ -75,6 +75,9 @@ struct TutorialButtonKind
 struct GUIKind
 {};
 
+struct UIRect
+{};
+
 using ParticlesEmitter = std::function<void(glm::vec3 position)>;
 using DebrisEmitter = NewType<
   std::function<void(std::shared_ptr<entt::registry>& registry,

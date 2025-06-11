@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 #include "src/components/common.h"
-#include "src/services.h"
+#include "src/services/logger.h"
 #include "src/utils/crash.h"
 #include "src/utils/file_loaders/file_loaders.h"
 

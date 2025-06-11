@@ -47,8 +47,5 @@ public:
 
   void draw(const DrawParams& draw_params);
 
-  static std::unique_ptr<Mesh> quad(float x = 1.0,
-                                    float y = 1.0,
-                                    float z = 0.0);
   [[nodiscard]] const Shape::Collider& bounding_volume() const;
 };

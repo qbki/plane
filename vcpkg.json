@@ -5,12 +5,11 @@
     "glm",
     "ms-gsl",
     "nlohmann-json",
+    "thorvg",
     "tinygltf",
     { "name": "glew", "platform": "linux" },
     { "name": "sdl2", "platform": "linux", "features": ["alsa"] },
-    { "name": "sdl2-mixer", "platform": "linux" },
-    { "name": "sdl2-ttf", "platform": "linux" }
-
+    { "name": "sdl2-mixer", "platform": "linux" }
   ],
   "overrides": [
     { "name": "catch2", "version": "3.5.4" },
@@ -21,7 +20,7 @@
     { "name": "nlohmann-json", "version": "3.11.3" },
     { "name": "sdl2", "version": "2.30.1" },
     { "name": "sdl2-mixer", "version": "2.8.0" },
-    { "name": "sdl2-ttf", "version": "2.22.0" },
+    { "name": "thorvg", "version": "0.15.13" },
     { "name": "tinygltf", "version": "2.8.21" }
   ]
 }

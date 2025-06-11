@@ -3,10 +3,10 @@
 #include <sstream>
 #include <string>
 
-#include "src/services.h"
+#include "src/services/logger.h"
 #include "src/utils/crash.h"
 
-#include "gl.h"
+#include "src/utils/gl.h"
 
 int
 buffer_size()

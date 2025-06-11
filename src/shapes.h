@@ -1,4 +1,5 @@
 #pragma once
+#include "src/mesh.h"
 
 struct RectSize
 {
@@ -17,3 +18,9 @@ struct Rect
   T width;
   T height;
 };
+
+std::unique_ptr<Mesh>
+create_quad(float x = 1.0, float y = 1.0, float z = 0.0);
+
+std::unique_ptr<Mesh>
+create_ui_quad();

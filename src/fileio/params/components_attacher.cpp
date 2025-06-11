@@ -5,9 +5,7 @@
 #include "src/components/transform.h"
 #include "src/components/turret_rotation.h"
 #include "src/components/weapon.h"
-#include "src/consts.h"
 #include "src/game_state/factory.h"
-#include "src/gui/types.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/utils/color.h"
@@ -60,34 +58,11 @@ ComponetsAttacher::operator()(const EntityParamsText& params) const
   auto text = t(params.text_id);
   attach_color(params.color);
   attach_text(text);
-  auto [font, transform, color] = _scene.get()
-                                    .state()
-                                    .registry()
-                                    .get<GUI::FontPtr, Transform, Core::Color>(
-                                      _entity);
-
-  font = Services::cache().get_font(Services::theme().font_path, params.size);
-  auto [text_width, text_height] = font->calculate_size(text);
-  auto ratio = static_cast<double>(text_width)
-               / static_cast<double>(text_height);
-  float height = 0;
-  float width = 0;
-
-  if (params.width.has_value() && params.height.has_value()) {
-    width = params.width.value();
-    height = params.height.value();
-  } else if (params.width.has_value()) {
-    width = params.width.value();
-    height = width / static_cast<float>(ratio);
-  } else if (params.height.has_value()) {
-    height = params.height.value();
-    width = static_cast<float>(ratio) * height;
-  } else {
-    height = 1;
-    width = static_cast<float>(ratio) * height;
-  }
-
-  transform.scale({ width * HALF, height * HALF, 1 });
+  auto [transform, color] = _scene.get()
+                              .state()
+                              .registry()
+                              .get<Transform, Core::Color>(_entity);
+  transform.scale({ params.width, params.height, 1 });
   color = params.color;
 }
 

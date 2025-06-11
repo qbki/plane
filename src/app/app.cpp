@@ -1,28 +1,33 @@
 #include <SDL_timer.h>
-#include <filesystem>
+#include <filesystem> // IWYU pragma: export
+#include <format>
 #include <functional>
 #include <utility>
 
+#include "src/sdl_init.h"
+#include "src/utils/crash.h"
+
 #include "app.h"
 
-App::App(std::unique_ptr<Control> control,
-         RectSize screen_size,
-         std::unique_ptr<DeferredShading> deferred_shading,
-         std::unique_ptr<Shader> particle_shader,
-         std::unique_ptr<Shader> intermediate_shader,
-         WindowPtr window,
-         ContextPtr gl_context,
-         std::filesystem::path assets_dir)
+App::App(std::filesystem::path assets_dir)
   : _last_time_point(SDL_GetTicks64())
-  , _window(std::move(window))
-  , _gl_context(std::move(gl_context))
-  , _control(std::move(control))
-  , _screen_size(screen_size)
-  , _deferred_shading(std::move(deferred_shading))
-  , _particle_shader(std::move(particle_shader))
-  , _intermediate_shader(std::move(intermediate_shader))
   , _assets_dir(std::move(assets_dir))
 {
+}
+
+template<typename T, typename F>
+void
+App::or_crash(std::unique_ptr<T, F>& ptr, const std::string& message)
+{
+  if (!ptr) {
+    crash(std::format("System is incomplete: {}", message));
+  }
+}
+
+void
+App::control(std::unique_ptr<Control> value)
+{
+  _control = std::move(value);
 }
 
 Control&
@@ -43,10 +48,22 @@ App::screen_size() const
   return _screen_size;
 }
 
+void
+App::deferred_shading(std::unique_ptr<DeferredShading> value)
+{
+  _deferred_shading = std::move(value);
+}
+
 DeferredShading&
 App::deferred_shading() const
 {
   return *_deferred_shading;
+}
+
+void
+App::intermediate_fb(std::unique_ptr<FrameBuffer> value)
+{
+  _intermediate_fb = std::move(value);
 }
 
 FrameBuffer&
@@ -55,10 +72,34 @@ App::intermediate_fb() const
   return *_intermediate_fb;
 }
 
+void
+App::particle_shader(std::unique_ptr<Shader> value)
+{
+  _particle_shader = std::move(value);
+}
+
 Shader&
 App::particle_shader() const
 {
   return *_particle_shader;
+}
+
+void
+App::ui_shader(std::unique_ptr<Shader> value)
+{
+  _ui_shader = std::move(value);
+}
+
+Shader&
+App::ui_shader() const
+{
+  return *_ui_shader;
+}
+
+void
+App::intermediate_shader(std::unique_ptr<Shader> value)
+{
+  _intermediate_shader = std::move(value);
 }
 
 Shader&
@@ -67,10 +108,22 @@ App::intermediate_shader() const
   return *_intermediate_shader;
 }
 
+void
+App::window(WindowPtr value)
+{
+  _window = std::move(value);
+}
+
 SDL_Window&
 App::window() const
 {
   return *_window;
+}
+
+void
+App::gl_context(ContextPtr value)
+{
+  _gl_context = std::move(value);
 }
 
 SDL_GLContext
@@ -216,4 +269,16 @@ App::update(unsigned long time_since_start_of_program)
   for (const auto& handler : _handlers) {
     handler(*this);
   }
+}
+
+void
+App::validate()
+{
+  or_crash(_control, "Control");
+  or_crash(_deferred_shading, "Deferred Shading");
+  or_crash(_particle_shader, "Particle Shader");
+  or_crash(_ui_shader, "UI Shader");
+  or_crash(_intermediate_shader, "Intermediate Shader");
+  or_crash(_window, "Window");
+  or_crash(_gl_context, "GL Context");
 }

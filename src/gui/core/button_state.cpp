@@ -1,4 +1,5 @@
 #include <entt/entt.hpp>
+#include <string>
 
 #include "src/components/common.h"
 #include "src/utils/crash.h"

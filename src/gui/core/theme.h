@@ -1,8 +1,6 @@
 #pragma once
 #include <filesystem>
-#include <memory>
 
-#include "src/gui/core/font.h" // IWYU pragma: export
 #include "src/utils/color.h"
 
 namespace GUI {
@@ -21,6 +19,12 @@ struct Palette
 
 struct Typography
 {
+  struct Font
+  {
+    std::string name {};
+    float size { 1 };
+  };
+
   constexpr static unsigned int SIZE_H1 { 96 };
   constexpr static unsigned int SIZE_H2 { 60 };
   constexpr static unsigned int SIZE_H3 { 48 };
@@ -30,14 +34,14 @@ struct Typography
   constexpr static unsigned int SIZE_BODY_1 { 16 };
   constexpr static unsigned int SIZE_BODY_2 { 14 };
 
-  std::shared_ptr<Font> h1;
-  std::shared_ptr<Font> h2;
-  std::shared_ptr<Font> h3;
-  std::shared_ptr<Font> h4;
-  std::shared_ptr<Font> h5;
-  std::shared_ptr<Font> h6;
-  std::shared_ptr<Font> body1;
-  std::shared_ptr<Font> body2;
+  Font h1 { .size = SIZE_H1 };
+  Font h2 { .size = SIZE_H2 };
+  Font h3 { .size = SIZE_H3 };
+  Font h4 { .size = SIZE_H4 };
+  Font h5 { .size = SIZE_H5 };
+  Font h6 { .size = SIZE_H6 };
+  Font body1 { .size = SIZE_BODY_1 };
+  Font body2 { .size = SIZE_BODY_2 };
 };
 
 struct Components

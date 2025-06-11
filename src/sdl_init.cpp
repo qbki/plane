@@ -2,20 +2,25 @@
 #include <SDL.h>
 #include <SDL_error.h>
 #include <SDL_mixer.h>
-#include <SDL_ttf.h>
 #include <SDL_video.h>
 #include <format>
+#include <memory>
 #include <string>
+#include <thorvg.h>
+#include <thread>
 #ifdef __EMSCRIPTEN__
 #include <emscripten/html5.h>
 #endif
 
 #include "src/consts.h"
+#include "src/gui/ui_canvas.h"
 #include "src/utils/crash.h"
 #include "src/utils/gl.h"
+#include "src/utils/tvg.h"
 
 #include "sdl_init.h"
 #include "services.h"
+#include "services/logger.h"
 
 void
 crash_with_sdl_error(std::string message)
@@ -57,13 +62,6 @@ init_window(int screen_width, int screen_height)
   Mix_AllocateChannels(DEFAULT_MAX_CHANNELS);
   Services::logger().info("SDL_mixer has been initialized.");
 
-  // Font
-  error = TTF_Init();
-  if (error < 0) {
-    crash_with_sdl_error("Unable to init SDL_ttf");
-  }
-  Services::logger().info("SDL_ttf has been initialized.");
-
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 #ifdef __EMSCRIPTEN__
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -87,9 +85,15 @@ init_window(int screen_width, int screen_height)
   }
   Services::logger().info("Window has been created.");
 
+  unsigned int threads = System::is_web ? 0
+                                        : std::thread::hardware_concurrency();
+  auto tvg_result = tvg::Initializer::init(tvg::CanvasEngine::Sw, threads);
+  vg_verify_or_crash(__func__, tvg_result);
+  Services::logger().info("ThorVG has been initialized.");
+
   return { window, [](auto w) {
+            tvg::Initializer::term(tvg::CanvasEngine::Sw);
             SDL_DestroyWindow(w);
-            TTF_Quit();
             SDL_Quit();
           } };
 }
@@ -129,4 +133,10 @@ init_context(SDL_Window* window)
 #endif
 
   return { ctx, [](auto c) { SDL_GL_DeleteContext(c); } };
+}
+
+UiCanvasPtr
+init_vg_canvas(std::size_t width, std::size_t height)
+{
+  return std::make_unique<UiCanvas>(width, height);
 }

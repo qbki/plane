@@ -1,6 +1,7 @@
 #ifdef __linux__
 #include <array>
 #include <linux/limits.h> // IWYU pragma: keep
+#include <string>
 #include <unistd.h>
 
 #include "src/utils/crash.h"

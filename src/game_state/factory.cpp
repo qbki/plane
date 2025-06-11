@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <glm/gtc/constants.hpp>
 
 #include "src/components/common.h"
@@ -124,7 +123,7 @@ make_text(std::shared_ptr<entt::registry>& registry, const std::string&)
 {
   auto entity = GUI::Factory::text(registry, GUI::Factory::TextConfig {});
   registry->emplace<ParticleKind>(entity); // TODO Add better type
-  registry->emplace<MeshPointer>(entity, Mesh::quad());
+  registry->emplace<MeshPointer>(entity, create_quad());
   return entity;
 }
 

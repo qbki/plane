@@ -1,3 +1,5 @@
+#include <string>
+
 #include "src/components/common.h"
 #include "src/gui/components/ui.h"
 #include "src/scene/scene.h"

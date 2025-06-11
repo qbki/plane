@@ -1,7 +1,5 @@
-#include <filesystem>
 #include <sstream>
 #include <string>
-#include <tuple>
 
 #include "src/components/common.h"
 #include "src/gui/components/ui.h"
@@ -39,14 +37,6 @@ credits_screen_factory(const Scene& scene)
       .font = Services::theme().typography.h3,
       .text = (line == "") ? " " : line,
     }));
-  }
-
-  if (!children.value.empty()) {
-    auto size = Services::theme().typography.h3->calculate_size(" ");
-    auto height = std::get<1>(size);
-    children.value.push_back({ ui.div({
-      .height = static_cast<float>(height),
-    }) });
   }
 
   children.value.push_back(ui.text_button({

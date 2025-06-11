@@ -3,6 +3,8 @@
 #include <glm/trigonometric.hpp>
 #include <glm/vec3.hpp>
 
+#include "src/math/shapes.h"
+
 #include "camera.h"
 #include "perspective_camera.h"
 

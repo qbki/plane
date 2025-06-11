@@ -1,11 +1,12 @@
 #include <SDL_rwops.h>
+#include <string>
 #include <utility>
 
 #include "src/utils/crash.h"
 
 #include "data_holder.h"
 
-DataHolder::DataHolder(const std::vector<unsigned char>&& data)
+DataHolder::DataHolder(const std::vector<char>&& data)
   : _data(std::move(data))
 {
 }
@@ -30,4 +31,10 @@ DataHolder::unsafe_rwops()
     crash("Can't create RWops");
   }
   return rw;
+}
+
+const std::vector<char>&
+DataHolder::payload() const
+{
+  return _data;
 }

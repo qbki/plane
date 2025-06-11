@@ -1,10 +1,9 @@
 #include <utility>
 
 #include "src/game_state/state.h"
-#include "src/scene/scene.h"
 #include "src/services.h"
 
-#include "scene.h"
+#include "src/scene/scene.h"
 
 Scene::Scene(std::unique_ptr<Camera> camera)
 {

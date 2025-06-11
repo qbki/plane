@@ -1,11 +1,9 @@
-#include <filesystem>
 #include <optional>
 #include <utility>
 #include <vector>
 
 #include "src/app/app.h"
 #include "src/gui/screens/main_menu_screen.h"
-#include "src/scene/scene.h"
 
 #include "utils.h"
 

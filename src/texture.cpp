@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "src/utils/crash.h"
+#include "src/utils/gl.h"
 
 #include "texture.h"
 
@@ -32,32 +33,6 @@ int_to_texture_index(unsigned int idx)
 /**
  * @param data Expects 4 bytes per pixel (RGBA) and a rectangular texture
  */
-Texture::Texture(int width, int height, const std::vector<unsigned char>& data)
-  : _width(width)
-  , _height(height)
-{
-  assert(width > 0 && "Width of a texture should be more than 0");
-  assert(height > 0 && "Height of a texture should be more than 0");
-  glGenTextures(1, &_texture_object);
-  glBindTexture(GL_TEXTURE_2D, _texture_object);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D,
-               0,
-               GL_SRGB8_ALPHA8,
-               width,
-               height,
-               0,
-               GL_RGBA,
-               GL_UNSIGNED_BYTE,
-               data.data());
-  glBindTexture(GL_TEXTURE_2D, 0);
-}
-
 Texture::Texture(Texture&& other) noexcept
   : _width(other._width)
   , _height(other._height)
@@ -105,31 +80,31 @@ Texture::use(unsigned int idx) const
   glBindTexture(GL_TEXTURE_2D, _texture_object);
 }
 
+template<typename T>
+  requires TextureData<T>
 void
-Texture::data(const std::vector<unsigned char>& pixels)
+Texture::data(const std::vector<T>& pixels)
 {
-  glBindTexture(GL_TEXTURE_2D, _texture_object);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  glTexSubImage2D(GL_TEXTURE_2D,
-                  0,
-                  0,
-                  0,
-                  _width,
-                  _height,
-                  GL_RGBA,
-                  GL_UNSIGNED_BYTE,
-                  pixels.data());
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-  glBindTexture(GL_TEXTURE_2D, 0);
+  data(pixels, _width, _height);
 }
 
+template void
+Texture::data<uint32_t>(const std::vector<uint32_t>& pixels);
+
+template void
+Texture::data<unsigned char>(const std::vector<unsigned char>& pixels);
+
+template<typename T>
+  requires TextureData<T>
 void
-Texture::data(const std::vector<unsigned char>& pixels, int width, int height)
+Texture::data(const std::vector<T>& pixels, int width, int height)
 {
+  assert(width > 0 && "Width of a texture should be more than 0");
+  assert(height > 0 && "Height of a texture should be more than 0");
+
   _width = width;
   _height = height;
   glBindTexture(GL_TEXTURE_2D, _texture_object);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glTexImage2D(GL_TEXTURE_2D,
                0,
                GL_SRGB8_ALPHA8,
@@ -139,6 +114,16 @@ Texture::data(const std::vector<unsigned char>& pixels, int width, int height)
                GL_RGBA,
                GL_UNSIGNED_BYTE,
                pixels.data());
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
   glBindTexture(GL_TEXTURE_2D, 0);
+  print_opengl_errors("Texture Initialization");
 }
+
+template void
+Texture::data<uint32_t>(const std::vector<uint32_t>& pixels,
+                        int width,
+                        int height);
+
+template void
+Texture::data<unsigned char>(const std::vector<unsigned char>& pixels,
+                             int width,
+                             int height);

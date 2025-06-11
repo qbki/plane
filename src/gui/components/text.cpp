@@ -1,11 +1,10 @@
-#include <algorithm>
+#include <thorvg.h>
+#include <utility>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/gui/types.h"
+#include "src/gui/ui_canvas.h"
 #include "src/services.h"
-#include "src/texture.h"
-#include "src/utils/common.h"
 
 #include "text.h"
 
@@ -14,26 +13,39 @@ namespace GUI::Factory {
 entt::entity
 text(std::shared_ptr<entt::registry>& registry, const TextConfig& config)
 {
-  auto& font = config.font;
-  auto [width, height] = font->calculate_size(config.text);
+  auto text = tvg::Text::gen();
+  text->font(config.font.name.c_str(), config.font.size);
+  text->text(config.text.c_str());
+  text->fill(config.color.r, config.color.g, config.color.b);
+  text->opacity(config.color.a);
 
-  auto valid_width = std::max(width, 1);
-  auto valid_height = std::max(height, 1);
-  auto pixels = get_pixels(valid_width, valid_height);
-  auto texture = std::make_shared<Texture>(valid_width, valid_height, pixels);
+  float bbox_x { 0 };
+  float bbox_y { 0 };
+  float bbox_width { 0 };
+  float bbox_height { 0 };
+  text->bounds(&bbox_x, &bbox_y, &bbox_width, &bbox_height, false);
+
+  const float twice = 2;
+  float width = bbox_x * twice + bbox_width;
+  float height = bbox_y * twice + bbox_height;
+
+  UiCanvas canvas(static_cast<int>(width), static_cast<int>(height));
+  canvas.canvas().push(std::move(text));
+
+  Transform transform;
+  transform.scale({ width, height, 1 });
 
   auto entity = registry->create();
   registry->emplace<Available>(entity);
   registry->emplace<Core::Color>(entity, config.color);
-  registry->emplace<FontPtr>(entity, font);
+  registry->emplace<GUI::Typography::Font>(entity, config.font);
   registry->emplace<GUIKind>(entity);
   registry->emplace<IsDirty>(entity, true);
   registry->emplace<Parent>(entity, config.parent);
   registry->emplace<RectSize>(entity, width, height);
   registry->emplace<Text>(entity, config.text);
-  registry->emplace<Transform>(entity);
-  registry->emplace<TexturePointer>(entity, texture);
-
+  registry->emplace<Transform>(entity, transform);
+  registry->emplace<UiCanvas>(entity, std::move(canvas));
   return entity;
 }
 

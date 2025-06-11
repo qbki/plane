@@ -3,12 +3,12 @@
 #include <functional>
 #include <memory>
 
+#include "background.h"
 #include "block.h"
+#include "div.h"
 #include "progress.h"
 #include "rect.h"
-#include "src/gui/components/background.h"
-#include "src/gui/components/div.h"
-#include "src/gui/components/row.h"
+#include "row.h"
 #include "text.h"
 #include "text_button.h"
 

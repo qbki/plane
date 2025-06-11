@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "src/mesh.h"
-#include "src/services.h"
+#include "src/services/logger.h"
 #include "src/utils/result.h" // IWYU pragma: export
 
 #include "file_loaders.h"
@@ -86,18 +86,18 @@ load_text(const std::string& file_path)
     .then<std::string>(read_file);
 }
 
-Result<std::vector<unsigned char>>
+Result<std::vector<char>>
 load_binary(const std::string& file_path)
 {
   auto read_file = [](FileStreamPtr& stream) {
-    std::vector<unsigned char> data { std::istreambuf_iterator<char>(*stream),
-                                      std::istreambuf_iterator<char>() };
-    return Result<std::vector<unsigned char>>::from_payload(std::move(data));
+    std::vector<char> data { std::istreambuf_iterator<char>(*stream),
+                             std::istreambuf_iterator<char>() };
+    return Result<std::vector<char>>::from_payload(std::move(data));
   };
   return Result<const std::string>::from_payload(file_path)
     .then<const std::string>(does_file_exist)
     .then<FileStreamPtr>(open_binary_file_stream)
-    .then<std::vector<unsigned char>>(read_file);
+    .then<std::vector<char>>(read_file);
 }
 
 Result<nlohmann::basic_json<>>

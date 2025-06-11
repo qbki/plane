@@ -1,8 +1,7 @@
 #include <GL/glew.h>
-#include <SDL_pixels.h>
-#include <SDL_surface.h>
 #include <algorithm>
 #include <format>
+#include <glm/mat3x3.hpp>
 #include <iterator>
 #include <ranges>
 #include <string>
@@ -11,14 +10,11 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/consts.h"
-#include "src/gui/types.h"
+#include "src/gui/ui_canvas.h"
 #include "src/material.h"
 #include "src/math/intersection.h"
-#include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/texture.h"
-#include "src/utils/color.h"
-#include "src/utils/common.h"
 #include "src/utils/ecs.h"
 
 #include "render.h"
@@ -226,127 +222,48 @@ render_particles(App& app, const Scene& scene)
 void
 render_ui(const Scene& scene)
 {
-  auto& registry = scene.state().registry();
-  const auto& camera = scene.state().camera();
-  GLint stored_gl_depth_func = 0;
+  static auto quad = create_ui_quad();
 
-  auto& particle_shader = Services::app().particle_shader();
-  particle_shader.use();
-  particle_shader.uniform("u_PV", camera.pv());
-  particle_shader.uniform("u_main_texture", 0);
+  GLint stored_gl_depth_func = 0;
+  auto& registry = scene.state().registry();
+  auto& camera = scene.state().camera();
+  auto& shader = Services::app().ui_shader();
+
+  shader.use();
+  shader.uniform("u_PV", camera.pv());
+  shader.uniform("u_normal_matrix", glm::mat3 { 1 });
+  shader.uniform("u_texture", 0);
 
   glEnable(GL_BLEND);
   glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
   glGetIntegerv(GL_DEPTH_FUNC, &stored_gl_depth_func);
   glDepthFunc(GL_ALWAYS);
-  struct Bearer
-  {
-    Transform* transform;
-    Texture* texture;
-    RectSize* rect;
-    Parent* parent;
-  };
-
-  std::vector<Bearer> gui_items {};
 
   registry
-    .view<Transform, TexturePointer, RectSize, Parent, Available, GUIKind>()
-    .each([&gui_items](Transform& orig_transform,
-                       TexturePointer& texture,
-                       RectSize& rect,
-                       Parent& parent) {
-      gui_items.push_back({
-        .transform = &orig_transform,
-        .texture = texture.get(),
-        .rect = &rect,
-        .parent = &parent,
+    .view<UiCanvas, Transform, RectSize, IsDirty, Parent, GUIKind, Available>()
+    .each([&](UiCanvas& canvas,
+              const Transform& transform,
+              const RectSize& rect,
+              IsDirty& is_dirty,
+              const Parent& parent) {
+      if (rect.width <= 0 || rect.height <= 0) {
+        return;
+      }
+      if (is_dirty.value) {
+        canvas.draw();
+        is_dirty.value = false;
+      }
+      canvas.texture().use(0);
+      glm::mat4 global_transform = get_global_matrix(registry, parent)
+                                   * transform.matrix();
+      quad->draw({
+        .transforms { std::vector<glm::mat4> { global_transform } },
       });
     });
 
-  std::ranges::sort(gui_items, [](const Bearer& a, const Bearer& b) {
-    return a.transform->translation().z < b.transform->translation().z;
-  });
-
-  for (const auto& item : gui_items) {
-    Transform transform {};
-    auto rect = item.rect;
-    transform.translate({
-      item.transform->translation().x + static_cast<float>(rect->width) * HALF,
-      item.transform->translation().y + static_cast<float>(rect->height) * HALF,
-      transform.translation().z,
-    });
-    transform.scale({ rect->width, rect->height, 1 });
-    item.texture->use(0);
-
-    glm::mat4 global_matrix = get_global_matrix(registry, *item.parent)
-                              * transform.matrix();
-    Services::gui_quad().draw({
-      .transforms = std::vector<glm::mat4> { global_matrix },
-    });
-  }
   glDepthFunc(stored_gl_depth_func);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDisable(GL_BLEND);
-}
-
-void
-update_font_texture(const Scene& scene)
-{
-  auto& registry = scene.state().registry();
-  registry
-    .view<GUI::FontPtr, TexturePointer, RectSize, Text, Core::Color, IsDirty>()
-    .each([](GUI::FontPtr& font,
-             TexturePointer& texture,
-             RectSize& rect,
-             Text& _text,
-             Core::Color& color,
-             IsDirty& _is_dirty) {
-      const auto color_size = 4;
-      auto& text = _text.value;
-      auto& is_dirty = _is_dirty.value;
-      if (!is_dirty) {
-        return;
-      }
-      is_dirty = false;
-      auto update = [&](const std::vector<unsigned char>& data) {
-        if (texture->width() == rect.width
-            && texture->height() == rect.height) {
-          texture->data(data);
-        } else {
-          texture->data(data, rect.width, rect.height);
-        }
-      };
-      if (text.empty()) {
-        rect.width = 1;
-        rect.height = font->size();
-        std::vector<unsigned char> result(rect.height, 0);
-        update(result);
-        return;
-      }
-      auto font_surface = font->draw(text, color);
-      rect.width = font_surface->w;
-      rect.height = font_surface->h;
-      auto result = get_pixels(rect.width, rect.height);
-      SDL_ConvertPixels(rect.width,
-                        rect.height,
-                        font_surface->format->format,
-                        font_surface->pixels,
-                        font_surface->pitch,
-                        SDL_PIXELFORMAT_ABGR8888,
-                        result.data(),
-                        rect.width * color_size);
-      auto length = rect.height / 2;
-      auto begin = result.begin();
-      auto end = result.end();
-      auto width = rect.width * color_size;
-      for (int y = 0; y < length; y++) {
-        auto src_start = begin + y * width;
-        auto src_end = src_start + width;
-        auto dst_start = end - width - width * y;
-        std::swap_ranges(src_start, src_end, dst_start);
-      }
-      update(result);
-    });
 }
 
 void
@@ -359,7 +276,6 @@ render_system(App& app)
   for (const auto& scene : app.scenes()) {
     glBindFramebuffer(GL_FRAMEBUFFER, inter_fb.handle());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    update_font_texture(*scene);
     if (scene->is_deferred()) {
       render_generic_objects(app, *scene);
       render_particles(app, *scene);

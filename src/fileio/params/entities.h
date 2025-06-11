@@ -72,8 +72,8 @@ struct EntityParamsText
   glm::vec3 color { 0, 0, 0 };
   std::string text_id { "" };
   int size { 1 };
-  std::optional<float> width { std::nullopt };
-  std::optional<float> height { std::nullopt };
+  float width { 1 };
+  float height { 1 };
 };
 
 using EntityParams = std::variant<EntityParamsActor,

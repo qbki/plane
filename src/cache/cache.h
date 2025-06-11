@@ -4,7 +4,6 @@
 #include <tuple>
 #include <unordered_map>
 
-#include "src/gui/types.h"
 #include "src/mesh.h"
 #include "src/sound/sound.h"
 #include "src/texture.h"
@@ -21,7 +20,6 @@ public:
 private:
   std::unordered_map<std::string, std::tuple<MeshPtr, TexturePtr>> _meshes;
   std::unordered_map<std::string, SoundPtr> _sounds;
-  std::unordered_map<std::string, GUI::FontPtr> _fonts;
 
 public:
   Cache();
@@ -29,5 +27,4 @@ public:
   ModelPair get_model(const std::filesystem::path& mesh_path);
   ModelPair get_rect(const Core::Color& color);
   SoundPtr get_sound(const std::filesystem::path& sound_path);
-  GUI::FontPtr get_font(const std::filesystem::path& font_path, int size);
 };

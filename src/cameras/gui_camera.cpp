@@ -1,5 +1,7 @@
 #include <glm/ext/matrix_clip_space.hpp>
 
+#include "src/math/shapes.h"
+
 #include "camera.h"
 #include "gui_camera.h"
 
@@ -18,8 +20,8 @@ GUICamera::nonvirt_screen_size(int width, int height)
   _height = height;
   Camera::projection(glm::ortho(0.f,
                                 static_cast<float>(width),
-                                0.f,
                                 static_cast<float>(height),
+                                0.f,
                                 -1.f,
                                 1.f));
 }

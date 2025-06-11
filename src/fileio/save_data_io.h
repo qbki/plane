@@ -1,5 +1,5 @@
 #pragma once
-#include <filesystem>
+#include <filesystem> // IWYU export
 #include <optional>
 
 struct SaveData

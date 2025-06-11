@@ -1,5 +1,6 @@
+#include <string>
+
 #include "src/components/transform.h"
-#include "src/scene/scene.h"
 #include "src/services.h"
 
 #include "components/text.h"

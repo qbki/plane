@@ -1,7 +1,6 @@
 #pragma once
 #include <format>
 #include <memory>
-#include <stdexcept>
 
 #include "src/components/common.h"
 #include "utils/types.h"

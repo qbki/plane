@@ -1,6 +1,4 @@
 #pragma once
-#include <entt/entt.hpp>
-
 #include "src/components/common.h"
 #include "src/services.h"
 #include "src/utils/color.h"

@@ -1,3 +1,5 @@
+#include <string>
+
 #include "src/utils/crash.h"
 
 #include "entities_validators.h"
@@ -9,11 +11,11 @@ validate(const EntityParamsText& value)
     crash(R"("size" field of kind "text" must be 1 or more)");
   }
 
-  if (value.width.has_value() && (value.width.value() < 0.0f)) {
+  if (value.width < 0.0f) {
     crash(R"("width" field of kind "text" must be more than zero)");
   }
 
-  if (value.height.has_value() && (value.height.value() < 0.0f)) {
+  if (value.height < 0.0f) {
     crash(R"("height" field of kind "text" must be more than zero)");
   }
 }

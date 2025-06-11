@@ -1,6 +1,5 @@
 #include <entt/entt.hpp>
 #include <glm/common.hpp>
-#include <ranges>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
@@ -32,7 +31,7 @@ block(std::shared_ptr<entt::registry>& registry, const BlockConfig& config)
           parent] = registry
                       ->get<Children, Transform, RectSize, Parent>(entity);
     RectSize new_rect_size;
-    for (auto& child_entity : std::views::reverse(children.value)) {
+    for (auto& child_entity : children.value) {
       auto [child_transform,
             child_rect_size] = registry->get<Transform, RectSize>(child_entity);
       auto child_position = child_transform.translation();
@@ -50,9 +49,9 @@ block(std::shared_ptr<entt::registry>& registry, const BlockConfig& config)
                                       parent.value.value())
                                   : Services::app().screen_size();
     auto left = (parent_rect_size.width - rect_size.width) / 2;
-    auto bottom = (parent_rect_size.height - rect_size.height) / 2;
+    auto top = (parent_rect_size.height - rect_size.height) / 2;
     auto position = transform.translation();
-    transform.translate({ left, bottom, position.z });
+    transform.translate({ left, top, position.z });
   });
 
   return entity;

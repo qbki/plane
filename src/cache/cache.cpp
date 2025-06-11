@@ -1,4 +1,3 @@
-#include <cassert>
 #include <filesystem>
 #include <glm/vec3.hpp>
 #include <optional>
@@ -85,7 +84,7 @@ Cache::get_rect(const Core::Color& color)
   }
   std::vector<unsigned char> data { color.r, color.g, color.b, color.a };
   auto texture = std::make_shared<Texture>(1, 1, data);
-  auto mesh = std::shared_ptr(Mesh::quad());
+  auto mesh = std::shared_ptr(create_quad());
   auto pair = std::make_tuple(mesh, texture);
   _meshes[rect_id] = pair;
   return pair;
@@ -100,19 +99,4 @@ Cache::get_sound(const std::filesystem::path& sound_path)
   std::shared_ptr<Sound::Sound> sound = load_sound(sound_path);
   _sounds[sound_path] = sound;
   return sound;
-}
-
-GUI::FontPtr
-Cache::get_font(const std::filesystem::path& font_path, int size)
-{
-  auto size_str = std::to_string(size);
-  assert((size > 0) && "Cache::get_font: size should be more than zero");
-  auto key = font_path.string() + "-" + size_str;
-  if (_fonts.contains(key)) {
-    return _fonts[key];
-  }
-  auto font_data = load_sdl_rw_data(font_path);
-  auto font = std::make_shared<GUI::Font>(font_data, size);
-  _fonts[key] = font;
-  return font;
 }

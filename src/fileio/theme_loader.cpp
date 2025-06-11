@@ -3,33 +3,31 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
+#include "src/fileio/params/theme.h"
 #include "src/gui/core/theme.h"
 #include "src/services.h"
-#include "src/utils/file_loaders.h"
+#include "src/utils/file_loaders/file_loaders.h"
 
 #include "theme_loader.h"
+#include "json/mappers.h" // IWYU pragma: keep
 
 std::unique_ptr<GUI::Theme>
 load_theme(const std::filesystem::path& theme_file_path)
 {
-  auto json_theme = load_json(theme_file_path).or_crash();
-  std::filesystem::path font_path { json_theme.at("font").get<std::string>() };
-  font_path = Services::app().assets_dir() / font_path;
-  auto data_holder = load_sdl_rw_data(font_path);
-  auto theme = std::make_unique<GUI::Theme>();
+  auto theme_params = load_json(theme_file_path).or_crash().get<ThemeParams>();
+  auto font_path = (Services::app().assets_dir() / theme_params.font_source)
+                     .lexically_normal();
+  load_font(font_path);
 
-  using namespace GUI;
-  auto make_font = [&data_holder](unsigned int size) {
-    return std::make_shared<GUI::Font>(data_holder, size);
-  };
+  auto theme = std::make_unique<GUI::Theme>();
   theme->font_path = font_path;
-  theme->typography.body1 = make_font(Typography::SIZE_BODY_1);
-  theme->typography.body2 = make_font(Typography::SIZE_BODY_2);
-  theme->typography.h1 = make_font(Typography::SIZE_H1);
-  theme->typography.h2 = make_font(Typography::SIZE_H2);
-  theme->typography.h3 = make_font(Typography::SIZE_H3);
-  theme->typography.h4 = make_font(Typography::SIZE_H4);
-  theme->typography.h5 = make_font(Typography::SIZE_H5);
-  theme->typography.h6 = make_font(Typography::SIZE_H6);
+  theme->typography.body1.name = theme_params.font_family;
+  theme->typography.body2.name = theme_params.font_family;
+  theme->typography.h1.name = theme_params.font_family;
+  theme->typography.h2.name = theme_params.font_family;
+  theme->typography.h3.name = theme_params.font_family;
+  theme->typography.h4.name = theme_params.font_family;
+  theme->typography.h5.name = theme_params.font_family;
+  theme->typography.h6.name = theme_params.font_family;
   return theme;
 }

@@ -1,9 +1,11 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/vec3.hpp>
 
+#include "src/consts.h"
+#include "src/math/shapes.h"
+
 #include "camera.h"
 #include "ortho_camera.h"
-#include "src/consts.h"
 
 OrthoCamera::OrthoCamera(int screen_width,
                          int screen_height,

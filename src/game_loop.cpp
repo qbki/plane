@@ -10,7 +10,6 @@
 #endif
 
 #include "game_loop.h"
-#include "scene/scene.h"
 #include "services.h"
 
 void
@@ -54,9 +53,9 @@ wasm_resize_window_cb(int /* eventType */,
   return EMSCRIPTEN_RESULT_SUCCESS;
 }
 
-EM_JS(int, get_js_window_width, (), { return window.innerWidth; });
+EM_JS(int, get_js_window_width,   , { return window.innerWidth; });
 
-EM_JS(int, get_js_window_height, (), { return window.innerHeight; });
+EM_JS(int, get_js_window_height,   , { return window.innerHeight; });
 #endif
 
 void

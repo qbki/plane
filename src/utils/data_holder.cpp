@@ -2,9 +2,10 @@
 #include <string>
 #include <utility>
 
-#include "src/utils/crash.h"
-
 #include "data_holder.h"
+
+import utils.crash;
+
 
 DataHolder::DataHolder(const std::vector<char>&& data)
   : _data(std::move(data))
@@ -28,7 +29,7 @@ DataHolder::unsafe_rwops()
 {
   auto rw = SDL_RWFromConstMem(_data.data(), static_cast<int>(_data.size()));
   if (rw == nullptr) {
-    crash("Can't create RWops");
+    utils::crash("Can't create RWops");
   }
   return rw;
 }

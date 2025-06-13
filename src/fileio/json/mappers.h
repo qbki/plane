@@ -16,11 +16,11 @@ import control;
 #include "src/fileio/params/meta.h"
 #include "src/fileio/params/theme.h"
 #include "src/services.h"
-#include "src/utils/crash.h"
 
 #include "../params.h"
 
 import control;
+import utils.crash;
 
 template<typename T>
 void
@@ -53,7 +53,7 @@ struct adl_serializer<BehaviourEnum>
     } else if (behaviour == "tutorial_button") {
       value = BehaviourEnum::TUTORIAL_BUTTON;
     } else {
-      crash(std::format("Unknown behaviour: {}", behaviour));
+      utils::crash(std::format("Unknown behaviour: {}", behaviour));
     }
   }
 };
@@ -75,7 +75,7 @@ struct adl_serializer<control::Action>
     } else if (action == "shooting") {
       value = control::Action::SHOOTING;
     } else {
-      crash(std::format("Unknown action: {}", action));
+      utils::crash(std::format("Unknown action: {}", action));
     }
   }
 };
@@ -206,7 +206,7 @@ struct adl_serializer<PositionStrategy>
       json_obj.at("entity_id").get_to(strategy.entity_id);
       value = strategy;
     } else {
-      crash(std::format("Unknown strategy: {}", kind));
+      utils::crash(std::format("Unknown strategy: {}", kind));
     }
   }
 };
@@ -279,7 +279,7 @@ struct adl_serializer<EntityParams>
       validate(params);
       value = params;
     } else {
-      crash(std::format("Unknown entity: {}", kind));
+      utils::crash(std::format("Unknown entity: {}", kind));
     }
   };
 };

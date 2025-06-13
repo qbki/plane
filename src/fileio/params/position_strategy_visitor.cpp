@@ -13,7 +13,6 @@
 #include "src/components/transform.h"
 #include "src/consts.h"
 #include "src/game_state/factory.h"
-#include "src/utils/crash.h"
 #include "src/utils/random.h"
 
 #include "components_attacher.h"
@@ -21,6 +20,8 @@
 #include "entity_maker.h"
 #include "position_strategy_visitor.h"
 #include "strategies.h"
+
+import utils.crash;
 
 PositionStrategyVisitor::PositionStrategyVisitor(
   std::reference_wrapper<const EntityParamsMap> entities,
@@ -93,7 +94,7 @@ PositionStrategyVisitor::operator()(const PositionStrategySingle& strategy)
   auto transform = registry.try_get<Transform>(entity);
   if (transform == nullptr) {
     constexpr auto message = "Entity {} can't be placed in exact position";
-    crash(std::format(message, strategy.entity_id));
+    utils::crash(std::format(message, strategy.entity_id));
   }
   transform->translate(strategy.position);
 }
@@ -140,7 +141,7 @@ PositionStrategyVisitor::operator()(const PositionStrategySquare& strategy)
 void
 PositionStrategyVisitor::operator()(const PositionStrategyUndefined&) const
 {
-  crash("Can't handle an unknown strategy");
+  utils::crash("Can't handle an unknown strategy");
 }
 
 void

@@ -12,7 +12,6 @@
 #include "logger/logger.h"
 #include "mesh.h"
 #include "sdl_init.h"
-#include "service.h"
 #include "services.h"
 #include "src/services/logger.h"
 #include "systems/render.h"
@@ -20,20 +19,21 @@
 #include "utils/types.h"
 
 import control;
+import pln;
 import utils.system;
 
 int
 main(int argc, char* argv[])
 {
-  Service<AbstractLogger>::install(std::make_unique<Logger>());
-  Service<Cache>::install(std::make_unique<Cache>());
-  Service<Events::EventEmitter<const Events::ShootEvent>>::install(
+  pln::Service<AbstractLogger>::install(std::make_unique<Logger>());
+  pln::Service<Cache>::install(std::make_unique<Cache>());
+  pln::Service<Events::EventEmitter<const Events::ShootEvent>>::install(
     std::make_unique<Events::EventEmitter<const Events::ShootEvent>>());
-  Service<Events::EventEmitter<const Events::LoadNextLevelEvent>>::install(
+  pln::Service<Events::EventEmitter<const Events::LoadNextLevelEvent>>::install(
     std::make_unique<Events::EventEmitter<const Events::LoadNextLevelEvent>>());
-  Service<Events::EventEmitter<const Events::LoseEvent>>::install(
+  pln::Service<Events::EventEmitter<const Events::LoseEvent>>::install(
     std::make_unique<Events::EventEmitter<const Events::LoseEvent>>());
-  Service<Events::EventEmitter<const Events::LoadCurrentLevelEvent>>::install(
+  pln::Service<Events::EventEmitter<const Events::LoadCurrentLevelEvent>>::install(
     std::make_unique<
       Events::EventEmitter<const Events::LoadCurrentLevelEvent>>());
 
@@ -122,13 +122,13 @@ main(int argc, char* argv[])
   auto translations = load_translations(app->assets_dir() / "text" / "en.json");
   app->set_translations(translations);
 
-  Service<App>::install(std::move(app));
+  pln::Service<App>::install(std::move(app));
 
   auto theme = load_theme(Services::app().levels_dir() / "theme.json");
-  Service<const GUI::Theme>::install(std::move(theme));
+  pln::Service<const GUI::Theme>::install(std::move(theme));
 
   auto quad = std::make_unique<Services::GuiQuad>(create_quad(1, 1, 0));
-  Service<const Services::GuiQuad>::install(std::move(quad));
+  pln::Service<const Services::GuiQuad>::install(std::move(quad));
 
   register_common_handlers();
   game_loop();

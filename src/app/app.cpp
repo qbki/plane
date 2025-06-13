@@ -5,9 +5,10 @@
 #include <utility>
 
 #include "src/sdl_init.h"
-#include "src/utils/crash.h"
 
 #include "app.h"
+
+import utils.crash;
 
 App::App(std::filesystem::path assets_dir)
   : _last_time_point(SDL_GetTicks64())
@@ -20,7 +21,7 @@ void
 App::or_crash(std::unique_ptr<T, F>& ptr, const std::string& message)
 {
   if (!ptr) {
-    crash(std::format("System is incomplete: {}", message));
+    utils::crash(std::format("System is incomplete: {}", message));
   }
 }
 

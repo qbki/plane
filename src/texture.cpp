@@ -2,10 +2,11 @@
 #include <cassert>
 #include <utility>
 
-#include "src/utils/crash.h"
 #include "src/utils/gl.h"
 
 #include "texture.h"
+
+import utils.crash;
 
 const GLuint Texture::DEFAULT_TEXTURE_OBJECT = 0;
 
@@ -26,7 +27,7 @@ int_to_texture_index(unsigned int idx)
     case 5: // NOLINT(cppcoreguidelines-avoid-magic-numbers)
       return GL_TEXTURE5;
     default:
-      crash("Wrong texture index");
+      utils::crash("Wrong texture index");
   }
 }
 

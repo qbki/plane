@@ -1,9 +1,15 @@
-#include <cstdlib>
+module;
+#include <exception>
+#include <string>
 
 #include "src/services/logger.h"
 
-#include "crash.h"
+export module utils.crash;
 
+namespace utils {
+
+
+export
 [[noreturn]] void
 crash(const std::string& message)
 {
@@ -11,8 +17,13 @@ crash(const std::string& message)
   std::abort();
 }
 
+
+export
 [[noreturn]] void
 crash(const std::exception& error)
 {
   crash(error.what());
+}
+
+
 }

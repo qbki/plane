@@ -4,23 +4,22 @@
 #include "src/events/event_emitter.h" // IWYU pragma: export
 #include "src/gui/core/theme.h"       // IWYU pragma: export
 #include "src/mesh.h"
-#include "src/utils/crash.h"
 #include "src/utils/types.h"
 
-#include "service.h"
+import pln;
 
 namespace Services {
 
 inline Cache&
 cache()
 {
-  return Service<Cache>::get();
+  return pln::Service<Cache>::get();
 }
 
 inline App&
 app()
 {
-  return Service<App>::get();
+  return pln::Service<App>::get();
 }
 
 const GUI::Theme&
@@ -34,7 +33,7 @@ template<typename T>
 inline Events::EventEmitter<T>&
 events()
 {
-  return Service<Events::EventEmitter<T>>::get();
+  return pln::Service<Events::EventEmitter<T>>::get();
 }
 
 }

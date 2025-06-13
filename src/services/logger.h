@@ -1,14 +1,14 @@
 #pragma once
 #include "src/logger/abstract_logger.h" // IWYU pragma: export
 
-#include "src/service.h"
+import pln;
 
 namespace Services {
 
 inline AbstractLogger&
 logger()
 {
-  return Service<AbstractLogger>::get();
+  return pln::Service<AbstractLogger>::get();
 }
 
 }

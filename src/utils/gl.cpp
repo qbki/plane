@@ -4,9 +4,10 @@
 #include <string>
 
 #include "src/services/logger.h"
-#include "src/utils/crash.h"
 
 #include "src/utils/gl.h"
+
+import utils.crash;
 
 int
 buffer_size()
@@ -159,7 +160,7 @@ gen_render_buffer(unsigned int width, unsigned int height)
       "Viewport dimentions: {}x{}", dimentions.at(2), dimentions.at(3)));
     auto status_text = std::format(
       "Framebuffer status ({}x{}): {}", width, height, status);
-    crash(status_text);
+    utils::crash(status_text);
   }
   return render_buffer;
 }

@@ -2,9 +2,11 @@
 #include <string>
 
 #include "src/components/common.h"
-#include "src/utils/crash.h"
 
 #include "button_state.h"
+
+import utils.crash;
+
 
 namespace GUI {
 
@@ -86,7 +88,7 @@ ButtonState::current() const
     case State::HOVER:
       return _hover;
   }
-  crash("Encountered an unknown button state");
+  utils::crash("Encountered an unknown button state");
 }
 
 }

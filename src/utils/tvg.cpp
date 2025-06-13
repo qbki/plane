@@ -1,8 +1,8 @@
 #include <format>
 
-#include "src/utils/crash.h"
-
 #include "tvg.h"
+
+import utils.crash;
 
 void
 vg_verify_or_crash(const std::string& where, const tvg::Result& result)
@@ -12,20 +12,20 @@ vg_verify_or_crash(const std::string& where, const tvg::Result& result)
   };
   switch (result) {
     case tvg::Result::FailedAllocation:
-      crash(message("FailedAllocation"));
+      utils::crash(message("FailedAllocation"));
     case tvg::Result::InsufficientCondition:
-      crash(message("InsufficientCondition"));
+      utils::crash(message("InsufficientCondition"));
     case tvg::Result::InvalidArguments:
-      crash(message("InvalidArguments"));
+      utils::crash(message("InvalidArguments"));
     case tvg::Result::MemoryCorruption:
-      crash(message("MemoryCorruption"));
+      utils::crash(message("MemoryCorruption"));
     case tvg::Result::NonSupport:
-      crash(message("NonSupport"));
+      utils::crash(message("NonSupport"));
     case tvg::Result::Unknown:
-      crash(message("Unknown"));
+      utils::crash(message("Unknown"));
     case tvg::Result::Success:
       break;
     default:
-      crash(message("Exhaustive switch error"));
+      utils::crash(message("Exhaustive switch error"));
   }
 }

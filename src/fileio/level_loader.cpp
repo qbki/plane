@@ -10,7 +10,6 @@
 #include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/services/logger.h"
-#include "src/utils/crash.h"
 #include "src/utils/file_loaders.h"
 #include "src/utils/result.h"
 #include "src/utils/types.h"
@@ -18,6 +17,8 @@
 #include "level_loader.h"
 #include "params.h"
 #include "json/mappers.h" // IWYU pragma: keep
+
+import utils.crash;
 
 void
 setup_camera(CameraParams& camera_params, Scene& scene)
@@ -32,7 +33,7 @@ setup_boundaries(BoundaryParams& boundaries, Scene& scene)
                   && boundaries.min.y < boundaries.max.y
                   && boundaries.min.z < boundaries.max.z;
   if (!is_valid) {
-    crash("Incorrect world boundaries: wrong ordering");
+    utils::crash("Incorrect world boundaries: wrong ordering");
   }
   scene.state().world_bbox({
     .min = boundaries.min,
@@ -58,7 +59,7 @@ get_entity_maker(const PositionStrategy& strategy,
       case BehaviourEnum::STATIC: {
         auto entity_id = std::visit(
           Overloaded {
-            [](auto&) -> std::string { crash("Strategy not supported"); },
+            [](auto&) -> std::string { utils::crash("Strategy not supported"); },
             [](const PositionStrategyMany& value) { return value.entity_id; },
             [](const PositionStrategySingle& value) { return value.entity_id; },
             // Temporally, should be removed after completion of the level
@@ -83,8 +84,8 @@ get_entity_maker(const PositionStrategy& strategy,
         auto entity_id = std::visit(
           Overloaded {
             [](auto&) -> std::string {
-              crash("No a single strategy for a light behaviour,"
-                    " it is not supported at this moment");
+            utils::crash("No a single strategy for a light behaviour,"
+                         " it is not supported at this moment");
             },
             [](const PositionStrategySingle& value) { return value.entity_id; },
             [](const PositionStrategyVoid& value) { return value.entity_id; } },
@@ -97,13 +98,13 @@ get_entity_maker(const PositionStrategy& strategy,
                      entity_params)) {
           return ModelFactory::make_point_light(args...);
         } else {
-          crash(
+          utils::crash(
             std::format("Unknown light type for the entity: {}", entity_id));
         }
         break;
       }
       default: {
-        crash("Unknown behaviour type???");
+        utils::crash("Unknown behaviour type???");
         break;
       }
     }

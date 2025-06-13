@@ -7,10 +7,11 @@ module;
 #include <string>
 #include <unistd.h>
 
-#include "src/utils/crash.h"
 #endif
 
 export module utils.system;
+
+import utils.crash;
 
 namespace utils::system {
 
@@ -27,7 +28,7 @@ get_excutable_path()
     std::filesystem::path result { path.data() };
     return { result.parent_path() };
   }
-  crash("Can't get the executable path");
+  utils::crash("Can't get the executable path");
 }
 
 

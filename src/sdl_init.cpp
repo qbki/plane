@@ -14,7 +14,6 @@
 
 #include "src/consts.h"
 #include "src/gui/ui_canvas.h"
-#include "src/utils/crash.h"
 #include "src/utils/gl.h"
 #include "src/utils/tvg.h"
 
@@ -22,10 +21,12 @@
 #include "services.h"
 #include "services/logger.h"
 
+import utils.crash;
+
 void
 crash_with_sdl_error(std::string message)
 {
-  crash(std::format("{}: {}", message, SDL_GetError()));
+  utils::crash(std::format("{}: {}", message, SDL_GetError()));
 }
 
 void GLAPIENTRY
@@ -116,7 +117,7 @@ init_context(SDL_Window* window)
   GLenum err = glewInit();
   if (GLEW_OK != err) {
     auto err_glew = glubyte_to_string(glewGetErrorString(err));
-    crash(std::format("Unable to initialize GLEW: {}", err_glew));
+    utils::crash(std::format("Unable to initialize GLEW: {}", err_glew));
   }
   Services::logger().info("GLEW has been inited.");
 

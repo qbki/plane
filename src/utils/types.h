@@ -7,8 +7,9 @@
 #include <optional>
 #include <string>
 
-#include "crash.h"
 #include "noop.h"
+
+import utils.crash;
 
 template<typename T>
 using OptionalPtr = std::optional<std::unique_ptr<T>>;
@@ -34,14 +35,14 @@ demangled_name()
       noop();
       break;
     case -1:
-      crash("Demangle. A memory allocation failure occurred.");
+      utils::crash("Demangle. A memory allocation failure occurred.");
     case -2:
-      crash("Demangle. A mangled_name is not a valid name "
-            "under the C++ ABI mangling rules.");
+      utils::crash("Demangle. A mangled_name is not a valid name "
+                   "under the C++ ABI mangling rules.");
     case -3:
-      crash("Demangle. One of the arguments is invalid.");
+      utils::crash("Demangle. One of the arguments is invalid.");
     default:
-      crash("Demangle. Unknown error.");
+      utils::crash("Demangle. Unknown error.");
   }
   return result;
 }

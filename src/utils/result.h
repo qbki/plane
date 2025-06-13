@@ -4,8 +4,10 @@
 #include <memory>
 #include <variant>
 
-#include "src/utils/crash.h"
 #include "src/utils/types.h"
+
+import utils.crash;
+
 
 /**
  * TODO Should be replaced by std::expected (C++23)
@@ -54,7 +56,7 @@ public:
     if (std::holds_alternative<T>(_variant)) {
       return std::get<PAYLOAD_IDX>(_variant);
     }
-    crash(*std::get<ERROR_IDX>(_variant));
+    utils::crash(*std::get<ERROR_IDX>(_variant));
   }
 
   bool has_payload() { return std::holds_alternative<T>(_variant); }

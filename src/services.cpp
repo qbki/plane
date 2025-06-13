@@ -1,18 +1,19 @@
 #include "services.h"
-#include "service.h"
+
+import pln;
 
 namespace Services {
 
 const GUI::Theme&
 theme()
 {
-  return Service<const GUI::Theme>::get();
+  return pln::Service<const GUI::Theme>::get();
 }
 
 Mesh&
 gui_quad()
 {
-  return *Service<const GuiQuad>::get().value;
+  return *pln::Service<const GuiQuad>::get().value;
 }
 
 }

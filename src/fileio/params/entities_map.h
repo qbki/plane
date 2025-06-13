@@ -9,8 +9,9 @@
 #include <vector>
 
 #include "src/fileio/params/entities.h"
-#include "src/utils/crash.h"
 #include "src/utils/types.h"
+
+import utils.crash;
 
 class EntityParamsMap
 {
@@ -28,7 +29,7 @@ public:
     if (std::holds_alternative<T>(value)) {
       return std::get<T>(value);
     }
-    crash(
+    utils::crash(
       std::format(R"(Can't find an entity params with key "{}" and type "{}")",
                   key,
                   demangled_name<T>()));

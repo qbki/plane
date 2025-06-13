@@ -1,9 +1,9 @@
 #include <GL/glew.h>
 #include <string>
 
-#include "src/utils/crash.h"
-
 #include "shader.h"
+
+import utils.crash;
 
 void
 crash_on_shader_error(GLuint shader, GLenum status)
@@ -16,7 +16,7 @@ crash_on_shader_error(GLuint shader, GLenum status)
     std::string log_text;
     log_text.resize(log_length);
     glGetShaderInfoLog(shader, log_length, nullptr, log_text.data());
-    crash(log_text);
+    utils::crash(log_text);
   }
 }
 
@@ -31,7 +31,7 @@ crash_on_program_error(GLuint program, GLenum status)
     std::string log_text;
     log_text.resize(log_length);
     glGetProgramInfoLog(program, log_length, nullptr, log_text.data());
-    crash(log_text);
+    utils::crash(log_text);
   }
 }
 
@@ -45,7 +45,7 @@ Shader::create_program()
 {
   _program = glCreateProgram();
   if (_program == 0) {
-    crash("Can't create a program.");
+    utils::crash("Can't create a program.");
   }
 }
 
@@ -54,7 +54,7 @@ Shader::compile_shader(std::string& text, unsigned int shader_type)
 {
   auto shader = glCreateShader(shader_type);
   if (shader == 0) {
-    crash("Can't create a shader.");
+    utils::crash("Can't create a shader.");
   }
 
   auto shader_text = text.c_str();

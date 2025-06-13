@@ -1,15 +1,16 @@
 #pragma once
 #include "src/components/common.h"
 #include "src/services.h"
-#include "src/utils/color.h"
+
+import utils.color;
 
 namespace GUI::Factory {
 
 struct BackgroundConfig
 {
-  Core::Color color = { Services::theme().palette.white };
+  utils::color::Color color = { Services::theme().palette.white };
   Parent parent = Parent { std::nullopt };
-  float z = 0;
+  float z { 0 };
 };
 
 entt::entity

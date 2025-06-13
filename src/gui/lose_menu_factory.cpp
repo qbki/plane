@@ -4,7 +4,6 @@
 #include "src/gui/components/ui.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
-#include "src/utils/color.h"
 
 #include "lose_menu_factory.h"
 #include "utils/utils.h"

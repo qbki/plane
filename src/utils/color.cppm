@@ -1,12 +1,14 @@
-#pragma once
+module;
 #include <SDL_rwops.h>
 #include <glm/vec3.hpp>
 #include <limits>
 #include <vector>
 
-namespace Core {
+export module utils.color;
 
-struct Color
+namespace utils::color {
+
+export struct Color
 {
   constexpr static auto MAX_COLOR { std::numeric_limits<std::uint8_t>::max() };
   constexpr static auto ONE_BYTE { 8 };

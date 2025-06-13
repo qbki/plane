@@ -5,18 +5,19 @@
 #include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
 #include "src/shapes.h"
-#include "src/utils/color.h"
 
 #include "ui.h"
+
+import utils.color;
 
 void
 ui_system(const Scene& scene)
 {
   auto& registry = scene.state().shared_registry();
-  registry->view<RectSize, Core::Color, Transform, IsDirty, UIRect>().each(
+  registry->view<RectSize, utils::color::Color, Transform, IsDirty, UIRect>().each(
     [&](entt::entity entity,
         const RectSize& rect,
-        const Core::Color& color,
+        const utils::color::Color& color,
         Transform& transform,
         IsDirty& is_dirty) {
       if (is_dirty.value) {

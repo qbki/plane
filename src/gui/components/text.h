@@ -3,13 +3,14 @@
 
 #include "src/components/common.h"
 #include "src/services.h"
-#include "src/utils/color.h"
+
+import utils.color;
 
 namespace GUI::Factory {
 
 struct TextConfig
 {
-  Core::Color color = Services::theme().components.text.color;
+  utils::color::Color color = Services::theme().components.text.color;
   GUI::Typography::Font font = Services::theme().typography.body1;
   Parent parent = Parent { std::nullopt };
   std::string text = "";

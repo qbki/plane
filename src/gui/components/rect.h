@@ -1,7 +1,8 @@
 #pragma once
 #include "src/components/common.h"
 #include "src/services.h"
-#include "src/utils/color.h"
+
+import utils.color;
 
 namespace GUI::Factory {
 
@@ -9,7 +10,7 @@ struct RectConfig
 {
   float width = 0;
   float height = 0;
-  Core::Color color = Services::theme().components.text.color;
+  utils::color::Color color = Services::theme().components.text.color;
   Parent parent = Parent { std::nullopt };
 };
 

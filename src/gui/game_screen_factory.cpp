@@ -8,9 +8,9 @@
 #include "src/gui/components/text.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
-#include "src/utils/color.h"
 
 #include "game_screen_factory.h"
+
 
 namespace GUI {
 

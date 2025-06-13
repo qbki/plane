@@ -8,6 +8,8 @@
 
 #include "text.h"
 
+import utils.color;
+
 namespace GUI::Factory {
 
 entt::entity
@@ -37,7 +39,7 @@ text(std::shared_ptr<entt::registry>& registry, const TextConfig& config)
 
   auto entity = registry->create();
   registry->emplace<Available>(entity);
-  registry->emplace<Core::Color>(entity, config.color);
+  registry->emplace<utils::color::Color>(entity, config.color);
   registry->emplace<GUI::Typography::Font>(entity, config.font);
   registry->emplace<GUIKind>(entity);
   registry->emplace<IsDirty>(entity, true);

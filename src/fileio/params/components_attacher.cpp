@@ -8,7 +8,6 @@
 #include "src/game_state/factory.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
-#include "src/utils/color.h"
 #include "src/utils/noop.h"
 
 #include "components_attacher.h"
@@ -16,6 +15,7 @@
 #include "entities_map.h"
 
 import control;
+import utils.color;
 
 ComponetsAttacher::ComponetsAttacher(
   std::reference_wrapper<const Scene> scene,
@@ -63,7 +63,7 @@ ComponetsAttacher::operator()(const EntityParamsText& params) const
   auto [transform, color] = _scene.get()
                               .state()
                               .registry()
-                              .get<Transform, Core::Color>(_entity);
+                              .get<Transform, utils::color::Color>(_entity);
   transform.scale({ params.width, params.height, 1 });
   color = params.color;
 }

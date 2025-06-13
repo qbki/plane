@@ -7,7 +7,8 @@
 #include "src/mesh.h"
 #include "src/sound/sound.h"
 #include "src/texture.h"
-#include "src/utils/color.h"
+
+import utils.color;
 
 class Cache
 {
@@ -25,6 +26,6 @@ public:
   Cache();
 
   ModelPair get_model(const std::filesystem::path& mesh_path);
-  ModelPair get_rect(const Core::Color& color);
+  ModelPair get_rect(const utils::color::Color& color);
   SoundPtr get_sound(const std::filesystem::path& sound_path);
 };

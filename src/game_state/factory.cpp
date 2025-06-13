@@ -7,6 +7,8 @@
 
 #include "factory.h"
 
+import control;
+
 namespace ModelFactory {
 
 entt::entity
@@ -138,7 +140,7 @@ make_tutorial_button(std::shared_ptr<entt::registry>& registry,
   registry->emplace<Opaque>(entity);
   registry->emplace<TexturePointer>(entity, texture);
   registry->emplace<Transform>(entity);
-  registry->emplace<TutorialButton>(entity, Control::Action::UNKNOWN);
+  registry->emplace<TutorialButton>(entity, control::Action::UNKNOWN);
   registry->emplace<TutorialButtonKind>(entity);
   return entity;
 }

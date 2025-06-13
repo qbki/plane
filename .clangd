@@ -1,5 +1,14 @@
 CompileFlags:
-  Add: [-std=c++23]
+  Add: [
+    "-std=c++23",
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-pedantic-errors",
+    "-fno-exceptions"
+  ]
+
+
 Diagnostics:
   # Use IWYU utils, for instance `make iwyu`.
   # Both IWYU and UnusedIncludes have unresolvable conflicts. So, it is better

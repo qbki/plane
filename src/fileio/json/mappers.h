@@ -1,4 +1,6 @@
 #pragma once
+import control;
+
 #include <format>
 #include <glm/vec3.hpp>
 #include <nlohmann/json.hpp>
@@ -9,7 +11,6 @@
 
 #include "src/components/common.h"
 #include "src/consts.h"
-#include "src/control.h"
 #include "src/fileio/params/entities.h"
 #include "src/fileio/params/entities_validators.h"
 #include "src/fileio/params/meta.h"
@@ -18,6 +19,8 @@
 #include "src/utils/crash.h"
 
 #include "../params.h"
+
+import control;
 
 template<typename T>
 void
@@ -56,21 +59,21 @@ struct adl_serializer<BehaviourEnum>
 };
 
 template<>
-struct adl_serializer<Control::Action>
+struct adl_serializer<control::Action>
 {
-  static void from_json(const nlohmann::json& json_obj, Control::Action& value)
+  static void from_json(const nlohmann::json& json_obj, control::Action& value)
   {
     auto action = json_obj.get<std::string>();
     if (action == "up") {
-      value = Control::Action::UP;
+      value = control::Action::UP;
     } else if (action == "left") {
-      value = Control::Action::LEFT;
+      value = control::Action::LEFT;
     } else if (action == "right") {
-      value = Control::Action::RIGHT;
+      value = control::Action::RIGHT;
     } else if (action == "down") {
-      value = Control::Action::DOWN;
+      value = control::Action::DOWN;
     } else if (action == "shooting") {
-      value = Control::Action::SHOOTING;
+      value = control::Action::SHOOTING;
     } else {
       crash(std::format("Unknown action: {}", action));
     }

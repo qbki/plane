@@ -4,6 +4,7 @@
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
+#include "src/events/event.h"
 #include "src/services.h"
 
 #include "row.h"
@@ -25,17 +26,18 @@ row(std::shared_ptr<entt::registry>& registry, const RowConfig& config)
 
   reparent(registry, config.children.value, entity);
 
-  layout.add([registry, entity](auto&) {
+  layout.add([registry, entity](Events::GUILayout &) {
     auto [children_ids,
           transform,
           rect_size,
           parent] = registry
                       ->get<Children, Transform, RectSize, Parent>(entity);
 
-    auto children = children_ids.value
-                    | std::views::transform([registry](const auto& child) {
-                        return registry->get<Transform, RectSize>(child);
-                      });
+    auto children = std::views::transform(
+      children_ids.value,
+      [registry](const auto child) {
+        return registry->get<Transform, RectSize>(child);
+      });
 
     int max_height = 0;
     for (auto [_, child_rect_size] : children) {

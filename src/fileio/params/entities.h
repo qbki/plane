@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cstddef>
 #include <filesystem> // IWYU pragma: export
 #include <glm/vec3.hpp>
@@ -6,7 +7,7 @@
 #include <string>
 #include <variant>
 
-#include "src/control.h"
+import control;
 
 struct VelocityParams
 {
@@ -64,7 +65,7 @@ struct EntityParamsWeapon
 struct EntityParamsTutorialButton
 {
   std::string model_id { "" };
-  Control::Action button { Control::Action::UNKNOWN };
+  control::Action button { control::Action::UNKNOWN };
 };
 
 struct EntityParamsText

@@ -8,10 +8,11 @@
 #include <optional> // IWYU pragma: export
 #include <vector>
 
-#include "src/control.h"
 #include "src/mesh.h" // IWYU pragma: export
 #include "src/texture.h"
 #include "src/utils/types.h" // IWYU pragma: export
+
+import control;
 
 enum class EnemyStateEnum
 {
@@ -32,7 +33,7 @@ using Parent = NewType<std::optional<entt::entity>, struct ParentTag>;
 using ShotSound = NewType<std::optional<std::string>, struct ShotSoundTag>;
 using Text = NewType<std::string, struct TextTag>;
 using TexturePointer = std::shared_ptr<Texture>;
-using TutorialButton = NewType<Control::Action, struct TutorialButtonTag>;
+using TutorialButton = NewType<control::Action, struct TutorialButtonTag>;
 
 using Acceleration = NewType<glm::vec3, struct AccelerationTag>;
 using AccelerationScalar = NewType<float, struct AccelerationScalarTag>;

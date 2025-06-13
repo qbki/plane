@@ -8,7 +8,7 @@
 #include <variant>
 #include <vector>
 
-#include "src/fileio/params/entities.h" // IWYU pragma: export
+#include "src/fileio/params/entities.h"
 #include "src/utils/crash.h"
 #include "src/utils/types.h"
 

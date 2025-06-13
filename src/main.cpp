@@ -19,6 +19,8 @@
 #include "utils/system.h"
 #include "utils/types.h"
 
+import control;
+
 int
 main(int argc, char* argv[])
 {
@@ -36,7 +38,7 @@ main(int argc, char* argv[])
 
   auto window = init_window(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
   auto context = init_context(window.get());
-  auto control = std::make_unique<Control>();
+  auto control = std::make_unique<control::Control>();
 
   auto geometry_pass_shader = std::make_unique<Shader>();
   {

@@ -1,4 +1,5 @@
 #pragma once
+
 #include <filesystem> // IWYU pragma: export
 #include <functional>
 #include <glm/vec2.hpp> // IWYU pragma: export
@@ -11,13 +12,14 @@
 #include "src/app/settings.h" // IWYU pragma: export
 #include "src/app/system.h"   // IWYU pragma: export
 #include "src/consts.h"
-#include "src/control.h"     // IWYU pragma: export
 #include "src/scene/scene.h" // IWYU pragma: export
 #include "src/sdl_init.h"
 #include "src/shader.h"                   // IWYU pragma: export
 #include "src/shading/deferred_shading.h" // IWYU pragma: export
 #include "src/shading/framebuffer.h"      // IWYU pragma: export
 #include "src/shapes.h"                   // IWYU pragma: export
+
+import control;
 
 class App
 {
@@ -37,7 +39,7 @@ private:
   Settings _settings { SETTINGS_FILE };
   Save _save { SAVE_DATA_FILE };
   std::vector<std::unique_ptr<Scene>> _scenes {};
-  std::unique_ptr<Control> _control {};
+  std::unique_ptr<control::Control> _control {};
   RectSize _screen_size { DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
   std::unique_ptr<DeferredShading> _deferred_shading {};
   std::unique_ptr<FrameBuffer>
@@ -59,8 +61,8 @@ public:
   App& operator=(App&&) = delete;
   ~App() = default;
 
-  void control(std::unique_ptr<Control> value);
-  [[nodiscard]] Control& control() const;
+  void control(std::unique_ptr<control::Control> value);
+  [[nodiscard]] control::Control& control() const;
 
   void deferred_shading(std::unique_ptr<DeferredShading> value);
   [[nodiscard]] DeferredShading& deferred_shading() const;

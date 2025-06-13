@@ -15,6 +15,8 @@
 #include "emitters.h"
 #include "entities_map.h"
 
+import control;
+
 ComponetsAttacher::ComponetsAttacher(
   std::reference_wrapper<const Scene> scene,
   const entt::entity entity,
@@ -167,7 +169,7 @@ ComponetsAttacher::attach_text(const std::string& text) const
 }
 
 void
-ComponetsAttacher::attach_tutorial_button_value(Control::Action action) const
+ComponetsAttacher::attach_tutorial_button_value(control::Action action) const
 {
   auto& registry = _scene.get().state().registry();
   registry.emplace_or_replace<TutorialButton>(_entity, action);

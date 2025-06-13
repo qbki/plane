@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.27)
+cmake_minimum_required(VERSION 3.31.6)
 include(${CMAKE_SOURCE_DIR}/configs/cmake/utils.cmake)
 include(${CMAKE_SOURCE_DIR}/configs/cmake/license.cmake)
 
@@ -39,6 +39,8 @@ endfunction()
 set(JSON_ImplicitConversions, OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_SCAN_FOR_MODULES ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(SRC_SHADERS_DIRECTORY ${CMAKE_SOURCE_DIR}/shaders)
@@ -103,13 +105,20 @@ if(DEFINED EMSCRIPTEN)
   #add_linker_flag("-gsource-map")
 endif()
 
-file(GLOB_RECURSE SOURCES src/*)
+file(GLOB_RECURSE SOURCES src/*.cpp)
+file(GLOB_RECURSE SOURCES_MODULES src/*.cppm)
 set(TEST_SOURCES ${SOURCES})
+set(MODULES_SOURCES src/control.cpp)
 list(FILTER SOURCES EXCLUDE REGEX ".tests.cpp$")
 list(FILTER TEST_SOURCES EXCLUDE REGEX "main.cpp$")
 
 if(BUILD_EXECUTABLE)
   add_executable(${PROJECT_NAME} ${SOURCES})
+  target_sources(${PROJECT_NAME}
+    PUBLIC
+      FILE_SET cpp_modules
+      TYPE CXX_MODULES FILES ${SOURCES_MODULES})
+  target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
   setup_link_libraries(${PROJECT_NAME})
   if(DEFINED EMSCRIPTEN)
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "index")

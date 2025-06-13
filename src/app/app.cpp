@@ -25,12 +25,12 @@ App::or_crash(std::unique_ptr<T, F>& ptr, const std::string& message)
 }
 
 void
-App::control(std::unique_ptr<Control> value)
+App::control(std::unique_ptr<control::Control> value)
 {
   _control = std::move(value);
 }
 
-Control&
+control::Control&
 App::control() const
 {
   return *_control;

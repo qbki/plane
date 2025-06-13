@@ -14,7 +14,9 @@ export module utils.system;
 
 namespace utils::system {
 
+
 #ifdef __linux__
+
 
 export std::filesystem::path
 get_excutable_path()
@@ -28,13 +30,16 @@ get_excutable_path()
   crash("Can't get the executable path");
 }
 
+
 #elif __EMSCRIPTEN__
+
 
 export std::filesystem::path
 get_excutable_path()
 {
   return { "/" };
 }
+
 
 #endif
 

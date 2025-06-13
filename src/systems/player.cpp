@@ -3,7 +3,6 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/trigonometric.hpp>
-#include <string>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
@@ -11,9 +10,10 @@
 #include "src/game_state/factory.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
-#include "src/utils/common.h"
 
 #include "player.h"
+
+import utils.common;
 
 void
 player_rotation_system(const Scene& scene)
@@ -54,6 +54,8 @@ player_shooting_system(const Scene& scene)
 void
 player_moving_system(const Scene& scene)
 {
+  using namespace utils::common;
+
   const auto& control = Services::app().control();
   glm::vec3 move_direction { 0, 0, 0 };
   if (control.left) {

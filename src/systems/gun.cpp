@@ -7,14 +7,17 @@
 #include "src/consts.h"
 #include "src/game_state/factory.h"
 #include "src/services.h"
-#include "src/utils/common.h"
 #include "src/utils/random.h"
 
 #include "gun.h"
 
+import utils.common;
+
 void
 gun_shooting_system(Scene& scene)
 {
+  using namespace utils::common;
+
   auto& registry = scene.state().shared_registry();
   static auto get_random_float = make_random_fn(0.0f, 1.0f);
   registry->view<entt::entity, Weapon, Transform>().each(

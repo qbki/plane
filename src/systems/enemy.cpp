@@ -6,7 +6,6 @@
 #include <glm/trigonometric.hpp>
 #include <ranges>
 #include <tuple>
-#include <variant>
 
 #include "src/collections/octree.h"
 #include "src/components/common.h"
@@ -16,11 +15,12 @@
 #include "src/consts.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
-#include "src/utils/common.h"
 
 #include "enemy.h"
 
 constexpr float SHOOT_ANGLE = 0.3;
+
+import utils.common;
 
 std::tuple<entt::entity, glm::vec3>
 get_player_data(const Scene& scene)
@@ -132,6 +132,7 @@ enemy_rotation_system(Scene& scene)
 void
 enemy_initial_rotation(const Scene& scene)
 {
+  using namespace utils::common;
   auto [_, player_position] = get_player_data(scene);
   scene.state()
     .shared_registry()

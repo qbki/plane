@@ -8,6 +8,7 @@ export module utils.color;
 
 namespace utils::color {
 
+
 export struct Color
 {
   constexpr static auto MAX_COLOR { std::numeric_limits<std::uint8_t>::max() };
@@ -20,6 +21,7 @@ export struct Color
   std::uint8_t b { MAX_COLOR };
   std::uint8_t a { MAX_COLOR };
 
+
   // cppcheck-suppress[functionStatic]
   constexpr explicit Color(std::uint32_t _value)
     : r((_value & (MAX_COLOR << THREE_BYTES)) >> THREE_BYTES)
@@ -29,6 +31,7 @@ export struct Color
   {
   }
 
+
   // cppcheck-suppress[functionStatic]
   constexpr explicit Color(glm::vec3 value)
     : r(denorm(value.r))
@@ -36,6 +39,7 @@ export struct Color
     , b(denorm(value.b))
   {
   }
+
 
   // cppcheck-suppress[functionStatic]
   constexpr Color(std::uint8_t _r,
@@ -49,6 +53,7 @@ export struct Color
   {
   }
 
+
   constexpr Color& operator=(glm::vec3 other)
   {
     this->r = denorm(other.r);
@@ -57,15 +62,18 @@ export struct Color
     return *this;
   }
 
+
   constexpr bool operator==(const Color& other) const
   {
     return a == other.a && r == other.r && g == other.g && b == other.b;
   }
 
+
   [[nodiscard]] std::vector<std::uint8_t> constexpr to_array() const
   {
     return { r, g, b, a };
   }
+
 
   constexpr static std::uint8_t denorm(float value)
   {

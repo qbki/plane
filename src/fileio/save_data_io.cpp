@@ -6,14 +6,15 @@
 #include "src/fileio/save_data_io.h"
 #include "src/services.h"
 #include "src/utils/file_loaders.h"
-#include "src/utils/system.h"
 
 #include "save_data_io.h"
+
+import utils.system;
 
 SaveData
 load_save_data(const std::filesystem::path& path)
 {
-  auto exec_path = get_excutable_path();
+  auto exec_path = utils::system::get_excutable_path();
   auto json = load_local_json(path).or_fallback({});
   auto current_level = json.contains("current_level")
                          ? json["current_level"].get<std::string>()

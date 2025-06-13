@@ -1,3 +1,6 @@
+module;
+#include <filesystem>
+
 #ifdef __linux__
 #include <array>
 #include <linux/limits.h> // IWYU pragma: keep
@@ -5,10 +8,15 @@
 #include <unistd.h>
 
 #include "src/utils/crash.h"
+#endif
 
-#include "system.h"
+export module utils.system;
 
-std::filesystem::path
+namespace utils::system {
+
+#ifdef __linux__
+
+export std::filesystem::path
 get_excutable_path()
 {
   std::array<char, PATH_MAX> path {};
@@ -22,12 +30,12 @@ get_excutable_path()
 
 #elif __EMSCRIPTEN__
 
-#include "system.h"
-
-std::filesystem::path
+export std::filesystem::path
 get_excutable_path()
 {
   return { "/" };
 }
 
 #endif
+
+}

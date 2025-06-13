@@ -1,3 +1,4 @@
+#include <cstdlib>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <format>
 #include <string>
@@ -16,10 +17,10 @@
 #include "src/services/logger.h"
 #include "systems/render.h"
 #include "utils/file_loaders/file_loaders.h"
-#include "utils/system.h"
 #include "utils/types.h"
 
 import control;
+import utils.system;
 
 int
 main(int argc, char* argv[])
@@ -86,7 +87,7 @@ main(int argc, char* argv[])
 
   auto vg_canvas = init_vg_canvas(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
 
-  auto assets_dir = get_excutable_path() / DEFAULT_ASSETS_DIR;
+  auto assets_dir = utils::system::get_excutable_path() / DEFAULT_ASSETS_DIR;
   if (argc == 2) {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     assets_dir = std::filesystem::path(std::string(argv[1]));

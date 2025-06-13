@@ -35,7 +35,8 @@
 #include "src/systems/ui.h"
 #include "src/systems/update_gui.h"
 #include "src/systems/velocity.h"
-#include "src/utils/system.h"
+
+import utils.system;
 
 std::unique_ptr<Camera>
 make_gui_camera(const App& app)
@@ -146,7 +147,7 @@ load_level_scene()
 void
 load_current_level(const Events::LoadCurrentLevelEvent&)
 {
-  auto exec_path = get_excutable_path();
+  auto exec_path = utils::system::get_excutable_path();
   auto save_data = load_save_data(exec_path / SAVE_DATA_FILE);
   auto levels_dir = Services::app().levels_dir();
   auto levels_order = load_levels_order(levels_dir / "levels.json");

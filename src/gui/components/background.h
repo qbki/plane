@@ -8,7 +8,7 @@ namespace GUI::Factory {
 
 struct BackgroundConfig
 {
-  utils::color::Color color = { Services::theme().palette.white };
+  pln::utils::color::Color color = { Services::theme().palette.white };
   Parent parent = Parent { std::nullopt };
   float z { 0 };
 };

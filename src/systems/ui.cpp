@@ -14,10 +14,10 @@ void
 ui_system(const Scene& scene)
 {
   auto& registry = scene.state().shared_registry();
-  registry->view<RectSize, utils::color::Color, Transform, IsDirty, UIRect>().each(
+  registry->view<RectSize, pln::utils::color::Color, Transform, IsDirty, UIRect>().each(
     [&](entt::entity entity,
         const RectSize& rect,
-        const utils::color::Color& color,
+        const pln::utils::color::Color& color,
         Transform& transform,
         IsDirty& is_dirty) {
       if (is_dirty.value) {

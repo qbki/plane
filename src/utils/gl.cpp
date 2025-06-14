@@ -160,7 +160,7 @@ gen_render_buffer(unsigned int width, unsigned int height)
       "Viewport dimentions: {}x{}", dimentions.at(2), dimentions.at(3)));
     auto status_text = std::format(
       "Framebuffer status ({}x{}): {}", width, height, status);
-    utils::crash(status_text);
+    pln::utils::crash(status_text);
   }
   return render_buffer;
 }

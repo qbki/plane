@@ -94,7 +94,7 @@ PositionStrategyVisitor::operator()(const PositionStrategySingle& strategy)
   auto transform = registry.try_get<Transform>(entity);
   if (transform == nullptr) {
     constexpr auto message = "Entity {} can't be placed in exact position";
-    utils::crash(std::format(message, strategy.entity_id));
+    pln::utils::crash(std::format(message, strategy.entity_id));
   }
   transform->translate(strategy.position);
 }
@@ -141,7 +141,7 @@ PositionStrategyVisitor::operator()(const PositionStrategySquare& strategy)
 void
 PositionStrategyVisitor::operator()(const PositionStrategyUndefined&) const
 {
-  utils::crash("Can't handle an unknown strategy");
+  pln::utils::crash("Can't handle an unknown strategy");
 }
 
 void

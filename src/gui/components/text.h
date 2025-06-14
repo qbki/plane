@@ -10,7 +10,7 @@ namespace GUI::Factory {
 
 struct TextConfig
 {
-  utils::color::Color color = Services::theme().components.text.color;
+  pln::utils::color::Color color = Services::theme().components.text.color;
   GUI::Typography::Font font = Services::theme().typography.body1;
   Parent parent = Parent { std::nullopt };
   std::string text = "";

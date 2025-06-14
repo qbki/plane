@@ -26,7 +26,7 @@ import utils.crash;
 void
 crash_with_sdl_error(std::string message)
 {
-  utils::crash(std::format("{}: {}", message, SDL_GetError()));
+  pln::utils::crash(std::format("{}: {}", message, SDL_GetError()));
 }
 
 void GLAPIENTRY
@@ -117,7 +117,7 @@ init_context(SDL_Window* window)
   GLenum err = glewInit();
   if (GLEW_OK != err) {
     auto err_glew = glubyte_to_string(glewGetErrorString(err));
-    utils::crash(std::format("Unable to initialize GLEW: {}", err_glew));
+    pln::utils::crash(std::format("Unable to initialize GLEW: {}", err_glew));
   }
   Services::logger().info("GLEW has been inited.");
 

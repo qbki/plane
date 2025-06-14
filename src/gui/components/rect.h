@@ -10,7 +10,7 @@ struct RectConfig
 {
   float width = 0;
   float height = 0;
-  utils::color::Color color = Services::theme().components.text.color;
+  pln::utils::color::Color color = Services::theme().components.text.color;
   Parent parent = Parent { std::nullopt };
 };
 

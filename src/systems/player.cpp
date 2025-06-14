@@ -54,7 +54,7 @@ player_shooting_system(const Scene& scene)
 void
 player_moving_system(const Scene& scene)
 {
-  using namespace utils::common;
+  using namespace pln::utils::common;
 
   const auto& control = Services::app().control();
   glm::vec3 move_direction { 0, 0, 0 };

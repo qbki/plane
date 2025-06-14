@@ -76,7 +76,7 @@ Cache::get_model(const std::filesystem::path& mesh_path)
 }
 
 Cache::ModelPair
-Cache::get_rect(const utils::color::Color& color)
+Cache::get_rect(const pln::utils::color::Color& color)
 {
   auto rect_id = "#rect";
   if (_meshes.contains(rect_id)) {

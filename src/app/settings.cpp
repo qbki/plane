@@ -30,7 +30,7 @@ Settings::master_volume()
 void
 Settings::load()
 {
-  auto exec_path = utils::system::get_excutable_path();
+  auto exec_path = pln::utils::system::get_excutable_path();
   const auto settings = load_settings(exec_path / _settings_path);
   _master_volume.value(settings.volume);
 }
@@ -38,7 +38,7 @@ Settings::load()
 void
 Settings::save() const
 {
-  auto exec_path = utils::system::get_excutable_path();
+  auto exec_path = pln::utils::system::get_excutable_path();
   save_settings(exec_path / _settings_path,
                 {
                   .volume = _master_volume.value(),

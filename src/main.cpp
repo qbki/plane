@@ -1,5 +1,5 @@
-#include <cstdlib>
 #define GLM_ENABLE_EXPERIMENTAL
+#include <cstdlib>
 #include <format>
 #include <string>
 #include <utility>
@@ -39,7 +39,7 @@ main(int argc, char* argv[])
 
   auto window = init_window(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
   auto context = init_context(window.get());
-  auto control = std::make_unique<control::Control>();
+  auto control = std::make_unique<pln::control::Control>();
 
   auto geometry_pass_shader = std::make_unique<Shader>();
   {
@@ -87,7 +87,7 @@ main(int argc, char* argv[])
 
   auto vg_canvas = init_vg_canvas(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
 
-  auto assets_dir = utils::system::get_excutable_path() / DEFAULT_ASSETS_DIR;
+  auto assets_dir = pln::utils::system::get_excutable_path() / DEFAULT_ASSETS_DIR;
   if (argc == 2) {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     assets_dir = std::filesystem::path(std::string(argv[1]));

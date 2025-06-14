@@ -132,7 +132,7 @@ enemy_rotation_system(Scene& scene)
 void
 enemy_initial_rotation(const Scene& scene)
 {
-  using namespace utils::common;
+  using namespace pln::utils::common;
   auto [_, player_position] = get_player_data(scene);
   scene.state()
     .shared_registry()

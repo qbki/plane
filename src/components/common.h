@@ -33,7 +33,7 @@ using Parent = NewType<std::optional<entt::entity>, struct ParentTag>;
 using ShotSound = NewType<std::optional<std::string>, struct ShotSoundTag>;
 using Text = NewType<std::string, struct TextTag>;
 using TexturePointer = std::shared_ptr<Texture>;
-using TutorialButton = NewType<control::Action, struct TutorialButtonTag>;
+using TutorialButton = NewType<pln::control::Action, struct TutorialButtonTag>;
 
 using Acceleration = NewType<glm::vec3, struct AccelerationTag>;
 using AccelerationScalar = NewType<float, struct AccelerationScalarTag>;

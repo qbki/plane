@@ -19,7 +19,7 @@ rect(std::shared_ptr<entt::registry>& registry, const RectConfig& config)
 
   auto entity = registry->create();
   registry->emplace<Available>(entity);
-  registry->emplace<utils::color::Color>(entity, config.color);
+  registry->emplace<pln::utils::color::Color>(entity, config.color);
   registry->emplace<GUIKind>(entity);
   registry->emplace<IsDirty>(entity, true);
   registry->emplace<Parent>(entity, config.parent);

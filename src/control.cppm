@@ -4,7 +4,7 @@ module;
 
 export module control;
 
-namespace control {
+namespace pln::control {
 
 export enum class Action
 {

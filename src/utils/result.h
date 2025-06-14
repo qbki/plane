@@ -56,7 +56,7 @@ public:
     if (std::holds_alternative<T>(_variant)) {
       return std::get<PAYLOAD_IDX>(_variant);
     }
-    utils::crash(*std::get<ERROR_IDX>(_variant));
+    pln::utils::crash(*std::get<ERROR_IDX>(_variant));
   }
 
   bool has_payload() { return std::holds_alternative<T>(_variant); }

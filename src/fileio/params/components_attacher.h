@@ -39,7 +39,7 @@ public:
   void attach_lives(int lives) const;
   void attach_color(const glm::vec3& color) const;
   void attach_text(const std::string& text) const;
-  void attach_tutorial_button_value(control::Action action) const;
+  void attach_tutorial_button_value(pln::control::Action action) const;
   void attach_weapon(const EntityParamsActor& actor_params) const;
   void attach_particles_emmiter_by_hit(
     const EntityParamsActor& actor_params) const;

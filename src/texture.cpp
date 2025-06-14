@@ -27,7 +27,7 @@ int_to_texture_index(unsigned int idx)
     case 5: // NOLINT(cppcoreguidelines-avoid-magic-numbers)
       return GL_TEXTURE5;
     default:
-      utils::crash("Wrong texture index");
+      pln::utils::crash("Wrong texture index");
   }
 }
 

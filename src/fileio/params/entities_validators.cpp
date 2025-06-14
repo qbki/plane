@@ -8,14 +8,14 @@ void
 validate(const EntityParamsText& value)
 {
   if (value.size <= 0) {
-    utils::crash(R"("size" field of kind "text" must be 1 or more)");
+    pln::utils::crash(R"("size" field of kind "text" must be 1 or more)");
   }
 
   if (value.width < 0.0f) {
-    utils::crash(R"("width" field of kind "text" must be more than zero)");
+    pln::utils::crash(R"("width" field of kind "text" must be more than zero)");
   }
 
   if (value.height < 0.0f) {
-    utils::crash(R"("height" field of kind "text" must be more than zero)");
+    pln::utils::crash(R"("height" field of kind "text" must be more than zero)");
   }
 }

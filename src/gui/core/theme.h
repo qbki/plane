@@ -7,14 +7,14 @@ namespace GUI {
 
 struct Palette
 {
-  constexpr static utils::color::Color WHITE { 0x7f'7d'7e'ff };
-  constexpr static utils::color::Color WHITE_ACCENT { 0xff'fd'fe'ff };
-  constexpr static utils::color::Color GRAY { 0x43'43'43'ff };
-  constexpr static utils::color::Color RED { 0xcb'00'66'ff };
+  constexpr static pln::utils::color::Color WHITE { 0x7f'7d'7e'ff };
+  constexpr static pln::utils::color::Color WHITE_ACCENT { 0xff'fd'fe'ff };
+  constexpr static pln::utils::color::Color GRAY { 0x43'43'43'ff };
+  constexpr static pln::utils::color::Color RED { 0xcb'00'66'ff };
 
-  utils::color::Color white { WHITE };
-  utils::color::Color white_accent { WHITE_ACCENT };
-  utils::color::Color gray { GRAY };
+  pln::utils::color::Color white { WHITE };
+  pln::utils::color::Color white_accent { WHITE_ACCENT };
+  pln::utils::color::Color gray { GRAY };
 };
 
 struct Typography
@@ -48,7 +48,7 @@ struct Components
 {
   struct Text
   {
-    utils::color::Color color { Palette::WHITE_ACCENT };
+    pln::utils::color::Color color { Palette::WHITE_ACCENT };
   } text;
 
   struct TextButton
@@ -60,7 +60,7 @@ struct Components
 
   struct MenuScreen
   {
-    utils::color::Color background_color { 0x00'00'00'bb }; // NOLINT
+    pln::utils::color::Color background_color { 0x00'00'00'bb }; // NOLINT
   } menu_screen;
 };
 

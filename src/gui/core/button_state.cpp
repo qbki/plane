@@ -88,7 +88,7 @@ ButtonState::current() const
     case State::HOVER:
       return _hover;
   }
-  utils::crash("Encountered an unknown button state");
+  pln::utils::crash("Encountered an unknown button state");
 }
 
 }

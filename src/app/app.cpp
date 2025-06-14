@@ -21,17 +21,17 @@ void
 App::or_crash(std::unique_ptr<T, F>& ptr, const std::string& message)
 {
   if (!ptr) {
-    utils::crash(std::format("System is incomplete: {}", message));
+    pln::utils::crash(std::format("System is incomplete: {}", message));
   }
 }
 
 void
-App::control(std::unique_ptr<control::Control> value)
+App::control(std::unique_ptr<pln::control::Control> value)
 {
   _control = std::move(value);
 }
 
-control::Control&
+pln::control::Control&
 App::control() const
 {
   return *_control;

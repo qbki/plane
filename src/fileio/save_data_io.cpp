@@ -14,7 +14,7 @@ import utils.system;
 SaveData
 load_save_data(const std::filesystem::path& path)
 {
-  auto exec_path = utils::system::get_excutable_path();
+  auto exec_path = pln::utils::system::get_excutable_path();
   auto json = load_local_json(path).or_fallback({});
   auto current_level = json.contains("current_level")
                          ? json["current_level"].get<std::string>()

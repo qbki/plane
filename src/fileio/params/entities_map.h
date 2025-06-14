@@ -29,7 +29,7 @@ public:
     if (std::holds_alternative<T>(value)) {
       return std::get<T>(value);
     }
-    utils::crash(
+    pln::utils::crash(
       std::format(R"(Can't find an entity params with key "{}" and type "{}")",
                   key,
                   demangled_name<T>()));

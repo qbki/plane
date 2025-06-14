@@ -1,6 +1,4 @@
 #pragma once
-import control;
-
 #include <format>
 #include <glm/vec3.hpp>
 #include <nlohmann/json.hpp>
@@ -53,29 +51,29 @@ struct adl_serializer<BehaviourEnum>
     } else if (behaviour == "tutorial_button") {
       value = BehaviourEnum::TUTORIAL_BUTTON;
     } else {
-      utils::crash(std::format("Unknown behaviour: {}", behaviour));
+      pln::utils::crash(std::format("Unknown behaviour: {}", behaviour));
     }
   }
 };
 
 template<>
-struct adl_serializer<control::Action>
+struct adl_serializer<pln::control::Action>
 {
-  static void from_json(const nlohmann::json& json_obj, control::Action& value)
+  static void from_json(const nlohmann::json& json_obj, pln::control::Action& value)
   {
     auto action = json_obj.get<std::string>();
     if (action == "up") {
-      value = control::Action::UP;
+      value = pln::control::Action::UP;
     } else if (action == "left") {
-      value = control::Action::LEFT;
+      value = pln::control::Action::LEFT;
     } else if (action == "right") {
-      value = control::Action::RIGHT;
+      value = pln::control::Action::RIGHT;
     } else if (action == "down") {
-      value = control::Action::DOWN;
+      value = pln::control::Action::DOWN;
     } else if (action == "shooting") {
-      value = control::Action::SHOOTING;
+      value = pln::control::Action::SHOOTING;
     } else {
-      utils::crash(std::format("Unknown action: {}", action));
+      pln::utils::crash(std::format("Unknown action: {}", action));
     }
   }
 };
@@ -206,7 +204,7 @@ struct adl_serializer<PositionStrategy>
       json_obj.at("entity_id").get_to(strategy.entity_id);
       value = strategy;
     } else {
-      utils::crash(std::format("Unknown strategy: {}", kind));
+      pln::utils::crash(std::format("Unknown strategy: {}", kind));
     }
   }
 };
@@ -279,7 +277,7 @@ struct adl_serializer<EntityParams>
       validate(params);
       value = params;
     } else {
-      utils::crash(std::format("Unknown entity: {}", kind));
+      pln::utils::crash(std::format("Unknown entity: {}", kind));
     }
   };
 };

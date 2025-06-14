@@ -63,7 +63,7 @@ ComponetsAttacher::operator()(const EntityParamsText& params) const
   auto [transform, color] = _scene.get()
                               .state()
                               .registry()
-                              .get<Transform, utils::color::Color>(_entity);
+                              .get<Transform, pln::utils::color::Color>(_entity);
   transform.scale({ params.width, params.height, 1 });
   color = params.color;
 }
@@ -169,7 +169,7 @@ ComponetsAttacher::attach_text(const std::string& text) const
 }
 
 void
-ComponetsAttacher::attach_tutorial_button_value(control::Action action) const
+ComponetsAttacher::attach_tutorial_button_value(pln::control::Action action) const
 {
   auto& registry = _scene.get().state().registry();
   registry.emplace_or_replace<TutorialButton>(_entity, action);

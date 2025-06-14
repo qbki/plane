@@ -35,14 +35,14 @@ demangled_name()
       noop();
       break;
     case -1:
-      utils::crash("Demangle. A memory allocation failure occurred.");
+      pln::utils::crash("Demangle. A memory allocation failure occurred.");
     case -2:
-      utils::crash("Demangle. A mangled_name is not a valid name "
-                   "under the C++ ABI mangling rules.");
+      pln::utils::crash("Demangle. A mangled_name is not a valid name "
+                        "under the C++ ABI mangling rules.");
     case -3:
-      utils::crash("Demangle. One of the arguments is invalid.");
+      pln::utils::crash("Demangle. One of the arguments is invalid.");
     default:
-      utils::crash("Demangle. Unknown error.");
+      pln::utils::crash("Demangle. Unknown error.");
   }
   return result;
 }

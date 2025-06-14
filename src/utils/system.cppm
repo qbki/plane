@@ -13,7 +13,7 @@ export module utils.system;
 
 import utils.crash;
 
-namespace utils::system {
+namespace pln::utils::system {
 
 
 #ifdef __linux__

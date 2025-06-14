@@ -29,7 +29,7 @@ DataHolder::unsafe_rwops()
 {
   auto rw = SDL_RWFromConstMem(_data.data(), static_cast<int>(_data.size()));
   if (rw == nullptr) {
-    utils::crash("Can't create RWops");
+    pln::utils::crash("Can't create RWops");
   }
   return rw;
 }

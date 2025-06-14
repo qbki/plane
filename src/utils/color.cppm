@@ -6,7 +6,7 @@ module;
 
 export module utils.color;
 
-namespace utils::color {
+namespace pln::utils::color {
 
 
 export struct Color

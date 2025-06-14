@@ -39,7 +39,7 @@ private:
   Settings _settings { SETTINGS_FILE };
   Save _save { SAVE_DATA_FILE };
   std::vector<std::unique_ptr<Scene>> _scenes {};
-  std::unique_ptr<control::Control> _control {};
+  std::unique_ptr<pln::control::Control> _control {};
   RectSize _screen_size { DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
   std::unique_ptr<DeferredShading> _deferred_shading {};
   std::unique_ptr<FrameBuffer>
@@ -61,8 +61,8 @@ public:
   App& operator=(App&&) = delete;
   ~App() = default;
 
-  void control(std::unique_ptr<control::Control> value);
-  [[nodiscard]] control::Control& control() const;
+  void control(std::unique_ptr<pln::control::Control> value);
+  [[nodiscard]] pln::control::Control& control() const;
 
   void deferred_shading(std::unique_ptr<DeferredShading> value);
   [[nodiscard]] DeferredShading& deferred_shading() const;

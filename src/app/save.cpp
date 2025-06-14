@@ -14,13 +14,13 @@ Save::Save(std::filesystem::path save_data_path)
 SaveData
 Save::load() const
 {
-  auto exec_path = utils::system::get_excutable_path();
+  auto exec_path = pln::utils::system::get_excutable_path();
   return load_save_data(exec_path / _save_data_path);
 }
 
 void
 Save::save(const SaveData& value) const
 {
-  auto exec_path = utils::system::get_excutable_path();
+  auto exec_path = pln::utils::system::get_excutable_path();
   store_save_data(exec_path / _save_data_path, value);
 }

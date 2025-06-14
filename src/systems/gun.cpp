@@ -16,7 +16,7 @@ import utils.common;
 void
 gun_shooting_system(Scene& scene)
 {
-  using namespace utils::common;
+  using namespace pln::utils::common;
 
   auto& registry = scene.state().shared_registry();
   static auto get_random_float = make_random_fn(0.0f, 1.0f);

@@ -6,7 +6,7 @@ module;
 
 export module utils.crash;
 
-namespace utils {
+namespace pln::utils {
 
 
 export

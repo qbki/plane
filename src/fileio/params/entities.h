@@ -65,7 +65,7 @@ struct EntityParamsWeapon
 struct EntityParamsTutorialButton
 {
   std::string model_id { "" };
-  control::Action button { control::Action::UNKNOWN };
+  pln::control::Action button { pln::control::Action::UNKNOWN };
 };
 
 struct EntityParamsText

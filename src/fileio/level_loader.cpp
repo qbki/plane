@@ -33,7 +33,7 @@ setup_boundaries(BoundaryParams& boundaries, Scene& scene)
                   && boundaries.min.y < boundaries.max.y
                   && boundaries.min.z < boundaries.max.z;
   if (!is_valid) {
-    utils::crash("Incorrect world boundaries: wrong ordering");
+    pln::utils::crash("Incorrect world boundaries: wrong ordering");
   }
   scene.state().world_bbox({
     .min = boundaries.min,
@@ -59,7 +59,7 @@ get_entity_maker(const PositionStrategy& strategy,
       case BehaviourEnum::STATIC: {
         auto entity_id = std::visit(
           Overloaded {
-            [](auto&) -> std::string { utils::crash("Strategy not supported"); },
+            [](auto&) -> std::string { pln::utils::crash("Strategy not supported"); },
             [](const PositionStrategyMany& value) { return value.entity_id; },
             [](const PositionStrategySingle& value) { return value.entity_id; },
             // Temporally, should be removed after completion of the level
@@ -84,8 +84,8 @@ get_entity_maker(const PositionStrategy& strategy,
         auto entity_id = std::visit(
           Overloaded {
             [](auto&) -> std::string {
-            utils::crash("No a single strategy for a light behaviour,"
-                         " it is not supported at this moment");
+            pln::utils::crash("No a single strategy for a light behaviour, "
+                              "it is not supported at this moment");
             },
             [](const PositionStrategySingle& value) { return value.entity_id; },
             [](const PositionStrategyVoid& value) { return value.entity_id; } },
@@ -98,13 +98,13 @@ get_entity_maker(const PositionStrategy& strategy,
                      entity_params)) {
           return ModelFactory::make_point_light(args...);
         } else {
-          utils::crash(
+          pln::utils::crash(
             std::format("Unknown light type for the entity: {}", entity_id));
         }
         break;
       }
       default: {
-        utils::crash("Unknown behaviour type???");
+        pln::utils::crash("Unknown behaviour type???");
         break;
       }
     }

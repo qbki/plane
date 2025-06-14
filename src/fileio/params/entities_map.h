@@ -11,7 +11,7 @@
 #include "src/fileio/params/entities.h"
 #include "src/utils/types.h"
 
-import utils.crash;
+import pln.utils.crash;
 
 class EntityParamsMap
 {

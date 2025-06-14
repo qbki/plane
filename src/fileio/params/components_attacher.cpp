@@ -14,8 +14,8 @@
 #include "emitters.h"
 #include "entities_map.h"
 
-import control;
-import utils.color;
+import pln.control;
+import pln.utils.color;
 
 ComponetsAttacher::ComponetsAttacher(
   std::reference_wrapper<const Scene> scene,

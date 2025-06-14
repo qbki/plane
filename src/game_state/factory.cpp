@@ -7,7 +7,7 @@
 
 #include "factory.h"
 
-import control;
+import pln.control;
 
 namespace ModelFactory {
 

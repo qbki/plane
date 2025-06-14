@@ -8,7 +8,7 @@
 
 #include "app.h"
 
-import utils.crash;
+import pln.utils.crash;
 
 App::App(std::filesystem::path assets_dir)
   : _last_time_point(SDL_GetTicks64())

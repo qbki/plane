@@ -6,7 +6,7 @@ module;
 #include <limits>
 #include <vector>
 
-export module utils.common;
+export module pln.utils.common;
 
 namespace pln::utils::common {
 

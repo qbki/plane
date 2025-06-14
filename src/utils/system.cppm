@@ -9,9 +9,9 @@ module;
 
 #endif
 
-export module utils.system;
+export module pln.utils.system;
 
-import utils.crash;
+import pln.utils.crash;
 
 namespace pln::utils::system {
 

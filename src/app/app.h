@@ -18,8 +18,8 @@
 #include "src/shading/framebuffer.h"      // IWYU pragma: export
 #include "src/shapes.h"                   // IWYU pragma: export
 
-import control;
 import pln.consts;
+import pln.control;
 
 class App
 {

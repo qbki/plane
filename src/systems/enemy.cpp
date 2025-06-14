@@ -20,7 +20,7 @@
 constexpr float SHOOT_ANGLE = 0.3;
 
 import pln.consts;
-import utils.common;
+import pln.utils.common;
 
 std::tuple<entt::entity, glm::vec3>
 get_player_data(const Scene& scene)

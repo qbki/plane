@@ -8,7 +8,7 @@
 
 #include "entities_map.h"
 
-import control;
+import pln.control;
 
 class ComponetsAttacher
 {

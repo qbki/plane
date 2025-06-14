@@ -10,8 +10,8 @@
 
 #include "gun.h"
 
-import utils.common;
 import pln.consts;
+import pln.utils.common;
 
 void
 gun_shooting_system(Scene& scene)

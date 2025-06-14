@@ -4,7 +4,7 @@ module;
 #include <limits>
 #include <vector>
 
-export module utils.color;
+export module pln.utils.color;
 
 namespace pln::utils::color {
 

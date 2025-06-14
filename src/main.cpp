@@ -16,11 +16,11 @@
 #include "utils/file_loaders/file_loaders.h"
 #include "utils/types.h"
 
-import common_handlers;
-import control;
+import pln.common_handlers;
 import pln.consts;
+import pln.control;
+import pln.utils.system;
 import pln;
-import utils.system;
 
 int
 main(int argc, char* argv[])

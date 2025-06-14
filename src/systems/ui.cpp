@@ -8,7 +8,7 @@
 
 #include "ui.h"
 
-import utils.color;
+import pln.utils.color;
 
 void
 ui_system(const Scene& scene)

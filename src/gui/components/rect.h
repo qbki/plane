@@ -2,7 +2,7 @@
 #include "src/components/common.h"
 #include "src/services.h"
 
-import utils.color;
+import pln.utils.color;
 
 namespace GUI::Factory {
 

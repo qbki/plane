@@ -21,7 +21,7 @@
 #include "services/logger.h"
 
 import pln.consts;
-import utils.crash;
+import pln.utils.crash;
 
 void
 crash_with_sdl_error(std::string message)

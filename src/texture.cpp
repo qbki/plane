@@ -6,7 +6,7 @@
 
 #include "texture.h"
 
-import utils.crash;
+import pln.utils.crash;
 
 const GLuint Texture::DEFAULT_TEXTURE_OBJECT = 0;
 

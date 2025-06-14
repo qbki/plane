@@ -7,7 +7,7 @@
 #include <string>
 #include <variant>
 
-import control;
+import pln.control;
 
 struct VelocityParams
 {

@@ -7,7 +7,7 @@
 
 #include "settings.h"
 
-import utils.system;
+import pln.utils.system;
 
 Settings::Settings(std::filesystem::path settings_path)
   : _settings_path(std::move(settings_path))

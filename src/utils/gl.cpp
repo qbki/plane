@@ -7,7 +7,7 @@
 
 #include "src/utils/gl.h"
 
-import utils.crash;
+import pln.utils.crash;
 
 int
 buffer_size()

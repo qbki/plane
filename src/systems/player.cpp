@@ -13,7 +13,7 @@
 
 #include "player.h"
 
-import utils.common;
+import pln.utils.common;
 
 void
 player_rotation_system(const Scene& scene)

@@ -36,10 +36,10 @@ module;
 #include "src/systems/update_gui.h"
 #include "src/systems/velocity.h"
 
-export module common_handlers;
+export module pln.common_handlers;
 
 import pln.consts;
-import utils.system;
+import pln.utils.system;
 
 namespace pln::common_handlers {
 

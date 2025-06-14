@@ -9,7 +9,7 @@
 
 #include "translation_loader.h"
 
-import utils.crash;
+import pln.utils.crash;
 
 std::unordered_map<std::string, std::string>
 load_translations(const std::filesystem::path& file_path)

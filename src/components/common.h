@@ -12,7 +12,7 @@
 #include "src/texture.h"
 #include "src/utils/types.h" // IWYU pragma: export
 
-import control;
+import pln.control;
 
 enum class EnemyStateEnum
 {

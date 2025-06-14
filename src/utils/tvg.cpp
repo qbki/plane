@@ -2,7 +2,7 @@
 
 #include "tvg.h"
 
-import utils.crash;
+import pln.utils.crash;
 
 void
 vg_verify_or_crash(const std::string& where, const tvg::Result& result)

@@ -4,7 +4,7 @@ module;
 #include <glm/vec3.hpp>
 #include <ostream>
 
-export module utils.ostream;
+export module pln.utils.ostream;
 
 export
 inline std::ostream&

@@ -8,7 +8,7 @@
 #include "src/sound/sound.h"
 #include "src/texture.h"
 
-import utils.color;
+import pln.utils.color;
 
 class Cache
 {

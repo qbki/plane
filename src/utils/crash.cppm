@@ -4,7 +4,7 @@ module;
 
 #include "src/services/logger.h"
 
-export module utils.crash;
+export module pln.utils.crash;
 
 namespace pln::utils {
 

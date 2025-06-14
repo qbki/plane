@@ -21,7 +21,7 @@
 #include "strategies.h"
 
 import pln.consts;
-import utils.crash;
+import pln.utils.crash;
 
 PositionStrategyVisitor::PositionStrategyVisitor(
   std::reference_wrapper<const EntityParamsMap> entities,

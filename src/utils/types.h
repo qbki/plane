@@ -9,7 +9,7 @@
 
 #include "noop.h"
 
-import utils.crash;
+import pln.utils.crash;
 
 template<typename T>
 using OptionalPtr = std::optional<std::unique_ptr<T>>;

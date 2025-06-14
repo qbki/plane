@@ -18,7 +18,7 @@
 #include "params.h"
 #include "json/mappers.h" // IWYU pragma: keep
 
-import utils.crash;
+import pln.utils.crash;
 
 void
 setup_camera(CameraParams& camera_params, Scene& scene)

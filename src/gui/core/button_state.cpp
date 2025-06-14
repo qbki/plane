@@ -5,7 +5,7 @@
 
 #include "button_state.h"
 
-import utils.crash;
+import pln.utils.crash;
 
 
 namespace GUI {

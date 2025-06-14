@@ -1,7 +1,7 @@
 #pragma once
 #include <filesystem>
 
-import utils.color;
+import pln.utils.color;
 
 namespace GUI {
 

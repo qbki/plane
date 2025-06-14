@@ -2,7 +2,7 @@
 
 #include "entities_validators.h"
 
-import utils.crash;
+import pln.utils.crash;
 
 void
 validate(const EntityParamsText& value)

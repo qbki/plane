@@ -2,7 +2,7 @@ module;
 #include <SDL_events.h>
 #include <SDL_keycode.h>
 
-export module control;
+export module pln.control;
 
 namespace pln::control {
 

@@ -16,8 +16,8 @@
 
 #include "../params.h"
 
-import control;
-import utils.crash;
+import pln.control;
+import pln.utils.crash;
 
 template<typename T>
 void

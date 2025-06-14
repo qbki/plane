@@ -3,7 +3,7 @@
 
 #include "shader.h"
 
-import utils.crash;
+import pln.utils.crash;
 
 void
 crash_on_shader_error(GLuint shader, GLenum status)

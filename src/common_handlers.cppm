@@ -1,3 +1,4 @@
+module;
 #include <compare>
 #include <optional>
 #include <ranges>
@@ -36,7 +37,11 @@
 #include "src/systems/update_gui.h"
 #include "src/systems/velocity.h"
 
+export module common_handlers;
+
 import utils.system;
+
+namespace pln::common_handlers {
 
 std::unique_ptr<Camera>
 make_gui_camera(const App& app)
@@ -209,6 +214,7 @@ play_sound(const Events::ShootEvent& sound_event)
   Services::cache().get_sound(sound_event.sound_path)->play(sound_event.volume);
 }
 
+export
 void
 register_common_handlers()
 {
@@ -218,4 +224,6 @@ register_common_handlers()
   Services::events<const Events::LoseEvent>().add(load_lose_menu);
   Services::events<const Events::LoadNextLevelEvent>().add(load_next_level);
   Services::app().add_once_handler(GUI::go_to_main_menu);
+}
+
 }

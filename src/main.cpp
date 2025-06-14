@@ -4,7 +4,6 @@
 #include <string>
 #include <utility>
 
-#include "common_handlers.h"
 #include "consts.h"
 #include "fileio/theme_loader.h"
 #include "fileio/translation_loader.h"
@@ -18,6 +17,7 @@
 #include "utils/file_loaders/file_loaders.h"
 #include "utils/types.h"
 
+import common_handlers;
 import control;
 import pln;
 import utils.system;
@@ -130,6 +130,6 @@ main(int argc, char* argv[])
   auto quad = std::make_unique<Services::GuiQuad>(create_quad(1, 1, 0));
   pln::Service<const Services::GuiQuad>::install(std::move(quad));
 
-  register_common_handlers();
+  pln::common_handlers::register_common_handlers();
   game_loop();
 }

@@ -1,8 +1,10 @@
+module;
 #include <GL/glew.h>
 #include <SDL.h>
 #include <SDL_error.h>
 #include <SDL_mixer.h>
 #include <SDL_video.h>
+#include <cstddef>
 #include <format>
 #include <memory>
 #include <string>
@@ -12,16 +14,23 @@
 #include <emscripten/html5.h>
 #endif
 
+#include "src/app/system.h"
 #include "src/gui/ui_canvas.h"
 #include "src/utils/gl.h"
 #include "src/utils/tvg.h"
 
-#include "sdl_init.h"
-#include "services.h"
 #include "services/logger.h"
+
+export module pln.sdl;
 
 import pln.consts;
 import pln.utils.crash;
+
+namespace pln::sdl {
+
+export using WindowPtr = std::unique_ptr<SDL_Window, void (*)(SDL_Window*)>;
+export using ContextPtr = std::unique_ptr<void, void (*)(SDL_GLContext)>;
+export using UiCanvasPtr = std::unique_ptr<UiCanvas>;
 
 void
 crash_with_sdl_error(std::string message)
@@ -30,7 +39,7 @@ crash_with_sdl_error(std::string message)
 }
 
 void GLAPIENTRY
-MessageCallback(GLenum /*source*/,
+messageCallback(GLenum /*source*/,
                 GLenum /*type*/,
                 GLuint /*id*/,
                 GLenum /*severity*/,
@@ -41,6 +50,7 @@ MessageCallback(GLenum /*source*/,
   Services::logger().error(std::format("OpenGL: {}", message));
 }
 
+export
 WindowPtr
 init_window(int screen_width, int screen_height)
 {
@@ -99,6 +109,7 @@ init_window(int screen_width, int screen_height)
           } };
 }
 
+export
 ContextPtr
 init_context(SDL_Window* window)
 {
@@ -130,14 +141,17 @@ init_context(SDL_Window* window)
 
 #ifndef __EMSCRIPTEN__
   // glEnable(GL_DEBUG_OUTPUT);
-  glDebugMessageCallback(MessageCallback, nullptr);
+  glDebugMessageCallback(messageCallback, nullptr);
 #endif
 
   return { ctx, [](auto c) { SDL_GL_DeleteContext(c); } };
 }
 
+export
 UiCanvasPtr
 init_vg_canvas(std::size_t width, std::size_t height)
 {
   return std::make_unique<UiCanvas>(width, height);
+}
+
 }

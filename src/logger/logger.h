@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 
-#include "abstract_logger.h"
+import pln.logger;
 
-class Logger : public AbstractLogger
+class Logger : public pln::logger::AbstractLogger
 {
 public:
   Logger() = default;

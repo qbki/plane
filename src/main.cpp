@@ -7,8 +7,8 @@
 #include "fileio/theme_loader.h"
 #include "fileio/translation_loader.h"
 #include "logger/logger.h"
-#include "sdl_init.h"
 #include "services.h"
+#include "services/logger.h"
 #include "src/services/logger.h"
 #include "systems/render.h"
 #include "utils/file_loaders/file_loaders.h"
@@ -18,13 +18,15 @@ import pln.common_handlers;
 import pln.consts;
 import pln.control;
 import pln.game_loop;
+import pln.logger;
+import pln.sdl;
 import pln.utils.system;
 import pln;
 
 int
 main(int argc, char* argv[])
 {
-  pln::Service<AbstractLogger>::install(std::make_unique<Logger>());
+  pln::Service<pln::logger::AbstractLogger>::install(std::make_unique<Logger>());
   pln::Service<Cache>::install(std::make_unique<Cache>());
   pln::Service<Events::EventEmitter<const Events::ShootEvent>>::install(
     std::make_unique<Events::EventEmitter<const Events::ShootEvent>>());
@@ -36,8 +38,9 @@ main(int argc, char* argv[])
     std::make_unique<
       Events::EventEmitter<const Events::LoadCurrentLevelEvent>>());
 
-  auto window = init_window(pln::consts::DEFAULT_SCREEN_WIDTH, pln::consts::DEFAULT_SCREEN_HEIGHT);
-  auto context = init_context(window.get());
+  auto window = pln::sdl::init_window(pln::consts::DEFAULT_SCREEN_WIDTH,
+                                      pln::consts::DEFAULT_SCREEN_HEIGHT);
+  auto context = pln::sdl::init_context(window.get());
   auto control = std::make_unique<pln::control::Control>();
 
   auto geometry_pass_shader = std::make_unique<Shader>();
@@ -84,7 +87,8 @@ main(int argc, char* argv[])
     pln::consts::DEFAULT_SCREEN_WIDTH,
     pln::consts::DEFAULT_SCREEN_HEIGHT);
 
-  auto vg_canvas = init_vg_canvas(pln::consts::DEFAULT_SCREEN_WIDTH, pln::consts::DEFAULT_SCREEN_HEIGHT);
+  auto vg_canvas = pln::sdl::init_vg_canvas(pln::consts::DEFAULT_SCREEN_WIDTH,
+                                            pln::consts::DEFAULT_SCREEN_HEIGHT);
 
   auto assets_dir = pln::utils::system::get_excutable_path() / pln::consts::DEFAULT_ASSETS_DIR;
   if (argc == 2) {

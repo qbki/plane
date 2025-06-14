@@ -4,10 +4,9 @@
 #include <functional>
 #include <utility>
 
-#include "src/sdl_init.h"
-
 #include "app.h"
 
+import pln.sdl;
 import pln.utils.crash;
 
 App::App(std::filesystem::path assets_dir)
@@ -110,7 +109,7 @@ App::intermediate_shader() const
 }
 
 void
-App::window(WindowPtr value)
+App::window(pln::sdl::WindowPtr value)
 {
   _window = std::move(value);
 }
@@ -122,7 +121,7 @@ App::window() const
 }
 
 void
-App::gl_context(ContextPtr value)
+App::gl_context(pln::sdl::ContextPtr value)
 {
   _gl_context = std::move(value);
 }

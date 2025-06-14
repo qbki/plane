@@ -1,5 +1,5 @@
 #pragma once
-
+#include <SDL_video.h>
 #include <filesystem> // IWYU pragma: export
 #include <functional>
 #include <glm/vec2.hpp> // IWYU pragma: export
@@ -12,7 +12,6 @@
 #include "src/app/settings.h" // IWYU pragma: export
 #include "src/app/system.h"   // IWYU pragma: export
 #include "src/scene/scene.h" // IWYU pragma: export
-#include "src/sdl_init.h"
 #include "src/shader.h"                   // IWYU pragma: export
 #include "src/shading/deferred_shading.h" // IWYU pragma: export
 #include "src/shading/framebuffer.h"      // IWYU pragma: export
@@ -20,6 +19,7 @@
 
 import pln.consts;
 import pln.control;
+import pln.sdl;
 
 class App
 {
@@ -33,8 +33,8 @@ private:
   float _time {};
   bool _is_game_running = true;
   AppInfo _info {};
-  WindowPtr _window { nullptr, [](SDL_Window*) {} };
-  ContextPtr _gl_context { nullptr, [](SDL_GLContext) {} };
+  pln::sdl::WindowPtr _window { nullptr, [](SDL_Window*) {} };
+  pln::sdl::ContextPtr _gl_context { nullptr, [](SDL_GLContext) {} };
   System _system {};
   Settings _settings { pln::consts::SETTINGS_FILE };
   Save _save { pln::consts::SAVE_DATA_FILE };
@@ -79,10 +79,10 @@ public:
   void intermediate_shader(std::unique_ptr<Shader> value);
   [[nodiscard]] Shader& intermediate_shader() const;
 
-  void window(WindowPtr value);
+  void window(pln::sdl::WindowPtr value);
   [[nodiscard]] SDL_Window& window() const;
 
-  void gl_context(ContextPtr value);
+  void gl_context(pln::sdl::ContextPtr value);
   [[nodiscard]] SDL_GLContext gl_context() const;
 
   [[nodiscard]] Settings& settings();

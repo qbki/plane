@@ -1,7 +1,11 @@
-#pragma once
+module;
 #include <string>
 
-class AbstractLogger
+export module pln.logger;
+
+namespace pln::logger {
+
+export class AbstractLogger
 {
 public:
   AbstractLogger() = default;
@@ -16,3 +20,5 @@ public:
   virtual void error(const std::string&) = 0;
   virtual void debug(const std::string&) = 0;
 };
+
+}

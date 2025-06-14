@@ -13,13 +13,13 @@
 #include "src/math/intersection.h"
 #include "src/services.h"
 #include "src/texture.h"
-#include "src/utils/ecs.h"
 
 #include "render.h"
 
 import pln.consts;
 import pln.materals;
 import pln.meshes;
+import pln.utils.ecs;
 
 
 static const pln::materials::Material COMMON_MATERIAL(glm::vec3(0.05, 0.05, 0.05),
@@ -257,7 +257,7 @@ render_ui(const Scene& scene)
         is_dirty.value = false;
       }
       canvas.texture().use(0);
-      glm::mat4 global_transform = get_global_matrix(registry, parent)
+      glm::mat4 global_transform = pln::utils::ecs::get_global_matrix(registry, parent)
                                    * transform.matrix();
       quad->draw({
         .transforms { std::vector<glm::mat4> { global_transform } },

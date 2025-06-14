@@ -5,10 +5,11 @@
 #include "src/math/intersection.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
-#include "src/utils/ecs.h"
 #include "src/utils/mouse.h"
 
 #include "update_gui.h"
+
+import pln.utils.ecs;
 
 void
 update_gui(Scene& scene)
@@ -52,7 +53,7 @@ update_gui(Scene& scene)
             Parent& parent,
             IsPointerInside& was_pointer_inside,
             IsPointerDownEventAccepted& is_down_event_accepted) {
-      auto global_matrix = get_global_matrix(registry, parent);
+      auto global_matrix = pln::utils::ecs::get_global_matrix(registry, parent);
       auto is_pointer_down = Services::app().control().pointer_pressed;
       auto is_pointer_up = !is_pointer_down;
       auto point = global_matrix * glm::vec4(transform.translation(), 1);

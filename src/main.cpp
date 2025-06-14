@@ -6,7 +6,6 @@
 
 #include "fileio/theme_loader.h"
 #include "fileio/translation_loader.h"
-#include "game_loop.h"
 #include "logger/logger.h"
 #include "mesh.h"
 #include "sdl_init.h"
@@ -19,6 +18,7 @@
 import pln.common_handlers;
 import pln.consts;
 import pln.control;
+import pln.game_loop;
 import pln.utils.system;
 import pln;
 
@@ -131,5 +131,5 @@ main(int argc, char* argv[])
   pln::Service<const Services::GuiQuad>::install(std::move(quad));
 
   pln::common_handlers::register_common_handlers();
-  game_loop();
+  pln::game_loop();
 }

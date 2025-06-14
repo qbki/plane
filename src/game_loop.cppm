@@ -1,3 +1,4 @@
+module;
 #include <GL/glew.h>
 #include <SDL_events.h>
 #include <SDL_keycode.h>
@@ -9,8 +10,11 @@
 #include <emscripten/html5.h>
 #endif
 
-#include "game_loop.h"
 #include "services.h"
+
+export module pln.game_loop;
+
+namespace pln {
 
 void
 resize_cameras(const std::vector<std::unique_ptr<Scene>>& scenes,
@@ -92,11 +96,14 @@ inner_game_loop(App& app)
 };
 
 #ifdef __EMSCRIPTEN__
+
 void
 emscripten_game_loop(void* data)
 {
   inner_game_loop(*static_cast<App*>(data));
 }
+
+export
 void
 game_loop()
 {
@@ -112,7 +119,10 @@ game_loop()
   // https://emscripten.org/docs/api_reference/emscripten.h.html?highlight=set_main_loop#c.emscripten_set_main_loop
   emscripten_set_main_loop_arg(emscripten_game_loop, &app, 0, false);
 }
+
 #else
+
+export
 void
 game_loop()
 {
@@ -121,4 +131,7 @@ game_loop()
     inner_game_loop(app);
   }
 }
+
 #endif
+
+}

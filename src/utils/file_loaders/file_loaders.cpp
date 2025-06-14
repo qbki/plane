@@ -6,7 +6,6 @@
 #include <utility>
 #include <vector>
 
-#include "src/services/logger.h"
 #include "src/utils/result.h"
 #include "src/utils/tvg.h"
 
@@ -17,11 +16,13 @@
 #include "file_loaders.std.ipp"
 #endif
 
+import pln.services.logger;
+
 std::shared_ptr<DataHolder>
 load_sdl_rw_data(const std::filesystem::path& path)
 {
   auto raw_data = load_binary(path).or_crash();
-  Services::logger().info(
+  pln::services::logger().info(
     std::format("Loaded: {} ({})", path.c_str(), raw_data.size()));
   return std::make_shared<DataHolder>(std::move(raw_data));
 }

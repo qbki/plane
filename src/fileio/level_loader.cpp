@@ -9,7 +9,6 @@
 #include "src/game_state/factory.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
-#include "src/services/logger.h"
 #include "src/utils/file_loaders.h"
 #include "src/utils/result.h"
 #include "src/utils/types.h"
@@ -19,6 +18,7 @@
 #include "json/mappers.h" // IWYU pragma: keep
 
 import pln.utils.crash;
+import pln.services.logger;
 
 void
 setup_camera(CameraParams& camera_params, Scene& scene)
@@ -142,5 +142,5 @@ load_level(const std::string& entities_file_path,
     auto maker = get_entity_maker(strategy, entities);
     PositionStrategyVisitor::visit(strategy, entities, scene, maker);
   }
-  Services::logger().info(std::format("Loaded level: {}", level_file_path));
+  pln::services::logger().info(std::format("Loaded level: {}", level_file_path));
 }

@@ -9,11 +9,12 @@
 #include <string>
 #include <vector>
 
-#include "src/services/logger.h"
 #include "src/utils/result.h" // IWYU pragma: export
 
 #include "file_loaders.h"
 #include "utils.h"
+
+import pln.services.logger;
 
 using FileStreamPtr = std::shared_ptr<std::fstream>;
 
@@ -56,14 +57,14 @@ load_gltf_model(const std::string& file_path)
       bool status = loader.LoadBinaryFromFile(&model, &err, &warn, path);
 
       if (!warn.empty()) {
-        Services::logger().warn(warn);
+        pln::services::logger().warn(warn);
       }
       if (!err.empty()) {
-        Services::logger().error(err);
+        pln::services::logger().error(err);
       }
 
       if (status) {
-        Services::logger().info(std::format("Loaded glTF: {}", path));
+        pln::services::logger().info(std::format("Loaded glTF: {}", path));
         return Result<tinygltf::Model>::from_payload(std::move(model));
       }
       auto error = std::make_shared<std::runtime_error>(
@@ -103,7 +104,7 @@ Result<nlohmann::basic_json<>>
 load_json(const std::string& file_path)
 {
   auto parse = [&file_path](FileStreamPtr& stream) {
-    Services::logger().info(std::format("Loaded json: {}", file_path));
+    pln::services::logger().info(std::format("Loaded json: {}", file_path));
     return Result<nlohmann::basic_json<>>::from_payload(
       nlohmann::json::parse(*stream));
   };
@@ -127,7 +128,7 @@ save_local_json(const std::filesystem::path& file_path, nlohmann::json json)
       && !std::filesystem::create_directories(parent_path)) {
     auto message = std::format("Can't create a directory: {}",
                                parent_path.string());
-    Services::logger().error(message);
+    pln::services::logger().error(message);
     return;
   }
   std::ofstream file { file_path };

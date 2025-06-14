@@ -19,11 +19,10 @@ module;
 #include "src/utils/gl.h"
 #include "src/utils/tvg.h"
 
-#include "services/logger.h"
-
 export module pln.sdl;
 
 import pln.consts;
+import pln.services.logger;
 import pln.utils.crash;
 
 namespace pln::sdl {
@@ -47,7 +46,7 @@ messageCallback(GLenum /*source*/,
                 const GLchar* message,
                 const void* /*userParam*/)
 {
-  Services::logger().error(std::format("OpenGL: {}", message));
+  pln::services::logger().error(std::format("OpenGL: {}", message));
 }
 
 export
@@ -60,7 +59,7 @@ init_window(int screen_width, int screen_height)
   if (error < 0) {
     crash_with_sdl_error("Unable to init SDL");
   }
-  Services::logger().info("SDL has been initialized.");
+  pln::services::logger().info("SDL has been initialized.");
 
   // Audio
   error = Mix_OpenAudio(MIX_DEFAULT_FREQUENCY,
@@ -71,7 +70,7 @@ init_window(int screen_width, int screen_height)
     crash_with_sdl_error("Unable to init SDL_mixer");
   }
   Mix_AllocateChannels(pln::consts::DEFAULT_MAX_CHANNELS);
-  Services::logger().info("SDL_mixer has been initialized.");
+  pln::services::logger().info("SDL_mixer has been initialized.");
 
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 #ifdef __EMSCRIPTEN__
@@ -94,13 +93,13 @@ init_window(int screen_width, int screen_height)
   if (window == nullptr) {
     crash_with_sdl_error("Unable to create window");
   }
-  Services::logger().info("Window has been created.");
+  pln::services::logger().info("Window has been created.");
 
   unsigned int threads = System::is_web ? 0
                                         : std::thread::hardware_concurrency();
   auto tvg_result = tvg::Initializer::init(tvg::CanvasEngine::Sw, threads);
   vg_verify_or_crash(__func__, tvg_result);
-  Services::logger().info("ThorVG has been initialized.");
+  pln::services::logger().info("ThorVG has been initialized.");
 
   return { window, [](auto w) {
             tvg::Initializer::term(tvg::CanvasEngine::Sw);
@@ -117,7 +116,7 @@ init_context(SDL_Window* window)
   if (ctx == nullptr) {
     crash_with_sdl_error("Unable to create GL Context");
   }
-  Services::logger().info("Context has been created.");
+  pln::services::logger().info("Context has been created.");
 
   auto swap_interwal_error = SDL_GL_SetSwapInterval(1);
   if (swap_interwal_error < 0) {
@@ -130,7 +129,7 @@ init_context(SDL_Window* window)
     auto err_glew = glubyte_to_string(glewGetErrorString(err));
     pln::utils::crash(std::format("Unable to initialize GLEW: {}", err_glew));
   }
-  Services::logger().info("GLEW has been inited.");
+  pln::services::logger().info("GLEW has been inited.");
 
   print_opengl_info();
   glEnable(GL_DEPTH_TEST);

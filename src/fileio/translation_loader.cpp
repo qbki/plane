@@ -4,11 +4,11 @@
 #include <unordered_map>
 
 #include "src/components/common.h"
-#include "src/services/logger.h"
 #include "src/utils/file_loaders/file_loaders.h"
 
 #include "translation_loader.h"
 
+import pln.services.logger;
 import pln.utils.crash;
 
 std::unordered_map<std::string, std::string>
@@ -16,7 +16,7 @@ load_translations(const std::filesystem::path& file_path)
 {
   auto json_result = load_json(file_path);
   if (!json_result.has_payload()) {
-    Services::logger().error(
+    pln::services::logger().error(
       std::format("Can't load translations: {}", json_result.error()->what()));
     return {};
   }

@@ -8,8 +8,6 @@
 #include "fileio/translation_loader.h"
 #include "logger/logger.h"
 #include "services.h"
-#include "services/logger.h"
-#include "src/services/logger.h"
 #include "systems/render.h"
 #include "utils/file_loaders/file_loaders.h"
 #include "utils/types.h"
@@ -20,6 +18,7 @@ import pln.control;
 import pln.game_loop;
 import pln.logger;
 import pln.sdl;
+import pln.services.logger;
 import pln.utils.system;
 import pln;
 
@@ -97,12 +96,12 @@ main(int argc, char* argv[])
   }
   if (System::is_pc) {
     if (!is_file_exists(assets_dir)) {
-      Services::logger().error(
+      pln::services::logger().error(
         std::format("Assets directory was not found {}", assets_dir.string()));
       return 1;
     }
   }
-  Services::logger().info(
+  pln::services::logger().info(
     std::format("Used assets directory: {}", assets_dir.string()));
 
   auto app = std::make_unique<App>(assets_dir);

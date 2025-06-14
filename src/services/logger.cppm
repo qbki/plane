@@ -1,10 +1,11 @@
-#pragma once
+export module pln.services.logger;
 
 import pln.logger;
 import pln;
 
-namespace Services {
+namespace pln::services {
 
+export
 inline pln::logger::AbstractLogger&
 logger()
 {

@@ -18,7 +18,6 @@ module;
 #include "src/gui/screens/load_credits_screen.h"
 #include "src/gui/utils/utils.h"
 #include "src/services.h"
-#include "src/services/logger.h"
 #include "src/sound/sound.h"
 #include "src/systems/camera.h"
 #include "src/systems/collision.h"
@@ -39,6 +38,7 @@ module;
 export module pln.common_handlers;
 
 import pln.consts;
+import pln.services.logger;
 import pln.utils.system;
 
 namespace pln::common_handlers {
@@ -158,7 +158,7 @@ load_current_level(const Events::LoadCurrentLevelEvent&)
   auto levels_order = load_levels_order(levels_dir / "levels.json");
   if (!save_data.current_level.has_value()) {
     Services::events<const Events::LoadNextLevelEvent>().emit({});
-    Services::logger().info(
+    pln::services::logger().info(
       "Can't get save data, a default level will be used");
     return;
   }
@@ -166,7 +166,7 @@ load_current_level(const Events::LoadCurrentLevelEvent&)
                                          save_data.current_level.value());
   if (current_level == levels_order.levels.end()) {
     Services::events<const Events::LoadNextLevelEvent>().emit({});
-    Services::logger().info(
+    pln::services::logger().info(
       "The user's progress not found, a default level will be used");
     return;
   }
@@ -182,7 +182,7 @@ load_next_level(const Events::LoadNextLevelEvent&)
   auto levels_dir = Services::app().levels_dir();
   auto levels_order = load_levels_order(levels_dir / "levels.json");
   if (levels_order.levels.empty()) {
-    Services::logger().error("No levels found");
+    pln::services::logger().error("No levels found");
     return;
   }
   std::vector<std::filesystem::path>::iterator next_level_it;

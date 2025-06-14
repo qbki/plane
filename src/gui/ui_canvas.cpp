@@ -2,10 +2,11 @@
 #include <algorithm>
 #include <string>
 
-#include "src/services/logger.h"
 #include "src/texture.h"
 
 #include "ui_canvas.h"
+
+import pln.services.logger;
 
 UiCanvas::UiCanvas(int init_width, int init_height)
   : _width(init_width)
@@ -76,7 +77,7 @@ UiCanvas::save_to_file(const std::filesystem::path& path)
   constexpr uint32_t A_MASK = 0xff000000;
 
   if (_width <= 0 || _height <= 0) {
-    Services::logger().info(
+    pln::services::logger().info(
       "Canvas has zero size, it can't be saved into a file");
     return;
   }

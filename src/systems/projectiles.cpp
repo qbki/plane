@@ -2,9 +2,10 @@
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/consts.h"
 
 #include "projectiles.h"
+
+import pln.consts;
 
 void
 projectile_handler_system(Scene& scene)
@@ -31,7 +32,7 @@ projectile_handler_system(Scene& scene)
         }
         auto hit_distance = glm::distance(prj_transform.translation(),
                                           enemy_position.translation());
-        auto has_hit = hit_distance <= DEFAULT_COLLIDER.radius;
+        auto has_hit = hit_distance <= pln::consts::DEFAULT_COLLIDER.radius;
         if (has_hit) {
           lives.value -= 1;
           particles_emitter(prj_transform.translation());

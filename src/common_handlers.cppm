@@ -8,7 +8,6 @@ module;
 
 #include "src/cameras/gui_camera.h"
 #include "src/cameras/perspective_camera.h"
-#include "src/consts.h"
 #include "src/fileio/level_loader.h"
 #include "src/fileio/levels_order_loader.h"
 #include "src/fileio/save_data_io.h"
@@ -39,6 +38,7 @@ module;
 
 export module common_handlers;
 
+import pln.consts;
 import utils.system;
 
 namespace pln::common_handlers {
@@ -153,7 +153,7 @@ void
 load_current_level(const Events::LoadCurrentLevelEvent&)
 {
   auto exec_path = utils::system::get_excutable_path();
-  auto save_data = load_save_data(exec_path / SAVE_DATA_FILE);
+  auto save_data = load_save_data(exec_path / pln::consts::SAVE_DATA_FILE);
   auto levels_dir = Services::app().levels_dir();
   auto levels_order = load_levels_order(levels_dir / "levels.json");
   if (!save_data.current_level.has_value()) {

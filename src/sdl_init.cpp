@@ -12,7 +12,6 @@
 #include <emscripten/html5.h>
 #endif
 
-#include "src/consts.h"
 #include "src/gui/ui_canvas.h"
 #include "src/utils/gl.h"
 #include "src/utils/tvg.h"
@@ -21,6 +20,7 @@
 #include "services.h"
 #include "services/logger.h"
 
+import pln.consts;
 import utils.crash;
 
 void
@@ -56,11 +56,11 @@ init_window(int screen_width, int screen_height)
   error = Mix_OpenAudio(MIX_DEFAULT_FREQUENCY,
                         MIX_DEFAULT_FORMAT,
                         MIX_DEFAULT_CHANNELS,
-                        DEFAULT_AUDIO_CHUNKSIZE);
+                        pln::consts::DEFAULT_AUDIO_CHUNKSIZE);
   if (error < 0) {
     crash_with_sdl_error("Unable to init SDL_mixer");
   }
-  Mix_AllocateChannels(DEFAULT_MAX_CHANNELS);
+  Mix_AllocateChannels(pln::consts::DEFAULT_MAX_CHANNELS);
   Services::logger().info("SDL_mixer has been initialized.");
 
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);

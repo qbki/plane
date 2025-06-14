@@ -4,11 +4,12 @@
 #include "src/collections/octree.h"
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/consts.h"
 #include "src/math/intersection.h"
 #include "src/services.h"
 
 #include "collision.h"
+
+import pln.consts;
 
 void
 collision_system(Scene& scene)
@@ -19,7 +20,7 @@ collision_system(Scene& scene)
   registry.view<Transform, Velocity, ActorKind>().each(
     [&](entt::entity entity, Transform& transform_a, Velocity& velocity_a) {
       auto collider_a = apply_transform_to_collider(transform_a,
-                                                    DEFAULT_COLLIDER);
+                                                    pln::consts::DEFAULT_COLLIDER);
       auto shape_a = std::get_if<Shape::Sphere>(&collider_a);
       if (!shape_a) {
         return;
@@ -36,7 +37,7 @@ collision_system(Scene& scene)
               mesh_b] = registry
                           .get<Transform, Velocity, MeshPointer>(near_entity);
         auto collider_b = apply_transform_to_collider(transform_b,
-                                                      DEFAULT_COLLIDER);
+                                                      pln::consts::DEFAULT_COLLIDER);
         auto shape_b = std::get_if<Shape::Sphere>(&collider_b);
         if (!shape_b) {
           continue;
@@ -50,7 +51,7 @@ collision_system(Scene& scene)
         }
 
         velocity_a.value = glm::reflect(velocity_a.value, norm_direction)
-                           * HALF;
+                           * pln::consts::HALF;
         const float offset = radius_sum + 0.01f;
         transform_a.translate(shape_b->center + norm_direction * offset);
 

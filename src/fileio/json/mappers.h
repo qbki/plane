@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "src/components/common.h"
-#include "src/consts.h"
 #include "src/fileio/params/entities.h"
 #include "src/fileio/params/entities_validators.h"
 #include "src/fileio/params/meta.h"

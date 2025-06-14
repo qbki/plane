@@ -6,15 +6,16 @@
 #include <memory>
 #include <vector>
 
-#include "src/consts.h"
 #include "src/math/intersection.h"
 #include "src/math/shapes.h"
+
+import pln.consts;
 
 /**
  * An implementation of an octree data structure.
  *
  * Limitations:
- * * It doesn't expect elements outside of bounding box;
+ * It doesn't expect elements outside of bounding box;
  */
 template<typename T>
 class Octree
@@ -74,7 +75,7 @@ Octree<T>::Octree(const Shape::AABB& bbox,
   : _bbox(bbox)
   , _depth(depth)
   , _max_depth(max_depth)
-  , _center((bbox.min + bbox.max) * HALF)
+  , _center((bbox.min + bbox.max) * pln::consts::HALF)
 {
   _partitioning[BBOX_MIN_MIN_BOTTOM] = {
     .min = _bbox.min,
@@ -115,7 +116,7 @@ void
 Octree<T>::insert(Shape::Sphere collider, const T& value)
 {
   const auto collider_size = collider.radius * 2.0f;
-  const auto bbox_child_size = (_bbox.max - _bbox.min) * HALF;
+  const auto bbox_child_size = (_bbox.max - _bbox.min) * pln::consts::HALF;
   if (collider_size >= bbox_child_size.x || collider_size >= bbox_child_size.y
       || collider_size >= bbox_child_size.z || _depth >= _max_depth
       || on_axis(collider, _bbox.min) || on_axis(collider, _bbox.max)

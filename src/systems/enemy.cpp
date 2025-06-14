@@ -12,7 +12,6 @@
 #include "src/components/transform.h"
 #include "src/components/turret_rotation.h"
 #include "src/components/weapon.h"
-#include "src/consts.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 
@@ -20,6 +19,7 @@
 
 constexpr float SHOOT_ANGLE = 0.3;
 
+import pln.consts;
 import utils.common;
 
 std::tuple<entt::entity, glm::vec3>
@@ -161,7 +161,7 @@ enemy_acceleration_system(const Scene& scene)
               const AccelerationScalar& accel_scalar,
               const Weapon& weapon) {
       auto max_acceleration_distance = weapon.lifetime * weapon.bullet_speed
-                                       * HALF;
+                                       * pln::consts::HALF;
       auto raw_direction = transform.rotation() * glm::vec3(1, 0, 0);
       auto direction = glm::vec3(raw_direction.x, raw_direction.y, 0);
       auto distance_to_target = glm::distance(transform.translation(),

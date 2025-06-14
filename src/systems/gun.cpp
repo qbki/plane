@@ -4,7 +4,6 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/weapon.h"
-#include "src/consts.h"
 #include "src/game_state/factory.h"
 #include "src/services.h"
 #include "src/utils/random.h"
@@ -12,6 +11,7 @@
 #include "gun.h"
 
 import utils.common;
+import pln.consts;
 
 void
 gun_shooting_system(Scene& scene)
@@ -30,7 +30,7 @@ gun_shooting_system(Scene& scene)
       }
       auto projectile_entity = ModelFactory::make_projectile(
         registry, weapon.bullet_model_path);
-      auto spread = weapon.spread * get_random_float() - weapon.spread * HALF;
+      auto spread = weapon.spread * get_random_float() - weapon.spread * pln::consts::HALF;
 
       auto direction = owner_transform.rotation()
                        * glm::quat(glm::vec3 { 0, 0, spread })

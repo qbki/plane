@@ -1,11 +1,12 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/vec3.hpp>
 
-#include "src/consts.h"
 #include "src/math/shapes.h"
 
 #include "camera.h"
 #include "ortho_camera.h"
+
+import pln.consts;
 
 OrthoCamera::OrthoCamera(int screen_width,
                          int screen_height,
@@ -21,8 +22,8 @@ OrthoCamera::OrthoCamera(int screen_width,
 void
 OrthoCamera::nonvirt_screen_size(int width, int height)
 {
-  _half_width = static_cast<float>(width) * HALF / _scale_factor;
-  _half_height = static_cast<float>(height) * HALF / _scale_factor;
+  _half_width = static_cast<float>(width) * pln::consts::HALF / _scale_factor;
+  _half_height = static_cast<float>(height) * pln::consts::HALF / _scale_factor;
   auto ortho = glm::ortho(-_half_width,
                           _half_width,
                           -_half_height,

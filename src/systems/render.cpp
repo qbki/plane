@@ -9,7 +9,6 @@
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/consts.h"
 #include "src/gui/ui_canvas.h"
 #include "src/material.h"
 #include "src/math/intersection.h"
@@ -18,6 +17,9 @@
 #include "src/utils/ecs.h"
 
 #include "render.h"
+
+import pln.consts;
+
 
 static const Material COMMON_MATERIAL(glm::vec3(0.05, 0.05, 0.05),
                                       glm::vec3(1.0, 1.0, 1.0),
@@ -287,7 +289,7 @@ render_system(App& app)
     glEnable(GL_BLEND);
     inter_fb.use();
     inter_shader.use();
-    inter_shader.uniform("u_gamma", GAMMA);
+    inter_shader.uniform("u_gamma", pln::consts::GAMMA);
     inter_shader.uniform("u_main_texture", 0);
     app.deferred_shading().draw_quad();
     glDisable(GL_BLEND);

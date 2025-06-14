@@ -1,11 +1,12 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/consts.h"
 #include "src/scene/scene.h"
 #include "src/services.h"
 #include "src/utils/interpolations.h"
 
 #include "velocity.h"
+
+import pln.consts;
 
 void
 acceleration_system(const Scene& scene)
@@ -43,6 +44,6 @@ velocity_gravity_system(const Scene& scene)
 {
   scene.state().registry().view<Acceleration, Gravity>().each(
     [&](Acceleration& acceleration) {
-      acceleration.value += glm::vec3(0.0, 0.0, -GRAVITY);
+      acceleration.value += glm::vec3(0.0, 0.0, -pln::consts::GRAVITY);
     });
 }

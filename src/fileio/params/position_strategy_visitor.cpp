@@ -11,7 +11,6 @@
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/consts.h"
 #include "src/game_state/factory.h"
 #include "src/utils/random.h"
 
@@ -21,6 +20,7 @@
 #include "position_strategy_visitor.h"
 #include "strategies.h"
 
+import pln.consts;
 import utils.crash;
 
 PositionStrategyVisitor::PositionStrategyVisitor(
@@ -119,8 +119,8 @@ PositionStrategyVisitor::operator()(const PositionStrategySquare& strategy)
   auto& height = strategy.height;
   auto get_random_int = make_random_fn(static_cast<size_t>(0),
                                        strategy.entity_ids.size() - 1);
-  auto start_x = center.x - static_cast<float>(width) * HALF;
-  auto start_y = center.y - static_cast<float>(height) * HALF;
+  auto start_x = center.x - static_cast<float>(width) * pln::consts::HALF;
+  auto start_y = center.y - static_cast<float>(height) * pln::consts::HALF;
   for (int x = 0; x < width; x++) {
     for (int y = 0; y < height; y++) {
       auto entity_index = get_random_int();

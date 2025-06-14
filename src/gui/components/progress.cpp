@@ -1,13 +1,14 @@
 #include "src/components/common.h"
 #include "src/components/percent.h"
 #include "src/components/transform.h"
-#include "src/consts.h"
 #include "src/events/event_emitter.h"
 #include "src/gui/components/div.h"
 #include "src/gui/components/rect.h"
 #include "src/shapes.h"
 
 #include "progress.h"
+
+import pln.consts;
 
 namespace GUI::Factory {
 
@@ -57,7 +58,7 @@ progress(std::shared_ptr<entt::registry>& registry,
     auto line_position = line_transform.translation();
     line_position.y = static_cast<float>(progress_size.height
                                          - line_size.height)
-                      * HALF;
+                      * pln::consts::HALF;
     line_transform.translate(line_position);
 
     is_progress_dirty.value = true;

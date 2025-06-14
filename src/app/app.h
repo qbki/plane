@@ -11,7 +11,6 @@
 #include "src/app/save.h"     // IWYU pragma: export
 #include "src/app/settings.h" // IWYU pragma: export
 #include "src/app/system.h"   // IWYU pragma: export
-#include "src/consts.h"
 #include "src/scene/scene.h" // IWYU pragma: export
 #include "src/sdl_init.h"
 #include "src/shader.h"                   // IWYU pragma: export
@@ -20,6 +19,7 @@
 #include "src/shapes.h"                   // IWYU pragma: export
 
 import control;
+import pln.consts;
 
 class App
 {
@@ -36,11 +36,11 @@ private:
   WindowPtr _window { nullptr, [](SDL_Window*) {} };
   ContextPtr _gl_context { nullptr, [](SDL_GLContext) {} };
   System _system {};
-  Settings _settings { SETTINGS_FILE };
-  Save _save { SAVE_DATA_FILE };
+  Settings _settings { pln::consts::SETTINGS_FILE };
+  Save _save { pln::consts::SAVE_DATA_FILE };
   std::vector<std::unique_ptr<Scene>> _scenes {};
   std::unique_ptr<pln::control::Control> _control {};
-  RectSize _screen_size { DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
+  RectSize _screen_size { pln::consts::DEFAULT_SCREEN_WIDTH, pln::consts::DEFAULT_SCREEN_HEIGHT };
   std::unique_ptr<DeferredShading> _deferred_shading {};
   std::unique_ptr<FrameBuffer>
     _intermediate_fb = std::make_unique<FrameBuffer>();
@@ -48,7 +48,7 @@ private:
   std::unique_ptr<Shader> _ui_shader {};
   std::unique_ptr<Shader> _intermediate_shader {};
   TranslationsMapping _translations;
-  std::filesystem::path _assets_dir { DEFAULT_ASSETS_DIR };
+  std::filesystem::path _assets_dir { pln::consts::DEFAULT_ASSETS_DIR };
 
   std::vector<Handler> _handlers = std::vector<Handler>();
   std::vector<Handler> _once_handlers = std::vector<Handler>();

@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 
-#include "src/mesh.h"
 #include "src/services/logger.h"
 #include "src/utils/result.h" // IWYU pragma: export
 

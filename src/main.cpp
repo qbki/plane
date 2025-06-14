@@ -7,7 +7,6 @@
 #include "fileio/theme_loader.h"
 #include "fileio/translation_loader.h"
 #include "logger/logger.h"
-#include "mesh.h"
 #include "sdl_init.h"
 #include "services.h"
 #include "src/services/logger.h"

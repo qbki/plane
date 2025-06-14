@@ -19,6 +19,7 @@
 
 import pln.consts;
 import pln.materals;
+import pln.meshes;
 
 
 static const pln::materials::Material COMMON_MATERIAL(glm::vec3(0.05, 0.05, 0.05),
@@ -27,9 +28,9 @@ static const pln::materials::Material COMMON_MATERIAL(glm::vec3(0.05, 0.05, 0.05
 
 struct TransformHolder
 {
-  Mesh* mesh = nullptr;
+  pln::meshes::Mesh* mesh = nullptr;
   const Texture* texture = nullptr;
-  Mesh::DrawParams draw_params;
+  pln::meshes::Mesh::DrawParams draw_params;
 };
 
 /**
@@ -44,7 +45,7 @@ struct TransformHolder
  * @see https://registry.khronos.org/webgl/specs/latest/2.0-compute/
  */
 void
-draw_sorted(const std::unordered_map<Mesh*, TransformHolder>& transform_holders)
+draw_sorted(const std::unordered_map<pln::meshes::Mesh*, TransformHolder>& transform_holders)
 {
   using namespace std;
   vector<const TransformHolder*> holders {};
@@ -65,7 +66,7 @@ draw_sorted(const std::unordered_map<Mesh*, TransformHolder>& transform_holders)
 }
 
 void
-draw(std::unordered_map<Mesh*, TransformHolder>& transform_holders)
+draw(std::unordered_map<pln::meshes::Mesh*, TransformHolder>& transform_holders)
 {
   for (auto& [_, holder] : transform_holders) {
     holder.texture->use(0);
@@ -75,8 +76,8 @@ draw(std::unordered_map<Mesh*, TransformHolder>& transform_holders)
 
 void
 update_transform_mapping(
-  std::unordered_map<Mesh*, TransformHolder>& transform_mapping,
-  Mesh* mesh_pointer,
+  std::unordered_map<pln::meshes::Mesh*, TransformHolder>& transform_mapping,
+  pln::meshes::Mesh* mesh_pointer,
   const Texture* texture_pointer,
   glm::mat4& transform)
 {
@@ -107,7 +108,7 @@ render_generic_objects(App& app, const Scene& scene)
   auto& geometry_pass_shader = deferred_shading.geometry_pass();
   geometry_pass_shader.uniform("u_PV", camera.pv());
 
-  std::unordered_map<Mesh*, TransformHolder> transform_mapping;
+  std::unordered_map<pln::meshes::Mesh*, TransformHolder> transform_mapping;
 
   glDisable(GL_BLEND);
   registry
@@ -202,7 +203,7 @@ render_particles(App& app, const Scene& scene)
   auto& particle_shader = app.particle_shader();
   particle_shader.use();
   particle_shader.uniform("u_PV", camera.pv());
-  std::unordered_map<Mesh*, TransformHolder> transform_mapping;
+  std::unordered_map<pln::meshes::Mesh*, TransformHolder> transform_mapping;
   registry
     .view<const Transform,
           const MeshPointer,

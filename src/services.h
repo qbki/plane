@@ -3,9 +3,9 @@
 #include "src/cache/cache.h"          // IWYU pragma: export
 #include "src/events/event_emitter.h" // IWYU pragma: export
 #include "src/gui/core/theme.h"       // IWYU pragma: export
-#include "src/mesh.h"
 #include "src/utils/types.h"
 
+import pln.meshes;
 import pln;
 
 namespace Services {
@@ -25,8 +25,8 @@ app()
 const GUI::Theme&
 theme();
 
-using GuiQuad = NewType<std::unique_ptr<Mesh>, struct GuiQuadTag>;
-Mesh&
+using GuiQuad = NewType<std::unique_ptr<pln::meshes::Mesh>, struct GuiQuadTag>;
+pln::meshes::Mesh&
 gui_quad();
 
 template<typename T>

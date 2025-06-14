@@ -8,11 +8,11 @@
 #include <optional> // IWYU pragma: export
 #include <vector>
 
-#include "src/mesh.h" // IWYU pragma: export
 #include "src/texture.h"
 #include "src/utils/types.h" // IWYU pragma: export
 
 import pln.control;
+import pln.meshes;
 
 enum class EnemyStateEnum
 {
@@ -27,7 +27,7 @@ using InitialPosition = NewType<glm::vec3, struct InitialPositionTag>;
 using IsDirty = NewType<bool, struct IsDirtyTag>;
 using Lifetime = NewType<float, struct LifeTimeTag>;
 using LifetimeMax = NewType<float, struct LifeTimeMaxTag>;
-using MeshPointer = std::shared_ptr<Mesh>;
+using MeshPointer = std::shared_ptr<pln::meshes::Mesh>;
 using Owner = NewType<entt::entity, struct OwnerTag>;
 using Parent = NewType<std::optional<entt::entity>, struct ParentTag>;
 using ShotSound = NewType<std::optional<std::string>, struct ShotSoundTag>;

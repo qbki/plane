@@ -14,6 +14,8 @@
 
 #include "src/cache/cache.h"
 
+import pln.meshes;
+
 glm::vec3
 exctract_material_color(tinygltf::Model& model)
 {
@@ -70,7 +72,7 @@ Cache::get_model(const std::filesystem::path& mesh_path)
   auto texture = extracted_texture_opt.has_value()
                    ? extracted_texture_opt.value()
                    : generate_texture(gltf_model);
-  auto mesh = std::make_shared<Mesh>(gltf_model);
+  auto mesh = std::make_shared<pln::meshes::Mesh>(gltf_model);
   _meshes[mesh_path] = std::make_tuple(mesh, texture);
   return { mesh, texture };
 }

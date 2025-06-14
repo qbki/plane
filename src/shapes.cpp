@@ -1,12 +1,14 @@
 #include "shapes.h"
 
+import pln.meshes;
+
 RectSize::RectSize(int _width, int _height)
   : width(_width)
   , height(_height)
 {
 }
 
-std::unique_ptr<Mesh>
+std::unique_ptr<pln::meshes::Mesh>
 create_quad(float x, float y, float z)
 {
   std::vector<float> vertices = {
@@ -27,10 +29,10 @@ create_quad(float x, float y, float z)
     2, 1, 0, //
     2, 3, 1, //
   };
-  return std::make_unique<Mesh>(vertices, normals, tex_coords, indices);
+  return std::make_unique<pln::meshes::Mesh>(vertices, normals, tex_coords, indices);
 }
 
-std::unique_ptr<Mesh>
+std::unique_ptr<pln::meshes::Mesh>
 create_y_reflected_quad()
 {
   std::vector<float> vertices = {
@@ -55,10 +57,10 @@ create_y_reflected_quad()
     2, 1, 0, //
     2, 3, 1, //
   };
-  return std::make_unique<Mesh>(vertices, normals, tex_coords, indices);
+  return std::make_unique<pln::meshes::Mesh>(vertices, normals, tex_coords, indices);
 }
 
-std::unique_ptr<Mesh>
+std::unique_ptr<pln::meshes::Mesh>
 create_ui_quad()
 {
   std::vector<float> vertices = {
@@ -83,5 +85,5 @@ create_ui_quad()
     2, 1, 0, //
     2, 3, 1, //
   };
-  return std::make_unique<Mesh>(vertices, normals, tex_coords, indices);
+  return std::make_unique<pln::meshes::Mesh>(vertices, normals, tex_coords, indices);
 }

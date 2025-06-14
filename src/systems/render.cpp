@@ -10,7 +10,6 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
-#include "src/material.h"
 #include "src/math/intersection.h"
 #include "src/services.h"
 #include "src/texture.h"
@@ -19,11 +18,12 @@
 #include "render.h"
 
 import pln.consts;
+import pln.materals;
 
 
-static const Material COMMON_MATERIAL(glm::vec3(0.05, 0.05, 0.05),
-                                      glm::vec3(1.0, 1.0, 1.0),
-                                      22);
+static const pln::materials::Material COMMON_MATERIAL(glm::vec3(0.05, 0.05, 0.05),
+                                                      glm::vec3(1.0, 1.0, 1.0),
+                                                      22);
 
 struct TransformHolder
 {

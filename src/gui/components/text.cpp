@@ -5,10 +5,10 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
-#include "src/shapes.h"
 
 #include "text.h"
 
+import pln.shapes;
 import pln.utils.color;
 
 namespace GUI::Factory {
@@ -28,7 +28,7 @@ text(std::shared_ptr<entt::registry>& registry, const TextConfig& config)
   float bbox_height { 0 };
   text->bounds(&bbox_x, &bbox_y, &bbox_width, &bbox_height, false);
 
-  const float twice = 2;
+  const float twice { 2 };
   float width = bbox_x * twice + bbox_width;
   float height = bbox_y * twice + bbox_height;
 
@@ -45,7 +45,7 @@ text(std::shared_ptr<entt::registry>& registry, const TextConfig& config)
   registry->emplace<GUIKind>(entity);
   registry->emplace<IsDirty>(entity, true);
   registry->emplace<Parent>(entity, config.parent);
-  registry->emplace<RectSize>(entity, width, height);
+  registry->emplace<pln::shapes::RectSize>(entity, width, height);
   registry->emplace<Text>(entity, config.text);
   registry->emplace<Transform>(entity, transform);
   registry->emplace<UiCanvas>(entity, std::move(canvas));

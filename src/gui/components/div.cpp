@@ -1,11 +1,13 @@
 #include <algorithm>
+#include <entt/entt.hpp>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/shapes.h"
 
 #include "div.h"
 #include "utils.h"
+
+import pln.shapes;
 
 namespace GUI::Factory {
 
@@ -20,7 +22,7 @@ div(std::shared_ptr<entt::registry>& registry, const DivConfig& config)
   registry->emplace<Children>(entity, config.children);
   registry->emplace<GUIKind>(entity);
   registry->emplace<Parent>(entity, config.parent);
-  registry->emplace<RectSize>(entity, valid_width, valid_height);
+  registry->emplace<pln::shapes::RectSize>(entity, valid_width, valid_height);
   registry->emplace<Transform>(entity);
 
   reparent(registry, config.children.value, entity);

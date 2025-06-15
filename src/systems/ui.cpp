@@ -4,19 +4,18 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
-#include "src/shapes.h"
 
 #include "ui.h"
 
+import pln.shapes;
 import pln.utils.color;
 
 void
 ui_system(const Scene& scene)
 {
   auto& registry = scene.state().shared_registry();
-  registry->view<RectSize, pln::utils::color::Color, Transform, IsDirty, UIRect>().each(
-    [&](entt::entity entity,
-        const RectSize& rect,
+  registry->view<pln::shapes::RectSize, pln::utils::color::Color, Transform, IsDirty, UIRect>().each(
+    [&](entt::entity entity, const pln::shapes::RectSize& rect,
         const pln::utils::color::Color& color,
         Transform& transform,
         IsDirty& is_dirty) {

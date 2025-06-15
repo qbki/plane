@@ -22,6 +22,7 @@ import pln.service;
 import pln.services.app;
 import pln.services.gui_quad;
 import pln.services.logger;
+import pln.shapes;
 import pln.utils.system;
 
 int
@@ -84,7 +85,7 @@ main(int argc, char* argv[])
   auto deferred_shading = std::make_unique<DeferredShading>(
     std::move(geometry_pass_shader),
     std::move(light_pass_shader),
-    create_quad(1.0, 1.0, pln::consts::FARTHEST_NDS_Z_COORD),
+    pln::shapes::create_quad(1.0, 1.0, pln::consts::FARTHEST_NDS_Z_COORD),
     pln::consts::DEFAULT_SCREEN_WIDTH,
     pln::consts::DEFAULT_SCREEN_HEIGHT);
 
@@ -131,7 +132,7 @@ main(int argc, char* argv[])
   auto theme = load_theme(pln::services::app().levels_dir() / "theme.json");
   pln::Service<const GUI::Theme>::install(std::move(theme));
 
-  auto quad = std::make_unique<pln::services::GuiQuad>(create_quad(1, 1, 0));
+  auto quad = std::make_unique<pln::services::GuiQuad>(pln::shapes::create_quad(1, 1, 0));
   pln::Service<const pln::services::GuiQuad>::install(std::move(quad));
 
   pln::common_handlers::register_common_handlers();

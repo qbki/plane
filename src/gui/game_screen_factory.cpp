@@ -12,6 +12,7 @@
 
 import pln.services.app;
 import pln.services.theme;
+import pln.shapes;
 
 
 namespace GUI {
@@ -54,13 +55,13 @@ game_screen_factory(Scene& scene)
       .color { pln::services::theme().palette.WHITE_ACCENT },
     });
   auto [lives_transform,
-        lives_size] = registry->get<Transform, RectSize>(lives_entity);
+        lives_size] = registry->get<Transform, pln::shapes::RectSize>(lives_entity);
   lives_transform.translate(
     { OFFSET, screen_size.height - lives_size.height - OFFSET, 0 });
   scene.handlers().add([lives_entity](Scene& scene) {
     auto& info = pln::services::app().info();
     auto& registry = scene.state().shared_registry();
-    auto size = registry->try_get<RectSize>(lives_entity);
+    auto size = registry->try_get<pln::shapes::RectSize>(lives_entity);
     if (size) {
       auto ratio = info.lives.max > 0 ? static_cast<double>(info.lives.value)
                                           / static_cast<double>(info.lives.max)

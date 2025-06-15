@@ -1,5 +1,4 @@
 module;
-#pragma once
 #include <filesystem>
 
 #include "src/math/shapes.h"

@@ -2,9 +2,11 @@
 #include <glm/vec2.hpp>
 
 #include "src/components/transform.h"
-#include "src/shapes.h"
 
 #include "shapes.h"
+
+import pln.shapes;
+
 
 bool
 is_in_front(const Shape::Plane& plane, const Shape::Sphere& sphere);
@@ -20,7 +22,7 @@ bool
 is_inside(const Shape::AABB& collider, const glm::vec3& point);
 
 bool
-is_inside(const Rect<int>& collider, const glm::ivec2& point);
+is_inside(const pln::shapes::Rect<int>& collider, const glm::ivec2& point);
 
 bool
 on_axis(const Shape::Sphere& collider, const glm::vec3& point);

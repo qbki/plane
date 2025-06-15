@@ -1,12 +1,12 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/core/button_state.h"
-#include "src/shapes.h"
 
 #include "text.h"
 #include "text_button.h"
 
 import pln.services.theme;
+import pln.shapes;
 
 namespace GUI::Factory {
 
@@ -51,7 +51,7 @@ text_button(std::shared_ptr<entt::registry>& registry,
   registry->emplace<IsPointerDownEventAccepted>(entity, false);
   registry->emplace<IsPointerInside>(entity, false);
   registry->emplace<Parent>(entity, config.parent);
-  registry->emplace<RectSize>(entity, 0, 0);
+  registry->emplace<pln::shapes::RectSize>(entity, 0, 0);
   registry->emplace<Transform>(entity);
 
   registry->emplace<Events::EventEmitter<Events::PointerMove>>(entity);
@@ -72,8 +72,8 @@ text_button(std::shared_ptr<entt::registry>& registry,
 
   layout.add([registry, entity](auto&) {
     auto [state,
-          parent_rect_size] = registry->get<ButtonState, RectSize>(entity);
-    const auto& child_rect_size = registry->get<RectSize>(state.current());
+          parent_rect_size] = registry->get<ButtonState, pln::shapes::RectSize>(entity);
+    const auto& child_rect_size = registry->get<pln::shapes::RectSize>(state.current());
     parent_rect_size = child_rect_size;
   });
 

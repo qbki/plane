@@ -15,11 +15,11 @@
 #include "src/shader.h"                   // IWYU pragma: export
 #include "src/shading/deferred_shading.h" // IWYU pragma: export
 #include "src/shading/framebuffer.h"      // IWYU pragma: export
-#include "src/shapes.h"                   // IWYU pragma: export
 
 import pln.consts;
 import pln.control;
 import pln.sdl;
+import pln.shapes;
 
 class App
 {
@@ -40,7 +40,8 @@ private:
   Save _save { pln::consts::SAVE_DATA_FILE };
   std::vector<std::unique_ptr<Scene>> _scenes {};
   std::unique_ptr<pln::control::Control> _control {};
-  RectSize _screen_size { pln::consts::DEFAULT_SCREEN_WIDTH, pln::consts::DEFAULT_SCREEN_HEIGHT };
+  pln::shapes::RectSize _screen_size { pln::consts::DEFAULT_SCREEN_WIDTH,
+                                       pln::consts::DEFAULT_SCREEN_HEIGHT };
   std::unique_ptr<DeferredShading> _deferred_shading {};
   std::unique_ptr<FrameBuffer>
     _intermediate_fb = std::make_unique<FrameBuffer>();
@@ -113,8 +114,8 @@ public:
   void add_once_handler(Handler handler);
   void update(unsigned long time_since_start_of_program);
 
-  void screen_size(const RectSize& size);
-  [[nodiscard]] RectSize screen_size() const;
+  void screen_size(const pln::shapes::RectSize& size);
+  [[nodiscard]] pln::shapes::RectSize screen_size() const;
 
   void validate();
 

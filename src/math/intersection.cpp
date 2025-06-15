@@ -6,6 +6,8 @@
 
 #include "intersection.h"
 
+import pln.shapes;
+
 bool
 is_in_front(const Shape::Plane& plane, const Shape::Sphere& sphere)
 {
@@ -94,7 +96,7 @@ is_inside(const Shape::AABB& collider, const glm::vec3& point)
 }
 
 bool
-is_inside(const Rect<int>& collider, const glm::ivec2& point)
+is_inside(const pln::shapes::Rect<int>& collider, const glm::ivec2& point)
 {
   return collider.x <= point.x && point.x <= (collider.x + collider.width)
          && collider.y <= point.y && point.y <= (collider.y + collider.height);

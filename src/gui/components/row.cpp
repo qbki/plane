@@ -6,10 +6,11 @@
 #include "src/components/transform.h"
 #include "src/events/event.h"
 #include "src/events/event_emitter.h"
-#include "src/shapes.h"
 
 #include "row.h"
 #include "utils.h"
+
+import pln.shapes;
 
 namespace GUI::Factory {
 
@@ -18,7 +19,7 @@ row(std::shared_ptr<entt::registry>& registry, const RowConfig& config)
 {
   auto entity = registry->create();
 
-  registry->emplace<RectSize>(entity, 0, 0);
+  registry->emplace<pln::shapes::RectSize>(entity, 0, 0);
   registry->emplace<Transform>(entity);
   registry->emplace<Parent>(entity, std::nullopt);
   registry->emplace<Children>(entity, config.children);
@@ -32,12 +33,12 @@ row(std::shared_ptr<entt::registry>& registry, const RowConfig& config)
           transform,
           rect_size,
           parent] = registry
-                      ->get<Children, Transform, RectSize, Parent>(entity);
+                      ->get<Children, Transform, pln::shapes::RectSize, Parent>(entity);
 
     auto children = std::views::transform(
       children_ids.value,
       [registry](const auto child) {
-        return registry->get<Transform, RectSize>(child);
+        return registry->get<Transform, pln::shapes::RectSize>(child);
       });
 
     int max_height = 0;
@@ -45,7 +46,7 @@ row(std::shared_ptr<entt::registry>& registry, const RowConfig& config)
       max_height = std::max(max_height, child_rect_size.height);
     }
 
-    RectSize new_rect_size;
+    pln::shapes::RectSize new_rect_size;
     new_rect_size.height = max_height;
     for (auto [child_transform, child_rect_size] : children) {
       auto child_position = child_transform.translation();

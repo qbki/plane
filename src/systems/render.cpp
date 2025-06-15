@@ -19,6 +19,7 @@ import pln.consts;
 import pln.materals;
 import pln.meshes;
 import pln.services.app;
+import pln.shapes;
 import pln.utils.ecs;
 
 
@@ -225,7 +226,7 @@ render_particles(App& app, const Scene& scene)
 void
 render_ui(const Scene& scene)
 {
-  static auto quad = create_ui_quad();
+  static auto quad = pln::shapes::create_ui_quad();
 
   GLint stored_gl_depth_func = 0;
   auto& registry = scene.state().registry();
@@ -243,10 +244,10 @@ render_ui(const Scene& scene)
   glDepthFunc(GL_ALWAYS);
 
   registry
-    .view<UiCanvas, Transform, RectSize, IsDirty, Parent, GUIKind, Available>()
+    .view<UiCanvas, Transform, pln::shapes::RectSize, IsDirty, Parent, GUIKind, Available>()
     .each([&](UiCanvas& canvas,
               const Transform& transform,
-              const RectSize& rect,
+              const pln::shapes::RectSize& rect,
               IsDirty& is_dirty,
               const Parent& parent) {
       if (rect.width <= 0 || rect.height <= 0) {

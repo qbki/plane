@@ -1,15 +1,41 @@
-#include "shapes.h"
+module;
+#include <memory>
+
+export module pln.shapes;
 
 import pln.meshes;
 
-RectSize::RectSize(int _width, int _height)
-  : width(_width)
-  , height(_height)
-{
-}
+namespace pln::shapes {
 
+export
+struct RectSize
+{
+  int width = 0;
+  int height = 0;
+
+  RectSize() = default;
+
+  RectSize(int _width, int _height)
+    : width(_width)
+    , height(_height)
+  {
+  }
+};
+
+export
+template<typename T>
+struct Rect
+{
+  T x;
+  T y;
+  T width;
+  T height;
+};
+
+
+export
 std::unique_ptr<pln::meshes::Mesh>
-create_quad(float x, float y, float z)
+create_quad(float x = 1.0f, float y = 1.0f, float z = 0.0f)
 {
   std::vector<float> vertices = {
     -x, y,  z, //
@@ -32,6 +58,8 @@ create_quad(float x, float y, float z)
   return std::make_unique<pln::meshes::Mesh>(vertices, normals, tex_coords, indices);
 }
 
+
+export
 std::unique_ptr<pln::meshes::Mesh>
 create_y_reflected_quad()
 {
@@ -60,6 +88,8 @@ create_y_reflected_quad()
   return std::make_unique<pln::meshes::Mesh>(vertices, normals, tex_coords, indices);
 }
 
+
+export
 std::unique_ptr<pln::meshes::Mesh>
 create_ui_quad()
 {
@@ -86,4 +116,6 @@ create_ui_quad()
     2, 3, 1, //
   };
   return std::make_unique<pln::meshes::Mesh>(vertices, normals, tex_coords, indices);
+}
+
 }

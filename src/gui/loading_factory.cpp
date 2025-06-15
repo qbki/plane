@@ -5,6 +5,7 @@
 
 import pln.services.app;
 import pln.services.theme;
+import pln.shapes;
 
 namespace GUI {
 
@@ -22,7 +23,7 @@ loading_factory(Scene& scene)
   scene.handlers().add([loading_text_entity](Scene& scene) {
     auto& registry = scene.state().registry();
     auto [transform,
-          size] = registry.get<Transform, RectSize>(loading_text_entity);
+          size] = registry.get<Transform, pln::shapes::RectSize>(loading_text_entity);
     const int offset = 16;
     auto screen_size = pln::services::app().screen_size();
     transform.translate({

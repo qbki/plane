@@ -6,16 +6,15 @@
 #include <tuple>
 #include <unordered_map>
 
-#include "src/shapes.h"
 #include "src/sound/sound.h"
 #include "src/texture.h"
 #include "src/utils/file_loaders.h"
-#include "src/utils/result.h"
 
 #include "src/cache/cache.h"
 
 import pln.meshes;
 import pln.services.app;
+import pln.shapes;
 
 glm::vec3
 exctract_material_color(tinygltf::Model& model)
@@ -87,7 +86,7 @@ Cache::get_rect(const pln::utils::color::Color& color)
   }
   std::vector<unsigned char> data { color.r, color.g, color.b, color.a };
   auto texture = std::make_shared<Texture>(1, 1, data);
-  auto mesh = std::shared_ptr(create_quad());
+  auto mesh = std::shared_ptr(pln::shapes::create_quad());
   auto pair = std::make_tuple(mesh, texture);
   _meshes[rect_id] = pair;
   return pair;

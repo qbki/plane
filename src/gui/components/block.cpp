@@ -4,12 +4,12 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/events/event_emitter.h"
-#include "src/shapes.h"
 
 #include "block.h"
 #include "utils.h"
 
 import pln.services.app;
+import pln.shapes;
 
 namespace GUI::Factory {
 
@@ -18,7 +18,7 @@ block(std::shared_ptr<entt::registry>& registry, const BlockConfig& config)
 {
   auto entity = registry->create();
 
-  registry->emplace<RectSize>(entity, 0, 0);
+  registry->emplace<pln::shapes::RectSize>(entity, 0, 0);
   registry->emplace<Transform>(entity);
   registry->emplace<Parent>(entity, std::nullopt);
   registry->emplace<Children>(entity, config.children);
@@ -32,11 +32,11 @@ block(std::shared_ptr<entt::registry>& registry, const BlockConfig& config)
           transform,
           rect_size,
           parent] = registry
-                      ->get<Children, Transform, RectSize, Parent>(entity);
-    RectSize new_rect_size;
+                      ->get<Children, Transform, pln::shapes::RectSize, Parent>(entity);
+    pln::shapes::RectSize new_rect_size;
     for (auto& child_entity : children.value) {
       auto [child_transform,
-            child_rect_size] = registry->get<Transform, RectSize>(child_entity);
+            child_rect_size] = registry->get<Transform, pln::shapes::RectSize>(child_entity);
       auto child_position = child_transform.translation();
       child_transform.translate({ child_position.x,
                                   static_cast<float>(new_rect_size.height),
@@ -47,8 +47,8 @@ block(std::shared_ptr<entt::registry>& registry, const BlockConfig& config)
     }
     rect_size = new_rect_size;
 
-    RectSize parent_rect_size = parent.value.has_value()
-                                  ? registry->get<RectSize>(
+    pln::shapes::RectSize parent_rect_size = parent.value.has_value()
+                                  ? registry->get<pln::shapes::RectSize>(
                                       parent.value.value())
                                   : pln::services::app().screen_size();
     auto left = (parent_rect_size.width - rect_size.width) / 2;

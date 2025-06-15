@@ -9,8 +9,9 @@
 
 #include "update_gui.h"
 
-import pln.utils.ecs;
 import pln.services.app;
+import pln.shapes;
+import pln.utils.ecs;
 
 void
 update_gui(Scene& scene)
@@ -36,7 +37,7 @@ update_gui(Scene& scene)
           Events::EventEmitter<Events::PointerLeave>,
           Events::EventEmitter<Events::PointerDown>,
           Transform,
-          RectSize,
+          pln::shapes::RectSize,
           Parent,
           IsPointerInside,
           IsPointerDownEventAccepted>()
@@ -50,7 +51,7 @@ update_gui(Scene& scene)
             Events::EventEmitter<Events::PointerLeave>& pointer_leave,
             Events::EventEmitter<Events::PointerDown>& pointer_down,
             Transform& transform,
-            RectSize& rect_size,
+            pln::shapes::RectSize& rect_size,
             Parent& parent,
             IsPointerInside& was_pointer_inside,
             IsPointerDownEventAccepted& is_down_event_accepted) {
@@ -58,7 +59,7 @@ update_gui(Scene& scene)
       auto is_pointer_down = pln::services::app().control().pointer_pressed;
       auto is_pointer_up = !is_pointer_down;
       auto point = global_matrix * glm::vec4(transform.translation(), 1);
-      Rect<int> rect {
+      pln::shapes::Rect<int> rect {
         .x = static_cast<int>(point.x),
         .y = static_cast<int>(point.y),
         .width = rect_size.width,

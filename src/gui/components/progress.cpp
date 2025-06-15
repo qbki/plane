@@ -4,11 +4,11 @@
 #include "src/events/event_emitter.h"
 #include "src/gui/components/div.h"
 #include "src/gui/components/rect.h"
-#include "src/shapes.h"
 
 #include "progress.h"
 
 import pln.consts;
+import pln.shapes;
 
 namespace GUI::Factory {
 
@@ -45,16 +45,16 @@ progress(std::shared_ptr<entt::registry>& registry,
     entity);
 
   layout.add([registry, entity, line, progress](auto&) {
-    auto [percent, rect, is_dirty] = registry->get<Percent, RectSize, IsDirty>(
+    auto [percent, rect, is_dirty] = registry->get<Percent, pln::shapes::RectSize, IsDirty>(
       entity);
     if (!is_dirty.value) {
       return;
     }
     auto [progress_size,
-          is_progress_dirty] = registry->get<RectSize, IsDirty>(progress);
+          is_progress_dirty] = registry->get<pln::shapes::RectSize, IsDirty>(progress);
     progress_size.width = static_cast<int>(rect.width * percent.norm());
 
-    auto [line_transform, line_size] = registry->get<Transform, RectSize>(line);
+    auto [line_transform, line_size] = registry->get<Transform, pln::shapes::RectSize>(line);
     auto line_position = line_transform.translation();
     line_position.y = static_cast<float>(progress_size.height
                                          - line_size.height)

@@ -3,13 +3,13 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/components/text.h"
-#include "src/shapes.h"
 
 #include "factory.h"
 
 import pln.control;
 import pln.services.cache;
 import pln.services.theme;
+import pln.shapes;
 
 namespace ModelFactory {
 
@@ -127,7 +127,7 @@ make_text(std::shared_ptr<entt::registry>& registry, const std::string&)
 {
   auto entity = GUI::Factory::text(registry, GUI::Factory::TextConfig {});
   registry->emplace<ParticleKind>(entity); // TODO Add better type
-  registry->emplace<MeshPointer>(entity, create_quad());
+  registry->emplace<MeshPointer>(entity, pln::shapes::create_quad());
   return entity;
 }
 

@@ -7,6 +7,7 @@
 #include "app.h"
 
 import pln.sdl;
+import pln.shapes;
 import pln.utils.crash;
 
 App::App(std::filesystem::path assets_dir)
@@ -37,12 +38,12 @@ App::control() const
 }
 
 void
-App::screen_size(const RectSize& size)
+App::screen_size(const pln::shapes::RectSize& size)
 {
   _screen_size = size;
 }
 
-RectSize
+pln::shapes::RectSize
 App::screen_size() const
 {
   return _screen_size;

@@ -4,11 +4,11 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
-#include "src/shapes.h"
 
 #include "rect.h"
 
 import pln.utils.color;
+import pln.shapes;
 
 namespace GUI::Factory {
 
@@ -24,7 +24,7 @@ rect(std::shared_ptr<entt::registry>& registry, const RectConfig& config)
   registry->emplace<GUIKind>(entity);
   registry->emplace<IsDirty>(entity, true);
   registry->emplace<Parent>(entity, config.parent);
-  registry->emplace<RectSize>(entity, config.width, config.height);
+  registry->emplace<pln::shapes::RectSize>(entity, config.width, config.height);
   registry->emplace<Transform>(entity);
   registry->emplace<UIRect>(entity);
   registry->emplace<UiCanvas>(entity, std::move(canvas));

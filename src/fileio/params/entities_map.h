@@ -38,15 +38,25 @@ public:
   template<typename T>
   std::vector<T> get_all() const
   {
-    std::vector<T> result;
-    auto data = _mapping | std::views::values
-                | std::views::filter(
-                  [](auto& value) { return std::holds_alternative<T>(value); })
-                | std::views::transform([](auto& value) {
-                    return std::get<EntityParamsModel>(value);
-                  });
-    std::ranges::copy(data, std::back_inserter(result));
-    return result;
+    auto data = _mapping | std::views::values;
+
+    std::vector<EntityParams> filterd_data {};
+    copy_if(data.begin(),
+            data.end(),
+            std::back_inserter(filterd_data),
+            [](const EntityParams& value) {
+              return std::holds_alternative<T>(value);
+            });
+
+    std::vector<T> transformed_data {};
+    std::transform(filterd_data.begin(),
+                   filterd_data.end(),
+                   std::back_inserter(transformed_data),
+                   [](const EntityParams& value) {
+                     return std::get<T>(value);
+                   });
+
+    return transformed_data;
   }
 
   void set(Mapping&& mapping);

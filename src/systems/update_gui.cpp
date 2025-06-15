@@ -1,20 +1,21 @@
+#include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/math/intersection.h"
 #include "src/scene/scene.h"
-#include "src/services.h"
 #include "src/utils/mouse.h"
 
 #include "update_gui.h"
 
 import pln.utils.ecs;
+import pln.services.app;
 
 void
 update_gui(Scene& scene)
 {
-  auto mouse_pos = mouse_position();
+  glm::ivec2 mouse_pos = mouse_position();
   glm::ivec2 position { mouse_pos.x, mouse_pos.y };
   Events::GUILayout gui_layout_event_data {};
   Events::PointerMove pointer_move_event_data { .position = position };
@@ -54,7 +55,7 @@ update_gui(Scene& scene)
             IsPointerInside& was_pointer_inside,
             IsPointerDownEventAccepted& is_down_event_accepted) {
       auto global_matrix = pln::utils::ecs::get_global_matrix(registry, parent);
-      auto is_pointer_down = Services::app().control().pointer_pressed;
+      auto is_pointer_down = pln::services::app().control().pointer_pressed;
       auto is_pointer_up = !is_pointer_down;
       auto point = global_matrix * glm::vec4(transform.translation(), 1);
       Rect<int> rect {
@@ -95,12 +96,12 @@ update_gui_calculate_hostiles(const Scene& scene)
         enemy_quantity++;
       }
     });
-  Services::app().info().hostiles = enemy_quantity;
+  pln::services::app().info().hostiles = enemy_quantity;
 }
 
 void
 update_gui_lives(const Scene& scene)
 {
   scene.state().shared_registry()->view<Lives, PlayerKind>().each(
-    [](const Lives& lives) { Services::app().info().lives = lives; });
+    [](const Lives& lives) { pln::services::app().info().lives = lives; });
 }

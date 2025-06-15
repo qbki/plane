@@ -3,11 +3,13 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/components/text.h"
-#include "src/services.h"
+#include "src/shapes.h"
 
 #include "factory.h"
 
 import pln.control;
+import pln.services.cache;
+import pln.services.theme;
 
 namespace ModelFactory {
 
@@ -16,7 +18,7 @@ make_player(std::shared_ptr<entt::registry>& registry,
             const std::string& file_path)
 {
   auto entity = registry->create();
-  auto [mesh, texture] = Services::cache().get_model(file_path);
+  auto [mesh, texture] = pln::services::cache().get_model(file_path);
   registry->emplace<ActorKind>(entity);
   registry->emplace<Acceleration>(entity, glm::vec3(0, 0, 0));
   registry->emplace<AccelerationScalar>(entity, 0);
@@ -34,7 +36,7 @@ entt::entity
 make_enemy(std::shared_ptr<entt::registry>& registry,
            const std::string& file_path)
 {
-  auto [mesh, texture] = Services::cache().get_model(file_path);
+  auto [mesh, texture] = pln::services::cache().get_model(file_path);
   auto entity = registry->create();
   registry->emplace<ActorKind>(entity);
   registry->emplace<Acceleration>(entity, glm::vec3(0, 0, 0));
@@ -54,7 +56,7 @@ entt::entity
 make_debris(std::shared_ptr<entt::registry>& registry,
             const std::string& file_path)
 {
-  auto [mesh, texture] = Services::cache().get_model(file_path);
+  auto [mesh, texture] = pln::services::cache().get_model(file_path);
   auto entity = registry->create();
   registry->emplace<Acceleration>(entity, glm::vec3(0, 0, 0));
   registry->emplace<Available>(entity);
@@ -71,8 +73,8 @@ make_debris(std::shared_ptr<entt::registry>& registry,
 entt::entity
 make_rect(std::shared_ptr<entt::registry>& registry, const std::string&)
 {
-  const auto& theme = Services::theme();
-  auto [mesh, texture] = Services::cache().get_rect(theme.palette.WHITE_ACCENT);
+  const auto& theme = pln::services::theme();
+  auto [mesh, texture] = pln::services::cache().get_rect(theme.palette.WHITE_ACCENT);
 
   const float size = 0.04;
   Transform transform {};
@@ -92,7 +94,7 @@ entt::entity
 make_projectile(std::shared_ptr<entt::registry>& registry,
                 const std::string& file_path)
 {
-  auto [mesh, texture] = Services::cache().get_model(file_path);
+  auto [mesh, texture] = pln::services::cache().get_model(file_path);
   auto entity = registry->create();
   registry->emplace<Available>(entity);
   registry->emplace<Lifetime>(entity, 0);
@@ -110,7 +112,7 @@ entt::entity
 make_static(std::shared_ptr<entt::registry>& registry,
             const std::string& file_path)
 {
-  auto [mesh, texture] = Services::cache().get_model(file_path);
+  auto [mesh, texture] = pln::services::cache().get_model(file_path);
   auto entity = registry->create();
   registry->emplace<Available>(entity);
   registry->emplace<MeshPointer>(entity, mesh);
@@ -133,7 +135,7 @@ entt::entity
 make_tutorial_button(std::shared_ptr<entt::registry>& registry,
                      const std::string& file_path)
 {
-  auto [mesh, texture] = Services::cache().get_model(file_path);
+  auto [mesh, texture] = pln::services::cache().get_model(file_path);
   auto entity = registry->create();
   registry->emplace<Available>(entity);
   registry->emplace<MeshPointer>(entity, mesh);
@@ -149,7 +151,7 @@ entt::entity
 make_particle(std::shared_ptr<entt::registry>& registry,
               const std::string& file_path)
 {
-  auto [mesh, texture] = Services::cache().get_model(file_path);
+  auto [mesh, texture] = pln::services::cache().get_model(file_path);
   auto entity = registry->create();
   registry->emplace<Available>(entity);
   registry->emplace<Color>(entity, glm::zero<glm::vec3>());

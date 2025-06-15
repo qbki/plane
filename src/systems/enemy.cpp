@@ -13,13 +13,13 @@
 #include "src/components/turret_rotation.h"
 #include "src/components/weapon.h"
 #include "src/scene/scene.h"
-#include "src/services.h"
 
 #include "enemy.h"
 
 constexpr float SHOOT_ANGLE = 0.3;
 
 import pln.consts;
+import pln.services.app;
 import pln.utils.common;
 
 std::tuple<entt::entity, glm::vec3>
@@ -123,7 +123,7 @@ enemy_rotation_system(Scene& scene)
         auto forward_vector = enemy_transform.rotation() * glm::vec3(1, 0, 0);
         auto target_vector = player_position - enemy_transform.translation();
         turret_rotation.rotate(
-          forward_vector, target_vector, Services::app().delta_time());
+          forward_vector, target_vector, pln::services::app().delta_time());
         enemy_transform.rotate(turret_rotation.quat());
       }
     });

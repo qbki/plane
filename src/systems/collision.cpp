@@ -5,17 +5,17 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/math/intersection.h"
-#include "src/services.h"
 
 #include "collision.h"
 
 import pln.consts;
+import pln.services.app;
 
 void
 collision_system(Scene& scene)
 {
   auto& registry = scene.state().registry();
-  auto delta_time = Services::app().delta_time();
+  auto delta_time = pln::services::app().delta_time();
 
   registry.view<Transform, Velocity, ActorKind>().each(
     [&](entt::entity entity, Transform& transform_a, Velocity& velocity_a) {

@@ -5,7 +5,8 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/events/event.h"
-#include "src/services.h"
+#include "src/events/event_emitter.h"
+#include "src/shapes.h"
 
 #include "row.h"
 #include "utils.h"

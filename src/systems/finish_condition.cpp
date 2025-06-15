@@ -1,8 +1,10 @@
 #include "src/components/common.h"
 #include "src/scene/scene.h"
-#include "src/services.h"
 
 #include "finish_condition.h"
+
+import pln.services.app;
+import pln.services.events;
 
 void
 check_finish_condition(Scene& scene)
@@ -18,8 +20,8 @@ check_finish_condition(Scene& scene)
     });
 
   if (enemy_quantity == 0) {
-    Services::app().add_once_handler([](auto&) {
-      Services::events<const Events::LoadNextLevelEvent>().emit({});
+    pln::services::app().add_once_handler([](auto&) {
+        pln::services::events<const Events::LoadNextLevelEvent>().emit({});
     });
   }
 }

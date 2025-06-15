@@ -2,13 +2,16 @@
 #include <string>
 
 #include "src/components/common.h"
-#include "src/services.h"
+#include "src/events/event_emitter.h"
+#include "src/gui/core/theme.h"
+
+import pln.services.theme;
 
 namespace GUI::Factory {
 
 struct TextButtonConfig
 {
-  Typography::Font font = Services::theme().typography.h4;
+  Typography::Font font = pln::services::theme().typography.h4;
   Parent parent = Parent { std::nullopt };
   std::string text = "";
   Events::EventEmitter<Events::PointerDown>::Handler on_pointer_down =

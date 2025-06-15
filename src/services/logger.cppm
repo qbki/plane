@@ -1,7 +1,7 @@
 export module pln.services.logger;
 
 import pln.logger;
-import pln;
+import pln.service;
 
 namespace pln::services {
 

@@ -2,16 +2,17 @@
 
 #include "src/cameras/gui_camera.h"
 #include "src/gui/main_menu_factory.h"
-#include "src/services.h"
 #include "src/systems/ui.h"
 #include "src/systems/update_gui.h"
 
 #include "main_menu_screen.h"
 
+import pln.services.app;
+
 std::unique_ptr<Scene>
 load_main_menu()
 {
-  auto screen_size = Services::app().screen_size();
+  auto screen_size = pln::services::app().screen_size();
   auto camera = std::make_unique<GUICamera>(screen_size.width,
                                             screen_size.height);
   auto scene = std::make_unique<Scene>(std::move(camera));

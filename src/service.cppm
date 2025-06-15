@@ -2,7 +2,7 @@ module;
 #include <memory>
 #include <cassert>
 
-export module pln;
+export module pln.service;
 
 namespace pln {
 

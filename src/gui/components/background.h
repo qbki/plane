@@ -1,14 +1,14 @@
 #pragma once
 #include "src/components/common.h"
-#include "src/services.h"
 
+import pln.services.theme;
 import pln.utils.color;
 
 namespace GUI::Factory {
 
 struct BackgroundConfig
 {
-  pln::utils::color::Color color = { Services::theme().palette.white };
+  pln::utils::color::Color color = { pln::services::theme().palette.white };
   Parent parent = Parent { std::nullopt };
   float z { 0 };
 };

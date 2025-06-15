@@ -12,11 +12,11 @@
 #include "src/fileio/params/entities_validators.h"
 #include "src/fileio/params/meta.h"
 #include "src/fileio/params/theme.h"
-#include "src/services.h"
 
 #include "../params.h"
 
 import pln.control;
+import pln.services.app;
 import pln.utils.crash;
 
 template<typename T>
@@ -247,7 +247,7 @@ struct adl_serializer<EntityParams>
       std::optional<std::string> shot_sound_path;
       set_optional(shot_sound_path, json_obj, "shot_sound_path");
       if (shot_sound_path.has_value()) {
-        auto assets_dir = Services::app().assets_dir();
+        auto assets_dir = pln::services::app().assets_dir();
         params.shot_sound_path = assets_dir / shot_sound_path.value();
       }
 

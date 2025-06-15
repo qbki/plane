@@ -4,9 +4,11 @@
 #include "src/components/percent.h"
 #include "src/gui/components/ui.h"
 #include "src/scene/scene.h"
-#include "src/services.h"
 
 #include "settings_screen_factory.h"
+
+import pln.services.app;
+import pln.services.theme;
 
 namespace GUI {
 
@@ -20,12 +22,12 @@ settings_screen_factory(Scene& scene)
   auto progress = ui.progress({
     .width = 200, // NOLINT(cppcoreguidelines-avoid-magic-numbers)
     .height = 20, // NOLINT(cppcoreguidelines-avoid-magic-numbers)
-    .value = Services::app().settings().master_volume().value(),
+    .value = pln::services::app().settings().master_volume().value(),
   });
 
   auto make_volume_changer = [registry, progress](int step) {
     return [registry, progress, step](auto&) {
-      auto& settings = Services::app().settings();
+      auto& settings = pln::services::app().settings();
       settings.master_volume().add(step);
       auto [percent,
             is_percent_dirty] = registry->get<Percent, IsDirty>(progress);
@@ -37,16 +39,16 @@ settings_screen_factory(Scene& scene)
   ui.block({
     .children = Children({
       ui.text({
-        .color = Services::theme().components.text.color,
-        .font = Services::theme().typography.h2,
+        .color = pln::services::theme().components.text.color,
+        .font = pln::services::theme().typography.h2,
         .text = "Settings",
       }),
 
       ui.row({
         .children = Children({
           ui.text({
-            .color = Services::theme().components.text.color,
-            .font = Services::theme().typography.h4,
+            .color = pln::services::theme().components.text.color,
+            .font = pln::services::theme().typography.h4,
             .text = "Sound: ",
           }),
 
@@ -68,8 +70,8 @@ settings_screen_factory(Scene& scene)
         .text = "Back",
         .on_pointer_down =
           [](auto&) {
-            Services::app().add_once_handler([](auto&) {
-              auto& app = Services::app();
+            pln::services::app().add_once_handler([](auto&) {
+              auto& app = pln::services::app();
               app.pop_scene();
               auto scenes_quantity = app.scenes().size();
               if (scenes_quantity > 0) {
@@ -83,7 +85,7 @@ settings_screen_factory(Scene& scene)
   });
 
   ui.background({
-    .color = Services::theme().components.menu_screen.background_color,
+    .color = pln::services::theme().components.menu_screen.background_color,
     .z = -0.1, // NOLINT
   });
 }

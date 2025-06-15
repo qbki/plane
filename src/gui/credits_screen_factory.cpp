@@ -4,10 +4,11 @@
 #include "src/components/common.h"
 #include "src/gui/components/ui.h"
 #include "src/gui/utils/utils.h"
-#include "src/services.h"
 #include "src/utils/file_loaders/file_loaders.h"
 
 #include "credits_screen_factory.h"
+
+import pln.services.app;
 
 namespace GUI {
 
@@ -27,14 +28,14 @@ void
 credits_screen_factory(const Scene& scene)
 {
   auto ui = Factory::make_ui(scene.state().shared_registry());
-  auto credits_file = Services::app().credits_file();
+  auto credits_file = pln::services::app().credits_file();
   auto credits_txt = load_text(credits_file).or_fallback("");
   auto credits_lines = split_by_line(credits_txt);
   Children children { {} };
 
   for (const auto& line : credits_lines) {
     children.value.push_back(ui.text({
-      .font = Services::theme().typography.h3,
+      .font = pln::services::theme().typography.h3,
       .text = (line == "") ? " " : line,
     }));
   }
@@ -43,8 +44,8 @@ credits_screen_factory(const Scene& scene)
     .text = "Go to title sreen",
     .on_pointer_down =
       [](auto&) {
-        clear_user_progress(Services::app());
-        Services::app().add_once_handler(go_to_main_menu);
+        clear_user_progress(pln::services::app());
+        pln::services::app().add_once_handler(go_to_main_menu);
       },
   }));
 

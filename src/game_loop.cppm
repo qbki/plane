@@ -4,15 +4,19 @@ module;
 #include <SDL_keycode.h>
 #include <SDL_timer.h>
 #include <SDL_video.h>
+#include <memory>
 #include <vector>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <emscripten/html5.h>
 #endif
 
-#include "services.h"
+#include "src/app/app.h"
+#include "src/scene/scene.h"
 
 export module pln.game_loop;
+
+import pln.services.app;
 
 namespace pln {
 
@@ -107,7 +111,7 @@ export
 void
 game_loop()
 {
-  auto& app = Services::app();
+  auto& app = pln::services::app();
   wasm_resize_window(app, get_js_window_width(), get_js_window_height());
   emscripten_set_resize_callback(
     EMSCRIPTEN_EVENT_TARGET_WINDOW, &app, EM_FALSE, wasm_resize_window_cb);
@@ -126,7 +130,7 @@ export
 void
 game_loop()
 {
-  auto& app = Services::app();
+  auto& app = pln::services::app();
   while (app.is_running()) {
     inner_game_loop(app);
   }

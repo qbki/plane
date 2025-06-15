@@ -7,9 +7,11 @@
 #include "src/gui/components/rect.h"
 #include "src/gui/components/text.h"
 #include "src/scene/scene.h"
-#include "src/services.h"
 
 #include "game_screen_factory.h"
+
+import pln.services.app;
+import pln.services.theme;
 
 
 namespace GUI {
@@ -21,8 +23,8 @@ game_screen_factory(Scene& scene)
   static const auto MAX_LIVES_WIDTH = 300;
   static const auto MAX_LIVES_HEIGHT = 20;
 
-  auto screen_size = Services::app().screen_size();
-  auto& theme = Services::theme();
+  auto screen_size = pln::services::app().screen_size();
+  auto& theme = pln::services::theme();
   auto& registry = scene.state().shared_registry();
 
   auto text = GUI::Factory::text(registry,
@@ -34,7 +36,7 @@ game_screen_factory(Scene& scene)
   auto& text_transform = registry->get<Transform>(text);
   text_transform.translate({ OFFSET, OFFSET, 0 });
   scene.handlers().add([text](Scene& scene) {
-    auto hostiles_quantity = Services::app().info().hostiles;
+    auto hostiles_quantity = pln::services::app().info().hostiles;
     auto& registry = scene.state().registry();
     auto [text_obj, is_dirty] = registry.get<Text, IsDirty>(text);
     auto new_text = std::format("Hostiles: {}", hostiles_quantity);
@@ -49,14 +51,14 @@ game_screen_factory(Scene& scene)
     {
       .width = static_cast<float>(MAX_LIVES_WIDTH),
       .height = static_cast<float>(MAX_LIVES_HEIGHT),
-      .color { Services::theme().palette.WHITE_ACCENT },
+      .color { pln::services::theme().palette.WHITE_ACCENT },
     });
   auto [lives_transform,
         lives_size] = registry->get<Transform, RectSize>(lives_entity);
   lives_transform.translate(
     { OFFSET, screen_size.height - lives_size.height - OFFSET, 0 });
   scene.handlers().add([lives_entity](Scene& scene) {
-    auto& info = Services::app().info();
+    auto& info = pln::services::app().info();
     auto& registry = scene.state().shared_registry();
     auto size = registry->try_get<RectSize>(lives_entity);
     if (size) {

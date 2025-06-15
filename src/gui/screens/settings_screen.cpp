@@ -3,16 +3,17 @@
 
 #include "src/cameras/gui_camera.h"
 #include "src/gui/settings_screen_factory.h"
-#include "src/services.h"
 #include "src/systems/ui.h"
 #include "src/systems/update_gui.h"
 
 #include "settings_screen.h"
 
+import pln.services.app;
+
 std::unique_ptr<Scene>
 load_settings_screen()
 {
-  auto screen_size = Services::app().screen_size();
+  auto screen_size = pln::services::app().screen_size();
   auto camera = std::make_unique<GUICamera>(screen_size.width,
                                             screen_size.height);
   auto scene = std::make_unique<Scene>(std::move(camera));
@@ -22,11 +23,11 @@ load_settings_screen()
   scene->handlers().add(ui_system);
 
   scene->cancel_handlers().add([](auto&) {
-    Services::app().add_once_handler([](auto&) {
-      Services::app().pop_scene();
-      auto scenes_quantity = Services::app().scenes().size();
+    pln::services::app().add_once_handler([](auto&) {
+      pln::services::app().pop_scene();
+      auto scenes_quantity = pln::services::app().scenes().size();
       if (scenes_quantity > 0) {
-        Services::app().scenes()[scenes_quantity - 1]->is_paused(false);
+        pln::services::app().scenes()[scenes_quantity - 1]->is_paused(false);
       }
     });
   });

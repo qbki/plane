@@ -6,7 +6,7 @@
 #include <tuple>
 #include <unordered_map>
 
-#include "src/services.h"
+#include "src/shapes.h"
 #include "src/sound/sound.h"
 #include "src/texture.h"
 #include "src/utils/file_loaders.h"
@@ -15,6 +15,7 @@
 #include "src/cache/cache.h"
 
 import pln.meshes;
+import pln.services.app;
 
 glm::vec3
 exctract_material_color(tinygltf::Model& model)
@@ -66,7 +67,7 @@ Cache::get_model(const std::filesystem::path& mesh_path)
   if (_meshes.contains(mesh_path)) {
     return _meshes[mesh_path];
   }
-  auto gltf_model = load_gltf_model(Services::app().assets_dir() / mesh_path)
+  auto gltf_model = load_gltf_model(pln::services::app().assets_dir() / mesh_path)
                       .or_crash();
   auto extracted_texture_opt = extract_texture(gltf_model);
   auto texture = extracted_texture_opt.has_value()

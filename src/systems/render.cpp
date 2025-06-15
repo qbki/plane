@@ -11,7 +11,6 @@
 #include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
 #include "src/math/intersection.h"
-#include "src/services.h"
 #include "src/texture.h"
 
 #include "render.h"
@@ -19,6 +18,7 @@
 import pln.consts;
 import pln.materals;
 import pln.meshes;
+import pln.services.app;
 import pln.utils.ecs;
 
 
@@ -230,7 +230,7 @@ render_ui(const Scene& scene)
   GLint stored_gl_depth_func = 0;
   auto& registry = scene.state().registry();
   auto& camera = scene.state().camera();
-  auto& shader = Services::app().ui_shader();
+  auto& shader = pln::services::app().ui_shader();
 
   shader.use();
   shader.uniform("u_PV", camera.pv());

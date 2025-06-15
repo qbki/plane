@@ -1,10 +1,12 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/core/button_state.h"
-#include "src/services.h"
+#include "src/shapes.h"
 
 #include "text.h"
 #include "text_button.h"
+
+import pln.services.theme;
 
 namespace GUI::Factory {
 
@@ -13,7 +15,7 @@ text_button(std::shared_ptr<entt::registry>& registry,
             const TextButtonConfig& config)
 {
   auto entity = registry->create();
-  auto& theme = Services::theme();
+  auto& theme = pln::services::theme();
   auto& button_theme = theme.components.text_button;
 
   auto active_entity = Factory::text(registry,

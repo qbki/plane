@@ -1,9 +1,13 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
+#include "src/events/event_emitter.h"
 #include "src/gui/components/rect.h"
-#include "src/services.h"
+#include "src/shapes.h"
 
 #include "background.h"
+
+import pln.services.app;
+import pln.services.events;
 
 namespace GUI::Factory {
 
@@ -17,11 +21,11 @@ background(std::shared_ptr<entt::registry>& registry,
       .width = static_cast<float>(
         config.parent.value.has_value()
           ? registry->get<RectSize>(config.parent.value.value()).width
-          : Services::app().screen_size().width),
+          : pln::services::app().screen_size().width),
       .height = static_cast<float>(
         config.parent.value.has_value()
           ? registry->get<RectSize>(config.parent.value.value()).height
-          : Services::app().screen_size().height),
+          : pln::services::app().screen_size().height),
       .color = config.color,
       .parent = config.parent,
     });
@@ -36,7 +40,7 @@ background(std::shared_ptr<entt::registry>& registry,
     auto [rect_size, parent] = registry->get<RectSize, Parent>(entity);
     rect_size = parent.value.has_value()
                   ? registry->get<RectSize>(parent.value.value())
-                  : Services::app().screen_size();
+                  : pln::services::app().screen_size();
   });
 
   return entity;

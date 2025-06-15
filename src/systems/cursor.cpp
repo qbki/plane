@@ -6,17 +6,18 @@
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/services.h"
 #include "src/utils/mouse.h"
 
 #include "cursor.h"
+
+import pln.services.app;
 
 void
 cursor_handler_system(Scene& scene)
 {
   auto mouse_pos = mouse_position();
   auto& camera = scene.state().camera();
-  auto screen_size = Services::app().screen_size();
+  auto screen_size = pln::services::app().screen_size();
   glm::vec4 viewport { 0, 0, screen_size.width, screen_size.height };
   auto projection_point = glm::unProject(
     { mouse_pos.x, screen_size.height - mouse_pos.y, 1.0 },

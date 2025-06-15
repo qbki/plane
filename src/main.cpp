@@ -4,10 +4,10 @@
 #include <string>
 #include <utility>
 
+#include "cache/cache.h"
 #include "fileio/theme_loader.h"
 #include "fileio/translation_loader.h"
 #include "logger/logger.h"
-#include "services.h"
 #include "systems/render.h"
 #include "utils/file_loaders/file_loaders.h"
 #include "utils/types.h"
@@ -18,9 +18,11 @@ import pln.control;
 import pln.game_loop;
 import pln.logger;
 import pln.sdl;
+import pln.service;
+import pln.services.app;
+import pln.services.gui_quad;
 import pln.services.logger;
 import pln.utils.system;
-import pln;
 
 int
 main(int argc, char* argv[])
@@ -126,11 +128,11 @@ main(int argc, char* argv[])
 
   pln::Service<App>::install(std::move(app));
 
-  auto theme = load_theme(Services::app().levels_dir() / "theme.json");
+  auto theme = load_theme(pln::services::app().levels_dir() / "theme.json");
   pln::Service<const GUI::Theme>::install(std::move(theme));
 
-  auto quad = std::make_unique<Services::GuiQuad>(create_quad(1, 1, 0));
-  pln::Service<const Services::GuiQuad>::install(std::move(quad));
+  auto quad = std::make_unique<pln::services::GuiQuad>(create_quad(1, 1, 0));
+  pln::Service<const pln::services::GuiQuad>::install(std::move(quad));
 
   pln::common_handlers::register_common_handlers();
   pln::game_loop();

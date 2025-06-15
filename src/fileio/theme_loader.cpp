@@ -5,17 +5,18 @@
 
 #include "src/fileio/params/theme.h"
 #include "src/gui/core/theme.h"
-#include "src/services.h"
 #include "src/utils/file_loaders/file_loaders.h"
 
 #include "theme_loader.h"
 #include "json/mappers.h" // IWYU pragma: keep
 
+import pln.services.app;
+
 std::unique_ptr<GUI::Theme>
 load_theme(const std::filesystem::path& theme_file_path)
 {
   auto theme_params = load_json(theme_file_path).or_crash().get<ThemeParams>();
-  auto font_path = (Services::app().assets_dir() / theme_params.font_source)
+  auto font_path = (pln::services::app().assets_dir() / theme_params.font_source)
                      .lexically_normal();
   load_font(font_path);
 

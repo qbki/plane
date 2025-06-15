@@ -1,9 +1,10 @@
-#include <string>
-
 #include "src/components/transform.h"
-#include "src/services.h"
+#include "src/scene/scene.h"
 
 #include "components/text.h"
+
+import pln.services.app;
+import pln.services.theme;
 
 namespace GUI {
 
@@ -15,7 +16,7 @@ loading_factory(Scene& scene)
   auto loading_text_entity = Factory::text(
     registry,
     {
-      .font = Services::theme().typography.h1,
+      .font = pln::services::theme().typography.h1,
       .text = "Loading...",
     });
   scene.handlers().add([loading_text_entity](Scene& scene) {
@@ -23,7 +24,7 @@ loading_factory(Scene& scene)
     auto [transform,
           size] = registry.get<Transform, RectSize>(loading_text_entity);
     const int offset = 16;
-    auto screen_size = Services::app().screen_size();
+    auto screen_size = pln::services::app().screen_size();
     transform.translate({
       screen_size.width - size.width - offset,
       offset,

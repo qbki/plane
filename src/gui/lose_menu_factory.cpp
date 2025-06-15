@@ -3,10 +3,12 @@
 #include "src/components/common.h"
 #include "src/gui/components/ui.h"
 #include "src/scene/scene.h"
-#include "src/services.h"
 
 #include "lose_menu_factory.h"
 #include "utils/utils.h"
+
+import pln.services.app;
+import pln.services.events;
 
 namespace GUI {
 
@@ -21,8 +23,8 @@ lose_menu_factory(const Scene& scene)
         .text = "I will do it",
         .on_pointer_down_once =
           [](auto&) {
-            Services::app().add_once_handler([](App&) {
-              Services::events<const Events::LoadCurrentLevelEvent>().emit({});
+            pln::services::app().add_once_handler([](App&) {
+              pln::services::events<const Events::LoadCurrentLevelEvent>().emit({});
             });
           },
       }),
@@ -30,14 +32,14 @@ lose_menu_factory(const Scene& scene)
       ui.text_button({
         .text = "Stop struggling",
         .on_pointer_down =
-          [](auto&) { Services::app().add_once_handler(go_to_main_menu); },
+          [](auto&) { pln::services::app().add_once_handler(go_to_main_menu); },
       }),
 
     }),
   });
 
   ui.background({
-    .color = Services::theme().components.menu_screen.background_color,
+    .color = pln::services::theme().components.menu_screen.background_color,
     .z = -0.1, // NOLINT
   });
 }

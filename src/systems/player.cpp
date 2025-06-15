@@ -9,10 +9,11 @@
 #include "src/components/weapon.h"
 #include "src/game_state/factory.h"
 #include "src/scene/scene.h"
-#include "src/services.h"
 
 #include "player.h"
 
+import pln.services.app;
+import pln.services.events;
 import pln.utils.common;
 
 void
@@ -46,7 +47,7 @@ player_rotation_system(const Scene& scene)
 void
 player_shooting_system(const Scene& scene)
 {
-  const auto& control = Services::app().control();
+  const auto& control = pln::services::app().control();
   scene.state().registry().view<Weapon, PlayerKind>().each(
     [&control](Weapon& weapon) { weapon.is_shooting = control.shooting; });
 };
@@ -56,7 +57,7 @@ player_moving_system(const Scene& scene)
 {
   using namespace pln::utils::common;
 
-  const auto& control = Services::app().control();
+  const auto& control = pln::services::app().control();
   glm::vec3 move_direction { 0, 0, 0 };
   if (control.left) {
     move_direction.x -= 1;
@@ -147,9 +148,9 @@ LoseSystem::operator()(const Scene& scene)
   auto players_quantity = scene.state().registry().view<PlayerKind>().size();
 
   if (players_quantity == 0) {
-    Services::app().pause_scenes();
-    Services::app().add_once_handler(
-      [](auto&) { Services::events<const Events::LoseEvent>().emit({}); });
+    pln::services::app().pause_scenes();
+    pln::services::app().add_once_handler(
+      [](auto&) { pln::services::events<const Events::LoseEvent>().emit({}); });
     is_fired = true;
   }
 }
@@ -159,6 +160,6 @@ player_updating_app_info_system(const Scene& scene)
 {
   auto registry = scene.state().shared_registry();
   registry->view<Transform, PlayerKind>().each([&](const Transform& transform) {
-    Services::app().info().player_position = transform.translation();
+      pln::services::app().info().player_position = transform.translation();
   });
 }

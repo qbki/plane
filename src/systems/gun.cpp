@@ -5,12 +5,13 @@
 #include "src/components/transform.h"
 #include "src/components/weapon.h"
 #include "src/game_state/factory.h"
-#include "src/services.h"
 #include "src/utils/random.h"
 
 #include "gun.h"
 
 import pln.consts;
+import pln.services.app;
+import pln.services.events;
 import pln.utils.common;
 
 void
@@ -24,7 +25,7 @@ gun_shooting_system(Scene& scene)
     [&](entt::entity owner_entity,
         Weapon& weapon,
         const Transform& owner_transform) {
-      weapon.left_time_to_shoot -= Services::app().delta_time();
+      weapon.left_time_to_shoot -= pln::services::app().delta_time();
       if (!weapon.is_shooting || (weapon.left_time_to_shoot > 0.0)) {
         return;
       }
@@ -55,7 +56,7 @@ gun_shooting_system(Scene& scene)
       projectile_transform.translate(owner_transform.translation());
 
       if (weapon.shot_sound_path.has_value()) {
-        auto player_position = Services::app().info().player_position;
+        auto player_position = pln::services::app().info().player_position;
         auto owner_position = owner_transform.translation();
         auto distance = glm::distance(owner_position, player_position);
 
@@ -68,7 +69,7 @@ gun_shooting_system(Scene& scene)
                            : coefficient / (distance * distance);
         // </>
 
-        Services::events<const Events::ShootEvent>().emit({
+        pln::services::events<const Events::ShootEvent>().emit({
           .sound_path { weapon.shot_sound_path.value() },
           .volume = intencity,
         });

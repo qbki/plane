@@ -8,7 +8,6 @@
 #include "src/fileio/params/strategies.h"
 #include "src/game_state/factory.h"
 #include "src/scene/scene.h"
-#include "src/services.h"
 #include "src/utils/file_loaders.h"
 #include "src/utils/result.h"
 #include "src/utils/types.h"
@@ -17,8 +16,9 @@
 #include "params.h"
 #include "json/mappers.h" // IWYU pragma: keep
 
-import pln.utils.crash;
+import pln.services.cache;
 import pln.services.logger;
+import pln.utils.crash;
 
 void
 setup_camera(CameraParams& camera_params, Scene& scene)
@@ -116,7 +116,7 @@ void
 preload_models(const std::vector<EntityParamsModel>& models)
 {
   for (auto& model : models) {
-    Services::cache().get_model(model.path);
+    pln::services::cache().get_model(model.path);
   }
 }
 

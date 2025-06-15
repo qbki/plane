@@ -3,10 +3,13 @@
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/services.h"
+#include "src/events/event_emitter.h"
+#include "src/shapes.h"
 
 #include "block.h"
 #include "utils.h"
+
+import pln.services.app;
 
 namespace GUI::Factory {
 
@@ -47,7 +50,7 @@ block(std::shared_ptr<entt::registry>& registry, const BlockConfig& config)
     RectSize parent_rect_size = parent.value.has_value()
                                   ? registry->get<RectSize>(
                                       parent.value.value())
-                                  : Services::app().screen_size();
+                                  : pln::services::app().screen_size();
     auto left = (parent_rect_size.width - rect_size.width) / 2;
     auto top = (parent_rect_size.height - rect_size.height) / 2;
     auto position = transform.translation();

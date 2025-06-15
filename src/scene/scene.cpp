@@ -1,9 +1,10 @@
 #include <utility>
 
 #include "src/game_state/state.h"
-#include "src/services.h"
 
 #include "src/scene/scene.h"
+
+import pln.services.app;
 
 Scene::Scene(std::unique_ptr<Camera> camera)
 {
@@ -14,7 +15,7 @@ void
 Scene::update()
 {
   if (!_is_paused) {
-    const auto& control = Services::app().control();
+    const auto& control = pln::services::app().control();
     _events.emit(*this);
     auto should_emit_cancel = control.cancel && _is_allowed_to_cancel;
     if (should_emit_cancel) {

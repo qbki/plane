@@ -5,10 +5,11 @@
 #include "src/gui/components/ui.h"
 #include "src/gui/screens/settings_screen.h"
 #include "src/scene/scene.h"
-#include "src/services.h"
 
 #include "in_game_main_menu_factory.h"
 #include "utils/utils.h"
+
+import pln.services.app;
 
 namespace GUI {
 
@@ -23,7 +24,7 @@ in_game_main_menu_factory(Scene& scene)
         .text = "Resume",
         .on_pointer_down_once =
           [](auto&) {
-            Services::app().add_once_handler([](App& app) {
+            pln::services::app().add_once_handler([](App& app) {
               app.scenes().pop_back();
               app.pause_scenes(false);
             });
@@ -34,15 +35,15 @@ in_game_main_menu_factory(Scene& scene)
         .text = "Settings",
         .on_pointer_down =
           [](auto&) {
-            Services::app().add_once_handler([](auto&) {
-              auto& scenes = Services::app().scenes();
+            pln::services::app().add_once_handler([](auto&) {
+              auto& scenes = pln::services::app().scenes();
               auto scenes_quantity = scenes.size();
               if (scenes_quantity > 0) {
                 auto& scene = scenes[scenes_quantity - 1];
                 scene->is_paused(true);
               }
               auto scene = load_settings_screen();
-              Services::app().push_scene(std::move(scene));
+              pln::services::app().push_scene(std::move(scene));
             });
           },
       }),
@@ -50,18 +51,18 @@ in_game_main_menu_factory(Scene& scene)
       ui.text_button({
         .text = "Title screen",
         .on_pointer_down_once =
-          [](auto&) { Services::app().add_once_handler(go_to_main_menu); },
+          [](auto&) { pln::services::app().add_once_handler(go_to_main_menu); },
       }),
     }),
   });
 
   ui.background({
-    .color = Services::theme().components.menu_screen.background_color,
+    .color = pln::services::theme().components.menu_screen.background_color,
     .z = -0.1, // NOLINT
   });
 
   scene.cancel_handlers().add([](auto&) {
-    Services::app().add_once_handler([](App& app) {
+      pln::services::app().add_once_handler([](App& app) {
       app.scenes().pop_back();
       app.pause_scenes(false);
     });

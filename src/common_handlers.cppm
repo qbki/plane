@@ -17,7 +17,6 @@ module;
 #include "src/gui/lose_menu_factory.h"
 #include "src/gui/screens/load_credits_screen.h"
 #include "src/gui/utils/utils.h"
-#include "src/services.h"
 #include "src/sound/sound.h"
 #include "src/systems/camera.h"
 #include "src/systems/collision.h"
@@ -38,6 +37,9 @@ module;
 export module pln.common_handlers;
 
 import pln.consts;
+import pln.services.app;
+import pln.services.cache;
+import pln.services.events;
 import pln.services.logger;
 import pln.utils.system;
 
@@ -61,44 +63,44 @@ make_game_camera(const App& app)
 void
 load_loading_screen()
 {
-  auto camera = make_gui_camera(Services::app());
+  auto camera = make_gui_camera(pln::services::app());
   auto scene = std::make_unique<Scene>(std::move(camera));
   scene->is_deferred(false);
   scene->handlers().once(GUI::loading_factory);
-  Services::app().push_scene(std::move(scene));
+  pln::services::app().push_scene(std::move(scene));
 }
 
 void
 load_in_game_main_menu()
 {
-  auto camera = make_gui_camera(Services::app());
+  auto camera = make_gui_camera(pln::services::app());
   auto scene = std::make_unique<Scene>(std::move(camera));
   scene->is_deferred(false);
   scene->handlers().once(GUI::in_game_main_menu_factory);
   scene->handlers().add(update_gui);
   scene->handlers().add(ui_system);
-  Services::app().push_scene(std::move(scene));
+  pln::services::app().push_scene(std::move(scene));
 }
 
 void
 load_lose_menu(const Events::LoseEvent&)
 {
-  auto camera = make_gui_camera(Services::app());
+  auto camera = make_gui_camera(pln::services::app());
   auto scene = std::make_unique<Scene>(std::move(camera));
   scene->is_deferred(false);
   scene->handlers().once(GUI::lose_menu_factory);
   scene->handlers().add(update_gui);
   scene->handlers().add(ui_system);
-  Services::app().push_scene(std::move(scene));
+  pln::services::app().push_scene(std::move(scene));
 }
 
 Scene&
 load_level_scene()
 {
-  Services::app().scenes().clear();
+  pln::services::app().scenes().clear();
   load_loading_screen();
 
-  auto camera = make_game_camera(Services::app());
+  auto camera = make_game_camera(pln::services::app());
   auto game = std::make_unique<Scene>(std::move(camera));
   game->is_deferred(true);
   game->handlers().once(enemy_initial_rotation);
@@ -132,10 +134,10 @@ load_level_scene()
   game->handlers().add(update_gui_lives);
   game->cancel_handlers().add([](Scene& scene) {
     scene.is_paused(true);
-    Services::app().add_once_handler([](auto&) { load_in_game_main_menu(); });
+    pln::services::app().add_once_handler([](auto&) { load_in_game_main_menu(); });
   });
 
-  auto gui_camera = make_gui_camera(Services::app());
+  auto gui_camera = make_gui_camera(pln::services::app());
   auto ui = std::make_unique<Scene>(std::move(gui_camera));
   ui->handlers().once(GUI::game_screen_factory);
   ui->handlers().add(update_gui);
@@ -143,9 +145,9 @@ load_level_scene()
   ui->is_deferred(false);
 
   auto& game_ref = *game;
-  Services::app().scenes().clear();
-  Services::app().push_scene(std::move(game));
-  Services::app().push_scene(std::move(ui));
+  pln::services::app().scenes().clear();
+  pln::services::app().push_scene(std::move(game));
+  pln::services::app().push_scene(std::move(ui));
   return game_ref;
 }
 
@@ -154,10 +156,10 @@ load_current_level(const Events::LoadCurrentLevelEvent&)
 {
   auto exec_path = utils::system::get_excutable_path();
   auto save_data = load_save_data(exec_path / pln::consts::SAVE_DATA_FILE);
-  auto levels_dir = Services::app().levels_dir();
+  auto levels_dir = pln::services::app().levels_dir();
   auto levels_order = load_levels_order(levels_dir / "levels.json");
   if (!save_data.current_level.has_value()) {
-    Services::events<const Events::LoadNextLevelEvent>().emit({});
+    pln::services::events<const Events::LoadNextLevelEvent>().emit({});
     pln::services::logger().info(
       "Can't get save data, a default level will be used");
     return;
@@ -165,21 +167,21 @@ load_current_level(const Events::LoadCurrentLevelEvent&)
   auto current_level = std::ranges::find(levels_order.levels,
                                          save_data.current_level.value());
   if (current_level == levels_order.levels.end()) {
-    Services::events<const Events::LoadNextLevelEvent>().emit({});
+    pln::services::events<const Events::LoadNextLevelEvent>().emit({});
     pln::services::logger().info(
       "The user's progress not found, a default level will be used");
     return;
   }
   auto& scene = load_level_scene();
   load_level(levels_dir / "entities.json", *current_level, scene);
-  Services::app().info().current_level = *current_level;
+  pln::services::app().info().current_level = *current_level;
 }
 
 void
 load_next_level(const Events::LoadNextLevelEvent&)
 {
-  auto& current_level = Services::app().info().current_level;
-  auto levels_dir = Services::app().levels_dir();
+  auto& current_level = pln::services::app().info().current_level;
+  auto levels_dir = pln::services::app().levels_dir();
   auto levels_order = load_levels_order(levels_dir / "levels.json");
   if (levels_order.levels.empty()) {
     pln::services::logger().error("No levels found");
@@ -195,35 +197,35 @@ load_next_level(const Events::LoadNextLevelEvent&)
   }
   bool is_game_finished = next_level_it == levels_order.levels.end();
   if (is_game_finished) {
-    Services::app().scenes().clear();
+    pln::services::app().scenes().clear();
     auto scene = load_credits_screen();
-    Services::app().push_scene(std::move(scene));
+    pln::services::app().push_scene(std::move(scene));
     return;
   }
   if (next_level_it < levels_order.levels.end()) {
     auto& scene = load_level_scene();
     load_level(levels_dir / "entities.json", *next_level_it, scene);
-    Services::app().info().current_level = *next_level_it;
-    Services::app().save_data().save({ .current_level = *next_level_it });
+    pln::services::app().info().current_level = *next_level_it;
+    pln::services::app().save_data().save({ .current_level = *next_level_it });
   }
 }
 
 void
 play_sound(const Events::ShootEvent& sound_event)
 {
-  Services::cache().get_sound(sound_event.sound_path)->play(sound_event.volume);
+  pln::services::cache().get_sound(sound_event.sound_path)->play(sound_event.volume);
 }
 
 export
 void
 register_common_handlers()
 {
-  Services::events<const Events::ShootEvent>().add(play_sound);
-  Services::events<const Events::LoadCurrentLevelEvent>().add(
+  pln::services::events<const Events::ShootEvent>().add(play_sound);
+  pln::services::events<const Events::LoadCurrentLevelEvent>().add(
     load_current_level);
-  Services::events<const Events::LoseEvent>().add(load_lose_menu);
-  Services::events<const Events::LoadNextLevelEvent>().add(load_next_level);
-  Services::app().add_once_handler(GUI::go_to_main_menu);
+  pln::services::events<const Events::LoseEvent>().add(load_lose_menu);
+  pln::services::events<const Events::LoadNextLevelEvent>().add(load_next_level);
+  pln::services::app().add_once_handler(GUI::go_to_main_menu);
 }
 
 }

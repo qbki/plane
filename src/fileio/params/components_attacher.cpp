@@ -7,7 +7,6 @@
 #include "src/components/weapon.h"
 #include "src/game_state/factory.h"
 #include "src/scene/scene.h"
-#include "src/services.h"
 #include "src/utils/noop.h"
 
 #include "components_attacher.h"
@@ -15,6 +14,7 @@
 #include "entities_map.h"
 
 import pln.control;
+import pln.services.app;
 import pln.utils.color;
 
 ComponetsAttacher::ComponetsAttacher(
@@ -56,7 +56,7 @@ ComponetsAttacher::operator()(const EntityParamsPointLight& params) const
 void
 ComponetsAttacher::operator()(const EntityParamsText& params) const
 {
-  auto t = Services::app().translate_fn();
+  auto t = pln::services::app().translate_fn();
   auto text = t(params.text_id);
   attach_color(params.color);
   attach_text(text);

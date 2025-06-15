@@ -7,9 +7,11 @@
 #include "src/gui/screens/settings_screen.h"
 #include "src/gui/utils/utils.h"
 #include "src/scene/scene.h"
-#include "src/services.h"
 
 #include "main_menu_factory.h"
+
+import pln.services.app;
+import pln.services.events;
 
 namespace GUI {
 
@@ -19,15 +21,15 @@ main_menu_factory(const Scene& scene)
   auto registry = scene.state().shared_registry();
   auto ui = Factory::make_ui(registry);
   auto children = Children({});
-  auto save_data = Services::app().save_data().load();
+  auto save_data = pln::services::app().save_data().load();
 
   if (save_data.current_level.has_value()) {
     auto continue_button_entity = ui.text_button({
       .text = "Continue",
       .on_pointer_down_once =
         [](auto&) {
-          Services::app().add_once_handler([](auto&) {
-            Services::events<const Events::LoadCurrentLevelEvent>().emit({});
+          pln::services::app().add_once_handler([](auto&) {
+            pln::services::events<const Events::LoadCurrentLevelEvent>().emit({});
           });
         },
     });
@@ -38,9 +40,9 @@ main_menu_factory(const Scene& scene)
     .text = "New Game",
     .on_pointer_down_once =
       [](auto&) {
-        Services::app().add_once_handler([](auto&) {
-          clear_user_progress(Services::app());
-          Services::events<const Events::LoadNextLevelEvent>().emit({});
+        pln::services::app().add_once_handler([](auto&) {
+          clear_user_progress(pln::services::app());
+          pln::services::events<const Events::LoadNextLevelEvent>().emit({});
         });
       },
   });
@@ -50,10 +52,10 @@ main_menu_factory(const Scene& scene)
     .text = "Settings",
     .on_pointer_down =
       [](auto&) {
-        Services::app().add_once_handler([](auto&) {
-          Services::app().pause_scenes();
+        pln::services::app().add_once_handler([](auto&) {
+          pln::services::app().pause_scenes();
           auto scene = load_settings_screen();
-          Services::app().push_scene(std::move(scene));
+          pln::services::app().push_scene(std::move(scene));
         });
       },
   });
@@ -62,7 +64,7 @@ main_menu_factory(const Scene& scene)
   if (System::is_pc) {
     auto exit_button_entity = ui.text_button({
       .text = "Exit",
-      .on_pointer_down_once = [](auto&) { Services::app().is_running(false); },
+      .on_pointer_down_once = [](auto&) { pln::services::app().is_running(false); },
     });
     children.value.push_back(exit_button_entity);
   }

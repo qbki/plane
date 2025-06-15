@@ -1,16 +1,16 @@
 #pragma once
 #include "src/components/common.h"
-#include "src/services.h"
 
+import pln.services.theme;
 import pln.utils.color;
 
 namespace GUI::Factory {
 
 struct RectConfig
 {
-  float width = 0;
-  float height = 0;
-  pln::utils::color::Color color = Services::theme().components.text.color;
+  float width { 0 };
+  float height { 0 };
+  pln::utils::color::Color color = pln::services::theme().components.text.color;
   Parent parent = Parent { std::nullopt };
 };
 

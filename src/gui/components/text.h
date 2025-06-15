@@ -2,16 +2,17 @@
 #include <string>
 
 #include "src/components/common.h"
-#include "src/services.h"
+#include "src/gui/core/theme.h"
 
 import pln.utils.color;
+import pln.services.theme;
 
 namespace GUI::Factory {
 
 struct TextConfig
 {
-  pln::utils::color::Color color = Services::theme().components.text.color;
-  GUI::Typography::Font font = Services::theme().typography.body1;
+  pln::utils::color::Color color = pln::services::theme().components.text.color;
+  GUI::Typography::Font font = pln::services::theme().typography.body1;
   Parent parent = Parent { std::nullopt };
   std::string text = "";
 };

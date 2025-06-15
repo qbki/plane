@@ -1,7 +1,8 @@
 #include "src/components/common.h"
-#include "src/services.h"
 
 #include "particles.h"
+
+import pln.services.app;
 
 void
 particle_handler_system(Scene& scene)
@@ -13,6 +14,6 @@ particle_handler_system(Scene& scene)
       registry.remove<Available>(id);
       return;
     }
-    lifetime.value -= Services::app().delta_time();
+    lifetime.value -= pln::services::app().delta_time();
   });
 }

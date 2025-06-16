@@ -10,7 +10,6 @@
 #include "src/app/app_info.h" // IWYU pragma: export
 #include "src/app/save.h"     // IWYU pragma: export
 #include "src/app/settings.h" // IWYU pragma: export
-#include "src/app/system.h"   // IWYU pragma: export
 #include "src/scene/scene.h" // IWYU pragma: export
 #include "src/shading/deferred_shading.h" // IWYU pragma: export
 #include "src/shading/framebuffer.h"      // IWYU pragma: export
@@ -35,7 +34,6 @@ private:
   AppInfo _info {};
   pln::sdl::WindowPtr _window { nullptr, [](SDL_Window*) {} };
   pln::sdl::ContextPtr _gl_context { nullptr, [](SDL_GLContext) {} };
-  System _system {};
   Settings _settings { pln::consts::SETTINGS_FILE };
   Save _save { pln::consts::SAVE_DATA_FILE };
   std::vector<std::unique_ptr<Scene>> _scenes {};
@@ -108,7 +106,6 @@ public:
   [[nodiscard]] std::vector<std::unique_ptr<Scene>>& scenes();
 
   [[nodiscard]] AppInfo& info();
-  [[nodiscard]] const System& system() const;
 
   void add_handler(Handler handler);
   void add_once_handler(Handler handler);

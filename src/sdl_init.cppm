@@ -14,7 +14,6 @@ module;
 #include <emscripten/html5.h>
 #endif
 
-#include "src/app/system.h"
 #include "src/gui/ui_canvas.h"
 #include "src/utils/gl.h"
 #include "src/utils/tvg.h"
@@ -24,6 +23,7 @@ export module pln.sdl;
 import pln.consts;
 import pln.services.logger;
 import pln.utils.crash;
+import pln.utils.platform;
 
 namespace pln::sdl {
 
@@ -95,8 +95,9 @@ init_window(int screen_width, int screen_height)
   }
   pln::services::logger().info("Window has been created.");
 
-  unsigned int threads = System::is_web ? 0
-                                        : std::thread::hardware_concurrency();
+  unsigned int threads = pln::utils::platform::IS_WEB
+                         ? 0
+                         : std::thread::hardware_concurrency();
   auto tvg_result = tvg::Initializer::init(tvg::CanvasEngine::Sw, threads);
   vg_verify_or_crash(__func__, tvg_result);
   pln::services::logger().info("ThorVG has been initialized.");

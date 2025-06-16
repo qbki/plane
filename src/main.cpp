@@ -5,7 +5,6 @@
 #include <utility>
 
 #include "app/app.h"
-#include "app/system.h"
 #include "cache/cache.h"
 #include "events/event_emitter.h"
 #include "fileio/theme_loader.h"
@@ -28,6 +27,7 @@ import pln.services.logger;
 import pln.shaders;
 import pln.shapes;
 import pln.systems.renderer;
+import pln.utils.platform;
 import pln.utils.system;
 
 int
@@ -102,7 +102,7 @@ main(int argc, char* argv[])
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     assets_dir = std::filesystem::path(std::string(argv[1]));
   }
-  if (System::is_pc) {
+  if (pln::utils::platform::IS_PC) {
     if (!is_file_exists(assets_dir)) {
       pln::services::logger().error(
         std::format("Assets directory was not found {}", assets_dir.string()));

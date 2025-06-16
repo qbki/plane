@@ -12,6 +12,7 @@
 
 import pln.services.app;
 import pln.services.events;
+import pln.utils.platform;
 
 namespace GUI {
 
@@ -61,7 +62,7 @@ main_menu_factory(const Scene& scene)
   });
   children.value.push_back(settings_button_entity);
 
-  if (System::is_pc) {
+  if (pln::utils::platform::IS_PC) {
     auto exit_button_entity = ui.text_button({
       .text = "Exit",
       .on_pointer_down_once = [](auto&) { pln::services::app().is_running(false); },

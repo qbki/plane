@@ -6,7 +6,9 @@
 
 #include "app.h"
 
+import pln.control;
 import pln.sdl;
+import pln.shaders;
 import pln.shapes;
 import pln.utils.crash;
 
@@ -204,12 +206,6 @@ AppInfo&
 App::info()
 {
   return _info;
-}
-
-const System&
-App::system() const
-{
-  return _system;
 }
 
 Settings&

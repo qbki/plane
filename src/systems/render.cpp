@@ -11,7 +11,6 @@
 #include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
 #include "src/math/intersection.h"
-#include "src/texture.h"
 
 #include "render.h"
 
@@ -20,6 +19,7 @@ import pln.materals;
 import pln.meshes;
 import pln.services.app;
 import pln.shapes;
+import pln.textures;
 import pln.utils.ecs;
 
 
@@ -30,7 +30,7 @@ static const pln::materials::Material COMMON_MATERIAL(glm::vec3(0.05, 0.05, 0.05
 struct TransformHolder
 {
   pln::meshes::Mesh* mesh = nullptr;
-  const Texture* texture = nullptr;
+  const pln::textures::Texture* texture = nullptr;
   pln::meshes::Mesh::DrawParams draw_params;
 };
 
@@ -79,7 +79,7 @@ void
 update_transform_mapping(
   std::unordered_map<pln::meshes::Mesh*, TransformHolder>& transform_mapping,
   pln::meshes::Mesh* mesh_pointer,
-  const Texture* texture_pointer,
+  const pln::textures::Texture* texture_pointer,
   glm::mat4& transform)
 {
   if (transform_mapping.contains(mesh_pointer)) {

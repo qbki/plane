@@ -7,7 +7,6 @@
 #include <unordered_map>
 
 #include "src/sound/sound.h"
-#include "src/texture.h"
 #include "src/utils/file_loaders.h"
 
 #include "src/cache/cache.h"
@@ -40,7 +39,7 @@ generate_texture(tinygltf::Model& model)
                                     to_integer_value(color.y),
                                     to_integer_value(color.z),
                                     to_integer_value(1.0) };
-  return std::make_shared<Texture>(1, 1, data);
+  return std::make_shared<pln::textures::Texture>(1, 1, data);
 }
 
 std::optional<Cache::TexturePtr>
@@ -50,7 +49,7 @@ extract_texture(const tinygltf::Model& model)
     return std::nullopt;
   }
   auto& image = model.images[0];
-  auto texture = std::make_shared<Texture>(
+  auto texture = std::make_shared<pln::textures::Texture>(
     image.width, image.height, image.image);
   return std::make_optional(texture);
 }
@@ -85,7 +84,7 @@ Cache::get_rect(const pln::utils::color::Color& color)
     return _meshes[rect_id];
   }
   std::vector<unsigned char> data { color.r, color.g, color.b, color.a };
-  auto texture = std::make_shared<Texture>(1, 1, data);
+  auto texture = std::make_shared<pln::textures::Texture>(1, 1, data);
   auto mesh = std::shared_ptr(pln::shapes::create_quad());
   auto pair = std::make_tuple(mesh, texture);
   _meshes[rect_id] = pair;

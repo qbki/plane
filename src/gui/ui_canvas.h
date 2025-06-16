@@ -6,7 +6,7 @@
 #include <tuple>
 #include <vector>
 
-#include "src/texture.h"
+import pln.textures;
 
 class UiCanvas
 {
@@ -19,7 +19,7 @@ private:
   int _height = 0;
   std::vector<uint32_t> _target;
   std::unique_ptr<tvg::SwCanvas> _canvas;
-  std::unique_ptr<Texture> _texture;
+  std::unique_ptr<pln::textures::Texture> _texture;
 
 public:
   UiCanvas(int init_width, int init_height);
@@ -35,7 +35,7 @@ public:
 
   [[nodiscard]] const std::vector<uint32_t>& target() const;
   tvg::Canvas& canvas();
-  Texture& texture();
+  pln::textures::Texture& texture();
 
   void draw();
 

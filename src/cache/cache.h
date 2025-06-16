@@ -5,16 +5,16 @@
 #include <unordered_map>
 
 #include "src/sound/sound.h"
-#include "src/texture.h"
 
 import pln.meshes;
+import pln.textures;
 import pln.utils.color;
 
 class Cache
 {
 public:
   using MeshPtr = std::shared_ptr<pln::meshes::Mesh>;
-  using TexturePtr = std::shared_ptr<Texture>;
+  using TexturePtr = std::shared_ptr<pln::textures::Texture>;
   using ModelPair = std::tuple<MeshPtr, TexturePtr>;
   using SoundPtr = std::shared_ptr<Sound::Sound>;
 

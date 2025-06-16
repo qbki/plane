@@ -2,11 +2,10 @@
 #include <algorithm>
 #include <string>
 
-#include "src/texture.h"
-
 #include "ui_canvas.h"
 
 import pln.services.logger;
+import pln.textures;
 
 UiCanvas::UiCanvas(int init_width, int init_height)
   : _width(init_width)
@@ -17,7 +16,7 @@ UiCanvas::UiCanvas(int init_width, int init_height)
   _target.resize(norm_width * norm_height, 0);
   _canvas->target(
     _target.data(), norm_width, norm_width, norm_height, COLOR_SPACE);
-  _texture = std::make_unique<Texture>(norm_width, norm_height, _target);
+  _texture = std::make_unique<pln::textures::Texture>(norm_width, norm_height, _target);
 }
 
 int
@@ -44,7 +43,7 @@ UiCanvas::canvas()
   return *_canvas;
 }
 
-Texture&
+pln::textures::Texture&
 UiCanvas::texture()
 {
   return *_texture;

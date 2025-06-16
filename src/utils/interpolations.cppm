@@ -1,5 +1,9 @@
-#pragma once
+module;
 #include <cmath>
+
+export module pln.utils.interpolations;
+
+namespace pln::utils::interpolations {
 
 /**
  * y = value * smoothing ^ dt
@@ -12,9 +16,12 @@
  *   1  | 10 / 2
  *   2  | 10 / 4
  */
+export
 template<typename T>
 T
 damp(T from, float smoothing, float dt)
 {
   return from * std::pow(smoothing, dt);
+}
+
 }

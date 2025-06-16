@@ -2,12 +2,12 @@ module;
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/scene/scene.h"
-#include "src/utils/interpolations.h"
 
 export module pln.systems.velocity;
 
 import pln.consts;
 import pln.services.app;
+import pln.utils.interpolations;
 
 namespace pln::systems::velocity {
 
@@ -28,6 +28,8 @@ export
 void
 damping(const Scene& scene)
 {
+  using namespace pln::utils::interpolations;
+
   scene.state().registry().view<Velocity, VelocityDamping>().each(
     [&](Velocity& velocity, const VelocityDamping& damping) {
       auto delta_time = pln::services::app().delta_time();

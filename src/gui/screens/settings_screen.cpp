@@ -3,12 +3,12 @@
 
 #include "src/cameras/gui_camera.h"
 #include "src/gui/settings_screen_factory.h"
-#include "src/systems/ui.h"
-#include "src/systems/update_gui.h"
 
 #include "settings_screen.h"
 
 import pln.services.app;
+import pln.systems.ui;
+import pln.systems.update_gui;
 
 std::unique_ptr<Scene>
 load_settings_screen()
@@ -19,8 +19,8 @@ load_settings_screen()
   auto scene = std::make_unique<Scene>(std::move(camera));
   scene->is_deferred(false);
   scene->handlers().once(GUI::settings_screen_factory);
-  scene->handlers().add(update_gui);
-  scene->handlers().add(ui_system);
+  scene->handlers().add(pln::systems::update_gui::update_gui);
+  scene->handlers().add(pln::systems::ui::ui);
 
   scene->cancel_handlers().add([](auto&) {
     pln::services::app().add_once_handler([](auto&) {

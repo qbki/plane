@@ -1,3 +1,4 @@
+module;
 #include <glm/geometric.hpp>
 #include <variant>
 
@@ -5,14 +6,18 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/math/intersection.h"
+#include "src/scene/scene.h"
 
-#include "collision.h"
+export module pln.systems.collision;
 
 import pln.consts;
 import pln.services.app;
 
+namespace pln::systems::collision {
+
+export
 void
-collision_system(Scene& scene)
+collision(Scene& scene)
 {
   auto& registry = scene.state().registry();
   auto delta_time = pln::services::app().delta_time();
@@ -58,4 +63,6 @@ collision_system(Scene& scene)
         velocity_b.value += -velocity_a.value;
       }
     });
+}
+
 }

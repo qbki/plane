@@ -1,10 +1,15 @@
+module;
 #include "src/components/common.h"
 #include "src/components/transform.h"
+#include "src/scene/scene.h"
 
-#include "debris.h"
+export module pln.systems.debris;
 
+namespace pln::systems::debris {
+
+export
 void
-remove_debris_system(Scene& scene)
+remove_debris(Scene& scene)
 {
   auto& registry = scene.state().registry();
   registry.view<const Transform, DebrisKind>().each(
@@ -13,4 +18,6 @@ remove_debris_system(Scene& scene)
         registry.destroy(entity);
       }
     });
+}
+
 }

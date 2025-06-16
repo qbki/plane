@@ -1,3 +1,4 @@
+module;
 #include <GL/glew.h>
 #include <algorithm>
 #include <format>
@@ -7,12 +8,13 @@
 #include <string>
 #include <unordered_map>
 
+#include "src/app/app.h"
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
 #include "src/math/intersection.h"
 
-#include "render.h"
+export module pln.systems.renderer;
 
 import pln.consts;
 import pln.materals;
@@ -22,6 +24,7 @@ import pln.shapes;
 import pln.textures;
 import pln.utils.ecs;
 
+namespace pln::systems::renderer {
 
 static const pln::materials::Material COMMON_MATERIAL(glm::vec3(0.05, 0.05, 0.05),
                                                       glm::vec3(1.0, 1.0, 1.0),
@@ -270,8 +273,9 @@ render_ui(const Scene& scene)
   glDisable(GL_BLEND);
 }
 
+export
 void
-render_system(App& app)
+render(App& app)
 {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -296,4 +300,6 @@ render_system(App& app)
     app.deferred_shading().draw_quad();
     glDisable(GL_BLEND);
   }
+}
+
 }

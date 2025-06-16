@@ -1,17 +1,22 @@
+module;
 #include <thorvg.h>
 #include <utility>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
+#include "src/scene/scene.h"
 
-#include "ui.h"
+export module pln.systems.ui;
 
 import pln.shapes;
 import pln.utils.color;
 
+namespace pln::systems::ui {
+
+export
 void
-ui_system(const Scene& scene)
+ui(const Scene& scene)
 {
   auto& registry = scene.state().shared_registry();
   registry->view<pln::shapes::RectSize, pln::utils::color::Color, Transform, IsDirty, UIRect>().each(
@@ -36,4 +41,6 @@ ui_system(const Scene& scene)
         registry->replace<UiCanvas>(entity, std::move(canvas));
       }
     });
+}
+
 }

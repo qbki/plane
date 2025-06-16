@@ -1,3 +1,4 @@
+module;
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext/matrix_projection.hpp>
 #include <glm/geometric.hpp>
@@ -6,14 +7,18 @@
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
+#include "src/scene/scene.h"
 #include "src/utils/mouse.h"
 
-#include "cursor.h"
+export module pln.systems.cursor;
 
 import pln.services.app;
 
+namespace pln::systems::cursor {
+
+export
 void
-cursor_handler_system(Scene& scene)
+cursor_handler(Scene& scene)
 {
   auto mouse_pos = mouse_position();
   auto& camera = scene.state().camera();
@@ -38,4 +43,6 @@ cursor_handler_system(Scene& scene)
         scene.state().cursor(camera.position() + ray * intersection_distance);
       }
     });
+}
+
 }

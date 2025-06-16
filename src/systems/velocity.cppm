@@ -1,15 +1,19 @@
+module;
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/scene/scene.h"
 #include "src/utils/interpolations.h"
 
-#include "velocity.h"
+export module pln.systems.velocity;
 
 import pln.consts;
 import pln.services.app;
 
+namespace pln::systems::velocity {
+
+export
 void
-acceleration_system(const Scene& scene)
+acceleration(const Scene& scene)
 {
   scene.state().registry().view<Velocity, Acceleration>().each(
     [&](Velocity& velocity, Acceleration& acceleration) {
@@ -19,8 +23,10 @@ acceleration_system(const Scene& scene)
     });
 }
 
+
+export
 void
-damping_system(const Scene& scene)
+damping(const Scene& scene)
 {
   scene.state().registry().view<Velocity, VelocityDamping>().each(
     [&](Velocity& velocity, const VelocityDamping& damping) {
@@ -29,8 +35,10 @@ damping_system(const Scene& scene)
     });
 }
 
+
+export
 void
-velocity_system(const Scene& scene)
+velocity(const Scene& scene)
 {
   scene.state().registry().view<Transform, Velocity>().each(
     [&](Transform& transform, const Velocity& velocity) {
@@ -39,11 +47,15 @@ velocity_system(const Scene& scene)
     });
 }
 
+
+export
 void
-velocity_gravity_system(const Scene& scene)
+velocity_gravity(const Scene& scene)
 {
   scene.state().registry().view<Acceleration, Gravity>().each(
     [&](Acceleration& acceleration) {
       acceleration.value += glm::vec3(0.0, 0.0, -pln::consts::GRAVITY);
     });
+}
+
 }

@@ -18,21 +18,6 @@ module;
 #include "src/gui/screens/load_credits_screen.h"
 #include "src/gui/utils/utils.h"
 #include "src/sound/sound.h"
-#include "src/systems/camera.h"
-#include "src/systems/collision.h"
-#include "src/systems/cursor.h"
-#include "src/systems/debris.h"
-#include "src/systems/enemy.h"
-#include "src/systems/entities_collector.h"
-#include "src/systems/finish_condition.h"
-#include "src/systems/gun.h"
-#include "src/systems/level.h"
-#include "src/systems/particles.h"
-#include "src/systems/player.h"
-#include "src/systems/projectiles.h"
-#include "src/systems/ui.h"
-#include "src/systems/update_gui.h"
-#include "src/systems/velocity.h"
 
 export module pln.common_handlers;
 
@@ -41,6 +26,21 @@ import pln.services.app;
 import pln.services.cache;
 import pln.services.events;
 import pln.services.logger;
+import pln.systems.camera;
+import pln.systems.collision;
+import pln.systems.cursor;
+import pln.systems.debris;
+import pln.systems.enemy;
+import pln.systems.entities_collector;
+import pln.systems.finish_condition;
+import pln.systems.gun;
+import pln.systems.level;
+import pln.systems.particles;
+import pln.systems.player;
+import pln.systems.projectiles;
+import pln.systems.ui;
+import pln.systems.update_gui;
+import pln.systems.velocity;
 import pln.utils.system;
 
 namespace pln::common_handlers {
@@ -77,8 +77,8 @@ load_in_game_main_menu()
   auto scene = std::make_unique<Scene>(std::move(camera));
   scene->is_deferred(false);
   scene->handlers().once(GUI::in_game_main_menu_factory);
-  scene->handlers().add(update_gui);
-  scene->handlers().add(ui_system);
+  scene->handlers().add(pln::systems::update_gui::update_gui);
+  scene->handlers().add(pln::systems::ui::ui);
   pln::services::app().push_scene(std::move(scene));
 }
 
@@ -89,8 +89,8 @@ load_lose_menu(const Events::LoseEvent&)
   auto scene = std::make_unique<Scene>(std::move(camera));
   scene->is_deferred(false);
   scene->handlers().once(GUI::lose_menu_factory);
-  scene->handlers().add(update_gui);
-  scene->handlers().add(ui_system);
+  scene->handlers().add(pln::systems::update_gui::update_gui);
+  scene->handlers().add(pln::systems::ui::ui);
   pln::services::app().push_scene(std::move(scene));
 }
 
@@ -103,35 +103,35 @@ load_level_scene()
   auto camera = make_game_camera(pln::services::app());
   auto game = std::make_unique<Scene>(std::move(camera));
   game->is_deferred(true);
-  game->handlers().once(enemy_initial_rotation);
-  game->handlers().add(collect_entities_system);
+  game->handlers().once(pln::systems::enemy::enemy_initial_rotation);
+  game->handlers().add(pln::systems::entities_collector::collect_entities);
 
-  game->handlers().add(velocity_gravity_system);
-  game->handlers().add(acceleration_system);
-  game->handlers().add(damping_system);
-  game->handlers().add(collision_system);
-  game->handlers().add(velocity_system);
-  game->handlers().add(player_updating_app_info_system);
-  game->handlers().add(level_boundaries_system);
+  game->handlers().add(pln::systems::velocity::velocity_gravity);
+  game->handlers().add(pln::systems::velocity::acceleration);
+  game->handlers().add(pln::systems::velocity::damping);
+  game->handlers().add(pln::systems::collision::collision);
+  game->handlers().add(pln::systems::velocity::velocity);
+  game->handlers().add(pln::systems::player::player_updating_app_info);
+  game->handlers().add(pln::systems::level::level_boundaries);
 
-  game->handlers().add(cursor_handler_system);
-  game->handlers().add(player_moving_system);
-  game->handlers().add(player_rotation_system);
-  game->handlers().add(player_shooting_system);
-  game->handlers().add(player_enemy_pointers);
-  game->handlers().add(enemy_hunting_system);
-  game->handlers().add(enemy_rotation_system);
-  game->handlers().add(enemy_acceleration_system);
-  game->handlers().add(particle_handler_system);
+  game->handlers().add(pln::systems::cursor::cursor_handler);
+  game->handlers().add(pln::systems::player::player_moving);
+  game->handlers().add(pln::systems::player::player_rotation);
+  game->handlers().add(pln::systems::player::player_shooting);
+  game->handlers().add(pln::systems::player::player_enemy_pointers);
+  game->handlers().add(pln::systems::enemy::enemy_hunting);
+  game->handlers().add(pln::systems::enemy::enemy_rotation);
+  game->handlers().add(pln::systems::enemy::enemy_acceleration);
+  game->handlers().add(pln::systems::particles::particle_handler);
 
-  game->handlers().add(remove_debris_system);
-  game->handlers().add(camera_move_system);
-  game->handlers().add(gun_shooting_system);
-  game->handlers().add(projectile_handler_system);
-  game->handlers().add(check_finish_condition);
-  game->handlers().add(LoseSystem {});
-  game->handlers().add(update_gui_calculate_hostiles);
-  game->handlers().add(update_gui_lives);
+  game->handlers().add(pln::systems::debris::remove_debris);
+  game->handlers().add(pln::systems::camera::camera_movement);
+  game->handlers().add(pln::systems::gun::gun_shooting);
+  game->handlers().add(pln::systems::projectiles::projectile_handler);
+  game->handlers().add(pln::systems::finish_condition::check_finish_condition);
+  game->handlers().add(pln::systems::player::LoseSystem {});
+  game->handlers().add(pln::systems::update_gui::update_gui_calculate_hostiles);
+  game->handlers().add(pln::systems::update_gui::update_gui_lives);
   game->cancel_handlers().add([](Scene& scene) {
     scene.is_paused(true);
     pln::services::app().add_once_handler([](auto&) { load_in_game_main_menu(); });
@@ -140,8 +140,8 @@ load_level_scene()
   auto gui_camera = make_gui_camera(pln::services::app());
   auto ui = std::make_unique<Scene>(std::move(gui_camera));
   ui->handlers().once(GUI::game_screen_factory);
-  ui->handlers().add(update_gui);
-  ui->handlers().add(ui_system);
+  ui->handlers().add(pln::systems::update_gui::update_gui);
+  ui->handlers().add(pln::systems::ui::ui);
   ui->is_deferred(false);
 
   auto& game_ref = *game;

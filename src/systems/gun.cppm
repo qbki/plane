@@ -1,3 +1,5 @@
+module;
+#include <cstdlib>
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
 
@@ -5,17 +7,21 @@
 #include "src/components/transform.h"
 #include "src/components/weapon.h"
 #include "src/game_state/factory.h"
+#include "src/scene/scene.h"
 #include "src/utils/random.h"
 
-#include "gun.h"
+export module pln.systems.gun;
 
 import pln.consts;
 import pln.services.app;
 import pln.services.events;
 import pln.utils.common;
 
+namespace pln::systems::gun {
+
+export
 void
-gun_shooting_system(Scene& scene)
+gun_shooting(Scene& scene)
 {
   using namespace pln::utils::common;
 
@@ -76,4 +82,6 @@ gun_shooting_system(Scene& scene)
       }
       weapon.left_time_to_shoot = 1.0f / weapon.fire_rate;
     });
+}
+
 }

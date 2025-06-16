@@ -1,11 +1,16 @@
+module;
 #include "src/components/common.h"
+#include "src/scene/scene.h"
 
-#include "particles.h"
+export module pln.systems.particles;
 
 import pln.services.app;
 
+namespace pln::systems::particles {
+
+export
 void
-particle_handler_system(Scene& scene)
+particle_handler(Scene& scene)
 {
   auto& registry = scene.state().registry();
   auto particles = registry.view<Lifetime, Available, ParticleKind>();
@@ -16,4 +21,6 @@ particle_handler_system(Scene& scene)
     }
     lifetime.value -= pln::services::app().delta_time();
   });
+}
+
 }

@@ -1,3 +1,4 @@
+module;
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
@@ -14,13 +15,16 @@
 #include "src/components/weapon.h"
 #include "src/scene/scene.h"
 
-#include "enemy.h"
-
-constexpr float SHOOT_ANGLE = 0.3;
+export module pln.systems.enemy;
 
 import pln.consts;
 import pln.services.app;
 import pln.utils.common;
+
+namespace pln::systems::enemy {
+
+constexpr float SHOOT_ANGLE = 0.3;
+
 
 std::tuple<entt::entity, glm::vec3>
 get_player_data(const Scene& scene)
@@ -35,8 +39,9 @@ get_player_data(const Scene& scene)
   return { player_id, position };
 }
 
+export
 void
-enemy_hunting_system(Scene& scene)
+enemy_hunting(Scene& scene)
 {
   auto& state = scene.state();
   auto& registry = state.registry();
@@ -109,8 +114,10 @@ enemy_hunting_system(Scene& scene)
   }
 }
 
+
+export
 void
-enemy_rotation_system(Scene& scene)
+enemy_rotation(Scene& scene)
 {
   auto& registry = scene.state().registry();
   auto [_, player_position] = get_player_data(scene);
@@ -129,6 +136,8 @@ enemy_rotation_system(Scene& scene)
     });
 }
 
+
+export
 void
 enemy_initial_rotation(const Scene& scene)
 {
@@ -149,8 +158,10 @@ enemy_initial_rotation(const Scene& scene)
     });
 }
 
+
+export
 void
-enemy_acceleration_system(const Scene& scene)
+enemy_acceleration(const Scene& scene)
 {
   auto [_, player_position] = get_player_data(scene);
   scene.state()
@@ -171,4 +182,6 @@ enemy_acceleration_system(const Scene& scene)
         accel.value += glm::normalize(direction) * accel_scalar.value;
       }
     });
+}
+
 }

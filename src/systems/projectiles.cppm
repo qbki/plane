@@ -1,14 +1,19 @@
+module;
 #include <glm/geometric.hpp>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
+#include "src/scene/scene.h"
 
-#include "projectiles.h"
+export module pln.systems.projectiles;
 
 import pln.consts;
 
+namespace pln::systems::projectiles {
+
+export
 void
-projectile_handler_system(Scene& scene)
+projectile_handler(Scene& scene)
 {
   auto& registry = scene.state().shared_registry();
   auto shooter_view = registry->view<Transform,
@@ -38,6 +43,7 @@ projectile_handler_system(Scene& scene)
           particles_emitter(prj_transform.translation());
           registry->remove<Available>(prj_id);
           if (lives.value <= 0) {
+            registry->remove<Available>(id);
             lives.value = 0;
             debris_emitter.value(registry, enemy_position.translation());
             scene.handlers().once(
@@ -46,4 +52,6 @@ projectile_handler_system(Scene& scene)
         }
       });
     });
+}
+
 }

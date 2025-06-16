@@ -1,8 +1,10 @@
+module;
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/geometric.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/trigonometric.hpp>
+#include <vector>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
@@ -10,14 +12,17 @@
 #include "src/game_state/factory.h"
 #include "src/scene/scene.h"
 
-#include "player.h"
+export module pln.systems.player;
 
 import pln.services.app;
 import pln.services.events;
 import pln.utils.common;
 
+namespace pln::systems::player {
+
+export
 void
-player_rotation_system(const Scene& scene)
+player_rotation(const Scene& scene)
 {
   static const auto tilt_angle = glm::pi<float>() / 4.0f;
   static const auto max_speed_coeficient = 0.4f;
@@ -44,16 +49,20 @@ player_rotation_system(const Scene& scene)
     });
 }
 
+
+export
 void
-player_shooting_system(const Scene& scene)
+player_shooting(const Scene& scene)
 {
   const auto& control = pln::services::app().control();
   scene.state().registry().view<Weapon, PlayerKind>().each(
     [&control](Weapon& weapon) { weapon.is_shooting = control.shooting; });
 };
 
+
+export
 void
-player_moving_system(const Scene& scene)
+player_moving(const Scene& scene)
 {
   using namespace pln::utils::common;
 
@@ -83,6 +92,8 @@ player_moving_system(const Scene& scene)
     });
 }
 
+
+export
 void
 player_enemy_pointers(const Scene& scene)
 {
@@ -138,28 +149,40 @@ player_enemy_pointers(const Scene& scene)
   }
 }
 
+
+export
 void
-LoseSystem::operator()(const Scene& scene)
-{
-  if (is_fired) {
-    return;
-  }
-
-  auto players_quantity = scene.state().registry().view<PlayerKind>().size();
-
-  if (players_quantity == 0) {
-    pln::services::app().pause_scenes();
-    pln::services::app().add_once_handler(
-      [](auto&) { pln::services::events<const Events::LoseEvent>().emit({}); });
-    is_fired = true;
-  }
-}
-
-void
-player_updating_app_info_system(const Scene& scene)
+player_updating_app_info(const Scene& scene)
 {
   auto registry = scene.state().shared_registry();
   registry->view<Transform, PlayerKind>().each([&](const Transform& transform) {
       pln::services::app().info().player_position = transform.translation();
   });
+}
+
+
+export class LoseSystem
+{
+private:
+  bool is_fired = false;
+
+public:
+  void operator()(const Scene& scene)
+  {
+    if (is_fired) {
+      return;
+    }
+
+    auto players_quantity = scene.state().registry().view<PlayerKind>().size();
+
+    if (players_quantity == 0) {
+      pln::services::app().pause_scenes();
+      pln::services::app().add_once_handler(
+          [](auto&) { pln::services::events<const Events::LoseEvent>().emit({}); });
+      is_fired = true;
+    }
+  }
+};
+
+
 }

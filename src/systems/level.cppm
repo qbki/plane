@@ -1,11 +1,17 @@
+module;
 #include <glm/common.hpp>
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/scene/scene.h"
 
+export module pln.systems.level;
+
+namespace pln::systems::level {
+
+export
 void
-level_boundaries_system(const Scene& scene)
+level_boundaries(const Scene& scene)
 {
   auto& world_bbox = scene.state().world_bbox();
 
@@ -27,4 +33,6 @@ level_boundaries_system(const Scene& scene)
         glm::clamp(pos.z, world_bbox.min.z, world_bbox.max.z),
       });
     });
+}
+
 }

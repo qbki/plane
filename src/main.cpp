@@ -4,11 +4,14 @@
 #include <string>
 #include <utility>
 
+#include "app/app.h"
+#include "app/system.h"
 #include "cache/cache.h"
+#include "events/event_emitter.h"
 #include "fileio/theme_loader.h"
 #include "fileio/translation_loader.h"
 #include "logger/logger.h"
-#include "systems/render.h"
+#include "shading/deferred_shading.h"
 #include "utils/file_loaders/file_loaders.h"
 #include "utils/types.h"
 
@@ -22,7 +25,9 @@ import pln.service;
 import pln.services.app;
 import pln.services.gui_quad;
 import pln.services.logger;
+import pln.shaders;
 import pln.shapes;
+import pln.systems.renderer;
 import pln.utils.system;
 
 int
@@ -122,7 +127,7 @@ main(int argc, char* argv[])
       scene->update();
     }
   });
-  app->add_handler(render_system);
+  app->add_handler(pln::systems::renderer::render);
 
   auto translations = load_translations(app->assets_dir() / "text" / "en.json");
   app->set_translations(translations);

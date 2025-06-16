@@ -1,17 +1,21 @@
+module;
 #include <utility>
-#include <variant>
 
 #include "src/collections/octree.h"
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/math/intersection.h"
+#include "src/scene/scene.h"
 
-#include "entities_collector.h"
+export module pln.systems.entities_collector;
 
-const unsigned int MAX_OCTREE_DEPTH = 12;
+namespace pln::systems::entities_collector {
 
+constexpr unsigned int MAX_OCTREE_DEPTH = 12;
+
+export
 void
-collect_entities_system(Scene& scene)
+collect_entities(Scene& scene)
 {
   auto& registry = scene.state().registry();
   const auto& state = scene.state();
@@ -28,4 +32,6 @@ collect_entities_system(Scene& scene)
     });
 
   scene.entities(std::move(octree));
+}
+
 }

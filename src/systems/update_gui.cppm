@@ -1,3 +1,4 @@
+module;
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
@@ -7,12 +8,15 @@
 #include "src/scene/scene.h"
 #include "src/utils/mouse.h"
 
-#include "update_gui.h"
+export module pln.systems.update_gui;
 
 import pln.services.app;
 import pln.shapes;
 import pln.utils.ecs;
 
+namespace pln::systems::update_gui {
+
+export
 void
 update_gui(Scene& scene)
 {
@@ -87,6 +91,8 @@ update_gui(Scene& scene)
     });
 }
 
+
+export
 void
 update_gui_calculate_hostiles(const Scene& scene)
 {
@@ -100,9 +106,13 @@ update_gui_calculate_hostiles(const Scene& scene)
   pln::services::app().info().hostiles = enemy_quantity;
 }
 
+
+export
 void
 update_gui_lives(const Scene& scene)
 {
   scene.state().shared_registry()->view<Lives, PlayerKind>().each(
     [](const Lives& lives) { pln::services::app().info().lives = lives; });
+}
+
 }

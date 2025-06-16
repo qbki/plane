@@ -1,11 +1,15 @@
+module;
 #include "src/components/common.h"
 #include "src/scene/scene.h"
 
-#include "finish_condition.h"
+export module pln.systems.finish_condition;
 
 import pln.services.app;
 import pln.services.events;
 
+namespace pln::systems::finish_condition {
+
+export
 void
 check_finish_condition(Scene& scene)
 {
@@ -24,4 +28,6 @@ check_finish_condition(Scene& scene)
         pln::services::events<const Events::LoadNextLevelEvent>().emit({});
     });
   }
+}
+
 }

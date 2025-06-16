@@ -5,9 +5,9 @@
 #include <glm/gtx/norm.hpp>
 #include <glm/trigonometric.hpp>
 
-#include "src/utils/vectors.h"
-
 #include "turret_rotation.h"
+
+import pln.utils.vectors;
 
 void
 TurretRotation::speed(float value)
@@ -38,6 +38,8 @@ TurretRotation::rotate(const glm::vec3& forward,
                        const glm::vec3& sight,
                        float delta_time)
 {
+  using namespace pln::utils::vectors;
+
   auto norm_forward = glm::normalize(forward);
   auto norm_sight = glm::normalize(sight);
   auto actual_angle = glm::acos(

@@ -8,11 +8,11 @@ module;
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/scene/scene.h"
-#include "src/utils/mouse.h"
 
 export module pln.systems.cursor;
 
 import pln.services.app;
+import pln.utils.mouse;
 
 namespace pln::systems::cursor {
 
@@ -20,7 +20,7 @@ export
 void
 cursor_handler(Scene& scene)
 {
-  auto mouse_pos = mouse_position();
+  auto mouse_pos = pln::utils::mouse::mouse_position();
   auto& camera = scene.state().camera();
   auto screen_size = pln::services::app().screen_size();
   glm::vec4 viewport { 0, 0, screen_size.width, screen_size.height };

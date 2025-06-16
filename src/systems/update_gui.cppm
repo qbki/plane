@@ -6,13 +6,13 @@ module;
 #include "src/components/transform.h"
 #include "src/math/intersection.h"
 #include "src/scene/scene.h"
-#include "src/utils/mouse.h"
 
 export module pln.systems.update_gui;
 
 import pln.services.app;
 import pln.shapes;
 import pln.utils.ecs;
+import pln.utils.mouse;
 
 namespace pln::systems::update_gui {
 
@@ -20,7 +20,7 @@ export
 void
 update_gui(Scene& scene)
 {
-  glm::ivec2 mouse_pos = mouse_position();
+  glm::ivec2 mouse_pos = pln::utils::mouse::mouse_position();
   glm::ivec2 position { mouse_pos.x, mouse_pos.y };
   Events::GUILayout gui_layout_event_data {};
   Events::PointerMove pointer_move_event_data { .position = position };

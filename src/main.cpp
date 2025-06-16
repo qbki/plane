@@ -45,7 +45,7 @@ main(int argc, char* argv[])
   auto context = pln::sdl::init_context(window.get());
   auto control = std::make_unique<pln::control::Control>();
 
-  auto geometry_pass_shader = std::make_unique<Shader>();
+  auto geometry_pass_shader = std::make_unique<pln::shaders::Shader>();
   {
     auto vertex = load_text(pln::consts::SHADERS_DIR / "main_v.glsl").or_crash();
     auto fragment = load_text(pln::consts::SHADERS_DIR / "deferred_geometry_pass_f.glsl")
@@ -53,7 +53,7 @@ main(int argc, char* argv[])
     geometry_pass_shader->compile(vertex, fragment);
   }
 
-  auto light_pass_shader = std::make_unique<Shader>();
+  auto light_pass_shader = std::make_unique<pln::shaders::Shader>();
   {
     auto vertex = load_text(pln::consts::SHADERS_DIR / "output_v.glsl").or_crash();
     auto fragment = load_text(pln::consts::SHADERS_DIR / "deferred_light_pass_f.glsl")
@@ -61,21 +61,21 @@ main(int argc, char* argv[])
     light_pass_shader->compile(vertex, fragment);
   }
 
-  auto particle_shader = std::make_unique<Shader>();
+  auto particle_shader = std::make_unique<pln::shaders::Shader>();
   {
     auto vertex = load_text(pln::consts::SHADERS_DIR / "main_v.glsl").or_crash();
     auto fragment = load_text(pln::consts::SHADERS_DIR / "particle_f.glsl").or_crash();
     particle_shader->compile(vertex, fragment);
   }
 
-  auto ui_shader = std::make_unique<Shader>();
+  auto ui_shader = std::make_unique<pln::shaders::Shader>();
   {
     auto vertex = load_text(pln::consts::SHADERS_DIR / "main_v.glsl").or_crash();
     auto fragment = load_text(pln::consts::SHADERS_DIR / "particle_f.glsl").or_crash();
     ui_shader->compile(vertex, fragment);
   }
 
-  auto inter_shader = std::make_unique<Shader>();
+  auto inter_shader = std::make_unique<pln::shaders::Shader>();
   {
     auto vertex = load_text(pln::consts::SHADERS_DIR / "output_v.glsl").or_crash();
     auto fragment = load_text(pln::consts::SHADERS_DIR / "output_f.glsl").or_crash();

@@ -12,13 +12,13 @@
 #include "src/app/settings.h" // IWYU pragma: export
 #include "src/app/system.h"   // IWYU pragma: export
 #include "src/scene/scene.h" // IWYU pragma: export
-#include "src/shader.h"                   // IWYU pragma: export
 #include "src/shading/deferred_shading.h" // IWYU pragma: export
 #include "src/shading/framebuffer.h"      // IWYU pragma: export
 
 import pln.consts;
 import pln.control;
 import pln.sdl;
+import pln.shaders;
 import pln.shapes;
 
 class App
@@ -45,9 +45,9 @@ private:
   std::unique_ptr<DeferredShading> _deferred_shading {};
   std::unique_ptr<FrameBuffer>
     _intermediate_fb = std::make_unique<FrameBuffer>();
-  std::unique_ptr<Shader> _particle_shader {};
-  std::unique_ptr<Shader> _ui_shader {};
-  std::unique_ptr<Shader> _intermediate_shader {};
+  std::unique_ptr<pln::shaders::Shader> _particle_shader {};
+  std::unique_ptr<pln::shaders::Shader> _ui_shader {};
+  std::unique_ptr<pln::shaders::Shader> _intermediate_shader {};
   TranslationsMapping _translations;
   std::filesystem::path _assets_dir { pln::consts::DEFAULT_ASSETS_DIR };
 
@@ -71,14 +71,14 @@ public:
   void intermediate_fb(std::unique_ptr<FrameBuffer> value);
   [[nodiscard]] FrameBuffer& intermediate_fb() const;
 
-  void particle_shader(std::unique_ptr<Shader> value);
-  [[nodiscard]] Shader& particle_shader() const;
+  void particle_shader(std::unique_ptr<pln::shaders::Shader> value);
+  [[nodiscard]] pln::shaders::Shader& particle_shader() const;
 
-  void ui_shader(std::unique_ptr<Shader> value);
-  [[nodiscard]] Shader& ui_shader() const;
+  void ui_shader(std::unique_ptr<pln::shaders::Shader> value);
+  [[nodiscard]] pln::shaders::Shader& ui_shader() const;
 
-  void intermediate_shader(std::unique_ptr<Shader> value);
-  [[nodiscard]] Shader& intermediate_shader() const;
+  void intermediate_shader(std::unique_ptr<pln::shaders::Shader> value);
+  [[nodiscard]] pln::shaders::Shader& intermediate_shader() const;
 
   void window(pln::sdl::WindowPtr value);
   [[nodiscard]] SDL_Window& window() const;

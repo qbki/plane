@@ -74,36 +74,36 @@ App::intermediate_fb() const
 }
 
 void
-App::particle_shader(std::unique_ptr<Shader> value)
+App::particle_shader(std::unique_ptr<pln::shaders::Shader> value)
 {
   _particle_shader = std::move(value);
 }
 
-Shader&
+pln::shaders::Shader&
 App::particle_shader() const
 {
   return *_particle_shader;
 }
 
 void
-App::ui_shader(std::unique_ptr<Shader> value)
+App::ui_shader(std::unique_ptr<pln::shaders::Shader> value)
 {
   _ui_shader = std::move(value);
 }
 
-Shader&
+pln::shaders::Shader&
 App::ui_shader() const
 {
   return *_ui_shader;
 }
 
 void
-App::intermediate_shader(std::unique_ptr<Shader> value)
+App::intermediate_shader(std::unique_ptr<pln::shaders::Shader> value)
 {
   _intermediate_shader = std::move(value);
 }
 
-Shader&
+pln::shaders::Shader&
 App::intermediate_shader() const
 {
   return *_intermediate_shader;

@@ -6,8 +6,8 @@
 import pln.meshes;
 
 
-DeferredShading::DeferredShading(std::unique_ptr<Shader> geometry_pass,
-                                 std::unique_ptr<Shader> light_pass,
+DeferredShading::DeferredShading(std::unique_ptr<pln::shaders::Shader> geometry_pass,
+                                 std::unique_ptr<pln::shaders::Shader> light_pass,
                                  std::unique_ptr<pln::meshes::Mesh> quad,
                                  unsigned int width,
                                  unsigned int height)
@@ -32,13 +32,13 @@ DeferredShading::use_light_pass()
   _g_buffer->use();
 }
 
-Shader&
+pln::shaders::Shader&
 DeferredShading::geometry_pass()
 {
   return *_geometry_pass;
 }
 
-Shader&
+pln::shaders::Shader&
 DeferredShading::light_path()
 {
   return *_light_pass;

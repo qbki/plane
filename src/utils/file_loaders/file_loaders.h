@@ -7,8 +7,9 @@
 #include <tiny_gltf.h>
 
 #include "src/sound/sound.h"
-#include "src/utils/data_holder.h" // IWYU pragma: export
 #include "src/utils/result.h"      // IWYU pragma: export
+
+import pln.utils.data_holder;
 
 Result<tinygltf::Model>
 load_gltf_model(const std::string& file_path);
@@ -25,7 +26,7 @@ load_local_json(const std::filesystem::path& file_path);
 void
 save_local_json(const std::filesystem::path& file_path, nlohmann::json json);
 
-std::shared_ptr<DataHolder>
+std::shared_ptr<pln::utils::data_holder::DataHolder>
 load_sdl_rw_data(const std::filesystem::path& path);
 
 std::unique_ptr<Sound::Sound>

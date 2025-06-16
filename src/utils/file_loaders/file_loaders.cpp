@@ -17,10 +17,12 @@
 #endif
 
 import pln.services.logger;
+import pln.utils.data_holder;
 
-std::shared_ptr<DataHolder>
+std::shared_ptr<pln::utils::data_holder::DataHolder>
 load_sdl_rw_data(const std::filesystem::path& path)
 {
+  using namespace pln::utils::data_holder;
   auto raw_data = load_binary(path).or_crash();
   pln::services::logger().info(
     std::format("Loaded: {} ({})", path.c_str(), raw_data.size()));

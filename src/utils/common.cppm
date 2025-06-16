@@ -30,4 +30,10 @@ get_pixels(int width, int height, unsigned int size = 4)
 }
 
 
+export
+inline void
+noop()
+{
+}
+
 }

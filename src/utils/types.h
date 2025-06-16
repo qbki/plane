@@ -7,8 +7,7 @@
 #include <optional>
 #include <string>
 
-#include "noop.h"
-
+import pln.utils.common;
 import pln.utils.crash;
 
 template<typename T>
@@ -32,7 +31,7 @@ demangled_name()
   std::string result { *name };
   switch (status) {
     case 0:
-      noop();
+      pln::utils::common::noop();
       break;
     case -1:
       pln::utils::crash("Demangle. A memory allocation failure occurred.");

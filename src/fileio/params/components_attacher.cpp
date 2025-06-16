@@ -7,7 +7,6 @@
 #include "src/components/weapon.h"
 #include "src/game_state/factory.h"
 #include "src/scene/scene.h"
-#include "src/utils/noop.h"
 
 #include "components_attacher.h"
 #include "emitters.h"
@@ -16,6 +15,7 @@
 import pln.control;
 import pln.services.app;
 import pln.utils.color;
+import pln.utils.common;
 
 ComponetsAttacher::ComponetsAttacher(
   std::reference_wrapper<const Scene> scene,
@@ -71,7 +71,7 @@ ComponetsAttacher::operator()(const EntityParamsText& params) const
 void
 ComponetsAttacher::operator()(const EntityParamsWeapon&) const
 {
-  noop();
+  pln::utils::common::noop();
 }
 
 void

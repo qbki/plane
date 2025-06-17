@@ -9,11 +9,11 @@
 
 #include "src/app/app_info.h" // IWYU pragma: export
 #include "src/app/save.h"     // IWYU pragma: export
-#include "src/app/settings.h" // IWYU pragma: export
 #include "src/scene/scene.h" // IWYU pragma: export
 #include "src/shading/deferred_shading.h" // IWYU pragma: export
 #include "src/shading/framebuffer.h"      // IWYU pragma: export
 
+import pln.app.settings;
 import pln.consts;
 import pln.control;
 import pln.sdl;
@@ -34,7 +34,7 @@ private:
   AppInfo _info {};
   pln::sdl::WindowPtr _window { nullptr, [](SDL_Window*) {} };
   pln::sdl::ContextPtr _gl_context { nullptr, [](SDL_GLContext) {} };
-  Settings _settings { pln::consts::SETTINGS_FILE };
+  pln::app::Settings _settings { pln::consts::SETTINGS_FILE };
   Save _save { pln::consts::SAVE_DATA_FILE };
   std::vector<std::unique_ptr<Scene>> _scenes {};
   std::unique_ptr<pln::control::Control> _control {};
@@ -84,7 +84,7 @@ public:
   void gl_context(pln::sdl::ContextPtr value);
   [[nodiscard]] SDL_GLContext gl_context() const;
 
-  [[nodiscard]] Settings& settings();
+  [[nodiscard]] pln::app::Settings& settings();
 
   [[nodiscard]] Save& save_data();
 

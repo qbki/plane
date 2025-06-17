@@ -6,6 +6,7 @@
 
 #include "app.h"
 
+import pln.app.settings;
 import pln.control;
 import pln.sdl;
 import pln.shaders;
@@ -208,7 +209,7 @@ App::info()
   return _info;
 }
 
-Settings&
+pln::app::Settings&
 App::settings()
 {
   return _settings;

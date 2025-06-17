@@ -10,12 +10,12 @@ module;
 #include <utility>
 #include <vector>
 
-#include "src/app/app_info.h" // IWYU pragma: export
 #include "src/shading/deferred_shading.h" // IWYU pragma: export
 #include "src/shading/framebuffer.h"      // IWYU pragma: export
 
 export module pln.app.app;
 
+import pln.app.info;
 import pln.app.save;
 import pln.app.settings;
 import pln.consts;
@@ -39,7 +39,7 @@ private:
   float _delta_time {};
   float _time {};
   bool _is_game_running = true;
-  AppInfo _info {};
+  pln::app::Info _info {};
   pln::sdl::WindowPtr _window { nullptr, [](SDL_Window*) {} };
   pln::sdl::ContextPtr _gl_context { nullptr, [](SDL_GLContext) {} };
   pln::app::Settings _settings { pln::consts::SETTINGS_FILE };
@@ -248,7 +248,7 @@ public:
     return _scenes;
   }
 
-  AppInfo&
+  pln::app::Info&
   info()
   {
     return _info;

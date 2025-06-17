@@ -8,11 +8,11 @@
 #include <vector>
 
 #include "src/app/app_info.h" // IWYU pragma: export
-#include "src/app/save.h"     // IWYU pragma: export
 #include "src/scene/scene.h" // IWYU pragma: export
 #include "src/shading/deferred_shading.h" // IWYU pragma: export
 #include "src/shading/framebuffer.h"      // IWYU pragma: export
 
+import pln.app.save;
 import pln.app.settings;
 import pln.consts;
 import pln.control;
@@ -35,7 +35,7 @@ private:
   pln::sdl::WindowPtr _window { nullptr, [](SDL_Window*) {} };
   pln::sdl::ContextPtr _gl_context { nullptr, [](SDL_GLContext) {} };
   pln::app::Settings _settings { pln::consts::SETTINGS_FILE };
-  Save _save { pln::consts::SAVE_DATA_FILE };
+  pln::app::Save _save { pln::consts::SAVE_DATA_FILE };
   std::vector<std::unique_ptr<Scene>> _scenes {};
   std::unique_ptr<pln::control::Control> _control {};
   pln::shapes::RectSize _screen_size { pln::consts::DEFAULT_SCREEN_WIDTH,
@@ -86,7 +86,7 @@ public:
 
   [[nodiscard]] pln::app::Settings& settings();
 
-  [[nodiscard]] Save& save_data();
+  [[nodiscard]] pln::app::Save& save_data();
 
   [[nodiscard]] std::function<std::string(const std::string&)>& translate_fn()
     const;

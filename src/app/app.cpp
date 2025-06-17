@@ -6,6 +6,7 @@
 
 #include "app.h"
 
+import pln.app.save;
 import pln.app.settings;
 import pln.control;
 import pln.sdl;
@@ -215,7 +216,7 @@ App::settings()
   return _settings;
 }
 
-Save&
+pln::app::Save&
 App::save_data()
 {
   return _save;

@@ -60,6 +60,7 @@ find_package(glm CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_path(TINYGLTF_INCLUDE_DIRS "tiny_gltf.h")
 find_package(Catch2 CONFIG REQUIRED)
+
 # <thorvg>
 find_package(PkgConfig)
 pkg_check_modules(thorvg REQUIRED IMPORTED_TARGET thorvg)

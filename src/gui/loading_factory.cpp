@@ -1,8 +1,8 @@
 #include "src/components/transform.h"
-#include "src/scene/scene.h"
 
 #include "components/text.h"
 
+import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
 import pln.shapes;
@@ -10,7 +10,7 @@ import pln.shapes;
 namespace GUI {
 
 void
-loading_factory(Scene& scene)
+loading_factory(pln::scene::IScene& scene)
 {
   auto& registry = scene.state().shared_registry();
 
@@ -20,7 +20,7 @@ loading_factory(Scene& scene)
       .font = pln::services::theme().typography.h1,
       .text = "Loading...",
     });
-  scene.handlers().add([loading_text_entity](Scene& scene) {
+  scene.handlers().add([loading_text_entity](pln::scene::IScene& scene) {
     auto& registry = scene.state().registry();
     auto [transform,
           size] = registry.get<Transform, pln::shapes::RectSize>(loading_text_entity);

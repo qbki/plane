@@ -3,17 +3,17 @@ module;
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/scene/scene.h"
 
 export module pln.systems.projectiles;
 
 import pln.consts;
+import pln.scene.iscene;
 
 namespace pln::systems::projectiles {
 
 export
 void
-projectile_handler(Scene& scene)
+projectile_handler(pln::scene::IScene& scene)
 {
   auto& registry = scene.state().shared_registry();
   auto shooter_view = registry->view<Transform,
@@ -47,7 +47,7 @@ projectile_handler(Scene& scene)
             lives.value = 0;
             debris_emitter.value(registry, enemy_position.translation());
             scene.handlers().once(
-              [id](const Scene& s) { s.state().registry().destroy(id); });
+              [id](const pln::scene::IScene& s) { s.state().registry().destroy(id); });
           }
         }
       });

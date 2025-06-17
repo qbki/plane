@@ -6,13 +6,14 @@ module;
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/weapon.h"
+#include "src/events/event.h"
 #include "src/game_state/factory.h"
-#include "src/scene/scene.h"
 #include "src/utils/random.h"
 
 export module pln.systems.gun;
 
 import pln.consts;
+import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
 import pln.utils.common;
@@ -21,7 +22,7 @@ namespace pln::systems::gun {
 
 export
 void
-gun_shooting(Scene& scene)
+gun_shooting(pln::scene::IScene& scene)
 {
   using namespace pln::utils::common;
 

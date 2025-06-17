@@ -21,11 +21,12 @@
 #include "strategies.h"
 
 import pln.consts;
+import pln.scene.iscene;
 import pln.utils.crash;
 
 PositionStrategyVisitor::PositionStrategyVisitor(
   std::reference_wrapper<const EntityParamsMap> entities,
-  std::reference_wrapper<Scene> scene,
+  std::reference_wrapper<pln::scene::IScene> scene,
   ModelFactory::MakerFn maker_fn)
   : _entities(entities)
   , _scene(scene)
@@ -153,7 +154,7 @@ PositionStrategyVisitor::operator()(const PositionStrategyVoid& strategy)
 void
 PositionStrategyVisitor::visit(const PositionStrategy& strategy,
                                const EntityParamsMap& entities,
-                               Scene& scene,
+                               pln::scene::IScene& scene,
                                const ModelFactory::MakerFn& maker_fn)
 {
   PositionStrategyVisitor strategy_handler(entities, scene, maker_fn);

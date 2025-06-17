@@ -9,11 +9,12 @@ module;
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/weapon.h"
+#include "src/events/event.h"
 #include "src/game_state/factory.h"
-#include "src/scene/scene.h"
 
 export module pln.systems.player;
 
+import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
 import pln.utils.common;
@@ -22,7 +23,7 @@ namespace pln::systems::player {
 
 export
 void
-player_rotation(const Scene& scene)
+player_rotation(const pln::scene::IScene& scene)
 {
   static const auto tilt_angle = glm::pi<float>() / 4.0f;
   static const auto max_speed_coeficient = 0.4f;
@@ -52,7 +53,7 @@ player_rotation(const Scene& scene)
 
 export
 void
-player_shooting(const Scene& scene)
+player_shooting(const pln::scene::IScene& scene)
 {
   const auto& control = pln::services::app().control();
   scene.state().registry().view<Weapon, PlayerKind>().each(
@@ -62,7 +63,7 @@ player_shooting(const Scene& scene)
 
 export
 void
-player_moving(const Scene& scene)
+player_moving(const pln::scene::IScene& scene)
 {
   using namespace pln::utils::common;
 
@@ -95,7 +96,7 @@ player_moving(const Scene& scene)
 
 export
 void
-player_enemy_pointers(const Scene& scene)
+player_enemy_pointers(const pln::scene::IScene& scene)
 {
   auto registry = scene.state().shared_registry();
   glm::vec3 player_position { 0, 0, 0 };
@@ -152,7 +153,7 @@ player_enemy_pointers(const Scene& scene)
 
 export
 void
-player_updating_app_info(const Scene& scene)
+player_updating_app_info(const pln::scene::IScene& scene)
 {
   auto registry = scene.state().shared_registry();
   registry->view<Transform, PlayerKind>().each([&](const Transform& transform) {
@@ -167,7 +168,7 @@ private:
   bool is_fired = false;
 
 public:
-  void operator()(const Scene& scene)
+  void operator()(const pln::scene::IScene& scene)
   {
     if (is_fired) {
       return;

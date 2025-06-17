@@ -6,18 +6,18 @@ module;
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/math/intersection.h"
-#include "src/scene/scene.h"
 
 export module pln.systems.collision;
 
 import pln.consts;
+import pln.scene.iscene;
 import pln.services.app;
 
 namespace pln::systems::collision {
 
 export
 void
-collision(Scene& scene)
+collision(pln::scene::IScene& scene)
 {
   auto& registry = scene.state().registry();
   auto delta_time = pln::services::app().delta_time();

@@ -13,11 +13,11 @@ module;
 #include "src/components/transform.h"
 #include "src/components/turret_rotation.h"
 #include "src/components/weapon.h"
-#include "src/scene/scene.h"
 
 export module pln.systems.enemy;
 
 import pln.consts;
+import pln.scene.iscene;
 import pln.services.app;
 import pln.utils.common;
 
@@ -27,7 +27,7 @@ constexpr float SHOOT_ANGLE = 0.3;
 
 
 std::tuple<entt::entity, glm::vec3>
-get_player_data(const Scene& scene)
+get_player_data(const pln::scene::IScene& scene)
 {
   entt::entity player_id = entt::null;
   glm::vec3 position {};
@@ -41,7 +41,7 @@ get_player_data(const Scene& scene)
 
 export
 void
-enemy_hunting(Scene& scene)
+enemy_hunting(pln::scene::IScene& scene)
 {
   auto& state = scene.state();
   auto& registry = state.registry();
@@ -117,7 +117,7 @@ enemy_hunting(Scene& scene)
 
 export
 void
-enemy_rotation(Scene& scene)
+enemy_rotation(pln::scene::IScene& scene)
 {
   auto& registry = scene.state().registry();
   auto [_, player_position] = get_player_data(scene);
@@ -139,7 +139,7 @@ enemy_rotation(Scene& scene)
 
 export
 void
-enemy_initial_rotation(const Scene& scene)
+enemy_initial_rotation(const pln::scene::IScene& scene)
 {
   using namespace pln::utils::common;
   auto [_, player_position] = get_player_data(scene);
@@ -161,7 +161,7 @@ enemy_initial_rotation(const Scene& scene)
 
 export
 void
-enemy_acceleration(const Scene& scene)
+enemy_acceleration(const pln::scene::IScene& scene)
 {
   auto [_, player_position] = get_player_data(scene);
   scene.state()

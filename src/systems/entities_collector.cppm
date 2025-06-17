@@ -5,9 +5,10 @@ module;
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/math/intersection.h"
-#include "src/scene/scene.h"
 
 export module pln.systems.entities_collector;
+
+import pln.scene.iscene;
 
 namespace pln::systems::entities_collector {
 
@@ -15,7 +16,7 @@ constexpr unsigned int MAX_OCTREE_DEPTH = 12;
 
 export
 void
-collect_entities(Scene& scene)
+collect_entities(pln::scene::IScene& scene)
 {
   auto& registry = scene.state().registry();
   const auto& state = scene.state();

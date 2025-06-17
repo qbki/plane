@@ -4,17 +4,19 @@
 #include "src/components/common.h"
 #include "src/gui/components/ui.h"
 #include "src/gui/screens/settings_screen.h"
-#include "src/scene/scene.h"
 
 #include "in_game_main_menu_factory.h"
 #include "utils/utils.h"
 
+import pln.app.app;
+import pln.scene.iscene;
 import pln.services.app;
+import pln.services.theme;
 
 namespace GUI {
 
 void
-in_game_main_menu_factory(Scene& scene)
+in_game_main_menu_factory(pln::scene::IScene& scene)
 {
   auto ui = Factory::make_ui(scene.state().shared_registry());
 
@@ -24,7 +26,7 @@ in_game_main_menu_factory(Scene& scene)
         .text = "Resume",
         .on_pointer_down_once =
           [](auto&) {
-            pln::services::app().add_once_handler([](App& app) {
+            pln::services::app().add_once_handler([](pln::app::App& app) {
               app.scenes().pop_back();
               app.pause_scenes(false);
             });
@@ -62,7 +64,7 @@ in_game_main_menu_factory(Scene& scene)
   });
 
   scene.cancel_handlers().add([](auto&) {
-      pln::services::app().add_once_handler([](App& app) {
+      pln::services::app().add_once_handler([](pln::app::App& app) {
       app.scenes().pop_back();
       app.pause_scenes(false);
     });

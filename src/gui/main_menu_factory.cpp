@@ -6,10 +6,10 @@
 #include "src/gui/components/ui.h"
 #include "src/gui/screens/settings_screen.h"
 #include "src/gui/utils/utils.h"
-#include "src/scene/scene.h"
 
 #include "main_menu_factory.h"
 
+import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
 import pln.utils.platform;
@@ -17,7 +17,7 @@ import pln.utils.platform;
 namespace GUI {
 
 void
-main_menu_factory(const Scene& scene)
+main_menu_factory(const pln::scene::IScene& scene)
 {
   auto registry = scene.state().shared_registry();
   auto ui = Factory::make_ui(registry);

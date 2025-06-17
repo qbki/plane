@@ -3,21 +3,19 @@
 #include <glm/vec3.hpp>
 #include <string>
 
-#include "src/app/app.h"
-#include "src/scene/scene.h"
-
 #include "entities_map.h"
 
 import pln.control;
+import pln.scene.iscene;
 
 class ComponetsAttacher
 {
 private:
-  std::reference_wrapper<const Scene> _scene;
+  std::reference_wrapper<const pln::scene::IScene> _scene;
   entt::entity _entity;
   std::reference_wrapper<const EntityParamsMap> _entities;
 
-  ComponetsAttacher(std::reference_wrapper<const Scene> scene,
+  ComponetsAttacher(std::reference_wrapper<const pln::scene::IScene> scene,
                     const entt::entity entity,
                     std::reference_wrapper<const EntityParamsMap> params_map);
 
@@ -45,7 +43,7 @@ public:
     const EntityParamsActor& actor_params) const;
   void attach_debris_emmiter(const EntityParamsActor& actor_params) const;
 
-  static void attach(const Scene& scene,
+  static void attach(const pln::scene::IScene& scene,
                      const entt::entity entity,
                      const EntityParamsMap& params_map,
                      const EntityParams& params);

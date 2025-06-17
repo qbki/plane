@@ -3,17 +3,17 @@
 #include "src/components/common.h"
 #include "src/components/percent.h"
 #include "src/gui/components/ui.h"
-#include "src/scene/scene.h"
 
 #include "settings_screen_factory.h"
 
+import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
 
 namespace GUI {
 
 void
-settings_screen_factory(Scene& scene)
+settings_screen_factory(pln::scene::IScene& scene)
 {
   auto& registry = scene.state().shared_registry();
   auto ui = Factory::make_ui(registry);

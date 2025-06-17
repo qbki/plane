@@ -7,7 +7,6 @@
 #include "src/fileio/params/meta.h"
 #include "src/fileio/params/strategies.h"
 #include "src/game_state/factory.h"
-#include "src/scene/scene.h"
 #include "src/utils/file_loaders.h"
 #include "src/utils/result.h"
 #include "src/utils/types.h"
@@ -16,18 +15,19 @@
 #include "params.h"
 #include "json/mappers.h" // IWYU pragma: keep
 
+import pln.scene.iscene;
 import pln.services.cache;
 import pln.services.logger;
 import pln.utils.crash;
 
 void
-setup_camera(CameraParams& camera_params, Scene& scene)
+setup_camera(CameraParams& camera_params, pln::scene::IScene& scene)
 {
   scene.state().camera().position(camera_params.position);
 }
 
 void
-setup_boundaries(BoundaryParams& boundaries, Scene& scene)
+setup_boundaries(BoundaryParams& boundaries, pln::scene::IScene& scene)
 {
   auto is_valid = boundaries.min.x < boundaries.max.x
                   && boundaries.min.y < boundaries.max.y
@@ -123,7 +123,7 @@ preload_models(const std::vector<EntityParamsModel>& models)
 void
 load_level(const std::string& entities_file_path,
            const std::string& level_file_path,
-           Scene& scene)
+           pln::scene::IScene& scene)
 {
   auto entities = load_json(entities_file_path)
                     .or_crash()

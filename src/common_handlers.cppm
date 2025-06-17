@@ -8,6 +8,7 @@ module;
 
 #include "src/cameras/gui_camera.h"
 #include "src/cameras/perspective_camera.h"
+#include "src/events/event.h"
 #include "src/fileio/level_loader.h"
 #include "src/fileio/levels_order_loader.h"
 #include "src/fileio/save_data_io.h"
@@ -21,7 +22,10 @@ module;
 
 export module pln.common_handlers;
 
+import pln.app.app;
 import pln.consts;
+import pln.scene.iscene;
+import pln.scene.scene;
 import pln.services.app;
 import pln.services.cache;
 import pln.services.events;
@@ -46,14 +50,14 @@ import pln.utils.system;
 namespace pln::common_handlers {
 
 std::unique_ptr<Camera>
-make_gui_camera(const App& app)
+make_gui_camera(const pln::app::App& app)
 {
   auto screen_size = app.screen_size();
   return std::make_unique<GUICamera>(screen_size.width, screen_size.height);
 }
 
 std::unique_ptr<Camera>
-make_game_camera(const App& app)
+make_game_camera(const pln::app::App& app)
 {
   auto screen_size = app.screen_size();
   return std::make_unique<PerspectiveCamera>(screen_size.width,
@@ -64,7 +68,7 @@ void
 load_loading_screen()
 {
   auto camera = make_gui_camera(pln::services::app());
-  auto scene = std::make_unique<Scene>(std::move(camera));
+  auto scene = std::make_unique<pln::scene::Scene>(std::move(camera));
   scene->is_deferred(false);
   scene->handlers().once(GUI::loading_factory);
   pln::services::app().push_scene(std::move(scene));
@@ -74,7 +78,7 @@ void
 load_in_game_main_menu()
 {
   auto camera = make_gui_camera(pln::services::app());
-  auto scene = std::make_unique<Scene>(std::move(camera));
+  auto scene = std::make_unique<pln::scene::Scene>(std::move(camera));
   scene->is_deferred(false);
   scene->handlers().once(GUI::in_game_main_menu_factory);
   scene->handlers().add(pln::systems::update_gui::update_gui);
@@ -86,7 +90,7 @@ void
 load_lose_menu(const Events::LoseEvent&)
 {
   auto camera = make_gui_camera(pln::services::app());
-  auto scene = std::make_unique<Scene>(std::move(camera));
+  auto scene = std::make_unique<pln::scene::Scene>(std::move(camera));
   scene->is_deferred(false);
   scene->handlers().once(GUI::lose_menu_factory);
   scene->handlers().add(pln::systems::update_gui::update_gui);
@@ -94,14 +98,14 @@ load_lose_menu(const Events::LoseEvent&)
   pln::services::app().push_scene(std::move(scene));
 }
 
-Scene&
+pln::scene::IScene&
 load_level_scene()
 {
   pln::services::app().scenes().clear();
   load_loading_screen();
 
   auto camera = make_game_camera(pln::services::app());
-  auto game = std::make_unique<Scene>(std::move(camera));
+  auto game = std::make_unique<pln::scene::Scene>(std::move(camera));
   game->is_deferred(true);
   game->handlers().once(pln::systems::enemy::enemy_initial_rotation);
   game->handlers().add(pln::systems::entities_collector::collect_entities);
@@ -132,13 +136,13 @@ load_level_scene()
   game->handlers().add(pln::systems::player::LoseSystem {});
   game->handlers().add(pln::systems::update_gui::update_gui_calculate_hostiles);
   game->handlers().add(pln::systems::update_gui::update_gui_lives);
-  game->cancel_handlers().add([](Scene& scene) {
+  game->cancel_handlers().add([](pln::scene::IScene& scene) {
     scene.is_paused(true);
     pln::services::app().add_once_handler([](auto&) { load_in_game_main_menu(); });
   });
 
   auto gui_camera = make_gui_camera(pln::services::app());
-  auto ui = std::make_unique<Scene>(std::move(gui_camera));
+  auto ui = std::make_unique<pln::scene::Scene>(std::move(gui_camera));
   ui->handlers().once(GUI::game_screen_factory);
   ui->handlers().add(pln::systems::update_gui::update_gui);
   ui->handlers().add(pln::systems::ui::ui);

@@ -1,5 +1,7 @@
 #pragma once
-#include "src/scene/scene.h"
+#include <memory>
 
-std::unique_ptr<Scene>
+import pln.scene.iscene;
+
+std::unique_ptr<pln::scene::IScene>
 load_credits_screen();

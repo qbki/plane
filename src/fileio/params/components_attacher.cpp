@@ -6,19 +6,19 @@
 #include "src/components/turret_rotation.h"
 #include "src/components/weapon.h"
 #include "src/game_state/factory.h"
-#include "src/scene/scene.h"
 
 #include "components_attacher.h"
 #include "emitters.h"
 #include "entities_map.h"
 
 import pln.control;
+import pln.scene.iscene;
 import pln.services.app;
 import pln.utils.color;
 import pln.utils.common;
 
 ComponetsAttacher::ComponetsAttacher(
-  std::reference_wrapper<const Scene> scene,
+  std::reference_wrapper<const pln::scene::IScene> scene,
   const entt::entity entity,
   std::reference_wrapper<const EntityParamsMap> params_map)
   : _scene(scene)
@@ -233,7 +233,7 @@ ComponetsAttacher::attach_debris_emmiter(
 }
 
 void
-ComponetsAttacher::attach(const Scene& scene,
+ComponetsAttacher::attach(const pln::scene::IScene& scene,
                           const entt::entity entity,
                           const EntityParamsMap& params_map,
                           const EntityParams& params)

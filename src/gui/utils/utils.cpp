@@ -2,15 +2,16 @@
 #include <utility>
 #include <vector>
 
-#include "src/app/app.h"
 #include "src/gui/screens/main_menu_screen.h"
 
 #include "utils.h"
 
+import pln.app.app;
+
 namespace GUI {
 
 void
-go_to_main_menu(App& app)
+go_to_main_menu(pln::app::App& app)
 {
   app.scenes().clear();
   auto scene = load_main_menu();
@@ -18,7 +19,7 @@ go_to_main_menu(App& app)
 }
 
 void
-clear_user_progress(App& app)
+clear_user_progress(pln::app::App& app)
 {
   app.info().current_level = std::nullopt;
   app.save_data().save({ .current_level = "" });

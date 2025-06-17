@@ -11,17 +11,16 @@ module;
 #include <emscripten/html5.h>
 #endif
 
-#include "src/app/app.h"
-#include "src/scene/scene.h"
-
 export module pln.game_loop;
 
+import pln.app.app;
+import pln.scene.iscene;
 import pln.services.app;
 
 namespace pln {
 
 void
-resize_cameras(const std::vector<std::unique_ptr<Scene>>& scenes,
+resize_cameras(const std::vector<std::unique_ptr<pln::scene::IScene>>& scenes,
                int width,
                int height)
 {
@@ -31,7 +30,7 @@ resize_cameras(const std::vector<std::unique_ptr<Scene>>& scenes,
 }
 
 void
-resize_screens(App& app, int width, int height)
+resize_screens(pln::app::App& app, int width, int height)
 {
   app.screen_size({ width, height });
   resize_cameras(app.scenes(), width, height);
@@ -42,7 +41,7 @@ resize_screens(App& app, int width, int height)
 
 #ifdef __EMSCRIPTEN__
 void
-wasm_resize_window(App& app, int width, int height)
+wasm_resize_window(pln::app::App& app, int width, int height)
 {
   auto& window = app.window();
   SDL_SetWindowSize(&window, width, height);
@@ -56,7 +55,7 @@ wasm_resize_window_cb(int /* eventType */,
 {
   int width = uiEvent->windowInnerWidth;
   int height = uiEvent->windowInnerHeight;
-  auto application = static_cast<App*>(data);
+  auto application = static_cast<pln::app::App*>(data);
   wasm_resize_window(*application, width, height);
   return EMSCRIPTEN_RESULT_SUCCESS;
 }
@@ -67,7 +66,7 @@ EM_JS(int, get_js_window_height,   , { return window.innerHeight; });
 #endif
 
 void
-inner_game_loop(App& app)
+inner_game_loop(pln::app::App& app)
 {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
@@ -104,7 +103,7 @@ inner_game_loop(App& app)
 void
 emscripten_game_loop(void* data)
 {
-  inner_game_loop(*static_cast<App*>(data));
+  inner_game_loop(*static_cast<pln::app::App*>(data));
 }
 
 export

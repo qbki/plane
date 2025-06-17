@@ -4,7 +4,6 @@
 #include <string>
 #include <utility>
 
-#include "app/app.h"
 #include "cache/cache.h"
 #include "events/event_emitter.h"
 #include "fileio/theme_loader.h"
@@ -14,6 +13,7 @@
 #include "utils/file_loaders/file_loaders.h"
 #include "utils/types.h"
 
+import pln.app.app;
 import pln.common_handlers;
 import pln.consts;
 import pln.control;
@@ -112,7 +112,7 @@ main(int argc, char* argv[])
   pln::services::logger().info(
     std::format("Used assets directory: {}", assets_dir.string()));
 
-  auto app = std::make_unique<App>(assets_dir);
+  auto app = std::make_unique<pln::app::App>(assets_dir);
   app->gl_context(std::move(context));
   app->control(std::move(control));
   app->deferred_shading(std::move(deferred_shading));
@@ -122,7 +122,7 @@ main(int argc, char* argv[])
   app->window(std::move(window));
   app->validate();
 
-  app->add_handler([](App& app) {
+  app->add_handler([](pln::app::App& app) {
     for (auto& scene : app.scenes()) {
       scene->update();
     }
@@ -132,7 +132,7 @@ main(int argc, char* argv[])
   auto translations = load_translations(app->assets_dir() / "text" / "en.json");
   app->set_translations(translations);
 
-  pln::Service<App>::install(std::move(app));
+  pln::Service<pln::app::App>::install(std::move(app));
 
   auto theme = load_theme(pln::services::app().levels_dir() / "theme.json");
   pln::Service<const GUI::Theme>::install(std::move(theme));

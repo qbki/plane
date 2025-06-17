@@ -1,11 +1,11 @@
 module;
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/scene/scene.h"
 
 export module pln.systems.velocity;
 
 import pln.consts;
+import pln.scene.iscene;
 import pln.services.app;
 import pln.utils.interpolations;
 
@@ -13,7 +13,7 @@ namespace pln::systems::velocity {
 
 export
 void
-acceleration(const Scene& scene)
+acceleration(const pln::scene::IScene& scene)
 {
   scene.state().registry().view<Velocity, Acceleration>().each(
     [&](Velocity& velocity, Acceleration& acceleration) {
@@ -26,7 +26,7 @@ acceleration(const Scene& scene)
 
 export
 void
-damping(const Scene& scene)
+damping(const pln::scene::IScene& scene)
 {
   using namespace pln::utils::interpolations;
 
@@ -40,7 +40,7 @@ damping(const Scene& scene)
 
 export
 void
-velocity(const Scene& scene)
+velocity(const pln::scene::IScene& scene)
 {
   scene.state().registry().view<Transform, Velocity>().each(
     [&](Transform& transform, const Velocity& velocity) {
@@ -52,7 +52,7 @@ velocity(const Scene& scene)
 
 export
 void
-velocity_gravity(const Scene& scene)
+velocity_gravity(const pln::scene::IScene& scene)
 {
   scene.state().registry().view<Acceleration, Gravity>().each(
     [&](Acceleration& acceleration) {

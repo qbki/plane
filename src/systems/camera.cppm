@@ -1,15 +1,16 @@
 module;
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/scene/scene.h"
 
 export module pln.systems.camera;
+
+import pln.scene.iscene;
 
 namespace pln::systems::camera {
 
 export
 void
-camera_movement(Scene& scene)
+camera_movement(pln::scene::IScene& scene)
 {
   auto& camera = scene.state().camera();
   scene.state().registry().view<Transform, PlayerKind>().each(

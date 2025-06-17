@@ -1,12 +1,13 @@
 #pragma once
-#include "src/app/app.h"
+
+import pln.app.app;
 
 namespace GUI {
 
 void
-go_to_main_menu(App& app);
+go_to_main_menu(pln::app::App& app);
 
 void
-clear_user_progress(App& app);
+clear_user_progress(pln::app::App& app);
 
 }

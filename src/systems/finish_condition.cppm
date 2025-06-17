@@ -1,9 +1,10 @@
 module;
 #include "src/components/common.h"
-#include "src/scene/scene.h"
+#include "src/events/event.h"
 
 export module pln.systems.finish_condition;
 
+import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
 
@@ -11,7 +12,7 @@ namespace pln::systems::finish_condition {
 
 export
 void
-check_finish_condition(Scene& scene)
+check_finish_condition(pln::scene::IScene& scene)
 {
   auto& registry = scene.state().registry();
 

@@ -1,9 +1,10 @@
 #pragma once
-#include "src/scene/scene.h"
+
+import pln.scene.iscene;
 
 namespace GUI {
 
 void
-lose_menu_factory(const Scene& scene);
+lose_menu_factory(const pln::scene::IScene& scene);
 
 }

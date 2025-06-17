@@ -7,10 +7,10 @@ module;
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/scene/scene.h"
 
 export module pln.systems.cursor;
 
+import pln.scene.iscene;
 import pln.services.app;
 import pln.utils.mouse;
 
@@ -18,7 +18,7 @@ namespace pln::systems::cursor {
 
 export
 void
-cursor_handler(Scene& scene)
+cursor_handler(pln::scene::IScene& scene)
 {
   auto mouse_pos = pln::utils::mouse::mouse_position();
   auto& camera = scene.state().camera();

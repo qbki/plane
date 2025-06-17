@@ -3,15 +3,16 @@ module;
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/scene/scene.h"
 
 export module pln.systems.level;
+
+import pln.scene.iscene;
 
 namespace pln::systems::level {
 
 export
 void
-level_boundaries(const Scene& scene)
+level_boundaries(const pln::scene::IScene& scene)
 {
   auto& world_bbox = scene.state().world_bbox();
 

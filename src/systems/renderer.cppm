@@ -8,7 +8,6 @@ module;
 #include <string>
 #include <unordered_map>
 
-#include "src/app/app.h"
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
@@ -16,9 +15,11 @@ module;
 
 export module pln.systems.renderer;
 
+import pln.app.app;
 import pln.consts;
 import pln.materals;
 import pln.meshes;
+import pln.scene.iscene;
 import pln.services.app;
 import pln.shapes;
 import pln.textures;
@@ -97,7 +98,7 @@ update_transform_mapping(
 }
 
 void
-render_generic_objects(App& app, const Scene& scene)
+render_generic_objects(pln::app::App& app, const pln::scene::IScene& scene)
 {
   auto& deferred_shading = app.deferred_shading();
   auto& registry = scene.state().registry();
@@ -200,7 +201,7 @@ render_generic_objects(App& app, const Scene& scene)
 }
 
 void
-render_particles(App& app, const Scene& scene)
+render_particles(pln::app::App& app, const pln::scene::IScene& scene)
 {
   auto& registry = scene.state().registry();
   const auto& camera = scene.state().camera();
@@ -227,7 +228,7 @@ render_particles(App& app, const Scene& scene)
 }
 
 void
-render_ui(const Scene& scene)
+render_ui(const pln::scene::IScene& scene)
 {
   static auto quad = pln::shapes::create_ui_quad();
 
@@ -275,7 +276,7 @@ render_ui(const Scene& scene)
 
 export
 void
-render(App& app)
+render(pln::app::App& app)
 {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

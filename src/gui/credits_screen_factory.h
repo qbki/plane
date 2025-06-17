@@ -1,9 +1,10 @@
 #pragma once
-#include "src/scene/scene.h"
+
+import pln.scene.iscene;
 
 namespace GUI {
 
 void
-credits_screen_factory(const Scene& scene);
+credits_screen_factory(const pln::scene::IScene& scene);
 
 }

@@ -6,10 +6,10 @@
 #include "src/components/transform.h"
 #include "src/gui/components/rect.h"
 #include "src/gui/components/text.h"
-#include "src/scene/scene.h"
 
 #include "game_screen_factory.h"
 
+import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
 import pln.shapes;
@@ -18,7 +18,7 @@ import pln.shapes;
 namespace GUI {
 
 void
-game_screen_factory(Scene& scene)
+game_screen_factory(pln::scene::IScene& scene)
 {
   static const int OFFSET = 25;
   static const auto MAX_LIVES_WIDTH = 300;
@@ -36,7 +36,7 @@ game_screen_factory(Scene& scene)
                                  });
   auto& text_transform = registry->get<Transform>(text);
   text_transform.translate({ OFFSET, OFFSET, 0 });
-  scene.handlers().add([text](Scene& scene) {
+  scene.handlers().add([text](pln::scene::IScene& scene) {
     auto hostiles_quantity = pln::services::app().info().hostiles;
     auto& registry = scene.state().registry();
     auto [text_obj, is_dirty] = registry.get<Text, IsDirty>(text);
@@ -58,7 +58,7 @@ game_screen_factory(Scene& scene)
         lives_size] = registry->get<Transform, pln::shapes::RectSize>(lives_entity);
   lives_transform.translate(
     { OFFSET, screen_size.height - lives_size.height - OFFSET, 0 });
-  scene.handlers().add([lives_entity](Scene& scene) {
+  scene.handlers().add([lives_entity](pln::scene::IScene& scene) {
     auto& info = pln::services::app().info();
     auto& registry = scene.state().shared_registry();
     auto size = registry->try_get<pln::shapes::RectSize>(lives_entity);

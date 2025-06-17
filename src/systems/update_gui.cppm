@@ -4,11 +4,14 @@ module;
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
+#include "src/events/event.h"
+#include "src/events/event_emitter.h"
 #include "src/math/intersection.h"
-#include "src/scene/scene.h"
 
 export module pln.systems.update_gui;
 
+import pln.scene.iscene;
+import pln.service;
 import pln.services.app;
 import pln.shapes;
 import pln.utils.ecs;
@@ -18,7 +21,7 @@ namespace pln::systems::update_gui {
 
 export
 void
-update_gui(Scene& scene)
+update_gui(pln::scene::IScene& scene)
 {
   glm::ivec2 mouse_pos = pln::utils::mouse::mouse_position();
   glm::ivec2 position { mouse_pos.x, mouse_pos.y };
@@ -94,7 +97,7 @@ update_gui(Scene& scene)
 
 export
 void
-update_gui_calculate_hostiles(const Scene& scene)
+update_gui_calculate_hostiles(const pln::scene::IScene& scene)
 {
   int enemy_quantity = 0;
   scene.state().registry().view<const EnemyStateEnum>().each(
@@ -109,7 +112,7 @@ update_gui_calculate_hostiles(const Scene& scene)
 
 export
 void
-update_gui_lives(const Scene& scene)
+update_gui_lives(const pln::scene::IScene& scene)
 {
   scene.state().shared_registry()->view<Lives, PlayerKind>().each(
     [](const Lives& lives) { pln::services::app().info().lives = lives; });

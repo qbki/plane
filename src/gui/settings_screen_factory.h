@@ -1,9 +1,10 @@
 #pragma once
-#include "src/scene/scene.h"
+
+import pln.scene.iscene;
 
 namespace GUI {
 
 void
-settings_screen_factory(Scene& scene);
+settings_screen_factory(pln::scene::IScene& scene);
 
 }

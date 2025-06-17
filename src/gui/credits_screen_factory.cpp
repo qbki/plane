@@ -8,6 +8,7 @@
 
 #include "credits_screen_factory.h"
 
+import pln.scene.iscene;
 import pln.services.app;
 
 namespace GUI {
@@ -25,7 +26,7 @@ split_by_line(const std::string& value)
 }
 
 void
-credits_screen_factory(const Scene& scene)
+credits_screen_factory(const pln::scene::IScene& scene)
 {
   auto ui = Factory::make_ui(scene.state().shared_registry());
   auto credits_file = pln::services::app().credits_file();

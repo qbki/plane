@@ -1,15 +1,16 @@
 module;
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/scene/scene.h"
 
 export module pln.systems.debris;
+
+import pln.scene.iscene;
 
 namespace pln::systems::debris {
 
 export
 void
-remove_debris(Scene& scene)
+remove_debris(pln::scene::IScene& scene)
 {
   auto& registry = scene.state().registry();
   registry.view<const Transform, DebrisKind>().each(

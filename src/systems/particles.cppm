@@ -1,16 +1,16 @@
 module;
 #include "src/components/common.h"
-#include "src/scene/scene.h"
 
 export module pln.systems.particles;
 
+import pln.scene.iscene;
 import pln.services.app;
 
 namespace pln::systems::particles {
 
 export
 void
-particle_handler(Scene& scene)
+particle_handler(pln::scene::IScene& scene)
 {
   auto& registry = scene.state().registry();
   auto particles = registry.view<Lifetime, Available, ParticleKind>();

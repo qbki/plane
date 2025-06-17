@@ -1,10 +1,10 @@
 #include <utility>
 
-#include "src/cameras/gui_camera.h"
 #include "src/gui/credits_screen_factory.h"
 
 #include "load_credits_screen.h"
 
+import pln.cameras.gui_camera;
 import pln.scene.iscene;
 import pln.scene.scene;
 import pln.services.app;
@@ -14,8 +14,8 @@ std::unique_ptr<pln::scene::IScene>
 load_credits_screen()
 {
   auto screen_size = pln::services::app().screen_size();
-  auto camera = std::make_unique<GUICamera>(screen_size.width,
-                                            screen_size.height);
+  auto camera = std::make_unique<pln::cameras::GUICamera>(screen_size.width,
+                                                          screen_size.height);
   auto scene = std::make_unique<pln::scene::Scene>(std::move(camera));
   scene->is_deferred(false);
   scene->handlers().once(GUI::credits_screen_factory);

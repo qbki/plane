@@ -6,8 +6,6 @@ module;
 #include <utility>
 #include <vector>
 
-#include "src/cameras/gui_camera.h"
-#include "src/cameras/perspective_camera.h"
 #include "src/events/event.h"
 #include "src/fileio/level_loader.h"
 #include "src/fileio/levels_order_loader.h"
@@ -23,6 +21,9 @@ module;
 export module pln.common_handlers;
 
 import pln.app.app;
+import pln.cameras.gui_camera;
+import pln.cameras.icamera;
+import pln.cameras.perspective_camera;
 import pln.consts;
 import pln.scene.iscene;
 import pln.scene.scene;
@@ -49,19 +50,20 @@ import pln.utils.system;
 
 namespace pln::common_handlers {
 
-std::unique_ptr<Camera>
+std::unique_ptr<pln::cameras::ICamera>
 make_gui_camera(const pln::app::App& app)
 {
   auto screen_size = app.screen_size();
-  return std::make_unique<GUICamera>(screen_size.width, screen_size.height);
+  return std::make_unique<pln::cameras::GUICamera>(screen_size.width,
+                                                   screen_size.height);
 }
 
-std::unique_ptr<Camera>
+std::unique_ptr<pln::cameras::ICamera>
 make_game_camera(const pln::app::App& app)
 {
   auto screen_size = app.screen_size();
-  return std::make_unique<PerspectiveCamera>(screen_size.width,
-                                             screen_size.height);
+  return std::make_unique<pln::cameras::PerspectiveCamera>(screen_size.width,
+                                                           screen_size.height);
 }
 
 void

@@ -3,14 +3,13 @@ module;
 #include <memory>
 #include <utility>
 
-#include "src/cameras/camera.h"
 #include "src/collections/octree.h"
 #include "src/events/event_emitter.h" // IWYU pragma: export
-#include "src/game_state/state.h"
 #include "src/game_state/state.h"     // IWYU pragma: export
 
 export module pln.scene.scene;
 
+import pln.cameras.icamera;
 import pln.scene.iscene;
 import pln.services.app;
 
@@ -19,7 +18,7 @@ namespace pln::scene {
 export class Scene : public IScene
 {
 public:
-  Scene(std::unique_ptr<Camera> camera)
+  Scene(std::unique_ptr<pln::cameras::ICamera> camera)
     : IScene()
   {
     _state->camera(std::move(camera));

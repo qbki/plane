@@ -3,13 +3,15 @@
 
 #include "state.h"
 
+import pln.cameras.icamera;
+
 void
-State::camera(std::unique_ptr<Camera> camera)
+State::camera(std::unique_ptr<pln::cameras::ICamera> camera)
 {
   _camera = std::move(camera);
 }
 
-Camera&
+pln::cameras::ICamera&
 State::camera() const
 {
   return *_camera;

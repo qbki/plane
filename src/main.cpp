@@ -4,7 +4,6 @@
 #include <string>
 #include <utility>
 
-#include "cache/cache.h"
 #include "events/event_emitter.h"
 #include "fileio/theme_loader.h"
 #include "fileio/translation_loader.h"
@@ -14,6 +13,7 @@
 #include "utils/types.h"
 
 import pln.app.app;
+import pln.cache;
 import pln.common_handlers;
 import pln.consts;
 import pln.control;
@@ -34,7 +34,7 @@ int
 main(int argc, char* argv[])
 {
   pln::Service<pln::logger::AbstractLogger>::install(std::make_unique<Logger>());
-  pln::Service<Cache>::install(std::make_unique<Cache>());
+  pln::Service<pln::cache::Cache>::install(std::make_unique<pln::cache::Cache>());
   pln::Service<Events::EventEmitter<const Events::ShootEvent>>::install(
     std::make_unique<Events::EventEmitter<const Events::ShootEvent>>());
   pln::Service<Events::EventEmitter<const Events::LoadNextLevelEvent>>::install(

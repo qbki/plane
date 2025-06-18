@@ -1,4 +1,4 @@
-#pragma once
+module;
 #include <array>
 #include <entt/entt.hpp>
 #include <glm/common.hpp>
@@ -9,7 +9,11 @@
 #include "src/math/intersection.h"
 #include "src/math/shapes.h"
 
+export module pln.collections.octree;
+
 import pln.consts;
+
+namespace pln::collections {
 
 /**
  * An implementation of an octree data structure.
@@ -17,6 +21,7 @@ import pln.consts;
  * Limitations:
  * It doesn't expect elements outside of bounding box;
  */
+export
 template<typename T>
 class Octree
 {
@@ -170,4 +175,6 @@ Octree<T>::at(const Shape::AABB& bbox, std::vector<T>& acc) const
       child->at(bbox, acc);
     }
   }
+}
+
 }

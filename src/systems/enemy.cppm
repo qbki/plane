@@ -1,5 +1,6 @@
 module;
 #define GLM_ENABLE_EXPERIMENTAL
+#include <entt/entt.hpp>
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtx/intersect.hpp>
@@ -8,11 +9,11 @@ module;
 #include <ranges>
 #include <tuple>
 
-#include "src/collections/octree.h"
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/turret_rotation.h"
 #include "src/components/weapon.h"
+#include "src/math/shapes.h"
 
 export module pln.systems.enemy;
 

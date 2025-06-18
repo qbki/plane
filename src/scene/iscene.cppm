@@ -2,11 +2,12 @@ module;
 #include <entt/entt.hpp>
 #include <memory>
 
-#include "src/collections/octree.h"
 #include "src/events/event_emitter.h" // IWYU pragma: export
 #include "src/game_state/state.h"
 
 export module pln.scene.iscene;
+
+import pln.collections.octree;
 
 namespace pln::scene {
 
@@ -31,8 +32,8 @@ public:
   [[nodiscard]] virtual bool is_paused() const = 0;
   virtual void is_paused(bool value) = 0;
 
-  virtual std::unique_ptr<Octree<entt::entity>>& entities() = 0;
-  virtual void entities(std::unique_ptr<Octree<entt::entity>> value) = 0;
+  virtual std::unique_ptr<pln::collections::Octree<entt::entity>>& entities() = 0;
+  virtual void entities(std::unique_ptr<pln::collections::Octree<entt::entity>> value) = 0;
 };
 
 }

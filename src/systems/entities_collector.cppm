@@ -1,13 +1,13 @@
 module;
 #include <utility>
 
-#include "src/collections/octree.h"
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/math/intersection.h"
 
 export module pln.systems.entities_collector;
 
+import pln.collections.octree;
 import pln.scene.iscene;
 
 namespace pln::systems::entities_collector {
@@ -20,8 +20,8 @@ collect_entities(pln::scene::IScene& scene)
 {
   auto& registry = scene.state().registry();
   const auto& state = scene.state();
-  auto octree = std::make_unique<Octree<entt::entity>>(state.world_bbox(),
-                                                       MAX_OCTREE_DEPTH);
+  auto octree = std::make_unique<pln::collections::Octree<entt::entity>>(state.world_bbox(),
+                                                                         MAX_OCTREE_DEPTH);
 
   registry.view<Transform, MeshPointer, EnemyKind>().each(
     [&octree](entt::entity entity,

@@ -2,7 +2,6 @@ module;
 #include <glm/geometric.hpp>
 #include <variant>
 
-#include "src/collections/octree.h"
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/math/intersection.h"

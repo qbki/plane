@@ -1,7 +1,6 @@
 #include <functional>
 #include <variant>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/turret_rotation.h"
 #include "src/game_state/factory.h"
@@ -10,12 +9,15 @@
 #include "emitters.h"
 #include "entities_map.h"
 
+import pln.components.common;
 import pln.components.weapon;
 import pln.control;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.utils.color;
 import pln.utils.common;
+
+using namespace pln::components;
 
 ComponetsAttacher::ComponetsAttacher(
   std::reference_wrapper<const pln::scene::IScene> scene,

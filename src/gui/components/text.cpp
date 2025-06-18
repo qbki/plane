@@ -2,12 +2,12 @@
 #include <thorvg.h>
 #include <utility>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
 
 #include "text.h"
 
+import pln.components.common;
 import pln.shapes;
 import pln.utils.color;
 
@@ -16,6 +16,8 @@ namespace GUI::Factory {
 entt::entity
 text(std::shared_ptr<entt::registry>& registry, const TextConfig& config)
 {
+  using namespace pln::components;
+
   auto text = tvg::Text::gen();
   text->font(config.font.name.c_str(), config.font.size);
   text->text(config.text.c_str());

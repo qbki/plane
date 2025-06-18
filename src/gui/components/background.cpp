@@ -1,10 +1,10 @@
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/events/event_emitter.h"
 #include "src/gui/components/rect.h"
 
 #include "background.h"
 
+import pln.components.common;
 import pln.services.app;
 import pln.services.events;
 import pln.shapes;
@@ -37,7 +37,8 @@ background(std::shared_ptr<entt::registry>& registry,
   transform.translate({ 0, 0, config.z });
 
   layout.add([registry, entity](auto&) {
-    auto [rect_size, parent] = registry->get<pln::shapes::RectSize, Parent>(entity);
+    auto [rect_size, parent] = registry->get<pln::shapes::RectSize,
+                                             pln::components::Parent>(entity);
     rect_size = parent.value.has_value()
                   ? registry->get<pln::shapes::RectSize>(parent.value.value())
                   : pln::services::app().screen_size();

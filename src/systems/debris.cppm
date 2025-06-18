@@ -1,10 +1,14 @@
 module;
-#include "src/components/common.h"
+#include <entt/entt.hpp>
+
 #include "src/components/transform.h"
 
 export module pln.systems.debris;
 
+import pln.components.common;
 import pln.scene.iscene;
+
+using namespace pln::components;
 
 namespace pln::systems::debris {
 

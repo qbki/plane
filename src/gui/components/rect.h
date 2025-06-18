@@ -1,6 +1,8 @@
 #pragma once
-#include "src/components/common.h"
+#include <entt/entt.hpp>
+#include <memory>
 
+import pln.components.common;
 import pln.services.theme;
 import pln.utils.color;
 
@@ -10,8 +12,8 @@ struct RectConfig
 {
   float width { 0 };
   float height { 0 };
-  pln::utils::color::Color color = pln::services::theme().components.text.color;
-  Parent parent = Parent { std::nullopt };
+  pln::utils::color::Color color { pln::services::theme().components.text.color };
+  pln::components::Parent parent { std::nullopt };
 };
 
 entt::entity

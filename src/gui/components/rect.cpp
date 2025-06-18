@@ -1,14 +1,16 @@
 #include <entt/entt.hpp>
 #include <utility>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
 
 #include "rect.h"
 
-import pln.utils.color;
+import pln.components.common;
 import pln.shapes;
+import pln.utils.color;
+
+using namespace pln::components;
 
 namespace GUI::Factory {
 

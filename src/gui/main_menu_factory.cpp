@@ -1,7 +1,6 @@
 #include <string>
 #include <utility>
 
-#include "src/components/common.h"
 #include "src/fileio/save_data_io.h"
 #include "src/gui/components/ui.h"
 #include "src/gui/screens/settings_screen.h"
@@ -9,10 +8,13 @@
 
 #include "main_menu_factory.h"
 
+import pln.components.common;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
 import pln.utils.platform;
+
+using namespace pln::components;
 
 namespace GUI {
 

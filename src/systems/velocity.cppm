@@ -1,13 +1,15 @@
 module;
-#include "src/components/common.h"
 #include "src/components/transform.h"
 
 export module pln.systems.velocity;
 
+import pln.components.common;
 import pln.consts;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.utils.interpolations;
+
+using namespace pln::components;
 
 namespace pln::systems::velocity {
 

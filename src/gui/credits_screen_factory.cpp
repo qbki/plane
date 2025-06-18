@@ -1,15 +1,16 @@
 #include <sstream>
 #include <string>
 
-#include "src/components/common.h"
 #include "src/gui/components/ui.h"
 #include "src/gui/utils/utils.h"
 #include "src/utils/file_loaders/file_loaders.h"
 
 #include "credits_screen_factory.h"
 
+import pln.components.common;
 import pln.scene.iscene;
 import pln.services.app;
+import pln.services.theme;
 
 namespace GUI {
 
@@ -32,7 +33,7 @@ credits_screen_factory(const pln::scene::IScene& scene)
   auto credits_file = pln::services::app().credits_file();
   auto credits_txt = load_text(credits_file).or_fallback("");
   auto credits_lines = split_by_line(credits_txt);
-  Children children { {} };
+  pln::components::Children children { {} };
 
   for (const auto& line : credits_lines) {
     children.value.push_back(ui.text({

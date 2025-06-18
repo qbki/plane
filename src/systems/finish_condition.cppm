@@ -1,12 +1,14 @@
 module;
-#include "src/components/common.h"
 #include "src/events/event.h"
 
 export module pln.systems.finish_condition;
 
+import pln.components.common;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
+
+using namespace pln::components;
 
 namespace pln::systems::finish_condition {
 

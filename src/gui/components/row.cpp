@@ -2,7 +2,6 @@
 #include <entt/entt.hpp>
 #include <ranges>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/events/event.h"
 #include "src/events/event_emitter.h"
@@ -10,7 +9,10 @@
 #include "row.h"
 #include "utils.h"
 
+import pln.components.common;
 import pln.shapes;
+
+using namespace pln::components;
 
 namespace GUI::Factory {
 

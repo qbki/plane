@@ -1,13 +1,16 @@
 #include <glm/common.hpp>
 #include <glm/gtc/constants.hpp>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/game_state/factory.h"
 #include "src/game_state/state.h"
 
 #include "emitters.h"
 #include "entities.h"
+
+import pln.components.common;
+
+using namespace pln::components;
 
 glm::quat
 calc_rotation(unsigned int multiplier, float angle)

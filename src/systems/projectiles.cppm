@@ -1,13 +1,16 @@
 module;
+#include <entt/entt.hpp>
 #include <glm/geometric.hpp>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 
 export module pln.systems.projectiles;
 
+import pln.components.common;
 import pln.consts;
 import pln.scene.iscene;
+
+using namespace pln::components;
 
 namespace pln::systems::projectiles {
 

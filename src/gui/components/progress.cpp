@@ -1,4 +1,3 @@
-#include "src/components/common.h"
 #include "src/components/percent.h"
 #include "src/components/transform.h"
 #include "src/events/event_emitter.h"
@@ -7,8 +6,11 @@
 
 #include "progress.h"
 
+import pln.components.common;
 import pln.consts;
 import pln.shapes;
+
+using namespace pln::components;
 
 namespace GUI::Factory {
 

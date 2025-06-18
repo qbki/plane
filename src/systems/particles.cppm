@@ -1,10 +1,13 @@
 module;
-#include "src/components/common.h"
+#include <entt/entt.hpp>
 
 export module pln.systems.particles;
 
+import pln.components.common;
 import pln.scene.iscene;
 import pln.services.app;
+
+using namespace pln::components;
 
 namespace pln::systems::particles {
 

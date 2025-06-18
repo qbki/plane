@@ -1,16 +1,16 @@
 #pragma once
 #include <entt/entt.hpp>
 
-#include "src/components/common.h"
+import pln.components.common;
 
 namespace GUI::Factory {
 
 struct DivConfig
 {
-  float width = 0;
-  float height = 0;
-  Parent parent = Parent { std::nullopt };
-  Children children = Children { std::vector<entt::entity>() };
+  float width { 0 };
+  float height { 0 };
+  pln::components::Parent parent { std::nullopt };
+  pln::components::Children children { std::vector<entt::entity>() };
 };
 
 entt::entity

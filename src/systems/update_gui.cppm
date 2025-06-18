@@ -2,7 +2,6 @@ module;
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/events/event.h"
 #include "src/events/event_emitter.h"
@@ -10,12 +9,15 @@ module;
 
 export module pln.systems.update_gui;
 
+import pln.components.common;
 import pln.scene.iscene;
 import pln.service;
 import pln.services.app;
 import pln.shapes;
 import pln.utils.ecs;
 import pln.utils.mouse;
+
+using namespace pln::components;
 
 namespace pln::systems::update_gui {
 

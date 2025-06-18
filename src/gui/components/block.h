@@ -1,13 +1,13 @@
 #pragma once
 #include <entt/entt.hpp>
 
-#include "src/components/common.h"
+import pln.components.common;
 
 namespace GUI::Factory {
 
 struct BlockConfig
 {
-  Children children = Children { std::vector<entt::entity>() };
+  pln::components::Children children { std::vector<entt::entity>() };
 };
 
 entt::entity

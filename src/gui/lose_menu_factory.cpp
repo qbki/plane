@@ -1,16 +1,18 @@
 #include <string>
 
-#include "src/components/common.h"
 #include "src/gui/components/ui.h"
 
 #include "lose_menu_factory.h"
 #include "utils/utils.h"
 
 import pln.app.app;
+import pln.components.common;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
 import pln.services.theme;
+
+using namespace pln::components;
 
 namespace GUI {
 

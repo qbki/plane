@@ -1,15 +1,17 @@
 #include <entt/entt.hpp>
 #include <glm/common.hpp>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/events/event_emitter.h"
 
 #include "block.h"
 #include "utils.h"
 
+import pln.components.common;
 import pln.services.app;
 import pln.shapes;
+
+using namespace pln::components;
 
 namespace GUI::Factory {
 

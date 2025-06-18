@@ -1,7 +1,6 @@
 #include <string>
 #include <utility>
 
-#include "src/components/common.h"
 #include "src/gui/components/ui.h"
 #include "src/gui/screens/settings_screen.h"
 
@@ -9,9 +8,12 @@
 #include "utils/utils.h"
 
 import pln.app.app;
+import pln.components.common;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
+
+using namespace pln::components;
 
 namespace GUI {
 

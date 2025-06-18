@@ -6,18 +6,20 @@ module;
 #include <glm/trigonometric.hpp>
 #include <vector>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/events/event.h"
 #include "src/game_state/factory.h"
 
 export module pln.systems.player;
 
+import pln.components.common;
 import pln.components.weapon;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
 import pln.utils.common;
+
+using namespace pln::components;
 
 namespace pln::systems::player {
 

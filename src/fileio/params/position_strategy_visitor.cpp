@@ -9,7 +9,6 @@
 #include <utility>
 #include <variant>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/game_state/factory.h"
 #include "src/utils/random.h"
@@ -20,9 +19,12 @@
 #include "position_strategy_visitor.h"
 #include "strategies.h"
 
+import pln.components.common;
 import pln.consts;
 import pln.scene.iscene;
 import pln.utils.crash;
+
+using namespace pln::components;
 
 PositionStrategyVisitor::PositionStrategyVisitor(
   std::reference_wrapper<const EntityParamsMap> entities,

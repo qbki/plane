@@ -3,7 +3,6 @@ module;
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/events/event.h"
 #include "src/game_state/factory.h"
@@ -11,6 +10,7 @@ module;
 
 export module pln.systems.gun;
 
+import pln.components.common;
 import pln.components.weapon;
 import pln.consts;
 import pln.scene.iscene;
@@ -24,6 +24,7 @@ export
 void
 gun_shooting(pln::scene::IScene& scene)
 {
+  using namespace pln::components;
   using namespace pln::utils::common;
 
   auto& registry = scene.state().shared_registry();

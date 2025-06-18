@@ -1,11 +1,12 @@
 #include <entt/entt.hpp>
 #include <string>
 
-#include "src/components/common.h"
-
 #include "button_state.h"
 
+import pln.components.common;
 import pln.utils.crash;
+
+using namespace pln::components;
 
 
 namespace GUI {

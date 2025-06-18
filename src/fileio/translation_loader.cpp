@@ -3,7 +3,6 @@
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 
-#include "src/components/common.h"
 #include "src/utils/file_loaders/file_loaders.h"
 
 #include "translation_loader.h"

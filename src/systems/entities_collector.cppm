@@ -1,14 +1,18 @@
 module;
+#include <entt/entt.hpp>
+#include <memory>
 #include <utility>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/math/intersection.h"
 
 export module pln.systems.entities_collector;
 
 import pln.collections.octree;
+import pln.components.common;
 import pln.scene.iscene;
+
+using namespace pln::components;
 
 namespace pln::systems::entities_collector {
 

@@ -2,9 +2,11 @@
 #include <entt/entt.hpp>
 #include <vector>
 
-#include "src/components/common.h"
-
 #include "utils.h"
+
+import pln.components.common;
+
+using namespace pln::components;
 
 namespace GUI {
 

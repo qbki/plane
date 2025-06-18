@@ -1,14 +1,16 @@
 #include <string>
 
-#include "src/components/common.h"
 #include "src/components/percent.h"
 #include "src/gui/components/ui.h"
 
 #include "settings_screen_factory.h"
 
+import pln.components.common;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
+
+using namespace pln::components;
 
 namespace GUI {
 

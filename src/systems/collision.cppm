@@ -1,16 +1,19 @@
 module;
+#include <entt/entt.hpp>
 #include <glm/geometric.hpp>
 #include <variant>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/math/intersection.h"
 
 export module pln.systems.collision;
 
+import pln.components.common;
 import pln.consts;
 import pln.scene.iscene;
 import pln.services.app;
+
+using namespace pln::components;
 
 namespace pln::systems::collision {
 

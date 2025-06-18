@@ -1,13 +1,15 @@
 #include <algorithm>
 #include <entt/entt.hpp>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 
 #include "div.h"
 #include "utils.h"
 
+import pln.components.common;
 import pln.shapes;
+
+using namespace pln::components;
 
 namespace GUI::Factory {
 

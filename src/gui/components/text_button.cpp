@@ -1,12 +1,14 @@
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/core/button_state.h"
 
 #include "text.h"
 #include "text_button.h"
 
+import pln.components.common;
 import pln.services.theme;
 import pln.shapes;
+
+using namespace pln::components;
 
 namespace GUI::Factory {
 

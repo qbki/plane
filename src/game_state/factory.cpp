@@ -1,15 +1,17 @@
 #include <glm/gtc/constants.hpp>
 
-#include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/gui/components/text.h"
 
 #include "factory.h"
 
+import pln.components.common;
 import pln.control;
 import pln.services.cache;
 import pln.services.theme;
 import pln.shapes;
+
+using namespace pln::components;
 
 namespace ModelFactory {
 
@@ -17,6 +19,7 @@ entt::entity
 make_player(std::shared_ptr<entt::registry>& registry,
             const std::string& file_path)
 {
+
   auto entity = registry->create();
   auto [mesh, texture] = pln::services::cache().get_model(file_path);
   registry->emplace<ActorKind>(entity);

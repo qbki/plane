@@ -4,13 +4,13 @@
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/turret_rotation.h"
-#include "src/components/weapon.h"
 #include "src/game_state/factory.h"
 
 #include "components_attacher.h"
 #include "emitters.h"
 #include "entities_map.h"
 
+import pln.components.weapon;
 import pln.control;
 import pln.scene.iscene;
 import pln.services.app;
@@ -185,7 +185,7 @@ ComponetsAttacher::attach_weapon(const EntityParamsActor& actor_params) const
   auto gun_params = _entities.get().weapon(actor_params.weapon_id.value());
   auto
     bullet_model_path = _entities.get().model(gun_params.bullet_model_id).path;
-  auto& gun = registry.emplace_or_replace<Weapon>(_entity);
+  auto& gun = registry.emplace_or_replace<pln::components::Weapon>(_entity);
   gun.bullet_speed = gun_params.bullet_speed;
   gun.bullet_model_path = bullet_model_path;
   gun.spread = gun_params.spread;

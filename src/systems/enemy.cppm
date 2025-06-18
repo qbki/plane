@@ -12,11 +12,11 @@ module;
 #include "src/components/common.h"
 #include "src/components/transform.h"
 #include "src/components/turret_rotation.h"
-#include "src/components/weapon.h"
 #include "src/math/shapes.h"
 
 export module pln.systems.enemy;
 
+import pln.components.weapon;
 import pln.consts;
 import pln.scene.iscene;
 import pln.services.app;
@@ -51,7 +51,7 @@ enemy_hunting(pln::scene::IScene& scene)
                         .view<Transform,
                               EnemyStateEnum,
                               MeshPointer,
-                              Weapon,
+                              pln::components::Weapon,
                               EnemyKind,
                               Available>()
                         .each();
@@ -167,11 +167,11 @@ enemy_acceleration(const pln::scene::IScene& scene)
   auto [_, player_position] = get_player_data(scene);
   scene.state()
     .shared_registry()
-    ->view<Transform, Acceleration, AccelerationScalar, Weapon, EnemyKind>()
+    ->view<Transform, Acceleration, AccelerationScalar, pln::components::Weapon, EnemyKind>()
     .each([&](const Transform& transform,
               Acceleration& accel,
               const AccelerationScalar& accel_scalar,
-              const Weapon& weapon) {
+              const pln::components::Weapon& weapon) {
       auto max_acceleration_distance = weapon.lifetime * weapon.bullet_speed
                                        * pln::consts::HALF;
       auto raw_direction = transform.rotation() * glm::vec3(1, 0, 0);

@@ -8,12 +8,12 @@ module;
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/components/weapon.h"
 #include "src/events/event.h"
 #include "src/game_state/factory.h"
 
 export module pln.systems.player;
 
+import pln.components.weapon;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
@@ -56,8 +56,8 @@ void
 player_shooting(const pln::scene::IScene& scene)
 {
   const auto& control = pln::services::app().control();
-  scene.state().registry().view<Weapon, PlayerKind>().each(
-    [&control](Weapon& weapon) { weapon.is_shooting = control.shooting; });
+  scene.state().registry().view<pln::components::Weapon, PlayerKind>().each(
+    [&control](pln::components::Weapon& weapon) { weapon.is_shooting = control.shooting; });
 };
 
 

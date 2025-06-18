@@ -5,13 +5,13 @@ module;
 
 #include "src/components/common.h"
 #include "src/components/transform.h"
-#include "src/components/weapon.h"
 #include "src/events/event.h"
 #include "src/game_state/factory.h"
 #include "src/utils/random.h"
 
 export module pln.systems.gun;
 
+import pln.components.weapon;
 import pln.consts;
 import pln.scene.iscene;
 import pln.services.app;
@@ -28,9 +28,11 @@ gun_shooting(pln::scene::IScene& scene)
 
   auto& registry = scene.state().shared_registry();
   static auto get_random_float = make_random_fn(0.0f, 1.0f);
-  registry->view<entt::entity, Weapon, Transform>().each(
+  registry->view<entt::entity,
+                 pln::components::Weapon,
+                 Transform>().each(
     [&](entt::entity owner_entity,
-        Weapon& weapon,
+        pln::components::Weapon& weapon,
         const Transform& owner_transform) {
       weapon.left_time_to_shoot -= pln::services::app().delta_time();
       if (!weapon.is_shooting || (weapon.left_time_to_shoot > 0.0)) {

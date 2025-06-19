@@ -1,11 +1,10 @@
 module;
 #include <glm/common.hpp>
 
-#include "src/components/transform.h"
-
 export module pln.systems.level;
 
 import pln.components.common;
+import pln.components.transform;
 import pln.scene.iscene;
 
 using namespace pln::components;

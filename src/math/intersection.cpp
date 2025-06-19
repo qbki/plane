@@ -7,6 +7,9 @@
 #include "intersection.h"
 
 import pln.shapes;
+import pln.components.transform;
+
+using namespace pln::components;
 
 bool
 is_in_front(const Shape::Plane& plane, const Shape::Sphere& sphere)

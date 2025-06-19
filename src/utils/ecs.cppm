@@ -2,11 +2,10 @@ module;
 #include <entt/entt.hpp>
 #include <glm/mat4x4.hpp>
 
-#include "src/components/transform.h"
-
 export module pln.utils.ecs;
 
 import pln.components.common;
+import pln.components.transform;
 
 using namespace pln::components;
 

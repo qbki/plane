@@ -1,13 +1,13 @@
 #include <entt/entt.hpp>
 #include <glm/common.hpp>
 
-#include "src/components/transform.h"
 #include "src/events/event_emitter.h"
 
 #include "block.h"
 #include "utils.h"
 
 import pln.components.common;
+import pln.components.transform;
 import pln.services.app;
 import pln.shapes;
 

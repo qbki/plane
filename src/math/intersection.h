@@ -1,10 +1,9 @@
 #pragma once
 #include <glm/vec2.hpp>
 
-#include "src/components/transform.h"
+#include "src/math/shapes.h"
 
-#include "shapes.h"
-
+import pln.components.transform;
 import pln.shapes;
 
 
@@ -31,5 +30,5 @@ bool
 are_intersected(const Shape::AABB& a, const Shape::AABB& b);
 
 Shape::Collider
-apply_transform_to_collider(const Transform& transform,
+apply_transform_to_collider(const pln::components::Transform& transform,
                             const Shape::Collider& collider);

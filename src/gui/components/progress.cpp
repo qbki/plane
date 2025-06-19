@@ -1,4 +1,3 @@
-#include "src/components/transform.h"
 #include "src/events/event_emitter.h"
 #include "src/gui/components/div.h"
 #include "src/gui/components/rect.h"
@@ -7,6 +6,7 @@
 
 import pln.components.common;
 import pln.components.percent;
+import pln.components.transform;
 import pln.consts;
 import pln.shapes;
 

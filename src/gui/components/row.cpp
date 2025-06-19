@@ -2,7 +2,6 @@
 #include <entt/entt.hpp>
 #include <ranges>
 
-#include "src/components/transform.h"
 #include "src/events/event.h"
 #include "src/events/event_emitter.h"
 
@@ -10,6 +9,7 @@
 #include "utils.h"
 
 import pln.components.common;
+import pln.components.transform;
 import pln.shapes;
 
 using namespace pln::components;

@@ -1,11 +1,12 @@
 #include <glm/gtc/constants.hpp>
+#include <glm/vec3.hpp>
 
-#include "src/components/transform.h"
 #include "src/gui/components/text.h"
 
 #include "factory.h"
 
 import pln.components.common;
+import pln.components.transform;
 import pln.control;
 import pln.services.cache;
 import pln.services.theme;

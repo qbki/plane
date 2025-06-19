@@ -1,7 +1,7 @@
 #include <glm/common.hpp>
 #include <glm/gtc/constants.hpp>
+#include <glm/gtc/quaternion.hpp>
 
-#include "src/components/transform.h"
 #include "src/game_state/factory.h"
 #include "src/game_state/state.h"
 
@@ -9,6 +9,7 @@
 #include "entities.h"
 
 import pln.components.common;
+import pln.components.transform;
 
 using namespace pln::components;
 

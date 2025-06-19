@@ -9,13 +9,13 @@ module;
 #include <ranges>
 #include <tuple>
 
-#include "src/components/transform.h"
 #include "src/components/turret_rotation.h"
 #include "src/math/shapes.h"
 
 export module pln.systems.enemy;
 
 import pln.components.common;
+import pln.components.transform;
 import pln.components.weapon;
 import pln.consts;
 import pln.scene.iscene;

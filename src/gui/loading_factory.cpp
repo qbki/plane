@@ -1,11 +1,12 @@
-#include "src/components/transform.h"
-
 #include "components/text.h"
 
+import pln.components.transform;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
 import pln.shapes;
+
+using namespace pln::components;
 
 namespace GUI {
 

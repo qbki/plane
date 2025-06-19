@@ -1,12 +1,12 @@
 #include <entt/entt.hpp>
 #include <utility>
 
-#include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
 
 #include "rect.h"
 
 import pln.components.common;
+import pln.components.transform;
 import pln.shapes;
 import pln.utils.color;
 

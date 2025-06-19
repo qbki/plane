@@ -1,8 +1,8 @@
 module;
+#include <glm/mat4x4.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
-#include "src/components/transform.h"
 #include "src/events/event.h"
 #include "src/events/event_emitter.h"
 #include "src/math/intersection.h"
@@ -10,6 +10,7 @@ module;
 export module pln.systems.update_gui;
 
 import pln.components.common;
+import pln.components.transform;
 import pln.scene.iscene;
 import pln.service;
 import pln.services.app;

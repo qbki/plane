@@ -1,12 +1,11 @@
 #include <algorithm>
 #include <entt/entt.hpp>
 
-#include "src/components/transform.h"
-
 #include "div.h"
 #include "utils.h"
 
 import pln.components.common;
+import pln.components.transform;
 import pln.shapes;
 
 using namespace pln::components;

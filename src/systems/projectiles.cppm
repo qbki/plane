@@ -2,11 +2,10 @@ module;
 #include <entt/entt.hpp>
 #include <glm/geometric.hpp>
 
-#include "src/components/transform.h"
-
 export module pln.systems.projectiles;
 
 import pln.components.common;
+import pln.components.transform;
 import pln.consts;
 import pln.scene.iscene;
 

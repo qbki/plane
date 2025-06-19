@@ -9,7 +9,6 @@
 #include <utility>
 #include <variant>
 
-#include "src/components/transform.h"
 #include "src/game_state/factory.h"
 #include "src/utils/random.h"
 
@@ -20,6 +19,7 @@
 #include "strategies.h"
 
 import pln.components.common;
+import pln.components.transform;
 import pln.consts;
 import pln.scene.iscene;
 import pln.utils.crash;

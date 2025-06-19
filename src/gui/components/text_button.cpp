@@ -1,10 +1,10 @@
-#include "src/components/transform.h"
 #include "src/gui/core/button_state.h"
 
 #include "text.h"
 #include "text_button.h"
 
 import pln.components.common;
+import pln.components.transform;
 import pln.services.theme;
 import pln.shapes;
 

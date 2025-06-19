@@ -2,13 +2,13 @@
 #include <string>
 #include <utility>
 
-#include "src/components/transform.h"
 #include "src/gui/components/rect.h"
 #include "src/gui/components/text.h"
 
 #include "game_screen_factory.h"
 
 import pln.components.common;
+import pln.components.transform;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;

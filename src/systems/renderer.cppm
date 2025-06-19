@@ -8,7 +8,6 @@ module;
 #include <string>
 #include <unordered_map>
 
-#include "src/components/transform.h"
 #include "src/gui/ui_canvas.h"
 #include "src/math/intersection.h"
 
@@ -16,6 +15,7 @@ export module pln.systems.renderer;
 
 import pln.app.app;
 import pln.components.common;
+import pln.components.transform;
 import pln.consts;
 import pln.materals;
 import pln.meshes;

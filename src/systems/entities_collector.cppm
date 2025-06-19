@@ -3,7 +3,6 @@ module;
 #include <memory>
 #include <utility>
 
-#include "src/components/transform.h"
 #include "src/math/intersection.h"
 
 export module pln.systems.entities_collector;

@@ -3,12 +3,12 @@ module;
 #include <glm/geometric.hpp>
 #include <variant>
 
-#include "src/components/transform.h"
 #include "src/math/intersection.h"
 
 export module pln.systems.collision;
 
 import pln.components.common;
+import pln.components.transform;
 import pln.consts;
 import pln.scene.iscene;
 import pln.services.app;

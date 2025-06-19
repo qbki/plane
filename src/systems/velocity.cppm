@@ -1,9 +1,10 @@
 module;
-#include "src/components/transform.h"
+#include <glm/vec3.hpp>
 
 export module pln.systems.velocity;
 
 import pln.components.common;
+import pln.components.transform;
 import pln.consts;
 import pln.scene.iscene;
 import pln.services.app;

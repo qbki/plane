@@ -2,8 +2,9 @@ module;
 #include <cstdlib>
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/vec3.hpp>
 
-#include "src/components/transform.h"
 #include "src/events/event.h"
 #include "src/game_state/factory.h"
 #include "src/utils/random.h"
@@ -11,6 +12,7 @@ module;
 export module pln.systems.gun;
 
 import pln.components.common;
+import pln.components.transform;
 import pln.components.weapon;
 import pln.consts;
 import pln.scene.iscene;
@@ -18,15 +20,15 @@ import pln.services.app;
 import pln.services.events;
 import pln.utils.common;
 
+using namespace pln::components;
+using namespace pln::utils::common;
+
 namespace pln::systems::gun {
 
 export
 void
 gun_shooting(pln::scene::IScene& scene)
 {
-  using namespace pln::components;
-  using namespace pln::utils::common;
-
   auto& registry = scene.state().shared_registry();
   static auto get_random_float = make_random_fn(0.0f, 1.0f);
   registry->view<entt::entity,

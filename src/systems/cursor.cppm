@@ -5,11 +5,10 @@ module;
 #include <glm/gtx/intersect.hpp>
 #include <glm/vec4.hpp>
 
-#include "src/components/transform.h"
-
 export module pln.systems.cursor;
 
 import pln.components.common;
+import pln.components.transform;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.utils.mouse;

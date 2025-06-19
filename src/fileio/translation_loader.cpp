@@ -3,12 +3,13 @@
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 
-#include "src/utils/file_loaders/file_loaders.h"
-
 #include "translation_loader.h"
 
 import pln.services.logger;
 import pln.utils.crash;
+import pln.utils.file_loaders;
+
+using namespace pln::utils::file_loaders;
 
 std::unordered_map<std::string, std::string>
 load_translations(const std::filesystem::path& file_path)

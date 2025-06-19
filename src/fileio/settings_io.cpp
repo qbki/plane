@@ -2,10 +2,13 @@
 #include <functional>
 #include <nlohmann/json.hpp>
 
-#include "src/utils/file_loaders.h"
 #include "src/utils/result.h"
 
 #include "settings_io.h"
+
+import pln.utils.file_loaders;
+
+using namespace pln::utils::file_loaders;
 
 SettingsData
 load_settings(const std::filesystem::path& settings_path)

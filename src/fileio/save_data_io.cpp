@@ -4,12 +4,14 @@
 #include <string>
 
 #include "src/fileio/save_data_io.h"
-#include "src/utils/file_loaders.h"
 
 #include "save_data_io.h"
 
 import pln.services.app;
+import pln.utils.file_loaders;
 import pln.utils.system;
+
+using namespace pln::utils::file_loaders;
 
 SaveData
 load_save_data(const std::filesystem::path& path)

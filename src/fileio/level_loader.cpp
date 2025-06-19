@@ -7,7 +7,6 @@
 #include "src/fileio/params/meta.h"
 #include "src/fileio/params/strategies.h"
 #include "src/game_state/factory.h"
-#include "src/utils/file_loaders.h"
 #include "src/utils/result.h"
 #include "src/utils/types.h"
 
@@ -19,6 +18,9 @@ import pln.scene.iscene;
 import pln.services.cache;
 import pln.services.logger;
 import pln.utils.crash;
+import pln.utils.file_loaders;
+
+using namespace pln::utils::file_loaders;
 
 void
 setup_camera(CameraParams& camera_params, pln::scene::IScene& scene)

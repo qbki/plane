@@ -1,24 +1,70 @@
+module;
 #include <SDL_mixer.h>
+#include <SDL_rwops.h>
 #include <filesystem>
 #include <format>
 #include <memory>
+#include <nlohmann/json.hpp>
+#include <string>
 #include <thorvg.h>
+#include <tiny_gltf.h>
 #include <utility>
 #include <vector>
 
 #include "src/utils/result.h"
 #include "src/utils/tvg.h"
+#include "src/sound/sound.h"
+#include "src/utils/result.h"
 
-#include "file_loaders.h"
-#ifdef __EMSCRIPTEN__
-#include "file_loaders.ems.ipp"
-#else
-#include "file_loaders.std.ipp"
-#endif
+export module pln.utils.file_loaders;
 
 import pln.services.logger;
 import pln.utils.data_holder;
 
+namespace pln::utils::file_loaders {
+
+export
+Result<tinygltf::Model>
+load_gltf_model(const std::string& file_path);
+
+export
+Result<std::string>
+load_text(const std::string& file_path);
+
+export
+Result<nlohmann::basic_json<>>
+load_json(const std::string& file_path);
+
+export
+Result<nlohmann::basic_json<>>
+load_local_json(const std::filesystem::path& file_path);
+
+export
+void
+save_local_json(const std::filesystem::path& file_path, nlohmann::json json);
+
+export
+std::shared_ptr<pln::utils::data_holder::DataHolder>
+load_sdl_rw_data(const std::filesystem::path& path);
+
+export
+std::unique_ptr<Sound::Sound>
+load_sound(const std::filesystem::path& sound_file_path);
+
+export
+void
+load_font(const std::filesystem::path&);
+
+export
+bool
+is_file_exists(const std::filesystem::path& path);
+
+export
+Result<std::vector<char>>
+load_binary(const std::string& file_name);
+
+
+export
 std::shared_ptr<pln::utils::data_holder::DataHolder>
 load_sdl_rw_data(const std::filesystem::path& path)
 {
@@ -29,6 +75,8 @@ load_sdl_rw_data(const std::filesystem::path& path)
   return std::make_shared<DataHolder>(std::move(raw_data));
 }
 
+
+export
 std::unique_ptr<Sound::Sound>
 load_sound(const std::filesystem::path& sound_file_path)
 {
@@ -38,6 +86,8 @@ load_sound(const std::filesystem::path& sound_file_path)
   return std::make_unique<Sound::Sound>(chunk);
 }
 
+
+export
 void
 load_font(const std::filesystem::path& path)
 {
@@ -45,4 +95,6 @@ load_font(const std::filesystem::path& path)
   auto result = tvg::Text::load(
     path.c_str(), data->payload().data(), data->payload().size(), "", true);
   vg_verify_or_crash(__func__, result);
+}
+
 }

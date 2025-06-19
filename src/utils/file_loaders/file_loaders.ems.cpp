@@ -1,5 +1,6 @@
+module;
 #pragma clang diagnostic ignored "-Wdollar-in-identifier-extension"
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__)
 #include <SDL_mixer.h>
 #include <emscripten.h>
 #include <filesystem>
@@ -15,8 +16,13 @@
 #include "src/services.h"
 #include "src/utils/result.h" // IWYU pragma: export
 
-#include "file_loaders.h"
 #include "utils.h"
+#endif
+
+module pln.utils.file_loaders;
+
+#if defined(__EMSCRIPTEN__)
+namespace pln::utils::file_loaders {
 
 // clang-format off
 // cppcheck-suppress-begin internalAstError
@@ -38,6 +44,7 @@ EM_JS(void, register_psync, (), {
 });
 // cppcheck-suppress-end internalAstError
 // clang-format on
+
 
 // clang-format off
 // cppcheck-suppress-begin internalAstError
@@ -62,6 +69,7 @@ EM_ASYNC_JS(char*, em_read_file, (const char* file_path_cstr, const char* parent
 // cppcheck-suppress-end internalAstError
 // clang-format on
 
+
 // clang-format off
 // cppcheck-suppress-begin internalAstError
 EM_ASYNC_JS(void, em_store_file, (const char* file_path_cstr, const char* parent_path_cstr, const char* data_cstr),
@@ -84,6 +92,8 @@ EM_ASYNC_JS(void, em_store_file, (const char* file_path_cstr, const char* parent
 // cppcheck-suppress-end internalAstError
 // clang-format on
 
+
+export
 Result<std::string>
 load_string_by_emscripten(const std::string& file_name)
 {
@@ -105,6 +115,8 @@ load_string_by_emscripten(const std::string& file_name)
   return Result<std::string>::from_payload(data);
 }
 
+
+export
 Result<std::vector<char>>
 load_binary_by_emscripten(const std::string& file_name)
 {
@@ -126,6 +138,8 @@ load_binary_by_emscripten(const std::string& file_name)
   return Result<std::vector<char>>::from_payload(data);
 }
 
+
+export
 Result<tinygltf::Model>
 load_gltf_model(const std::string& file_name)
 {
@@ -164,18 +178,24 @@ load_gltf_model(const std::string& file_name)
     std::make_shared<std::runtime_error>(message));
 }
 
+
+export
 Result<std::string>
 load_text(const std::string& file_name)
 {
   return load_string_by_emscripten(file_name);
 }
 
+
+export
 Result<std::vector<char>>
 load_binary(const std::string& file_name)
 {
   return load_binary_by_emscripten(file_name);
 }
 
+
+export
 Result<nlohmann::basic_json<>>
 load_json(const std::string& file_path)
 {
@@ -186,6 +206,8 @@ load_json(const std::string& file_path)
     });
 }
 
+
+export
 Result<nlohmann::basic_json<>>
 load_local_json(const std::filesystem::path& file_path)
 {
@@ -196,6 +218,8 @@ load_local_json(const std::filesystem::path& file_path)
   return Result<nlohmann::basic_json<>>::from_payload(json);
 }
 
+
+export
 void
 save_local_json(const std::filesystem::path& file_path, nlohmann::json json)
 {
@@ -204,10 +228,13 @@ save_local_json(const std::filesystem::path& file_path, nlohmann::json json)
   em_store_file(file_path.c_str(), parent_path.c_str(), dump.c_str());
 }
 
+
+export
 bool
 is_file_exists(const std::filesystem::path&)
 {
   crash(std::format("{} can't be used in WASM build", __func__));
 }
 
+}
 #endif

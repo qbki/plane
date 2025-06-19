@@ -4,11 +4,12 @@
 #include <string>
 #include <vector>
 
-#include "src/utils/file_loaders.h"
-
 #include "levels_order_loader.h"
 
 import pln.services.app;
+import pln.utils.file_loaders;
+
+using namespace pln::utils::file_loaders;
 
 std::filesystem::path
 to_path(const std::string& path) {

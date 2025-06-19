@@ -1,3 +1,5 @@
+module;
+#if defined (__linux__)
 #include <SDL_mixer.h>
 #include <filesystem>
 #include <format>
@@ -7,14 +9,20 @@
 #include <nlohmann/json.hpp>
 #include <stdexcept>
 #include <string>
+#include <tiny_gltf.h>
 #include <vector>
 
 #include "src/utils/result.h" // IWYU pragma: export
 
-#include "file_loaders.h"
 #include "utils.h"
+#endif
 
+module pln.utils.file_loaders;
+
+#if defined (__linux__)
 import pln.services.logger;
+
+namespace pln::utils::file_loaders {
 
 using FileStreamPtr = std::shared_ptr<std::fstream>;
 
@@ -142,3 +150,7 @@ is_file_exists(const std::filesystem::path& path)
 {
   return std::filesystem::exists(path);
 }
+
+}
+
+#endif

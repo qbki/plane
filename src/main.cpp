@@ -8,7 +8,6 @@
 #include "fileio/translation_loader.h"
 #include "logger/logger.h"
 #include "shading/deferred_shading.h"
-#include "utils/file_loaders/file_loaders.h"
 #include "utils/types.h"
 
 import pln.app.app;
@@ -28,8 +27,11 @@ import pln.services.logger;
 import pln.shaders;
 import pln.shapes;
 import pln.systems.renderer;
+import pln.utils.file_loaders;
 import pln.utils.platform;
 import pln.utils.system;
+
+using namespace pln::utils::file_loaders;
 
 int
 main(int argc, char* argv[])

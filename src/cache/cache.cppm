@@ -8,7 +8,6 @@ module;
 #include <unordered_map>
 
 #include "src/sound/sound.h"
-#include "src/utils/file_loaders.h"
 
 export module pln.cache;
 
@@ -17,6 +16,9 @@ import pln.services.app;
 import pln.shapes;
 import pln.textures;
 import pln.utils.color;
+import pln.utils.file_loaders;
+
+using namespace pln::utils::file_loaders;
 
 namespace pln::cache {
 

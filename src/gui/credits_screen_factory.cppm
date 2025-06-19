@@ -4,7 +4,6 @@ module;
 
 #include "src/gui/components/ui.h"
 #include "src/gui/utils/utils.h"
-#include "src/utils/file_loaders/file_loaders.h"
 
 export module pln.gui.credits_screen_factory;
 
@@ -12,6 +11,9 @@ import pln.components.common;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
+import pln.utils.file_loaders;
+
+using namespace pln::utils::file_loaders;
 
 namespace pln::gui {
 

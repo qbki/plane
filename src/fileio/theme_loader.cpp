@@ -5,12 +5,14 @@
 
 #include "src/fileio/params/theme.h"
 #include "src/gui/core/theme.h"
-#include "src/utils/file_loaders/file_loaders.h"
 
 #include "theme_loader.h"
 #include "json/mappers.h" // IWYU pragma: keep
 
 import pln.services.app;
+import pln.utils.file_loaders;
+
+using namespace pln::utils::file_loaders;
 
 std::unique_ptr<GUI::Theme>
 load_theme(const std::filesystem::path& theme_file_path)

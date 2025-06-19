@@ -7,12 +7,14 @@
 
 import pln.app.app;
 import pln.components.common;
+import pln.events.event;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
 import pln.services.theme;
 
 using namespace pln::components;
+using namespace pln::events;
 
 namespace GUI {
 
@@ -28,7 +30,7 @@ lose_menu_factory(const pln::scene::IScene& scene)
         .on_pointer_down_once =
           [](auto&) {
             pln::services::app().add_once_handler([](pln::app::App&) {
-              pln::services::events<const Events::LoadCurrentLevelEvent>().emit({});
+              pln::services::events<const LoadCurrentLevelEvent>().emit({});
             });
           },
       }),

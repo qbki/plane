@@ -1,15 +1,17 @@
-#include "src/events/event_emitter.h"
 #include "src/gui/components/rect.h"
 
 #include "background.h"
 
 import pln.components.common;
 import pln.components.transform;
+import pln.events.event;
+import pln.events.event_emitter;
 import pln.services.app;
 import pln.services.events;
 import pln.shapes;
 
 using namespace pln::components;
+using namespace pln::events;
 
 namespace GUI::Factory {
 
@@ -32,7 +34,7 @@ background(std::shared_ptr<entt::registry>& registry,
       .parent = config.parent,
     });
 
-  auto& layout = registry->emplace<Events::EventEmitter<Events::GUILayout>>(
+  auto& layout = registry->emplace<EventEmitter<GUILayout>>(
     entity);
 
   auto& transform = registry->get<Transform>(entity);

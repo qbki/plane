@@ -6,7 +6,6 @@ module;
 #include <glm/trigonometric.hpp>
 #include <vector>
 
-#include "src/events/event.h"
 #include "src/game_state/factory.h"
 
 export module pln.systems.player;
@@ -14,12 +13,14 @@ export module pln.systems.player;
 import pln.components.common;
 import pln.components.transform;
 import pln.components.weapon;
+import pln.events.event;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
 import pln.utils.common;
 
 using namespace pln::components;
+using namespace pln::events;
 
 namespace pln::systems::player {
 
@@ -181,7 +182,7 @@ public:
     if (players_quantity == 0) {
       pln::services::app().pause_scenes();
       pln::services::app().add_once_handler(
-          [](auto&) { pln::services::events<const Events::LoseEvent>().emit({}); });
+          [](auto&) { pln::services::events<const LoseEvent>().emit({}); });
       is_fired = true;
     }
   }

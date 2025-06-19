@@ -3,14 +3,14 @@ module;
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
-#include "src/events/event.h"
-#include "src/events/event_emitter.h"
 #include "src/math/intersection.h"
 
 export module pln.systems.update_gui;
 
 import pln.components.common;
 import pln.components.transform;
+import pln.events.event;
+import pln.events.event_emitter;
 import pln.scene.iscene;
 import pln.service;
 import pln.services.app;
@@ -19,6 +19,7 @@ import pln.utils.ecs;
 import pln.utils.mouse;
 
 using namespace pln::components;
+using namespace pln::events;
 
 namespace pln::systems::update_gui {
 
@@ -28,24 +29,24 @@ update_gui(pln::scene::IScene& scene)
 {
   glm::ivec2 mouse_pos = pln::utils::mouse::mouse_position();
   glm::ivec2 position { mouse_pos.x, mouse_pos.y };
-  Events::GUILayout gui_layout_event_data {};
-  Events::PointerMove pointer_move_event_data { .position = position };
-  Events::PointerEnter pointer_enter_event_data {};
-  Events::PointerLeave pointer_leave_event_data {};
-  Events::PointerDown pointer_down_event_data { .position = position };
+  GUILayout gui_layout_event_data {};
+  PointerMove pointer_move_event_data { .position = position };
+  PointerEnter pointer_enter_event_data {};
+  PointerLeave pointer_leave_event_data {};
+  PointerDown pointer_down_event_data { .position = position };
   auto& registry = scene.state().registry();
 
-  registry.view<Events::EventEmitter<Events::GUILayout>>().each(
+  registry.view<EventEmitter<GUILayout>>().each(
     [&gui_layout_event_data](
-      Events::EventEmitter<Events::GUILayout>& event_emitter) {
+      EventEmitter<GUILayout>& event_emitter) {
       event_emitter.emit(gui_layout_event_data);
     });
 
   registry
-    .view<Events::EventEmitter<Events::PointerMove>,
-          Events::EventEmitter<Events::PointerEnter>,
-          Events::EventEmitter<Events::PointerLeave>,
-          Events::EventEmitter<Events::PointerDown>,
+    .view<EventEmitter<PointerMove>,
+          EventEmitter<PointerEnter>,
+          EventEmitter<PointerLeave>,
+          EventEmitter<PointerDown>,
           Transform,
           pln::shapes::RectSize,
           Parent,
@@ -56,10 +57,10 @@ update_gui(pln::scene::IScene& scene)
            &pointer_enter_event_data,
            &pointer_leave_event_data,
            &pointer_down_event_data](
-            Events::EventEmitter<Events::PointerMove>& pointer_move,
-            Events::EventEmitter<Events::PointerEnter>& pointer_enter,
-            Events::EventEmitter<Events::PointerLeave>& pointer_leave,
-            Events::EventEmitter<Events::PointerDown>& pointer_down,
+            EventEmitter<PointerMove>& pointer_move,
+            EventEmitter<PointerEnter>& pointer_enter,
+            EventEmitter<PointerLeave>& pointer_leave,
+            EventEmitter<PointerDown>& pointer_down,
             Transform& transform,
             pln::shapes::RectSize& rect_size,
             Parent& parent,

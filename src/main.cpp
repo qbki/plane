@@ -4,7 +4,6 @@
 #include <string>
 #include <utility>
 
-#include "events/event_emitter.h"
 #include "fileio/theme_loader.h"
 #include "fileio/translation_loader.h"
 #include "logger/logger.h"
@@ -17,6 +16,8 @@ import pln.cache;
 import pln.common_handlers;
 import pln.consts;
 import pln.control;
+import pln.events.event;
+import pln.events.event_emitter;
 import pln.game_loop;
 import pln.logger;
 import pln.sdl;
@@ -34,16 +35,21 @@ int
 main(int argc, char* argv[])
 {
   pln::Service<pln::logger::AbstractLogger>::install(std::make_unique<Logger>());
+
   pln::Service<pln::cache::Cache>::install(std::make_unique<pln::cache::Cache>());
-  pln::Service<Events::EventEmitter<const Events::ShootEvent>>::install(
-    std::make_unique<Events::EventEmitter<const Events::ShootEvent>>());
-  pln::Service<Events::EventEmitter<const Events::LoadNextLevelEvent>>::install(
-    std::make_unique<Events::EventEmitter<const Events::LoadNextLevelEvent>>());
-  pln::Service<Events::EventEmitter<const Events::LoseEvent>>::install(
-    std::make_unique<Events::EventEmitter<const Events::LoseEvent>>());
-  pln::Service<Events::EventEmitter<const Events::LoadCurrentLevelEvent>>::install(
+
+  pln::Service<pln::events::EventEmitter<const pln::events::ShootEvent>>::install(
+    std::make_unique<pln::events::EventEmitter<const pln::events::ShootEvent>>());
+
+  pln::Service<pln::events::EventEmitter<const pln::events::LoadNextLevelEvent>>::install(
+    std::make_unique<pln::events::EventEmitter<const pln::events::LoadNextLevelEvent>>());
+
+  pln::Service<pln::events::EventEmitter<const pln::events::LoseEvent>>::install(
+    std::make_unique<pln::events::EventEmitter<const pln::events::LoseEvent>>());
+
+  pln::Service<pln::events::EventEmitter<const pln::events::LoadCurrentLevelEvent>>::install(
     std::make_unique<
-      Events::EventEmitter<const Events::LoadCurrentLevelEvent>>());
+      pln::events::EventEmitter<const pln::events::LoadCurrentLevelEvent>>());
 
   auto window = pln::sdl::init_window(pln::consts::DEFAULT_SCREEN_WIDTH,
                                       pln::consts::DEFAULT_SCREEN_HEIGHT);

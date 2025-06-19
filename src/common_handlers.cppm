@@ -6,7 +6,6 @@ module;
 #include <utility>
 #include <vector>
 
-#include "src/events/event.h"
 #include "src/fileio/level_loader.h"
 #include "src/fileio/levels_order_loader.h"
 #include "src/fileio/save_data_io.h"
@@ -25,6 +24,8 @@ import pln.cameras.gui_camera;
 import pln.cameras.icamera;
 import pln.cameras.perspective_camera;
 import pln.consts;
+import pln.events.event;
+import pln.events.event_emitter;
 import pln.scene.iscene;
 import pln.scene.scene;
 import pln.services.app;
@@ -47,6 +48,8 @@ import pln.systems.ui;
 import pln.systems.update_gui;
 import pln.systems.velocity;
 import pln.utils.system;
+
+using namespace pln::events;
 
 namespace pln::common_handlers {
 
@@ -89,7 +92,7 @@ load_in_game_main_menu()
 }
 
 void
-load_lose_menu(const Events::LoseEvent&)
+load_lose_menu(const LoseEvent&)
 {
   auto camera = make_gui_camera(pln::services::app());
   auto scene = std::make_unique<pln::scene::Scene>(std::move(camera));
@@ -158,14 +161,14 @@ load_level_scene()
 }
 
 void
-load_current_level(const Events::LoadCurrentLevelEvent&)
+load_current_level(const LoadCurrentLevelEvent&)
 {
   auto exec_path = utils::system::get_excutable_path();
   auto save_data = load_save_data(exec_path / pln::consts::SAVE_DATA_FILE);
   auto levels_dir = pln::services::app().levels_dir();
   auto levels_order = load_levels_order(levels_dir / "levels.json");
   if (!save_data.current_level.has_value()) {
-    pln::services::events<const Events::LoadNextLevelEvent>().emit({});
+    pln::services::events<const LoadNextLevelEvent>().emit({});
     pln::services::logger().info(
       "Can't get save data, a default level will be used");
     return;
@@ -173,7 +176,7 @@ load_current_level(const Events::LoadCurrentLevelEvent&)
   auto current_level = std::ranges::find(levels_order.levels,
                                          save_data.current_level.value());
   if (current_level == levels_order.levels.end()) {
-    pln::services::events<const Events::LoadNextLevelEvent>().emit({});
+    pln::services::events<const LoadNextLevelEvent>().emit({});
     pln::services::logger().info(
       "The user's progress not found, a default level will be used");
     return;
@@ -184,7 +187,7 @@ load_current_level(const Events::LoadCurrentLevelEvent&)
 }
 
 void
-load_next_level(const Events::LoadNextLevelEvent&)
+load_next_level(const LoadNextLevelEvent&)
 {
   auto& current_level = pln::services::app().info().current_level;
   auto levels_dir = pln::services::app().levels_dir();
@@ -217,7 +220,7 @@ load_next_level(const Events::LoadNextLevelEvent&)
 }
 
 void
-play_sound(const Events::ShootEvent& sound_event)
+play_sound(const ShootEvent& sound_event)
 {
   pln::services::cache().get_sound(sound_event.sound_path)->play(sound_event.volume);
 }
@@ -226,11 +229,11 @@ export
 void
 register_common_handlers()
 {
-  pln::services::events<const Events::ShootEvent>().add(play_sound);
-  pln::services::events<const Events::LoadCurrentLevelEvent>().add(
+  pln::services::events<const ShootEvent>().add(play_sound);
+  pln::services::events<const LoadCurrentLevelEvent>().add(
     load_current_level);
-  pln::services::events<const Events::LoseEvent>().add(load_lose_menu);
-  pln::services::events<const Events::LoadNextLevelEvent>().add(load_next_level);
+  pln::services::events<const LoseEvent>().add(load_lose_menu);
+  pln::services::events<const LoadNextLevelEvent>().add(load_next_level);
   pln::services::app().add_once_handler(GUI::go_to_main_menu);
 }
 

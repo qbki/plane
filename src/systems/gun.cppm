@@ -5,7 +5,6 @@ module;
 #include <glm/gtc/quaternion.hpp>
 #include <glm/vec3.hpp>
 
-#include "src/events/event.h"
 #include "src/game_state/factory.h"
 #include "src/utils/random.h"
 
@@ -15,6 +14,7 @@ import pln.components.common;
 import pln.components.transform;
 import pln.components.weapon;
 import pln.consts;
+import pln.events.event;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
@@ -81,7 +81,7 @@ gun_shooting(pln::scene::IScene& scene)
                            : coefficient / (distance * distance);
         // </>
 
-        pln::services::events<const Events::ShootEvent>().emit({
+        pln::services::events<const pln::events::ShootEvent>().emit({
           .sound_path { weapon.shot_sound_path.value() },
           .volume = intencity,
         });

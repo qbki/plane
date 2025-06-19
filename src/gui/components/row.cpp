@@ -2,17 +2,17 @@
 #include <entt/entt.hpp>
 #include <ranges>
 
-#include "src/events/event.h"
-#include "src/events/event_emitter.h"
-
 #include "row.h"
 #include "utils.h"
 
 import pln.components.common;
 import pln.components.transform;
+import pln.events.event;
+import pln.events.event_emitter;
 import pln.shapes;
 
 using namespace pln::components;
+using namespace pln::events;
 
 namespace GUI::Factory {
 
@@ -25,12 +25,12 @@ row(std::shared_ptr<entt::registry>& registry, const RowConfig& config)
   registry->emplace<Transform>(entity);
   registry->emplace<Parent>(entity, std::nullopt);
   registry->emplace<Children>(entity, config.children);
-  auto& layout = registry->emplace<Events::EventEmitter<Events::GUILayout>>(
+  auto& layout = registry->emplace<EventEmitter<GUILayout>>(
     entity);
 
   reparent(registry, config.children.value, entity);
 
-  layout.add([registry, entity](Events::GUILayout &) {
+  layout.add([registry, entity](GUILayout &) {
     auto [children_ids,
           transform,
           rect_size,

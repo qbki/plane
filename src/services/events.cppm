@@ -1,18 +1,16 @@
-module;
-#include "src/events/event_emitter.h"
-
 export module pln.services.events;
 
+import pln.events.event_emitter;
 import pln.service;
 
 namespace pln::services {
 
 export
 template<typename T>
-inline Events::EventEmitter<T>&
+inline pln::events::EventEmitter<T>&
 events()
 {
-  return pln::Service<Events::EventEmitter<T>>::get();
+  return pln::Service<pln::events::EventEmitter<T>>::get();
 }
 
 }

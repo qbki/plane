@@ -9,12 +9,14 @@
 #include "main_menu_factory.h"
 
 import pln.components.common;
+import pln.events.event;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
 import pln.utils.platform;
 
 using namespace pln::components;
+using namespace pln::events;
 
 namespace GUI {
 
@@ -32,7 +34,7 @@ main_menu_factory(const pln::scene::IScene& scene)
       .on_pointer_down_once =
         [](auto&) {
           pln::services::app().add_once_handler([](auto&) {
-            pln::services::events<const Events::LoadCurrentLevelEvent>().emit({});
+            pln::services::events<const LoadCurrentLevelEvent>().emit({});
           });
         },
     });
@@ -45,7 +47,7 @@ main_menu_factory(const pln::scene::IScene& scene)
       [](auto&) {
         pln::services::app().add_once_handler([](auto&) {
           clear_user_progress(pln::services::app());
-          pln::services::events<const Events::LoadNextLevelEvent>().emit({});
+          pln::services::events<const LoadNextLevelEvent>().emit({});
         });
       },
   });

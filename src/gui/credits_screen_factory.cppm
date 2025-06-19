@@ -1,3 +1,4 @@
+module;
 #include <sstream>
 #include <string>
 
@@ -5,14 +6,14 @@
 #include "src/gui/utils/utils.h"
 #include "src/utils/file_loaders/file_loaders.h"
 
-#include "credits_screen_factory.h"
+export module pln.gui.credits_screen_factory;
 
 import pln.components.common;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
 
-namespace GUI {
+namespace pln::gui {
 
 std::vector<std::string>
 split_by_line(const std::string& value)
@@ -26,10 +27,11 @@ split_by_line(const std::string& value)
   return result;
 }
 
+export
 void
 credits_screen_factory(const pln::scene::IScene& scene)
 {
-  auto ui = Factory::make_ui(scene.state().shared_registry());
+  auto ui = GUI::Factory::make_ui(scene.state().shared_registry());
   auto credits_file = pln::services::app().credits_file();
   auto credits_txt = load_text(credits_file).or_fallback("");
   auto credits_lines = split_by_line(credits_txt);
@@ -37,8 +39,8 @@ credits_screen_factory(const pln::scene::IScene& scene)
 
   for (const auto& line : credits_lines) {
     children.value.push_back(ui.text({
-      .font = pln::services::theme().typography.h3,
-      .text = (line == "") ? " " : line,
+      .font { pln::services::theme().typography.h3 },
+      .text { line == "" ? " " : line },
     }));
   }
 
@@ -46,8 +48,8 @@ credits_screen_factory(const pln::scene::IScene& scene)
     .text = "Go to title sreen",
     .on_pointer_down =
       [](auto&) {
-        clear_user_progress(pln::services::app());
-        pln::services::app().add_once_handler(go_to_main_menu);
+        GUI::clear_user_progress(pln::services::app());
+        pln::services::app().add_once_handler(GUI::go_to_main_menu);
       },
   }));
 

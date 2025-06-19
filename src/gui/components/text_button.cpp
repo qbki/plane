@@ -5,10 +5,13 @@
 
 import pln.components.common;
 import pln.components.transform;
+import pln.events.event;
+import pln.events.event_emitter;
 import pln.services.theme;
 import pln.shapes;
 
 using namespace pln::components;
+using namespace pln::events;
 
 namespace GUI::Factory {
 
@@ -56,17 +59,17 @@ text_button(std::shared_ptr<entt::registry>& registry,
   registry->emplace<pln::shapes::RectSize>(entity, 0, 0);
   registry->emplace<Transform>(entity);
 
-  registry->emplace<Events::EventEmitter<Events::PointerMove>>(entity);
+  registry->emplace<EventEmitter<PointerMove>>(entity);
   auto& pointer_down = registry
-                         ->emplace<Events::EventEmitter<Events::PointerDown>>(
+                         ->emplace<EventEmitter<PointerDown>>(
                            entity);
   auto& pointer_enter = registry
-                          ->emplace<Events::EventEmitter<Events::PointerEnter>>(
+                          ->emplace<EventEmitter<PointerEnter>>(
                             entity);
   auto& pointer_leave = registry
-                          ->emplace<Events::EventEmitter<Events::PointerLeave>>(
+                          ->emplace<EventEmitter<PointerLeave>>(
                             entity);
-  auto& layout = registry->emplace<Events::EventEmitter<Events::GUILayout>>(
+  auto& layout = registry->emplace<EventEmitter<GUILayout>>(
     entity);
 
   pointer_down.add(config.on_pointer_down);

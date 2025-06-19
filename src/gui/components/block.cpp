@@ -1,17 +1,18 @@
 #include <entt/entt.hpp>
 #include <glm/common.hpp>
 
-#include "src/events/event_emitter.h"
-
 #include "block.h"
 #include "utils.h"
 
 import pln.components.common;
 import pln.components.transform;
+import pln.events.event;
+import pln.events.event_emitter;
 import pln.services.app;
 import pln.shapes;
 
 using namespace pln::components;
+using namespace pln::events;
 
 namespace GUI::Factory {
 
@@ -24,7 +25,7 @@ block(std::shared_ptr<entt::registry>& registry, const BlockConfig& config)
   registry->emplace<Transform>(entity);
   registry->emplace<Parent>(entity, std::nullopt);
   registry->emplace<Children>(entity, config.children);
-  auto& layout = registry->emplace<Events::EventEmitter<Events::GUILayout>>(
+  auto& layout = registry->emplace<EventEmitter<GUILayout>>(
     entity);
 
   reparent(registry, config.children.value, entity);

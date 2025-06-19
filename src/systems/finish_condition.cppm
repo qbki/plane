@@ -1,14 +1,14 @@
 module;
-#include "src/events/event.h"
-
 export module pln.systems.finish_condition;
 
 import pln.components.common;
+import pln.events.event;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
 
 using namespace pln::components;
+using namespace pln::events;
 
 namespace pln::systems::finish_condition {
 
@@ -28,7 +28,7 @@ check_finish_condition(pln::scene::IScene& scene)
 
   if (enemy_quantity == 0) {
     pln::services::app().add_once_handler([](auto&) {
-        pln::services::events<const Events::LoadNextLevelEvent>().emit({});
+        pln::services::events<const LoadNextLevelEvent>().emit({});
     });
   }
 }

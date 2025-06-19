@@ -1,4 +1,3 @@
-#include "src/events/event_emitter.h"
 #include "src/gui/components/div.h"
 #include "src/gui/components/rect.h"
 
@@ -8,9 +7,12 @@ import pln.components.common;
 import pln.components.percent;
 import pln.components.transform;
 import pln.consts;
+import pln.events.event;
+import pln.events.event_emitter;
 import pln.shapes;
 
 using namespace pln::components;
+using namespace pln::events;
 
 namespace GUI::Factory {
 
@@ -43,8 +45,7 @@ progress(std::shared_ptr<entt::registry>& registry,
   registry->emplace<Percent>(entity, config.value);
   registry->emplace<IsDirty>(entity, true);
 
-  auto& layout = registry->emplace<Events::EventEmitter<Events::GUILayout>>(
-    entity);
+  auto& layout = registry->emplace<EventEmitter<GUILayout>>(entity);
 
   layout.add([registry, entity, line, progress](auto&) {
     auto [percent, rect, is_dirty] = registry->get<Percent, pln::shapes::RectSize, IsDirty>(

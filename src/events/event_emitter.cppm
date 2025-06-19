@@ -1,15 +1,17 @@
-#pragma once
+module;
 #include <functional>
 #include <map>
 #include <ranges>
 #include <unordered_set>
 
-#include "event.h" // IWYU pragma: export
+export module pln.events.event_emitter;
 
-namespace Events {
+namespace pln::events {
 
+export
 using fn = void(void*);
 
+export
 template<typename... Ts>
 class EventEmitter
 {

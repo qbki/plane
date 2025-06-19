@@ -1,9 +1,11 @@
 module;
 #include <algorithm>
 
-#include "src/events/event_emitter.h"
-
 export module pln.components.percent;
+
+import pln.events.event_emitter;
+
+using namespace pln::events;
 
 namespace pln::components {
 
@@ -12,7 +14,7 @@ class Percent
 {
 private:
   int _value = 0;
-  Events::EventEmitter<int> _emitter;
+  EventEmitter<int> _emitter;
 
 public:
   constexpr static int TOP = 100;
@@ -56,7 +58,7 @@ public:
   }
 
 
-  Events::EventEmitter<int>&
+  EventEmitter<int>&
   on_changed()
   {
     return _emitter;

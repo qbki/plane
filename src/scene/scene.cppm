@@ -3,13 +3,13 @@ module;
 #include <memory>
 #include <utility>
 
-#include "src/events/event_emitter.h" // IWYU pragma: export
 #include "src/game_state/state.h"     // IWYU pragma: export
 
 export module pln.scene.scene;
 
 import pln.cameras.icamera;
 import pln.collections.octree;
+import pln.events.event_emitter;
 import pln.scene.iscene;
 import pln.services.app;
 
@@ -38,13 +38,13 @@ public:
     }
   }
 
-  Events::EventEmitter<IScene>&
+  pln::events::EventEmitter<IScene>&
   handlers() override
   {
     return _events;
   }
 
-  Events::EventEmitter<IScene>&
+  pln::events::EventEmitter<IScene>&
   cancel_handlers() override
   {
     return _cancel_events;
@@ -102,8 +102,8 @@ private:
 
   std::unique_ptr<pln::collections::Octree<entt::entity>>
     _entities = std::make_unique<pln::collections::Octree<entt::entity>>();
-  Events::EventEmitter<IScene> _events {};
-  Events::EventEmitter<IScene> _cancel_events {};
+  pln::events::EventEmitter<IScene> _events {};
+  pln::events::EventEmitter<IScene> _cancel_events {};
   std::unique_ptr<State> _state = std::make_unique<State>();
 };
 

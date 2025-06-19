@@ -2,16 +2,19 @@ module;
 #include <entt/entt.hpp>
 #include <memory>
 
-#include "src/events/event_emitter.h" // IWYU pragma: export
 #include "src/game_state/state.h"
 
 export module pln.scene.iscene;
 
 import pln.collections.octree;
+import pln.events.event_emitter;
+
+using namespace pln::events;
 
 namespace pln::scene {
 
-export class IScene
+export
+class IScene
 {
 public:
   IScene() = default;
@@ -22,8 +25,8 @@ public:
   virtual ~IScene() = default;
 
   virtual void update() = 0;
-  virtual Events::EventEmitter<IScene>& handlers() = 0;
-  virtual Events::EventEmitter<IScene>& cancel_handlers() = 0;
+  virtual EventEmitter<IScene>& handlers() = 0;
+  virtual EventEmitter<IScene>& cancel_handlers() = 0;
   [[nodiscard]] virtual State& state() const = 0;
 
   [[nodiscard]] virtual bool is_deferred() const = 0;

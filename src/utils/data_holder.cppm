@@ -46,7 +46,7 @@ public:
   }
 
 
-  const std::vector<char>&
+  [[nodiscard]] const std::vector<char>&
   payload() const
   {
     return _data;

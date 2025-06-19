@@ -2,13 +2,14 @@ module;
 #include <SDL_mixer.h>
 #include <utility>
 
-#include "src/components/percent.h"
-#include "src/events/event_emitter.h"
 #include "src/fileio/settings_io.h"
 
 export module pln.app.settings;
 
+import pln.components.percent;
 import pln.utils.system;
+
+using namespace pln::components;
 
 namespace pln::app {
 

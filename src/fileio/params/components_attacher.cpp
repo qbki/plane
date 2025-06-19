@@ -1,7 +1,6 @@
 #include <functional>
 #include <variant>
 
-#include "src/components/turret_rotation.h"
 #include "src/game_state/factory.h"
 
 #include "components_attacher.h"
@@ -10,6 +9,7 @@
 
 import pln.components.common;
 import pln.components.transform;
+import pln.components.turret_rotation;
 import pln.components.weapon;
 import pln.control;
 import pln.scene.iscene;

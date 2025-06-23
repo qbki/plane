@@ -3,15 +3,16 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-#include "src/fileio/params/theme.h"
 #include "src/gui/core/theme.h"
 
 #include "theme_loader.h"
 
 import pln.fileio.json.mappers;
+import pln.fileio.params.theme;
 import pln.services.app;
 import pln.utils.file_loaders;
 
+using namespace pln::fileio::params;
 using namespace pln::utils::file_loaders;
 
 std::unique_ptr<GUI::Theme>

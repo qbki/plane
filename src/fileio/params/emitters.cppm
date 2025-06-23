@@ -1,11 +1,16 @@
+module;
 #include <glm/common.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/vec3.hpp>
+#include <string>
 
 #include "src/game_state/state.h"
 
-#include "emitters.h"
 #include "entities.h"
+#include "entities.h"
+
+export module pln.fileio.params.emitters;
 
 import pln.components.common;
 import pln.components.transform;
@@ -14,6 +19,8 @@ import pln.game_state.factory;
 using namespace pln::components;
 using namespace pln::game_state::factory;
 
+namespace pln::fileio::params {
+
 glm::quat
 calc_rotation(unsigned int multiplier, float angle)
 {
@@ -21,6 +28,8 @@ calc_rotation(unsigned int multiplier, float angle)
                         glm::vec3(0, 0, 1));
 }
 
+
+export
 void
 emit_particles(std::shared_ptr<entt::registry> registry,
                glm::vec3 initial_position,
@@ -60,4 +69,6 @@ emit_particles(std::shared_ptr<entt::registry> registry,
     registry->replace<Transform>(entity, transform);
     registry->replace<Velocity>(entity, velocity);
   }
+}
+
 }

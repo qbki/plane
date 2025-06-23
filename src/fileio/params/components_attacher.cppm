@@ -5,7 +5,6 @@ module;
 #include <string>
 #include <variant>
 
-#include "emitters.h"
 #include "entities.h"
 
 export module pln.fileio.params.components_attacher;
@@ -15,6 +14,7 @@ import pln.components.transform;
 import pln.components.turret_rotation;
 import pln.components.weapon;
 import pln.control;
+import pln.fileio.params.emitters;
 import pln.fileio.params.entities_map;
 import pln.fileio.params.strategies;
 import pln.game_state.factory;

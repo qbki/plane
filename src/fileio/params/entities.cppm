@@ -1,5 +1,4 @@
-#pragma once
-
+module;
 #include <cstddef>
 #include <filesystem> // IWYU pragma: export
 #include <glm/vec3.hpp>
@@ -7,8 +6,13 @@
 #include <string>
 #include <variant>
 
+export module pln.fileio.params.entities;
+
 import pln.control;
 
+namespace pln::fileio::params {
+
+export
 struct VelocityParams
 {
   std::optional<float> acceleration { std::nullopt };
@@ -16,12 +20,16 @@ struct VelocityParams
   std::optional<float> damping { std::nullopt };
 };
 
+
+export
 struct EntityParamsModel
 {
   std::filesystem::path path {};
   bool is_opaque { true };
 };
 
+
+export
 struct EntityParamsActor
 {
   VelocityParams speed {};
@@ -33,17 +41,23 @@ struct EntityParamsActor
   std::optional<std::string> hit_particles_id { std::nullopt };
 };
 
+
+export
 struct EntityParamsPointLight
 {
   glm::vec3 color { 0, 0, 0 };
 };
 
+
+export
 struct EntityParamsDirectionalLight
 {
   glm::vec3 color { 0, 0, 0 };
   glm::vec3 direction { 0, 0, -1 };
 };
 
+
+export
 struct EntityParamsParticles
 {
   std::string model_id { "" };
@@ -52,6 +66,8 @@ struct EntityParamsParticles
   float speed { 0 };
 };
 
+
+export
 struct EntityParamsWeapon
 {
   float bullet_speed { 0 };
@@ -62,12 +78,16 @@ struct EntityParamsWeapon
   std::optional<std::filesystem::path> shot_sound_path {};
 };
 
+
+export
 struct EntityParamsTutorialButton
 {
   std::string model_id { "" };
   pln::control::Action button { pln::control::Action::UNKNOWN };
 };
 
+
+export
 struct EntityParamsText
 {
   glm::vec3 color { 0, 0, 0 };
@@ -77,6 +97,8 @@ struct EntityParamsText
   float height { 1 };
 };
 
+
+export
 using EntityParams = std::variant<EntityParamsActor,
                                   EntityParamsDirectionalLight,
                                   EntityParamsModel,
@@ -85,3 +107,4 @@ using EntityParams = std::variant<EntityParamsActor,
                                   EntityParamsText,
                                   EntityParamsTutorialButton,
                                   EntityParamsWeapon>;
+}

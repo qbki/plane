@@ -6,6 +6,7 @@ module;
 #include <functional>
 #include <glm/geometric.hpp>
 #include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 #include <iterator>
 #include <string>
 #include <tuple>
@@ -14,14 +15,13 @@ module;
 
 #include "src/utils/random.h"
 
-#include "entities.h"
-
 export module pln.fileio.params.position_strategy_viditor;
 
 import pln.components.common;
 import pln.components.transform;
 import pln.consts;
 import pln.fileio.params.components_attacher;
+import pln.fileio.params.entities;
 import pln.fileio.params.entities_map;
 import pln.fileio.params.entity_maker;
 import pln.fileio.params.strategies;

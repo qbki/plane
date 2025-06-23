@@ -6,14 +6,15 @@ module;
 #include <optional>
 #include <vector>
 
-#include "src/fileio/params/entities_validators.h"
 #include "src/fileio/params/meta.h"
 #include "src/fileio/params/theme.h"
 
 export module pln.fileio.json.mappers;
 
 import pln.control;
+import pln.fileio.params.entities;
 import pln.fileio.params.entities_map;
+import pln.fileio.params.entities_validators;
 import pln.fileio.params.strategies;
 import pln.services.app;
 import pln.utils.crash;

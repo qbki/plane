@@ -7,16 +7,15 @@ module;
 
 #include "src/game_state/state.h"
 
-#include "entities.h"
-#include "entities.h"
-
 export module pln.fileio.params.emitters;
 
 import pln.components.common;
 import pln.components.transform;
+import pln.fileio.params.entities;
 import pln.game_state.factory;
 
 using namespace pln::components;
+using namespace pln::fileio::params;
 using namespace pln::game_state::factory;
 
 namespace pln::fileio::params {

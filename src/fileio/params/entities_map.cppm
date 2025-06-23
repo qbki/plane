@@ -8,11 +8,11 @@ module;
 #include <variant>
 #include <vector>
 
-#include "src/fileio/params/entities.h"
 #include "src/utils/types.h"
 
 export module pln.fileio.params.entities_map;
 
+import pln.fileio.params.entities;
 import pln.utils.crash;
 
 namespace pln::fileio::params {

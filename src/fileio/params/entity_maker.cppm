@@ -6,10 +6,9 @@ module;
 #include <utility>
 #include <variant>
 
-#include "entities.h"
-
 export module pln.fileio.params.entity_maker;
 
+import pln.fileio.params.entities;
 import pln.fileio.params.entities_map;
 import pln.fileio.params.strategies;
 import pln.game_state.factory;

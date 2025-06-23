@@ -2,7 +2,6 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-#include "src/game_state/factory.h"
 #include "src/game_state/state.h"
 
 #include "emitters.h"
@@ -10,8 +9,10 @@
 
 import pln.components.common;
 import pln.components.transform;
+import pln.game_state.factory;
 
 using namespace pln::components;
+using namespace pln::game_state::factory;
 
 glm::quat
 calc_rotation(unsigned int multiplier, float angle)
@@ -49,7 +50,7 @@ emit_particles(std::shared_ptr<entt::registry> registry,
   }
 
   for (; idx < params.quantity; idx += 1) {
-    auto entity = ModelFactory::make_particle(registry, file_path);
+    auto entity = make_particle(registry, file_path);
     auto rotation = calc_rotation(idx, step);
     Transform transform;
     transform.translate(initial_position).rotate(rotation);

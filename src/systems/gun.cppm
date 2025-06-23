@@ -1,11 +1,11 @@
 module;
 #include <cstdlib>
+#include <entt/entt.hpp>
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/vec3.hpp>
 
-#include "src/game_state/factory.h"
 #include "src/utils/random.h"
 
 export module pln.systems.gun;
@@ -15,12 +15,14 @@ import pln.components.transform;
 import pln.components.weapon;
 import pln.consts;
 import pln.events.event;
+import pln.game_state.factory;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
 import pln.utils.common;
 
 using namespace pln::components;
+using namespace pln::game_state;
 using namespace pln::utils::common;
 
 namespace pln::systems::gun {
@@ -41,7 +43,7 @@ gun_shooting(pln::scene::IScene& scene)
       if (!weapon.is_shooting || (weapon.left_time_to_shoot > 0.0)) {
         return;
       }
-      auto projectile_entity = ModelFactory::make_projectile(
+      auto projectile_entity = factory::make_projectile(
         registry, weapon.bullet_model_path);
       auto spread = weapon.spread * get_random_float() - weapon.spread * pln::consts::HALF;
 

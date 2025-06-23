@@ -1,22 +1,24 @@
-#pragma once
+module;
 #include <format>
 #include <glm/vec3.hpp>
 #include <nlohmann/json.hpp>
 #include <nlohmann/json_fwd.hpp>
 #include <optional>
-#include <stdexcept>
 #include <vector>
 
-#include "src/fileio/params/entities.h"
 #include "src/fileio/params/entities_validators.h"
 #include "src/fileio/params/meta.h"
 #include "src/fileio/params/theme.h"
 
-#include "../params.h"
+export module pln.fileio.json.mappers;
 
 import pln.control;
+import pln.fileio.params.entities_map;
+import pln.fileio.params.strategies;
 import pln.services.app;
 import pln.utils.crash;
+
+using namespace pln::fileio::params;
 
 template<typename T>
 void
@@ -54,6 +56,7 @@ struct adl_serializer<BehaviourEnum>
   }
 };
 
+
 template<>
 struct adl_serializer<pln::control::Action>
 {
@@ -76,6 +79,7 @@ struct adl_serializer<pln::control::Action>
   }
 };
 
+
 template<>
 struct adl_serializer<glm::vec3>
 {
@@ -86,6 +90,7 @@ struct adl_serializer<glm::vec3>
     json_obj.at(2).get_to(value.z);
   }
 };
+
 
 template<>
 struct adl_serializer<std::vector<glm::vec3>>
@@ -104,6 +109,7 @@ struct adl_serializer<std::vector<glm::vec3>>
   }
 };
 
+
 template<>
 struct adl_serializer<CameraParams>
 {
@@ -112,6 +118,7 @@ struct adl_serializer<CameraParams>
     json.at("position").get_to(value.position);
   }
 };
+
 
 template<>
 struct adl_serializer<BoundaryParams>
@@ -123,6 +130,7 @@ struct adl_serializer<BoundaryParams>
   }
 };
 
+
 template<>
 struct adl_serializer<LevelMetaParams>
 {
@@ -133,6 +141,7 @@ struct adl_serializer<LevelMetaParams>
   }
 };
 
+
 template<>
 struct adl_serializer<ThemeParams>
 {
@@ -142,6 +151,7 @@ struct adl_serializer<ThemeParams>
     json.at("font-family").get_to(value.font_family);
   }
 };
+
 
 template<>
 struct adl_serializer<VelocityParams>
@@ -162,6 +172,7 @@ struct adl_serializer<VelocityParams>
     value.damping = get("damping");
   }
 };
+
 
 template<>
 struct adl_serializer<PositionStrategy>
@@ -206,6 +217,7 @@ struct adl_serializer<PositionStrategy>
     }
   }
 };
+
 
 template<>
 struct adl_serializer<EntityParams>
@@ -279,6 +291,7 @@ struct adl_serializer<EntityParams>
     }
   };
 };
+
 
 template<>
 struct adl_serializer<EntityParamsMap>

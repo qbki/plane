@@ -1,9 +1,16 @@
-#pragma once
+module;
 #include <glm/vec3.hpp>
 #include <string>
 #include <variant>
 #include <vector>
 
+#include "src/utils/types.h"
+
+export module pln.fileio.params.strategies;
+
+namespace pln::fileio::params {
+
+export
 enum class BehaviourEnum : char
 {
   UNKNOWN = 0,
@@ -14,9 +21,13 @@ enum class BehaviourEnum : char
   TUTORIAL_BUTTON,
 };
 
+
+export
 struct PositionStrategyUndefined
 {};
 
+
+export
 struct PositionStrategyRound
 {
   BehaviourEnum behaviour;
@@ -25,6 +36,8 @@ struct PositionStrategyRound
   std::vector<std::string> entity_ids;
 };
 
+
+export
 struct PositionStrategySingle
 {
   BehaviourEnum behaviour;
@@ -32,6 +45,8 @@ struct PositionStrategySingle
   std::string entity_id;
 };
 
+
+export
 struct PositionStrategyMany
 {
   BehaviourEnum behaviour;
@@ -39,6 +54,8 @@ struct PositionStrategyMany
   std::string entity_id;
 };
 
+
+export
 struct PositionStrategySquare
 {
   BehaviourEnum behaviour;
@@ -48,12 +65,16 @@ struct PositionStrategySquare
   std::vector<std::string> entity_ids;
 };
 
+
+export
 struct PositionStrategyVoid
 {
   BehaviourEnum behaviour; // Supported only BehaviourEnum::LIGHT
   std::string entity_id;
 };
 
+
+export
 using PositionStrategy = std::variant<PositionStrategyUndefined,
                                       PositionStrategyRound,
                                       PositionStrategySingle,
@@ -61,5 +82,17 @@ using PositionStrategy = std::variant<PositionStrategyUndefined,
                                       PositionStrategySquare,
                                       PositionStrategyVoid>;
 
+
+export
 BehaviourEnum
-get_behaviour(const PositionStrategy& strategy);
+get_behaviour(const PositionStrategy& strategy)
+{
+  return std::visit(
+    Overloaded {
+      [](const auto& value) { return value.behaviour; },
+      [](const PositionStrategyUndefined) { return BehaviourEnum::UNKNOWN; },
+    },
+    strategy);
+}
+
+}

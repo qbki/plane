@@ -1,12 +1,11 @@
 module;
 #define GLM_ENABLE_EXPERIMENTAL
+#include <entt/entt.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/trigonometric.hpp>
 #include <vector>
-
-#include "src/game_state/factory.h"
 
 export module pln.systems.player;
 
@@ -14,6 +13,7 @@ import pln.components.common;
 import pln.components.transform;
 import pln.components.weapon;
 import pln.events.event;
+import pln.game_state.factory;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
@@ -21,6 +21,7 @@ import pln.utils.common;
 
 using namespace pln::components;
 using namespace pln::events;
+using namespace pln::game_state;
 
 namespace pln::systems::player {
 
@@ -144,7 +145,7 @@ player_enemy_pointers(const pln::scene::IScene& scene)
   }
   while (!is_finished()) {
     if (is_far(player_position, *it_start)) {
-      auto entity = ModelFactory::make_rect(registry, "");
+      auto entity = factory::make_rect(registry, "");
       auto& transform = registry->get<Transform>(entity);
       auto pos = calc_position(player_position, *it_start);
       transform.translate(pos);

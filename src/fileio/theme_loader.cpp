@@ -7,8 +7,8 @@
 #include "src/gui/core/theme.h"
 
 #include "theme_loader.h"
-#include "json/mappers.h" // IWYU pragma: keep
 
+import pln.fileio.json.mappers;
 import pln.services.app;
 import pln.utils.file_loaders;
 

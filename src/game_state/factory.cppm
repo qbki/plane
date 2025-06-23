@@ -1,9 +1,14 @@
+module;
+#include <entt/entt.hpp>
+#include <functional>
 #include <glm/gtc/constants.hpp>
 #include <glm/vec3.hpp>
+#include <memory>
+#include <string>
 
 #include "src/gui/components/text.h"
 
-#include "factory.h"
+export module pln.game_state.factory;
 
 import pln.components.common;
 import pln.components.transform;
@@ -14,8 +19,14 @@ import pln.shapes;
 
 using namespace pln::components;
 
-namespace ModelFactory {
+namespace pln::game_state::factory {
 
+export
+using MakerFn = std::function<entt::entity(std::shared_ptr<entt::registry>&,
+                                           const std::string&)>;
+
+
+export
 entt::entity
 make_player(std::shared_ptr<entt::registry>& registry,
             const std::string& file_path)
@@ -36,6 +47,8 @@ make_player(std::shared_ptr<entt::registry>& registry,
   return entity;
 }
 
+
+export
 entt::entity
 make_enemy(std::shared_ptr<entt::registry>& registry,
            const std::string& file_path)
@@ -56,6 +69,8 @@ make_enemy(std::shared_ptr<entt::registry>& registry,
   return entity;
 }
 
+
+export
 entt::entity
 make_debris(std::shared_ptr<entt::registry>& registry,
             const std::string& file_path)
@@ -74,6 +89,8 @@ make_debris(std::shared_ptr<entt::registry>& registry,
   return entity;
 }
 
+
+export
 entt::entity
 make_rect(std::shared_ptr<entt::registry>& registry, const std::string&)
 {
@@ -94,6 +111,8 @@ make_rect(std::shared_ptr<entt::registry>& registry, const std::string&)
   return entity;
 }
 
+
+export
 entt::entity
 make_projectile(std::shared_ptr<entt::registry>& registry,
                 const std::string& file_path)
@@ -112,6 +131,8 @@ make_projectile(std::shared_ptr<entt::registry>& registry,
   return entity;
 }
 
+
+export
 entt::entity
 make_static(std::shared_ptr<entt::registry>& registry,
             const std::string& file_path)
@@ -126,6 +147,8 @@ make_static(std::shared_ptr<entt::registry>& registry,
   return entity;
 }
 
+
+export
 entt::entity
 make_text(std::shared_ptr<entt::registry>& registry, const std::string&)
 {
@@ -135,6 +158,8 @@ make_text(std::shared_ptr<entt::registry>& registry, const std::string&)
   return entity;
 }
 
+
+export
 entt::entity
 make_tutorial_button(std::shared_ptr<entt::registry>& registry,
                      const std::string& file_path)
@@ -151,6 +176,8 @@ make_tutorial_button(std::shared_ptr<entt::registry>& registry,
   return entity;
 }
 
+
+export
 entt::entity
 make_particle(std::shared_ptr<entt::registry>& registry,
               const std::string& file_path)
@@ -169,6 +196,8 @@ make_particle(std::shared_ptr<entt::registry>& registry,
   return entity;
 }
 
+
+export
 entt::entity
 make_point_light(std::shared_ptr<entt::registry>& registry, const std::string&)
 {
@@ -185,6 +214,8 @@ make_point_light(std::shared_ptr<entt::registry>& registry, const std::string&)
   return entity;
 }
 
+
+export
 entt::entity
 make_directional_light(std::shared_ptr<entt::registry>& registry,
                        const std::string&)

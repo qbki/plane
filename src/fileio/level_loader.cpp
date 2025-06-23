@@ -4,22 +4,26 @@
 #include <variant>
 #include <vector>
 
+#include "src/fileio/params/entities.h"
 #include "src/fileio/params/meta.h"
-#include "src/fileio/params/strategies.h"
-#include "src/game_state/factory.h"
 #include "src/utils/result.h"
 #include "src/utils/types.h"
 
 #include "level_loader.h"
-#include "params.h"
-#include "json/mappers.h" // IWYU pragma: keep
 
+import pln.fileio.json.mappers;
+import pln.fileio.params.entities_map;
+import pln.fileio.params.position_strategy_viditor;
+import pln.fileio.params.strategies;
+import pln.game_state.factory;
 import pln.scene.iscene;
 import pln.services.cache;
 import pln.services.logger;
 import pln.utils.crash;
 import pln.utils.file_loaders;
 
+using namespace pln::fileio::params;
+using namespace pln::game_state;
 using namespace pln::utils::file_loaders;
 
 void
@@ -43,19 +47,19 @@ setup_boundaries(BoundaryParams& boundaries, pln::scene::IScene& scene)
   });
 }
 
-ModelFactory::MakerFn
+factory::MakerFn
 get_entity_maker(const PositionStrategy& strategy,
                  const EntityParamsMap& entities)
 {
-  ModelFactory::MakerFn maker = [&entities, strategy](auto&... args) {
+  factory::MakerFn maker = [&entities, strategy](auto&... args) {
     auto behaviour = get_behaviour(strategy);
     switch (behaviour) {
       case BehaviourEnum::ENEMY: {
-        return ModelFactory::make_enemy(args...);
+        return factory::make_enemy(args...);
         break;
       }
       case BehaviourEnum::PLAYER: {
-        return ModelFactory::make_player(args...);
+        return factory::make_player(args...);
         break;
       }
       case BehaviourEnum::STATIC: {
@@ -73,13 +77,13 @@ get_entity_maker(const PositionStrategy& strategy,
           strategy);
         auto entity_params = entities.params(entity_id);
         if (std::holds_alternative<EntityParamsText>(entity_params)) {
-          return ModelFactory::make_text(args...);
+          return factory::make_text(args...);
         }
-        return ModelFactory::make_static(args...);
+        return factory::make_static(args...);
         break;
       }
       case BehaviourEnum::TUTORIAL_BUTTON: {
-        return ModelFactory::make_tutorial_button(args...);
+        return factory::make_tutorial_button(args...);
         break;
       }
       case BehaviourEnum::LIGHT: {
@@ -95,10 +99,10 @@ get_entity_maker(const PositionStrategy& strategy,
         auto entity_params = entities.params(entity_id);
         if (std::holds_alternative<EntityParamsDirectionalLight>(
               entity_params)) {
-          return ModelFactory::make_directional_light(args...);
+          return factory::make_directional_light(args...);
         } else if (std::holds_alternative<EntityParamsPointLight>(
                      entity_params)) {
-          return ModelFactory::make_point_light(args...);
+          return factory::make_point_light(args...);
         } else {
           pln::utils::crash(
             std::format("Unknown light type for the entity: {}", entity_id));

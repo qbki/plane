@@ -4,7 +4,6 @@
 #include <variant>
 #include <vector>
 
-#include "src/fileio/params/meta.h"
 #include "src/utils/result.h"
 #include "src/utils/types.h"
 
@@ -13,6 +12,7 @@
 import pln.fileio.json.mappers;
 import pln.fileio.params.entities;
 import pln.fileio.params.entities_map;
+import pln.fileio.params.meta;
 import pln.fileio.params.position_strategy_viditor;
 import pln.fileio.params.strategies;
 import pln.game_state.factory;

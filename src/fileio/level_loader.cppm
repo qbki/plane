@@ -1,3 +1,4 @@
+module;
 #include <format>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -7,7 +8,7 @@
 #include "src/utils/result.h"
 #include "src/utils/types.h"
 
-#include "level_loader.h"
+export module pln.fileio.level_loader;
 
 import pln.fileio.json.mappers;
 import pln.fileio.params.entities;
@@ -26,11 +27,14 @@ using namespace pln::fileio::params;
 using namespace pln::game_state;
 using namespace pln::utils::file_loaders;
 
+namespace pln::fileio {
+
 void
 setup_camera(CameraParams& camera_params, pln::scene::IScene& scene)
 {
   scene.state().camera().position(camera_params.position);
 }
+
 
 void
 setup_boundaries(BoundaryParams& boundaries, pln::scene::IScene& scene)
@@ -46,6 +50,7 @@ setup_boundaries(BoundaryParams& boundaries, pln::scene::IScene& scene)
     .max = boundaries.max,
   });
 }
+
 
 factory::MakerFn
 get_entity_maker(const PositionStrategy& strategy,
@@ -118,6 +123,7 @@ get_entity_maker(const PositionStrategy& strategy,
   return maker;
 }
 
+
 void
 preload_models(const std::vector<EntityParamsModel>& models)
 {
@@ -126,6 +132,8 @@ preload_models(const std::vector<EntityParamsModel>& models)
   }
 }
 
+
+export
 void
 load_level(const std::string& entities_file_path,
            const std::string& level_file_path,
@@ -149,4 +157,6 @@ load_level(const std::string& entities_file_path,
     PositionStrategyVisitor::visit(strategy, entities, scene, maker);
   }
   pln::services::logger().info(std::format("Loaded level: {}", level_file_path));
+}
+
 }

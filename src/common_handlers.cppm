@@ -6,7 +6,6 @@ module;
 #include <utility>
 #include <vector>
 
-#include "src/fileio/level_loader.h"
 #include "src/fileio/levels_order_loader.h"
 #include "src/fileio/save_data_io.h"
 #include "src/gui/game_screen_factory.h"
@@ -26,6 +25,7 @@ import pln.cameras.perspective_camera;
 import pln.consts;
 import pln.events.event;
 import pln.events.event_emitter;
+import pln.fileio.level_loader;
 import pln.scene.iscene;
 import pln.scene.scene;
 import pln.services.app;
@@ -50,6 +50,7 @@ import pln.systems.velocity;
 import pln.utils.system;
 
 using namespace pln::events;
+using namespace pln::fileio;
 
 namespace pln::common_handlers {
 

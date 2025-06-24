@@ -6,7 +6,6 @@ module;
 #include <utility>
 #include <vector>
 
-#include "src/fileio/levels_order_loader.h"
 #include "src/fileio/save_data_io.h"
 #include "src/gui/game_screen_factory.h"
 #include "src/gui/in_game_main_menu_factory.h"
@@ -26,6 +25,7 @@ import pln.consts;
 import pln.events.event;
 import pln.events.event_emitter;
 import pln.fileio.level_loader;
+import pln.fileio.levels_order_loader;
 import pln.scene.iscene;
 import pln.scene.scene;
 import pln.services.app;

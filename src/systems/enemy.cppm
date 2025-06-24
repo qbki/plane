@@ -57,12 +57,11 @@ enemy_hunting(pln::scene::IScene& scene)
                               EnemyKind,
                               Available>()
                         .each();
-  auto enemies = std::ranges::subrange(enemies_view)
-                 | std::ranges::views::filter([](const auto& tuple) {
-                     return std::get<2>(tuple) == EnemyStateEnum::HUNTING;
-                   });
+  for (auto [id_a, transform_a, state_a, mesh_a, weapon_a] : enemies_view) {
+    if (state_a != EnemyStateEnum::HUNTING) {
+      return;
+    }
 
-  for (auto [id_a, transform_a, _state_a, mesh_a, weapon_a] : enemies) {
     auto position_a = transform_a.translation();
     const auto shooting_distance = weapon_a.bullet_speed * weapon_a.lifetime;
     auto bvolume_a = std::get_if<Shape::Sphere>(&mesh_a->bounding_volume());

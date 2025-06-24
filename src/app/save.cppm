@@ -2,11 +2,12 @@ module;
 #include <utility>
 #include <filesystem>
 
-#include "src/fileio/save_data_io.h"
-
 export module pln.app.save;
 
+import pln.fileio.save_data_io;
 import pln.utils.system;
+
+using namespace pln::fileio;
 
 namespace pln::app {
 
@@ -23,18 +24,18 @@ public:
 
 
   [[nodiscard]] SaveData
-  load() const
+  load(const std::filesystem::path& assets_dir_path) const
   {
     auto exec_path = pln::utils::system::get_excutable_path();
-    return load_save_data(exec_path / _save_data_path);
+    return load_save_data(exec_path / _save_data_path, assets_dir_path);
   }
 
 
   void
-  save(const SaveData& value) const
+  save(const std::filesystem::path& assets_dir_path, const SaveData& value) const
   {
     auto exec_path = pln::utils::system::get_excutable_path();
-    store_save_data(exec_path / _save_data_path, value);
+    store_save_data(exec_path / _save_data_path, assets_dir_path, value);
   }
 };
 

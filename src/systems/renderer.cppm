@@ -54,19 +54,18 @@ struct TransformHolder
 void
 draw_sorted(const std::unordered_map<pln::meshes::Mesh*, TransformHolder>& transform_holders)
 {
-  using namespace std;
-  vector<const TransformHolder*> holders {};
-  auto view = transform_holders | views::values
-              | views::filter([](const TransformHolder& value) {
-                  return value.draw_params.transforms.size() > 0;
-                })
-              | views::transform([](auto& item) { return &item; });
-  ranges::copy(view, std::back_inserter(holders));
-  ranges::sort(holders, [](const TransformHolder* a, const TransformHolder* b) {
+  auto values = transform_holders | std::views::values;
+  std::vector<const TransformHolder*> filtered_holders {};
+  for (auto& item : values) {
+    if (!item.draw_params.transforms.empty()) {
+      filtered_holders.push_back(&item);
+    }
+  }
+  std::ranges::sort(filtered_holders, [](const TransformHolder* a, const TransformHolder* b) {
     return a->draw_params.transforms[0][3].z
            < b->draw_params.transforms[0][3].z;
   });
-  for (auto& holder : holders) {
+  for (auto& holder : filtered_holders) {
     holder->texture->use(0);
     holder->mesh->draw(holder->draw_params);
   }

@@ -1,12 +1,12 @@
 module;
 #include <compare>
+#include <filesystem>
 #include <optional>
 #include <ranges>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "src/fileio/save_data_io.h"
 #include "src/gui/game_screen_factory.h"
 #include "src/gui/in_game_main_menu_factory.h"
 #include "src/gui/loading_factory.h"
@@ -26,6 +26,7 @@ import pln.events.event;
 import pln.events.event_emitter;
 import pln.fileio.level_loader;
 import pln.fileio.levels_order_loader;
+import pln.fileio.save_data_io;
 import pln.scene.iscene;
 import pln.scene.scene;
 import pln.services.app;
@@ -165,7 +166,8 @@ void
 load_current_level(const LoadCurrentLevelEvent&)
 {
   auto exec_path = utils::system::get_excutable_path();
-  auto save_data = load_save_data(exec_path / pln::consts::SAVE_DATA_FILE);
+  auto save_data = load_save_data(exec_path / pln::consts::SAVE_DATA_FILE,
+                                  pln::services::app().assets_dir());
   auto levels_dir = pln::services::app().levels_dir();
   auto levels_order = load_levels_order(levels_dir / "levels.json");
   if (!save_data.current_level.has_value()) {
@@ -216,7 +218,9 @@ load_next_level(const LoadNextLevelEvent&)
     auto& scene = load_level_scene();
     load_level(levels_dir / "entities.json", *next_level_it, scene);
     pln::services::app().info().current_level = *next_level_it;
-    pln::services::app().save_data().save({ .current_level = *next_level_it });
+    pln::services::app().save_data().save(
+        pln::services::app().assets_dir(),
+        { .current_level = *next_level_it });
   }
 }
 

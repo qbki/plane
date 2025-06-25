@@ -1,15 +1,28 @@
+module;
 #include <filesystem>
 #include <functional>
 #include <nlohmann/json.hpp>
 
 #include "src/utils/result.h"
 
-#include "settings_io.h"
+export module pln.fileio.settings_io;
 
 import pln.utils.file_loaders;
 
 using namespace pln::utils::file_loaders;
 
+namespace pln::fileio {
+
+export
+struct SettingsData
+{
+  constexpr static int DEFAULT_VOLUME = 100;
+
+  int volume = DEFAULT_VOLUME;
+};
+
+
+export
 SettingsData
 load_settings(const std::filesystem::path& settings_path)
 {
@@ -23,6 +36,8 @@ load_settings(const std::filesystem::path& settings_path)
     .or_fallback({});
 }
 
+
+export
 void
 save_settings(const std::filesystem::path& settings_path,
               const SettingsData& settings)
@@ -30,4 +45,6 @@ save_settings(const std::filesystem::path& settings_path,
   nlohmann::json json;
   json["volume"] = settings.volume;
   save_local_json(settings_path, json);
+}
+
 }

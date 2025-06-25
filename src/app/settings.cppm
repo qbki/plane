@@ -1,19 +1,21 @@
 module;
 #include <SDL_mixer.h>
+#include <filesystem>
 #include <utility>
-
-#include "src/fileio/settings_io.h"
 
 export module pln.app.settings;
 
 import pln.components.percent;
+import pln.fileio.settings_io;
 import pln.utils.system;
 
 using namespace pln::components;
+using namespace pln::fileio;
 
 namespace pln::app {
 
-export class Settings
+export
+class Settings
 {
 private:
   std::filesystem::path _settings_path;

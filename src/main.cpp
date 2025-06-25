@@ -4,8 +4,8 @@
 #include <string>
 #include <utility>
 
-#include "fileio/theme_loader.h"
 #include "fileio/translation_loader.h"
+#include "gui/core/theme.h"
 #include "logger/logger.h"
 #include "shading/deferred_shading.h"
 #include "utils/types.h"
@@ -17,6 +17,7 @@ import pln.consts;
 import pln.control;
 import pln.events.event;
 import pln.events.event_emitter;
+import pln.fileio.theme_loader;
 import pln.game_loop;
 import pln.logger;
 import pln.sdl;
@@ -142,7 +143,7 @@ main(int argc, char* argv[])
 
   pln::Service<pln::app::App>::install(std::move(app));
 
-  auto theme = load_theme(pln::services::app().levels_dir() / "theme.json");
+  auto theme = pln::fileio::load_theme(pln::services::app().levels_dir() / "theme.json");
   pln::Service<const GUI::Theme>::install(std::move(theme));
 
   auto quad = std::make_unique<pln::services::GuiQuad>(pln::shapes::create_quad(1, 1, 0));

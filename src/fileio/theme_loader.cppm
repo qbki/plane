@@ -1,11 +1,11 @@
+module;
 #include <filesystem>
 #include <memory>
 #include <nlohmann/json.hpp>
-#include <string>
 
 #include "src/gui/core/theme.h"
 
-#include "theme_loader.h"
+export module pln.fileio.theme_loader;
 
 import pln.fileio.json.mappers;
 import pln.fileio.params.theme;
@@ -15,6 +15,9 @@ import pln.utils.file_loaders;
 using namespace pln::fileio::params;
 using namespace pln::utils::file_loaders;
 
+namespace pln::fileio {
+
+export
 std::unique_ptr<GUI::Theme>
 load_theme(const std::filesystem::path& theme_file_path)
 {
@@ -34,4 +37,6 @@ load_theme(const std::filesystem::path& theme_file_path)
   theme->typography.h5.name = theme_params.font_family;
   theme->typography.h6.name = theme_params.font_family;
   return theme;
+}
+
 }

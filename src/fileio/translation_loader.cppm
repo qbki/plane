@@ -1,9 +1,9 @@
-#include <exception>
+module;
 #include <format>
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 
-#include "translation_loader.h"
+export module pln.fileio.translation_loader;
 
 import pln.services.logger;
 import pln.utils.crash;
@@ -11,6 +11,9 @@ import pln.utils.file_loaders;
 
 using namespace pln::utils::file_loaders;
 
+namespace pln::fileio {
+
+export
 std::unordered_map<std::string, std::string>
 load_translations(const std::filesystem::path& file_path)
 {
@@ -39,4 +42,6 @@ load_translations(const std::filesystem::path& file_path)
   }
 
   return translations;
+}
+
 }

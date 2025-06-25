@@ -4,7 +4,6 @@
 #include <string>
 #include <utility>
 
-#include "fileio/translation_loader.h"
 #include "gui/core/theme.h"
 #include "logger/logger.h"
 #include "shading/deferred_shading.h"
@@ -18,6 +17,7 @@ import pln.control;
 import pln.events.event;
 import pln.events.event_emitter;
 import pln.fileio.theme_loader;
+import pln.fileio.translation_loader;
 import pln.game_loop;
 import pln.logger;
 import pln.sdl;
@@ -138,7 +138,7 @@ main(int argc, char* argv[])
   });
   app->add_handler(pln::systems::renderer::render);
 
-  auto translations = load_translations(app->assets_dir() / "text" / "en.json");
+  auto translations = pln::fileio::load_translations(app->assets_dir() / "text" / "en.json");
   app->set_translations(translations);
 
   pln::Service<pln::app::App>::install(std::move(app));

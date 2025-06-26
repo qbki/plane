@@ -2,14 +2,14 @@ module;
 #include <entt/entt.hpp>
 #include <memory>
 
-#include "src/game_state/state.h"
-
 export module pln.scene.iscene;
 
 import pln.collections.octree;
 import pln.events.event_emitter;
+import pln.game_state.state;
 
 using namespace pln::events;
+using namespace pln::game_state;
 
 namespace pln::scene {
 

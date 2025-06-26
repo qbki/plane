@@ -7,13 +7,11 @@ module;
 #include <utility>
 #include <vector>
 
-#include "src/gui/game_screen_factory.h"
 #include "src/gui/in_game_main_menu_factory.h"
 #include "src/gui/loading_factory.h"
 #include "src/gui/lose_menu_factory.h"
 #include "src/gui/screens/load_credits_screen.h"
 #include "src/gui/utils/utils.h"
-#include "src/sound/sound.h"
 
 export module pln.common_handlers;
 
@@ -27,6 +25,8 @@ import pln.events.event_emitter;
 import pln.fileio.level_loader;
 import pln.fileio.levels_order_loader;
 import pln.fileio.save_data_io;
+import pln.gui.credits_screen_factory;
+import pln.gui.game_screen_factory;
 import pln.scene.iscene;
 import pln.scene.scene;
 import pln.services.app;
@@ -52,6 +52,7 @@ import pln.utils.system;
 
 using namespace pln::events;
 using namespace pln::fileio;
+using namespace pln::gui;
 
 namespace pln::common_handlers {
 
@@ -150,7 +151,7 @@ load_level_scene()
 
   auto gui_camera = make_gui_camera(pln::services::app());
   auto ui = std::make_unique<pln::scene::Scene>(std::move(gui_camera));
-  ui->handlers().once(GUI::game_screen_factory);
+  ui->handlers().once(game_screen_factory);
   ui->handlers().add(pln::systems::update_gui::update_gui);
   ui->handlers().add(pln::systems::ui::ui);
   ui->is_deferred(false);

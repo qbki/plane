@@ -3,15 +3,16 @@ module;
 #include <memory>
 #include <utility>
 
-#include "src/game_state/state.h"     // IWYU pragma: export
-
 export module pln.scene.scene;
 
 import pln.cameras.icamera;
 import pln.collections.octree;
 import pln.events.event_emitter;
+import pln.game_state.state;
 import pln.scene.iscene;
 import pln.services.app;
+
+using namespace pln::game_state;
 
 namespace pln::scene {
 

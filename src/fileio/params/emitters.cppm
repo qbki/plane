@@ -1,11 +1,11 @@
 module;
+#include <entt/entt.hpp>
 #include <glm/common.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/vec3.hpp>
+#include <memory>
 #include <string>
-
-#include "src/game_state/state.h"
 
 export module pln.fileio.params.emitters;
 
@@ -13,6 +13,7 @@ import pln.components.common;
 import pln.components.transform;
 import pln.fileio.params.entities;
 import pln.game_state.factory;
+import pln.game_state.state;
 
 using namespace pln::components;
 using namespace pln::fileio::params;

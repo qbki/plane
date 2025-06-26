@@ -1,3 +1,4 @@
+module;
 #include <format>
 #include <string>
 #include <utility>
@@ -5,7 +6,7 @@
 #include "src/gui/components/rect.h"
 #include "src/gui/components/text.h"
 
-#include "game_screen_factory.h"
+export module pln.gui.game_screen_factory;
 
 import pln.components.common;
 import pln.components.transform;
@@ -16,8 +17,9 @@ import pln.shapes;
 
 using namespace pln::components;
 
-namespace GUI {
+namespace pln::gui {
 
+export
 void
 game_screen_factory(pln::scene::IScene& scene)
 {

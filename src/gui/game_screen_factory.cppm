@@ -3,13 +3,12 @@ module;
 #include <string>
 #include <utility>
 
-#include "src/gui/components/rect.h"
-#include "src/gui/components/text.h"
-
 export module pln.gui.game_screen_factory;
 
 import pln.components.common;
 import pln.components.transform;
+import pln.gui.components.rect;
+import pln.gui.components.text;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
@@ -31,12 +30,12 @@ game_screen_factory(pln::scene::IScene& scene)
   auto& theme = pln::services::theme();
   auto& registry = scene.state().shared_registry();
 
-  auto text = GUI::Factory::text(registry,
-                                 {
-                                   .color = theme.palette.white_accent,
-                                   .font = theme.typography.h5,
-                                   .text = "Hostiles: 0",
-                                 });
+  auto text = components::text(registry,
+                               {
+                                 .color = theme.palette.white_accent,
+                                 .font = theme.typography.h5,
+                                 .text = "Hostiles: 0",
+                               });
   auto& text_transform = registry->get<Transform>(text);
   text_transform.translate({ OFFSET, OFFSET, 0 });
   scene.handlers().add([text](pln::scene::IScene& scene) {
@@ -50,7 +49,7 @@ game_screen_factory(pln::scene::IScene& scene)
     }
   });
 
-  auto lives_entity = GUI::Factory::rect(
+  auto lives_entity = components::rect(
     registry,
     {
       .width = static_cast<float>(MAX_LIVES_WIDTH),

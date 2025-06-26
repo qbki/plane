@@ -1,15 +1,17 @@
+module;
 #include <algorithm>
 #include <entt/entt.hpp>
 #include <vector>
 
-#include "utils.h"
+export module pln.gui.components.utils;
 
 import pln.components.common;
 
 using namespace pln::components;
 
-namespace GUI {
+namespace pln::gui::components::utils {
 
+export
 void
 remove_child(std::shared_ptr<entt::registry>& registry,
              entt::entity parent,
@@ -22,6 +24,8 @@ remove_child(std::shared_ptr<entt::registry>& registry,
   parents_children.erase(rm_begin, rm_end);
 }
 
+
+export
 void
 reparent(std::shared_ptr<entt::registry>& registry,
          const std::vector<entt::entity>& children,

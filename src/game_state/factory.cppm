@@ -6,13 +6,12 @@ module;
 #include <memory>
 #include <string>
 
-#include "src/gui/components/text.h"
-
 export module pln.game_state.factory;
 
 import pln.components.common;
 import pln.components.transform;
 import pln.control;
+import pln.gui.components.text;
 import pln.services.cache;
 import pln.services.theme;
 import pln.shapes;
@@ -152,7 +151,7 @@ export
 entt::entity
 make_text(std::shared_ptr<entt::registry>& registry, const std::string&)
 {
-  auto entity = GUI::Factory::text(registry, GUI::Factory::TextConfig {});
+  auto entity = pln::gui::components::text(registry);
   registry->emplace<ParticleKind>(entity); // TODO Add better type
   registry->emplace<MeshPointer>(entity, pln::shapes::create_quad());
   return entity;

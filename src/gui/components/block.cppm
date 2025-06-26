@@ -1,23 +1,33 @@
+module;
 #include <entt/entt.hpp>
 #include <glm/common.hpp>
 
-#include "block.h"
-#include "utils.h"
+export module pln.gui.components.block;
 
 import pln.components.common;
 import pln.components.transform;
 import pln.events.event;
 import pln.events.event_emitter;
+import pln.gui.components.utils;
 import pln.services.app;
 import pln.shapes;
 
 using namespace pln::components;
 using namespace pln::events;
 
-namespace GUI::Factory {
+namespace pln::gui::components {
 
+export
+struct BlockConfig
+{
+  pln::components::Children children { std::vector<entt::entity>() };
+};
+
+
+export
 entt::entity
-block(std::shared_ptr<entt::registry>& registry, const BlockConfig& config)
+block(std::shared_ptr<entt::registry>& registry,
+      const BlockConfig& config = {})
 {
   auto entity = registry->create();
 
@@ -28,7 +38,7 @@ block(std::shared_ptr<entt::registry>& registry, const BlockConfig& config)
   auto& layout = registry->emplace<EventEmitter<GUILayout>>(
     entity);
 
-  reparent(registry, config.children.value, entity);
+  utils::reparent(registry, config.children.value, entity);
 
   layout.add([registry, entity](auto&) {
     auto [children,

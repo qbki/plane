@@ -7,7 +7,6 @@ module;
 #include <utility>
 #include <vector>
 
-#include "src/gui/in_game_main_menu_factory.h"
 #include "src/gui/loading_factory.h"
 #include "src/gui/lose_menu_factory.h"
 #include "src/gui/screens/load_credits_screen.h"
@@ -27,6 +26,7 @@ import pln.fileio.levels_order_loader;
 import pln.fileio.save_data_io;
 import pln.gui.credits_screen_factory;
 import pln.gui.game_screen_factory;
+import pln.gui.in_game_main_menu_factory;
 import pln.scene.iscene;
 import pln.scene.scene;
 import pln.services.app;
@@ -88,7 +88,7 @@ load_in_game_main_menu()
   auto camera = make_gui_camera(pln::services::app());
   auto scene = std::make_unique<pln::scene::Scene>(std::move(camera));
   scene->is_deferred(false);
-  scene->handlers().once(GUI::in_game_main_menu_factory);
+  scene->handlers().once(in_game_main_menu_factory);
   scene->handlers().add(pln::systems::update_gui::update_gui);
   scene->handlers().add(pln::systems::ui::ui);
   pln::services::app().push_scene(std::move(scene));

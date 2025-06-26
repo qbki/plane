@@ -1,25 +1,41 @@
-#include "src/gui/components/rect.h"
+module;
+#include <entt/entt.hpp>
+#include <memory>
+#include <optional>
 
-#include "background.h"
+export module pln.gui.components.background;
 
 import pln.components.common;
 import pln.components.transform;
 import pln.events.event;
 import pln.events.event_emitter;
+import pln.gui.components.rect;
 import pln.services.app;
 import pln.services.events;
+import pln.services.theme;
 import pln.shapes;
+import pln.utils.color;
 
 using namespace pln::components;
 using namespace pln::events;
 
-namespace GUI::Factory {
+namespace pln::gui::components {
 
+export
+struct BackgroundConfig
+{
+  pln::utils::color::Color color { pln::services::theme().palette.white };
+  pln::components::Parent parent { std::nullopt };
+  float z { 0 };
+};
+
+
+export
 entt::entity
 background(std::shared_ptr<entt::registry>& registry,
-           const BackgroundConfig& config)
+           const BackgroundConfig& config = {})
 {
-  auto entity = Factory::rect(
+  auto entity = rect(
     registry,
     {
       .width = static_cast<float>(

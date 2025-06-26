@@ -1,7 +1,8 @@
-#include "src/gui/components/div.h"
-#include "src/gui/components/rect.h"
+module;
+#include <entt/entt.hpp>
+#include <optional>
 
-#include "progress.h"
+export module pln.gui.components.progress;
 
 import pln.components.common;
 import pln.components.percent;
@@ -9,38 +10,51 @@ import pln.components.transform;
 import pln.consts;
 import pln.events.event;
 import pln.events.event_emitter;
+import pln.gui.components.div;
+import pln.gui.components.rect;
 import pln.shapes;
 
 using namespace pln::components;
 using namespace pln::events;
 
-namespace GUI::Factory {
+namespace pln::gui::components {
 
+export
+struct ProgressConfig
+{
+  float width { 100.f }; // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+  float height { 10.f }; // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+  pln::components::Parent parent { std::nullopt };
+  int value { 0 };
+};
+
+
+export
 entt::entity
 progress(std::shared_ptr<entt::registry>& registry,
          const ProgressConfig& config)
 {
   const float line_height_coefficient = 0.1f;
 
-  auto line = Factory::rect(registry,
-                            {
-                              .width = config.width,
-                              .height = config.height * line_height_coefficient,
-                            });
+  auto line = rect(registry,
+                   {
+                     .width = config.width,
+                     .height = config.height * line_height_coefficient,
+                   });
 
-  auto progress = Factory::rect(registry,
-                                {
-                                  .width = config.width,
-                                  .height = config.height,
-                                });
+  auto progress = rect(registry,
+                       {
+                         .width = config.width,
+                         .height = config.height,
+                       });
 
-  auto entity = Factory::div(registry,
-                             {
-                               .width = config.width,
-                               .height = config.height,
-                               .parent = config.parent,
-                               .children = Children({ line, progress }),
-                             });
+  auto entity = div(registry,
+                    {
+                      .width = config.width,
+                      .height = config.height,
+                      .parent = config.parent,
+                      .children = Children({ line, progress }),
+                    });
 
   registry->emplace<Percent>(entity, config.value);
   registry->emplace<IsDirty>(entity, true);

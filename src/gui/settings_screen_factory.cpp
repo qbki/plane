@@ -1,16 +1,16 @@
 #include <string>
 
-#include "src/gui/components/ui.h"
-
 #include "settings_screen_factory.h"
 
 import pln.components.common;
 import pln.components.percent;
+import pln.gui.components.ui;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
 
 using namespace pln::components;
+using namespace pln::gui::components;
 
 namespace GUI {
 
@@ -18,7 +18,7 @@ void
 settings_screen_factory(pln::scene::IScene& scene)
 {
   auto& registry = scene.state().shared_registry();
-  auto ui = Factory::make_ui(registry);
+  auto ui = make_ui(registry);
   const int step = 5;
 
   auto progress = ui.progress({

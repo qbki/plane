@@ -1,7 +1,6 @@
 #include <string>
 #include <utility>
 
-#include "src/gui/components/ui.h"
 #include "src/gui/screens/settings_screen.h"
 #include "src/gui/utils/utils.h"
 
@@ -10,6 +9,7 @@
 import pln.components.common;
 import pln.events.event;
 import pln.fileio.save_data_io;
+import pln.gui.components.ui;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
@@ -18,6 +18,7 @@ import pln.utils.platform;
 using namespace pln::components;
 using namespace pln::events;
 using namespace pln::fileio;
+using namespace pln::gui::components;
 
 namespace GUI {
 
@@ -25,7 +26,7 @@ void
 main_menu_factory(const pln::scene::IScene& scene)
 {
   auto registry = scene.state().shared_registry();
-  auto ui = Factory::make_ui(registry);
+  auto ui = make_ui(registry);
   auto children = Children({});
   auto assets_dir = pln::services::app().assets_dir();
   auto save_data = pln::services::app().save_data().load(assets_dir);

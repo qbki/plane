@@ -1,13 +1,12 @@
 #include <string>
 
-#include "src/gui/components/ui.h"
-
 #include "lose_menu_factory.h"
 #include "utils/utils.h"
 
 import pln.app.app;
 import pln.components.common;
 import pln.events.event;
+import pln.gui.components.ui;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
@@ -15,13 +14,14 @@ import pln.services.theme;
 
 using namespace pln::components;
 using namespace pln::events;
+using namespace pln::gui::components;
 
 namespace GUI {
 
 void
 lose_menu_factory(const pln::scene::IScene& scene)
 {
-  auto ui = Factory::make_ui(scene.state().shared_registry());
+  auto ui = make_ui(scene.state().shared_registry());
 
   ui.block({
     .children = Children({

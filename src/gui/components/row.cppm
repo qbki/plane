@@ -1,21 +1,30 @@
+module;
 #include <algorithm>
 #include <entt/entt.hpp>
 #include <ranges>
 
-#include "row.h"
-#include "utils.h"
+export module pln.gui.components.row;
 
 import pln.components.common;
 import pln.components.transform;
 import pln.events.event;
 import pln.events.event_emitter;
+import pln.gui.components.utils;
 import pln.shapes;
 
 using namespace pln::components;
 using namespace pln::events;
 
-namespace GUI::Factory {
+namespace pln::gui::components {
 
+export
+struct RowConfig
+{
+  pln::components::Children children { std::vector<entt::entity>() };
+};
+
+
+export
 entt::entity
 row(std::shared_ptr<entt::registry>& registry, const RowConfig& config)
 {
@@ -28,7 +37,7 @@ row(std::shared_ptr<entt::registry>& registry, const RowConfig& config)
   auto& layout = registry->emplace<EventEmitter<GUILayout>>(
     entity);
 
-  reparent(registry, config.children.value, entity);
+  utils::reparent(registry, config.children.value, entity);
 
   layout.add([registry, entity](GUILayout &) {
     auto [children_ids,

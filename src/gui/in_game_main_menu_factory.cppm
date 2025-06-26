@@ -1,26 +1,29 @@
+module;
 #include <string>
 #include <utility>
 
-#include "src/gui/components/ui.h"
 #include "src/gui/screens/settings_screen.h"
 
-#include "in_game_main_menu_factory.h"
 #include "utils/utils.h"
+
+export module pln.gui.in_game_main_menu_factory;
 
 import pln.app.app;
 import pln.components.common;
+import pln.gui.components.ui;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
 
 using namespace pln::components;
 
-namespace GUI {
+namespace pln::gui {
 
+export
 void
 in_game_main_menu_factory(pln::scene::IScene& scene)
 {
-  auto ui = Factory::make_ui(scene.state().shared_registry());
+  auto ui = components::make_ui(scene.state().shared_registry());
 
   ui.block({
     .children = Children({
@@ -55,7 +58,7 @@ in_game_main_menu_factory(pln::scene::IScene& scene)
       ui.text_button({
         .text = "Title screen",
         .on_pointer_down_once =
-          [](auto&) { pln::services::app().add_once_handler(go_to_main_menu); },
+          [](auto&) { pln::services::app().add_once_handler(GUI::go_to_main_menu); },
       }),
     }),
   });

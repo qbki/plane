@@ -2,12 +2,12 @@ module;
 #include <sstream>
 #include <string>
 
-#include "src/gui/components/ui.h"
 #include "src/gui/utils/utils.h"
 
 export module pln.gui.credits_screen_factory;
 
 import pln.components.common;
+import pln.gui.components.ui;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
@@ -33,7 +33,7 @@ export
 void
 credits_screen_factory(const pln::scene::IScene& scene)
 {
-  auto ui = GUI::Factory::make_ui(scene.state().shared_registry());
+  auto ui = components::make_ui(scene.state().shared_registry());
   auto credits_file = pln::services::app().credits_file();
   auto credits_txt = load_text(credits_file).or_fallback("");
   auto credits_lines = split_by_line(credits_txt);

@@ -1,17 +1,29 @@
+module;
 #include <algorithm>
 #include <entt/entt.hpp>
 
-#include "div.h"
-#include "utils.h"
+export module pln.gui.components.div;
 
 import pln.components.common;
 import pln.components.transform;
+import pln.gui.components.utils;
 import pln.shapes;
 
 using namespace pln::components;
 
-namespace GUI::Factory {
+namespace pln::gui::components {
 
+export
+struct DivConfig
+{
+  float width { 0 };
+  float height { 0 };
+  pln::components::Parent parent { std::nullopt };
+  pln::components::Children children { std::vector<entt::entity>() };
+};
+
+
+export
 entt::entity
 div(std::shared_ptr<entt::registry>& registry, const DivConfig& config)
 {
@@ -26,7 +38,7 @@ div(std::shared_ptr<entt::registry>& registry, const DivConfig& config)
   registry->emplace<pln::shapes::RectSize>(entity, valid_width, valid_height);
   registry->emplace<Transform>(entity);
 
-  reparent(registry, config.children.value, entity);
+  utils::reparent(registry, config.children.value, entity);
 
   return entity;
 }

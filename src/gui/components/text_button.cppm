@@ -1,5 +1,7 @@
 module;
-#include "src/gui/core/button_state.h"
+#include <entt/entt.hpp>
+#include <optional>
+#include <string>
 
 export module pln.gui.components.text_button;
 
@@ -8,6 +10,7 @@ import pln.components.transform;
 import pln.events.event;
 import pln.events.event_emitter;
 import pln.gui.components.text;
+import pln.gui.core.button_state;
 import pln.gui.core.theme;
 import pln.services.theme;
 import pln.shapes;
@@ -66,11 +69,11 @@ text_button(std::shared_ptr<entt::registry>& registry,
                                 .text = config.text,
                               });
 
-  GUI::ButtonState button_state { active_entity, hover_entity, disabled_entity };
+  ButtonState button_state { active_entity, hover_entity, disabled_entity };
   button_state.apply(*registry);
 
   Children children { std::vector<entt::entity> { button_state.current() } };
-  registry->emplace<GUI::ButtonState>(entity, button_state);
+  registry->emplace<ButtonState>(entity, button_state);
   registry->emplace<Children>(entity, children);
   registry->emplace<IsPointerDownEventAccepted>(entity, false);
   registry->emplace<IsPointerInside>(entity, false);
@@ -96,20 +99,20 @@ text_button(std::shared_ptr<entt::registry>& registry,
 
   layout.add([registry, entity](auto&) {
     auto [state,
-          parent_rect_size] = registry->get<GUI::ButtonState, pln::shapes::RectSize>(entity);
+          parent_rect_size] = registry->get<ButtonState, pln::shapes::RectSize>(entity);
     const auto& child_rect_size = registry->get<pln::shapes::RectSize>(state.current());
     parent_rect_size = child_rect_size;
   });
 
   pointer_enter.add([registry, entity](auto&) {
-    auto [state, children] = registry->get<GUI::ButtonState, Children>(entity);
-    state.state(GUI::ButtonState::State::HOVER);
+    auto [state, children] = registry->get<ButtonState, Children>(entity);
+    state.state(ButtonState::State::HOVER);
     state.apply(*registry);
   });
 
   pointer_leave.add([registry, entity](auto&) {
-    auto [state, children] = registry->get<GUI::ButtonState, Children>(entity);
-    state.state(GUI::ButtonState::State::ACTIVE);
+    auto [state, children] = registry->get<ButtonState, Children>(entity);
+    state.state(ButtonState::State::ACTIVE);
     state.apply(*registry);
   });
 

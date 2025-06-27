@@ -2,17 +2,17 @@ module;
 #include <sstream>
 #include <string>
 
-#include "src/gui/utils/utils.h"
-
 export module pln.gui.credits_screen_factory;
 
 import pln.components.common;
 import pln.gui.components.ui;
+import pln.gui.utils;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
 import pln.utils.file_loaders;
 
+using namespace pln::gui::utils;
 using namespace pln::utils::file_loaders;
 
 namespace pln::gui {
@@ -50,8 +50,8 @@ credits_screen_factory(const pln::scene::IScene& scene)
     .text = "Go to title sreen",
     .on_pointer_down =
       [](auto&) {
-        GUI::clear_user_progress(pln::services::app());
-        pln::services::app().add_once_handler(GUI::go_to_main_menu);
+        clear_user_progress(pln::services::app());
+        pln::services::app().add_once_handler(go_to_main_menu);
       },
   }));
 

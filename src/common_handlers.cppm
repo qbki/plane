@@ -10,7 +10,6 @@ module;
 #include "src/gui/loading_factory.h"
 #include "src/gui/lose_menu_factory.h"
 #include "src/gui/screens/load_credits_screen.h"
-#include "src/gui/utils/utils.h"
 
 export module pln.common_handlers;
 
@@ -27,6 +26,7 @@ import pln.fileio.save_data_io;
 import pln.gui.credits_screen_factory;
 import pln.gui.game_screen_factory;
 import pln.gui.in_game_main_menu_factory;
+import pln.gui.utils;
 import pln.scene.iscene;
 import pln.scene.scene;
 import pln.services.app;
@@ -52,6 +52,7 @@ import pln.utils.system;
 
 using namespace pln::events;
 using namespace pln::fileio;
+using namespace pln::gui::utils;
 using namespace pln::gui;
 
 namespace pln::common_handlers {
@@ -240,7 +241,7 @@ register_common_handlers()
     load_current_level);
   pln::services::events<const LoseEvent>().add(load_lose_menu);
   pln::services::events<const LoadNextLevelEvent>().add(load_next_level);
-  pln::services::app().add_once_handler(GUI::go_to_main_menu);
+  pln::services::app().add_once_handler(go_to_main_menu);
 }
 
 }

@@ -1,15 +1,17 @@
+module;
 #include <optional>
 #include <utility>
 #include <vector>
 
 #include "src/gui/screens/main_menu_screen.h"
 
-#include "utils.h"
+export module pln.gui.utils;
 
 import pln.app.app;
 
-namespace GUI {
+namespace pln::gui::utils {
 
+export
 void
 go_to_main_menu(pln::app::App& app)
 {
@@ -18,6 +20,8 @@ go_to_main_menu(pln::app::App& app)
   app.push_scene(std::move(scene));
 }
 
+
+export
 void
 clear_user_progress(pln::app::App& app)
 {

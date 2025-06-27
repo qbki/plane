@@ -4,18 +4,18 @@ module;
 
 #include "src/gui/screens/settings_screen.h"
 
-#include "utils/utils.h"
-
 export module pln.gui.in_game_main_menu_factory;
 
 import pln.app.app;
 import pln.components.common;
 import pln.gui.components.ui;
+import pln.gui.utils;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.theme;
 
 using namespace pln::components;
+using namespace pln::gui::utils;
 
 namespace pln::gui {
 
@@ -58,7 +58,7 @@ in_game_main_menu_factory(pln::scene::IScene& scene)
       ui.text_button({
         .text = "Title screen",
         .on_pointer_down_once =
-          [](auto&) { pln::services::app().add_once_handler(GUI::go_to_main_menu); },
+          [](auto&) { pln::services::app().add_once_handler(go_to_main_menu); },
       }),
     }),
   });

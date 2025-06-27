@@ -1,12 +1,12 @@
 #include <string>
 
 #include "lose_menu_factory.h"
-#include "utils/utils.h"
 
 import pln.app.app;
 import pln.components.common;
 import pln.events.event;
 import pln.gui.components.ui;
+import pln.gui.utils;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
@@ -15,6 +15,7 @@ import pln.services.theme;
 using namespace pln::components;
 using namespace pln::events;
 using namespace pln::gui::components;
+using namespace pln::gui::utils;
 
 namespace GUI {
 

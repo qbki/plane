@@ -1,10 +1,13 @@
-#pragma once
+module;
 #include <filesystem>
+
+export module pln.gui.core.theme;
 
 import pln.utils.color;
 
-namespace GUI {
+namespace pln::gui::core {
 
+export
 struct Palette
 {
   constexpr static pln::utils::color::Color WHITE { 0x7f'7d'7e'ff };
@@ -17,6 +20,8 @@ struct Palette
   pln::utils::color::Color gray { GRAY };
 };
 
+
+export
 struct Typography
 {
   struct Font
@@ -44,6 +49,8 @@ struct Typography
   Font body2 { .size = SIZE_BODY_2 };
 };
 
+
+export
 struct Components
 {
   struct Text
@@ -64,6 +71,8 @@ struct Components
   } menu_screen;
 };
 
+
+export
 struct Theme
 {
   Typography typography;

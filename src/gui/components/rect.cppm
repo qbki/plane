@@ -2,7 +2,6 @@ module;
 #include <entt/entt.hpp>
 #include <utility>
 
-#include "src/gui/core/theme.h"
 #include "src/gui/ui_canvas.h"
 
 export module pln.gui.components.rect;

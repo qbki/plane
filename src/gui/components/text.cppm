@@ -3,18 +3,19 @@ module;
 #include <thorvg.h>
 #include <utility>
 
-#include "src/gui/core/theme.h"
 #include "src/gui/ui_canvas.h"
 
 export module pln.gui.components.text;
 
 import pln.components.common;
 import pln.components.transform;
+import pln.gui.core.theme;
 import pln.services.theme;
 import pln.shapes;
 import pln.utils.color;
 
 using namespace pln::components;
+using namespace pln::gui::core;
 
 namespace pln::gui::components {
 
@@ -22,7 +23,7 @@ export
 struct TextConfig
 {
   pln::utils::color::Color color { pln::services::theme().components.text.color };
-  GUI::Typography::Font font { pln::services::theme().typography.body1 };
+  Typography::Font font { pln::services::theme().typography.body1 };
   pln::components::Parent parent { std::nullopt };
   std::string text {""};
 };
@@ -57,7 +58,7 @@ text(std::shared_ptr<entt::registry>& registry, const TextConfig& config = {})
   auto entity = registry->create();
   registry->emplace<Available>(entity);
   registry->emplace<pln::utils::color::Color>(entity, config.color);
-  registry->emplace<GUI::Typography::Font>(entity, config.font);
+  registry->emplace<Typography::Font>(entity, config.font);
   registry->emplace<GUIKind>(entity);
   registry->emplace<IsDirty>(entity, true);
   registry->emplace<Parent>(entity, config.parent);

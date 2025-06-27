@@ -1,10 +1,10 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <cstdlib>
+#include <filesystem>
 #include <format>
 #include <string>
 #include <utility>
 
-#include "gui/core/theme.h"
 #include "logger/logger.h"
 #include "shading/deferred_shading.h"
 #include "utils/types.h"
@@ -19,6 +19,7 @@ import pln.events.event_emitter;
 import pln.fileio.theme_loader;
 import pln.fileio.translation_loader;
 import pln.game_loop;
+import pln.gui.core.theme;
 import pln.logger;
 import pln.sdl;
 import pln.service;
@@ -33,6 +34,7 @@ import pln.utils.platform;
 import pln.utils.system;
 
 using namespace pln::utils::file_loaders;
+using namespace pln::gui::core;
 
 int
 main(int argc, char* argv[])
@@ -144,7 +146,7 @@ main(int argc, char* argv[])
   pln::Service<pln::app::App>::install(std::move(app));
 
   auto theme = pln::fileio::load_theme(pln::services::app().levels_dir() / "theme.json");
-  pln::Service<const GUI::Theme>::install(std::move(theme));
+  pln::Service<const Theme>::install(std::move(theme));
 
   auto quad = std::make_unique<pln::services::GuiQuad>(pln::shapes::create_quad(1, 1, 0));
   pln::Service<const pln::services::GuiQuad>::install(std::move(quad));

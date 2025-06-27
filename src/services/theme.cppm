@@ -1,17 +1,15 @@
-module;
-#include "src/gui/core/theme.h"
-
 export module pln.services.theme;
 
+import pln.gui.core.theme;
 import pln.service;
 
 namespace pln::services {
 
 export
-const GUI::Theme&
+const pln::gui::core::Theme&
 theme()
 {
-  return pln::Service<const GUI::Theme>::get();
+  return pln::Service<const pln::gui::core::Theme>::get();
 }
 
 }

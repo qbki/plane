@@ -1,6 +1,5 @@
 module;
 #include "src/gui/core/button_state.h"
-#include "src/gui/core/theme.h"
 
 export module pln.gui.components.text_button;
 
@@ -9,18 +8,20 @@ import pln.components.transform;
 import pln.events.event;
 import pln.events.event_emitter;
 import pln.gui.components.text;
+import pln.gui.core.theme;
 import pln.services.theme;
 import pln.shapes;
 
 using namespace pln::components;
 using namespace pln::events;
+using namespace pln::gui::core;
 
 namespace pln::gui::components {
 
 export
 struct TextButtonConfig
 {
-  GUI::Typography::Font font { pln::services::theme().typography.h4 };
+  Typography::Font font { pln::services::theme().typography.h4 };
   pln::components::Parent parent { std::nullopt };
   std::string text {""};
   pln::events::EventEmitter<pln::events::PointerDown>::Handler on_pointer_down {

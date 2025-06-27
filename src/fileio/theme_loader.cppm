@@ -3,22 +3,22 @@ module;
 #include <memory>
 #include <nlohmann/json.hpp>
 
-#include "src/gui/core/theme.h"
-
 export module pln.fileio.theme_loader;
 
 import pln.fileio.json.mappers;
 import pln.fileio.params.theme;
+import pln.gui.core.theme;
 import pln.services.app;
 import pln.utils.file_loaders;
 
 using namespace pln::fileio::params;
 using namespace pln::utils::file_loaders;
+using namespace pln::gui::core;
 
 namespace pln::fileio {
 
 export
-std::unique_ptr<GUI::Theme>
+std::unique_ptr<Theme>
 load_theme(const std::filesystem::path& theme_file_path)
 {
   auto theme_params = load_json(theme_file_path).or_crash().get<ThemeParams>();
@@ -26,7 +26,7 @@ load_theme(const std::filesystem::path& theme_file_path)
                      .lexically_normal();
   load_font(font_path);
 
-  auto theme = std::make_unique<GUI::Theme>();
+  auto theme = std::make_unique<Theme>();
   theme->font_path = font_path;
   theme->typography.body1.name = theme_params.font_family;
   theme->typography.body2.name = theme_params.font_family;

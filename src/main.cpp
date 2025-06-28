@@ -5,7 +5,6 @@
 #include <string>
 #include <utility>
 
-#include "logger/logger.h"
 #include "shading/deferred_shading.h"
 #include "utils/types.h"
 
@@ -20,6 +19,7 @@ import pln.fileio.theme_loader;
 import pln.fileio.translation_loader;
 import pln.game_loop;
 import pln.gui.core.theme;
+import pln.logger.console_logger;
 import pln.logger;
 import pln.sdl;
 import pln.service;
@@ -39,7 +39,8 @@ using namespace pln::gui::core;
 int
 main(int argc, char* argv[])
 {
-  pln::Service<pln::logger::AbstractLogger>::install(std::make_unique<Logger>());
+  pln::Service<pln::logger::AbstractLogger>::install(
+    std::make_unique<pln::logger::ConsoleLogger>());
 
   pln::Service<pln::cache::Cache>::install(std::make_unique<pln::cache::Cache>());
 

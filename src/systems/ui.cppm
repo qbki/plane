@@ -3,12 +3,11 @@ module;
 #include <thorvg.h>
 #include <utility>
 
-#include "src/gui/ui_canvas.h"
-
 export module pln.systems.ui;
 
 import pln.components.common;
 import pln.components.transform;
+import pln.gui.ui_canvas;
 import pln.scene.iscene;
 import pln.shapes;
 import pln.utils.color;
@@ -38,10 +37,10 @@ ui(const pln::scene::IScene& scene)
 
         transform.scale({ rect.width, rect.height, 1 });
 
-        UiCanvas canvas(rect.width, rect.height);
+        pln::gui::UiCanvas canvas(rect.width, rect.height);
         canvas.canvas().push(std::move(shape));
 
-        registry->replace<UiCanvas>(entity, std::move(canvas));
+        registry->replace<pln::gui::UiCanvas>(entity, std::move(canvas));
       }
     });
 }

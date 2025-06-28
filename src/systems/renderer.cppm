@@ -8,7 +8,6 @@ module;
 #include <string>
 #include <unordered_map>
 
-#include "src/gui/ui_canvas.h"
 #include "src/math/intersection.h"
 
 export module pln.systems.renderer;
@@ -17,6 +16,7 @@ import pln.app.app;
 import pln.components.common;
 import pln.components.transform;
 import pln.consts;
+import pln.gui.ui_canvas;
 import pln.materals;
 import pln.meshes;
 import pln.scene.iscene;
@@ -249,8 +249,14 @@ render_ui(const pln::scene::IScene& scene)
   glDepthFunc(GL_ALWAYS);
 
   registry
-    .view<UiCanvas, Transform, pln::shapes::RectSize, IsDirty, Parent, GUIKind, Available>()
-    .each([&](UiCanvas& canvas,
+    .view<pln::gui::UiCanvas,
+          Transform,
+          pln::shapes::RectSize,
+          IsDirty,
+          Parent,
+          GUIKind,
+          Available>()
+    .each([&](pln::gui::UiCanvas& canvas,
               const Transform& transform,
               const pln::shapes::RectSize& rect,
               IsDirty& is_dirty,

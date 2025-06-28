@@ -2,12 +2,11 @@ module;
 #include <entt/entt.hpp>
 #include <utility>
 
-#include "src/gui/ui_canvas.h"
-
 export module pln.gui.components.rect;
 
 import pln.components.common;
 import pln.components.transform;
+import pln.gui.ui_canvas;
 import pln.services.theme;
 import pln.shapes;
 import pln.utils.color;
@@ -31,8 +30,8 @@ entt::entity
 rect(std::shared_ptr<entt::registry>& registry,
      const RectConfig& config = {})
 {
-  UiCanvas canvas(static_cast<int>(config.width),
-                  static_cast<int>(config.height));
+  pln::gui::UiCanvas canvas(static_cast<int>(config.width),
+                            static_cast<int>(config.height));
 
   auto entity = registry->create();
   registry->emplace<Available>(entity);
@@ -43,7 +42,7 @@ rect(std::shared_ptr<entt::registry>& registry,
   registry->emplace<pln::shapes::RectSize>(entity, config.width, config.height);
   registry->emplace<Transform>(entity);
   registry->emplace<UIRect>(entity);
-  registry->emplace<UiCanvas>(entity, std::move(canvas));
+  registry->emplace<pln::gui::UiCanvas>(entity, std::move(canvas));
 
   return entity;
 }

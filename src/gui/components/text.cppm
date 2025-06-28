@@ -3,13 +3,12 @@ module;
 #include <thorvg.h>
 #include <utility>
 
-#include "src/gui/ui_canvas.h"
-
 export module pln.gui.components.text;
 
 import pln.components.common;
 import pln.components.transform;
 import pln.gui.core.theme;
+import pln.gui.ui_canvas;
 import pln.services.theme;
 import pln.shapes;
 import pln.utils.color;

@@ -14,13 +14,13 @@ module;
 #include <emscripten/html5.h>
 #endif
 
-#include "src/gui/ui_canvas.h"
 #include "src/utils/gl.h"
 #include "src/utils/tvg.h"
 
 export module pln.sdl;
 
 import pln.consts;
+import pln.gui.ui_canvas;
 import pln.services.logger;
 import pln.utils.crash;
 import pln.utils.platform;
@@ -29,7 +29,7 @@ namespace pln::sdl {
 
 export using WindowPtr = std::unique_ptr<SDL_Window, void (*)(SDL_Window*)>;
 export using ContextPtr = std::unique_ptr<void, void (*)(SDL_GLContext)>;
-export using UiCanvasPtr = std::unique_ptr<UiCanvas>;
+export using UiCanvasPtr = std::unique_ptr<pln::gui::UiCanvas>;
 
 void
 crash_with_sdl_error(std::string message)
@@ -151,7 +151,7 @@ export
 UiCanvasPtr
 init_vg_canvas(std::size_t width, std::size_t height)
 {
-  return std::make_unique<UiCanvas>(width, height);
+  return std::make_unique<pln::gui::UiCanvas>(width, height);
 }
 
 }

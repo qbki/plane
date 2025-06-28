@@ -2,13 +2,13 @@ module;
 #include <string>
 #include <utility>
 
-#include "src/gui/screens/settings_screen.h"
-
 export module pln.gui.in_game_main_menu_factory;
 
 import pln.app.app;
 import pln.components.common;
 import pln.gui.components.ui;
+import pln.gui.screens.main_menu_screen;
+import pln.gui.screens.settings_screen;
 import pln.gui.utils;
 import pln.scene.iscene;
 import pln.services.app;
@@ -49,7 +49,7 @@ in_game_main_menu_factory(pln::scene::IScene& scene)
                 auto& scene = scenes[scenes_quantity - 1];
                 scene->is_paused(true);
               }
-              auto scene = load_settings_screen();
+              auto scene = pln::gui::screens::load_settings_screen();
               pln::services::app().push_scene(std::move(scene));
             });
           },
@@ -58,7 +58,7 @@ in_game_main_menu_factory(pln::scene::IScene& scene)
       ui.text_button({
         .text = "Title screen",
         .on_pointer_down_once =
-          [](auto&) { pln::services::app().add_once_handler(go_to_main_menu); },
+          [](auto&) { pln::services::app().add_once_handler(pln::gui::screens::go_to_main_menu); },
       }),
     }),
   });

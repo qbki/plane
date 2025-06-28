@@ -1,14 +1,13 @@
-#include <string>
+module;
 #include <utility>
 
-#include "src/gui/screens/settings_screen.h"
-
-#include "main_menu_factory.h"
+export module pln.gui.main_menu_factory;
 
 import pln.components.common;
 import pln.events.event;
 import pln.fileio.save_data_io;
 import pln.gui.components.ui;
+import pln.gui.screens.settings_screen;
 import pln.gui.utils;
 import pln.scene.iscene;
 import pln.services.app;
@@ -21,8 +20,9 @@ using namespace pln::fileio;
 using namespace pln::gui::components;
 using namespace pln::gui::utils;
 
-namespace GUI {
+namespace pln::gui {
 
+export
 void
 main_menu_factory(const pln::scene::IScene& scene)
 {
@@ -63,7 +63,7 @@ main_menu_factory(const pln::scene::IScene& scene)
       [](auto&) {
         pln::services::app().add_once_handler([](auto&) {
           pln::services::app().pause_scenes();
-          auto scene = load_settings_screen();
+          auto scene = pln::gui::screens::load_settings_screen();
           pln::services::app().push_scene(std::move(scene));
         });
       },

@@ -7,10 +7,6 @@ module;
 #include <utility>
 #include <vector>
 
-#include "src/gui/loading_factory.h"
-#include "src/gui/lose_menu_factory.h"
-#include "src/gui/screens/load_credits_screen.h"
-
 export module pln.common_handlers;
 
 import pln.app.app;
@@ -26,6 +22,10 @@ import pln.fileio.save_data_io;
 import pln.gui.credits_screen_factory;
 import pln.gui.game_screen_factory;
 import pln.gui.in_game_main_menu_factory;
+import pln.gui.loading_factory;
+import pln.gui.lose_menu_factory;
+import pln.gui.screens.load_credits_screen;
+import pln.gui.screens.main_menu_screen;
 import pln.gui.utils;
 import pln.scene.iscene;
 import pln.scene.scene;
@@ -79,7 +79,7 @@ load_loading_screen()
   auto camera = make_gui_camera(pln::services::app());
   auto scene = std::make_unique<pln::scene::Scene>(std::move(camera));
   scene->is_deferred(false);
-  scene->handlers().once(GUI::loading_factory);
+  scene->handlers().once(pln::gui::loading_factory);
   pln::services::app().push_scene(std::move(scene));
 }
 
@@ -101,7 +101,7 @@ load_lose_menu(const LoseEvent&)
   auto camera = make_gui_camera(pln::services::app());
   auto scene = std::make_unique<pln::scene::Scene>(std::move(camera));
   scene->is_deferred(false);
-  scene->handlers().once(GUI::lose_menu_factory);
+  scene->handlers().once(pln::gui::lose_menu_factory);
   scene->handlers().add(pln::systems::update_gui::update_gui);
   scene->handlers().add(pln::systems::ui::ui);
   pln::services::app().push_scene(std::move(scene));
@@ -212,7 +212,7 @@ load_next_level(const LoadNextLevelEvent&)
   bool is_game_finished = next_level_it == levels_order.levels.end();
   if (is_game_finished) {
     pln::services::app().scenes().clear();
-    auto scene = load_credits_screen();
+    auto scene = pln::gui::screens::load_credits_screen();
     pln::services::app().push_scene(std::move(scene));
     return;
   }
@@ -241,7 +241,7 @@ register_common_handlers()
     load_current_level);
   pln::services::events<const LoseEvent>().add(load_lose_menu);
   pln::services::events<const LoadNextLevelEvent>().add(load_next_level);
-  pln::services::app().add_once_handler(go_to_main_menu);
+  pln::services::app().add_once_handler(pln::gui::screens::go_to_main_menu);
 }
 
 }

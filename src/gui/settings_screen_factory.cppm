@@ -1,6 +1,7 @@
-#include <string>
+module;
+#include <tuple>
 
-#include "settings_screen_factory.h"
+export module pln.gui.settings_screen_factory;
 
 import pln.components.common;
 import pln.components.percent;
@@ -12,8 +13,9 @@ import pln.services.theme;
 using namespace pln::components;
 using namespace pln::gui::components;
 
-namespace GUI {
+namespace pln::gui {
 
+export
 void
 settings_screen_factory(pln::scene::IScene& scene)
 {

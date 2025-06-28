@@ -1,4 +1,7 @@
+module;
 #include <tuple>
+
+export module pln.gui.loading_factory;
 
 import pln.components.transform;
 import pln.gui.components.text;
@@ -10,8 +13,9 @@ import pln.shapes;
 using namespace pln::components;
 using namespace pln::shapes;
 
-namespace GUI {
+namespace pln::gui {
 
+export
 void
 loading_factory(pln::scene::IScene& scene)
 {

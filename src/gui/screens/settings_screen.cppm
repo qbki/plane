@@ -1,17 +1,21 @@
+module;
+#include <memory>
 #include <utility>
 #include <vector>
 
-#include "src/gui/settings_screen_factory.h"
-
-#include "settings_screen.h"
+export module pln.gui.screens.settings_screen;
 
 import pln.cameras.gui_camera;
+import pln.gui.settings_screen_factory;
 import pln.scene.iscene;
 import pln.scene.scene;
 import pln.services.app;
 import pln.systems.ui;
 import pln.systems.update_gui;
 
+namespace pln::gui::screens {
+
+export
 std::unique_ptr<pln::scene::IScene>
 load_settings_screen()
 {
@@ -20,7 +24,7 @@ load_settings_screen()
                                                           screen_size.height);
   auto scene = std::make_unique<pln::scene::Scene>(std::move(camera));
   scene->is_deferred(false);
-  scene->handlers().once(GUI::settings_screen_factory);
+  scene->handlers().once(pln::gui::settings_screen_factory);
   scene->handlers().add(pln::systems::update_gui::update_gui);
   scene->handlers().add(pln::systems::ui::ui);
 
@@ -35,4 +39,6 @@ load_settings_screen()
   });
 
   return scene;
+}
+
 }

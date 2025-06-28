@@ -6,6 +6,7 @@ export module pln.gui.credits_screen_factory;
 
 import pln.components.common;
 import pln.gui.components.ui;
+import pln.gui.screens.main_menu_screen;
 import pln.gui.utils;
 import pln.scene.iscene;
 import pln.services.app;
@@ -51,7 +52,7 @@ credits_screen_factory(const pln::scene::IScene& scene)
     .on_pointer_down =
       [](auto&) {
         clear_user_progress(pln::services::app());
-        pln::services::app().add_once_handler(go_to_main_menu);
+        pln::services::app().add_once_handler(pln::gui::screens::go_to_main_menu);
       },
   }));
 

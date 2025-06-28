@@ -1,11 +1,10 @@
-#include <string>
-
-#include "lose_menu_factory.h"
+export module pln.gui.lose_menu_factory;
 
 import pln.app.app;
 import pln.components.common;
 import pln.events.event;
 import pln.gui.components.ui;
+import pln.gui.screens.main_menu_screen;
 import pln.gui.utils;
 import pln.scene.iscene;
 import pln.services.app;
@@ -17,8 +16,9 @@ using namespace pln::events;
 using namespace pln::gui::components;
 using namespace pln::gui::utils;
 
-namespace GUI {
+namespace pln::gui {
 
+export
 void
 lose_menu_factory(const pln::scene::IScene& scene)
 {
@@ -39,7 +39,7 @@ lose_menu_factory(const pln::scene::IScene& scene)
       ui.text_button({
         .text = "Stop struggling",
         .on_pointer_down =
-          [](auto&) { pln::services::app().add_once_handler(go_to_main_menu); },
+          [](auto&) { pln::services::app().add_once_handler(pln::gui::screens::go_to_main_menu); },
       }),
 
     }),

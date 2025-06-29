@@ -10,9 +10,6 @@ module;
 #include <utility>
 #include <vector>
 
-#include "src/shading/deferred_shading.h" // IWYU pragma: export
-#include "src/shading/framebuffer.h"      // IWYU pragma: export
-
 export module pln.app.app;
 
 import pln.app.info;
@@ -24,6 +21,8 @@ import pln.math.shapes;
 import pln.scene.iscene;
 import pln.sdl;
 import pln.shaders;
+import pln.shading.deferred_shading;
+import pln.shading.framebuffer;
 import pln.utils.crash;
 
 namespace pln::app {
@@ -48,9 +47,9 @@ private:
   std::unique_ptr<pln::control::Control> _control {};
   pln::math::RectSize _screen_size { pln::consts::DEFAULT_SCREEN_WIDTH,
                                      pln::consts::DEFAULT_SCREEN_HEIGHT };
-  std::unique_ptr<DeferredShading> _deferred_shading {};
-  std::unique_ptr<FrameBuffer>
-    _intermediate_fb = std::make_unique<FrameBuffer>();
+  std::unique_ptr<pln::shading::DeferredShading> _deferred_shading {};
+  std::unique_ptr<pln::shading::FrameBuffer>
+    _intermediate_fb = std::make_unique<pln::shading::FrameBuffer>();
   std::unique_ptr<pln::shaders::Shader> _particle_shader {};
   std::unique_ptr<pln::shaders::Shader> _ui_shader {};
   std::unique_ptr<pln::shaders::Shader> _intermediate_shader {};
@@ -98,24 +97,24 @@ public:
   }
 
   void
-  deferred_shading(std::unique_ptr<DeferredShading> value)
+  deferred_shading(std::unique_ptr<pln::shading::DeferredShading> value)
   {
     _deferred_shading = std::move(value);
   }
 
-  DeferredShading&
+  pln::shading::DeferredShading&
   deferred_shading() const
   {
     return *_deferred_shading;
   }
 
   void
-  intermediate_fb(std::unique_ptr<FrameBuffer> value)
+  intermediate_fb(std::unique_ptr<pln::shading::FrameBuffer> value)
   {
     _intermediate_fb = std::move(value);
   }
 
-  FrameBuffer&
+  pln::shading::FrameBuffer&
   intermediate_fb() const
   {
     return *_intermediate_fb;

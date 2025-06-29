@@ -5,7 +5,6 @@
 #include <string>
 #include <utility>
 
-#include "shading/deferred_shading.h"
 #include "utils/types.h"
 
 import pln.app.app;
@@ -28,6 +27,7 @@ import pln.services.app;
 import pln.services.gui_quad;
 import pln.services.logger;
 import pln.shaders;
+import pln.shading.deferred_shading;
 import pln.systems.renderer;
 import pln.utils.file_loaders;
 import pln.utils.platform;
@@ -99,7 +99,7 @@ main(int argc, char* argv[])
     inter_shader->compile(vertex, fragment);
   }
 
-  auto deferred_shading = std::make_unique<DeferredShading>(
+  auto deferred_shading = std::make_unique<pln::shading::DeferredShading>(
     std::move(geometry_pass_shader),
     std::move(light_pass_shader),
     pln::mesh::create_quad(1.0, 1.0, pln::consts::FARTHEST_NDS_Z_COORD),

@@ -13,8 +13,6 @@ module;
 #include <utility>
 #include <variant>
 
-#include "src/utils/random.h"
-
 export module pln.fileio.params.position_strategy_viditor;
 
 import pln.components.common;
@@ -26,10 +24,9 @@ import pln.fileio.params.entities_map;
 import pln.fileio.params.entity_maker;
 import pln.fileio.params.strategies;
 import pln.game_state.factory;
-import pln.game_state.factory;
-import pln.scene.iscene;
 import pln.scene.iscene;
 import pln.utils.crash;
+import pln.utils.random;
 
 using namespace pln::components;
 using namespace pln::game_state;
@@ -84,8 +81,8 @@ public:
 
     std::vector<VelocityParams> speed_items(speed_items_view.begin(),
                                             speed_items_view.end());
-    auto get_random_int = make_random_fn(static_cast<size_t>(0),
-                                         strategy.entity_ids.size() - 1);
+    auto get_random_int = pln::utils::make_random_fn(static_cast<size_t>(0),
+                                                      strategy.entity_ids.size() - 1);
     auto radius_float = static_cast<float>(radius);
 
     std::vector<glm::ivec2> coords;
@@ -151,8 +148,8 @@ public:
     auto& center = strategy.center;
     auto& width = strategy.width;
     auto& height = strategy.height;
-    auto get_random_int = make_random_fn(static_cast<size_t>(0),
-                                         strategy.entity_ids.size() - 1);
+    auto get_random_int = pln::utils::make_random_fn(static_cast<size_t>(0),
+                                                      strategy.entity_ids.size() - 1);
     auto start_x = center.x - static_cast<float>(width) * pln::consts::HALF;
     auto start_y = center.y - static_cast<float>(height) * pln::consts::HALF;
     for (int x = 0; x < width; x++) {

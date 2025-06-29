@@ -6,8 +6,6 @@ module;
 #include <glm/gtc/quaternion.hpp>
 #include <glm/vec3.hpp>
 
-#include "src/utils/random.h"
-
 export module pln.systems.gun;
 
 import pln.components.common;
@@ -20,6 +18,7 @@ import pln.scene.iscene;
 import pln.services.app;
 import pln.services.events;
 import pln.utils.common;
+import pln.utils.random;
 
 using namespace pln::components;
 using namespace pln::game_state;
@@ -32,7 +31,7 @@ void
 gun_shooting(pln::scene::IScene& scene)
 {
   auto& registry = scene.state().shared_registry();
-  static auto get_random_float = make_random_fn(0.0f, 1.0f);
+  static auto get_random_float = pln::utils::make_random_fn(0.0f, 1.0f);
   registry->view<entt::entity,
                  pln::components::Weapon,
                  Transform>().each(

@@ -7,13 +7,12 @@ module;
 #include <tuple>
 #include <unordered_map>
 
-#include "src/sound/sound.h"
-
 export module pln.cache;
 
 import pln.mesh;
 import pln.mesh_generators;
 import pln.services.app;
+import pln.sounds.sound;
 import pln.textures;
 import pln.utils.color;
 import pln.utils.file_loaders;
@@ -29,7 +28,7 @@ public:
   using MeshPtr = std::shared_ptr<pln::mesh::Mesh>;
   using TexturePtr = std::shared_ptr<pln::textures::Texture>;
   using ModelPair = std::tuple<MeshPtr, TexturePtr>;
-  using SoundPtr = std::shared_ptr<Sound::Sound>;
+  using SoundPtr = std::shared_ptr<pln::sounds::Sound>;
 
 private:
   std::unordered_map<std::string, std::tuple<MeshPtr, TexturePtr>> _meshes;
@@ -82,7 +81,7 @@ public:
     if (_sounds.contains(sound_path)) {
       return _sounds[sound_path];
     }
-    std::shared_ptr<Sound::Sound> sound = load_sound(sound_path);
+    std::shared_ptr<pln::sounds::Sound> sound = load_sound(sound_path);
     _sounds[sound_path] = sound;
     return sound;
   }

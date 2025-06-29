@@ -13,12 +13,12 @@ module;
 
 #include "src/utils/result.h"
 #include "src/utils/tvg.h"
-#include "src/sound/sound.h"
 #include "src/utils/result.h"
 
 export module pln.utils.file_loaders;
 
 import pln.services.logger;
+import pln.sounds.sound;
 import pln.utils.data_holder;
 
 namespace pln::utils::file_loaders {
@@ -48,7 +48,7 @@ std::shared_ptr<pln::utils::data_holder::DataHolder>
 load_sdl_rw_data(const std::filesystem::path& path);
 
 export
-std::unique_ptr<Sound::Sound>
+std::unique_ptr<pln::sounds::Sound>
 load_sound(const std::filesystem::path& sound_file_path);
 
 export
@@ -77,13 +77,13 @@ load_sdl_rw_data(const std::filesystem::path& path)
 
 
 export
-std::unique_ptr<Sound::Sound>
+std::unique_ptr<pln::sounds::Sound>
 load_sound(const std::filesystem::path& sound_file_path)
 {
   auto holder = load_sdl_rw_data(sound_file_path);
   auto rwops = holder->rwops();
   auto chunk = Mix_LoadWAV_RW(rwops.get(), 0);
-  return std::make_unique<Sound::Sound>(chunk);
+  return std::make_unique<pln::sounds::Sound>(chunk);
 }
 
 

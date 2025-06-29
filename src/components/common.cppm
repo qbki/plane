@@ -8,13 +8,14 @@ module;
 #include <optional> // IWYU pragma: export
 #include <vector>
 
-#include "src/utils/types.h" // IWYU pragma: export
-
 export module pln.components.common;
 
 import pln.control;
 import pln.mesh;
 import pln.textures;
+import pln.utils.types;
+
+using namespace pln::utils;
 
 namespace pln::components {
 

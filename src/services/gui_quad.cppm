@@ -1,17 +1,16 @@
 module;
 #include <memory>
 
-#include "src/utils/types.h"
-
 export module pln.services.gui_quad;
 
 import pln.mesh;
 import pln.service;
+import pln.utils.types;
 
 namespace pln::services {
 
 export
-using GuiQuad = NewType<std::unique_ptr<pln::mesh::Mesh>, struct GuiQuadTag>;
+using GuiQuad = utils::NewType<std::unique_ptr<pln::mesh::Mesh>, struct GuiQuadTag>;
 
 export
 pln::mesh::Mesh&

@@ -1,4 +1,4 @@
-#pragma once
+module;
 #include <SDL_rwops.h>
 #include <cxxabi.h>
 #include <glm/ext/vector_float3.hpp>
@@ -7,12 +7,19 @@
 #include <optional>
 #include <string>
 
+export module pln.utils.types;
+
 import pln.utils.common;
 import pln.utils.crash;
 
+namespace pln::utils {
+
+export
 template<typename T>
 using OptionalPtr = std::optional<std::unique_ptr<T>>;
 
+
+export
 template<typename T, typename TAG>
 struct NewType
 {
@@ -21,6 +28,8 @@ struct NewType
     : value(std::move(v)) {};
 };
 
+
+export
 template<typename T>
 std::string
 demangled_name()
@@ -46,9 +55,13 @@ demangled_name()
   return result;
 }
 
+
 // @link https://en.cppreference.com/w/cpp/utility/variant/visit
+export
 template<class... Ts>
 struct Overloaded : Ts...
 {
   using Ts::operator()...;
 };
+
+}

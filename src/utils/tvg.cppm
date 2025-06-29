@@ -1,9 +1,15 @@
+module;
 #include <format>
+#include <string>
+#include <thorvg.h>
 
-#include "tvg.h"
+export module pln.utils.tvg;
 
 import pln.utils.crash;
 
+namespace pln::utils {
+
+export
 void
 vg_verify_or_crash(const std::string& where, const tvg::Result& result)
 {
@@ -28,4 +34,6 @@ vg_verify_or_crash(const std::string& where, const tvg::Result& result)
     default:
       pln::utils::crash(message("Exhaustive switch error"));
   }
+}
+
 }

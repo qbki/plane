@@ -5,8 +5,7 @@ CompileFlags:
     "-Wextra",
     "-Wpedantic",
     "-pedantic-errors",
-    "-fno-exceptions",
-    "-fno-vectorize"
+    "-fno-exceptions"
   ]
 
 

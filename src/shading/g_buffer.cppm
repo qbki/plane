@@ -2,9 +2,9 @@ module;
 #include <GL/glew.h>
 #include <array>
 
-#include "src/utils/gl.h"
-
 export module pln.shading.g_buffer;
+
+import pln.utils.gl;
 
 namespace pln::shading {
 
@@ -61,14 +61,14 @@ public:
     glDeleteTextures(1, &_position_texture);
     glDeleteRenderbuffers(1, &_render_buffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _g_frame_buffer);
-    _position_texture = gen_color_attachment(
+    _position_texture = utils::gen_color_attachment(
       GL_RGBA32F, GL_COLOR_ATTACHMENT0, _width, _height, GL_FLOAT);
-    _normal_texture = gen_color_attachment(
+    _normal_texture = utils::gen_color_attachment(
       GL_RGBA32F, GL_COLOR_ATTACHMENT1, _width, _height, GL_FLOAT);
-    _base_color_texture = gen_color_attachment(
+    _base_color_texture = utils::gen_color_attachment(
       GL_RGBA8, GL_COLOR_ATTACHMENT2, _width, _height, GL_UNSIGNED_BYTE);
     glDrawBuffers(3, GBuffer::COLOR_ATTACHMENTS.data());
-    _render_buffer = gen_render_buffer(_width, _height);
+    _render_buffer = utils::gen_render_buffer(_width, _height);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
   }
 

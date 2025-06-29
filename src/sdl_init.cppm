@@ -14,16 +14,15 @@ module;
 #include <emscripten/html5.h>
 #endif
 
-#include "src/utils/gl.h"
-#include "src/utils/tvg.h"
-
 export module pln.sdl;
 
 import pln.consts;
 import pln.gui.ui_canvas;
 import pln.services.logger;
 import pln.utils.crash;
+import pln.utils.gl;
 import pln.utils.platform;
+import pln.utils.tvg;
 
 namespace pln::sdl {
 
@@ -99,7 +98,7 @@ init_window(int screen_width, int screen_height)
                          ? 0
                          : std::thread::hardware_concurrency();
   auto tvg_result = tvg::Initializer::init(tvg::CanvasEngine::Sw, threads);
-  vg_verify_or_crash(__func__, tvg_result);
+  utils::vg_verify_or_crash(__func__, tvg_result);
   pln::services::logger().info("ThorVG has been initialized.");
 
   return { window, [](auto w) {
@@ -127,12 +126,12 @@ init_context(SDL_Window* window)
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
   if (GLEW_OK != err) {
-    auto err_glew = glubyte_to_string(glewGetErrorString(err));
+    auto err_glew = utils::glubyte_to_string(glewGetErrorString(err));
     pln::utils::crash(std::format("Unable to initialize GLEW: {}", err_glew));
   }
   pln::services::logger().info("GLEW has been inited.");
 
-  print_opengl_info();
+  utils::print_opengl_info();
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);

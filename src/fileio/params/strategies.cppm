@@ -4,9 +4,9 @@ module;
 #include <variant>
 #include <vector>
 
-#include "src/utils/types.h"
-
 export module pln.fileio.params.strategies;
+
+import pln.utils.types;
 
 namespace pln::fileio::params {
 
@@ -88,7 +88,7 @@ BehaviourEnum
 get_behaviour(const PositionStrategy& strategy)
 {
   return std::visit(
-    Overloaded {
+    utils::Overloaded {
       [](const auto& value) { return value.behaviour; },
       [](const PositionStrategyUndefined) { return BehaviourEnum::UNKNOWN; },
     },

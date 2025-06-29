@@ -11,32 +11,30 @@ module;
 #include <utility>
 #include <vector>
 
-#include "src/utils/result.h"
-#include "src/utils/tvg.h"
-#include "src/utils/result.h"
-
 export module pln.utils.file_loaders;
 
 import pln.services.logger;
 import pln.sounds.sound;
 import pln.utils.data_holder;
+import pln.utils.result;
+import pln.utils.tvg;
 
 namespace pln::utils::file_loaders {
 
 export
-Result<tinygltf::Model>
+pln::utils::Result<tinygltf::Model>
 load_gltf_model(const std::string& file_path);
 
 export
-Result<std::string>
+pln::utils::Result<std::string>
 load_text(const std::string& file_path);
 
 export
-Result<nlohmann::basic_json<>>
+pln::utils::Result<nlohmann::basic_json<>>
 load_json(const std::string& file_path);
 
 export
-Result<nlohmann::basic_json<>>
+pln::utils::Result<nlohmann::basic_json<>>
 load_local_json(const std::filesystem::path& file_path);
 
 export
@@ -60,7 +58,7 @@ bool
 is_file_exists(const std::filesystem::path& path);
 
 export
-Result<std::vector<char>>
+pln::utils::Result<std::vector<char>>
 load_binary(const std::string& file_name);
 
 

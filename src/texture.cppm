@@ -7,14 +7,12 @@ module;
 #include <utility>
 #include <vector>
 
-#include "src/utils/gl.h"
-
 export module pln.textures;
 
 import pln.utils.crash;
+import pln.utils.gl;
 
 namespace pln::textures {
-
 
 export
 template<typename T>
@@ -97,7 +95,7 @@ public:
                  GL_UNSIGNED_BYTE,
                  data.data());
     glBindTexture(GL_TEXTURE_2D, 0);
-    print_opengl_errors("Texture Initialization");
+    utils::print_opengl_errors("Texture Initialization");
   }
 
 
@@ -175,7 +173,7 @@ public:
                  GL_UNSIGNED_BYTE,
                  pixels.data());
     glBindTexture(GL_TEXTURE_2D, 0);
-    print_opengl_errors("Texture Initialization");
+    utils::print_opengl_errors("Texture Initialization");
   }
 
 

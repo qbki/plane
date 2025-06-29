@@ -12,12 +12,12 @@ module;
 #include <tiny_gltf.h>
 #include <vector>
 
-#include "src/utils/result.h" // IWYU pragma: export
-
-#include "utils.h"
 #endif
 
 module pln.utils.file_loaders;
+
+import pln.utils.file_loaders.utils;
+import pln.utils.result;
 
 #if defined (__linux__)
 import pln.services.logger;
@@ -26,7 +26,7 @@ namespace pln::utils::file_loaders {
 
 using FileStreamPtr = std::shared_ptr<std::fstream>;
 
-Result<FileStreamPtr>
+pln::utils::Result<FileStreamPtr>
 open_file_stream(const std::string& path, std::ios::openmode mode)
 {
   auto stream = std::make_shared<std::fstream>(path, mode);
@@ -35,25 +35,25 @@ open_file_stream(const std::string& path, std::ios::openmode mode)
     return std::make_shared<std::runtime_error>(message);
   };
   return stream->fail()
-           ? Result<std::shared_ptr<std::fstream>>::from_error(make_error())
-           : Result<std::shared_ptr<std::fstream>>::from_payload(
+           ? pln::utils::Result<std::shared_ptr<std::fstream>>::from_error(make_error())
+           : pln::utils::Result<std::shared_ptr<std::fstream>>::from_payload(
                std::move(stream));
 }
 
-Result<FileStreamPtr>
+pln::utils::Result<FileStreamPtr>
 open_text_file_stream(const std::string& path)
 {
   return open_file_stream(path, std::ios_base::in | std::ios_base::out);
 }
 
-Result<FileStreamPtr>
+pln::utils::Result<FileStreamPtr>
 open_binary_file_stream(const std::string& path)
 {
   return open_file_stream(
     path, std::ios_base::in | std::ios_base::out | std::ios_base::binary);
 }
 
-Result<tinygltf::Model>
+pln::utils::Result<tinygltf::Model>
 load_gltf_model(const std::string& file_path)
 {
   return does_file_exist(file_path).then<tinygltf::Model>(
@@ -73,47 +73,47 @@ load_gltf_model(const std::string& file_path)
 
       if (status) {
         pln::services::logger().info(std::format("Loaded glTF: {}", path));
-        return Result<tinygltf::Model>::from_payload(std::move(model));
+        return pln::utils::Result<tinygltf::Model>::from_payload(std::move(model));
       }
       auto error = std::make_shared<std::runtime_error>(
         std::format("Failed to load glTF: {}", path));
-      return Result<tinygltf::Model>::from_error(error);
+      return pln::utils::Result<tinygltf::Model>::from_error(error);
     });
 }
 
-Result<std::string>
+pln::utils::Result<std::string>
 load_text(const std::string& file_path)
 {
   auto read_file = [](const FileStreamPtr& stream) {
     std::string data { std::istreambuf_iterator<char>(*stream),
                        std::istreambuf_iterator<char>() };
-    return Result<std::string>::from_payload(std::move(data));
+    return pln::utils::Result<std::string>::from_payload(std::move(data));
   };
   return does_file_exist(file_path)
     .then<FileStreamPtr>(open_text_file_stream)
     .then<std::string>(read_file);
 }
 
-Result<std::vector<char>>
+pln::utils::Result<std::vector<char>>
 load_binary(const std::string& file_path)
 {
   auto read_file = [](FileStreamPtr& stream) {
     std::vector<char> data { std::istreambuf_iterator<char>(*stream),
                              std::istreambuf_iterator<char>() };
-    return Result<std::vector<char>>::from_payload(std::move(data));
+    return pln::utils::Result<std::vector<char>>::from_payload(std::move(data));
   };
-  return Result<const std::string>::from_payload(file_path)
+  return pln::utils::Result<const std::string>::from_payload(file_path)
     .then<const std::string>(does_file_exist)
     .then<FileStreamPtr>(open_binary_file_stream)
     .then<std::vector<char>>(read_file);
 }
 
-Result<nlohmann::basic_json<>>
+pln::utils::Result<nlohmann::basic_json<>>
 load_json(const std::string& file_path)
 {
   auto parse = [&file_path](FileStreamPtr& stream) {
     pln::services::logger().info(std::format("Loaded json: {}", file_path));
-    return Result<nlohmann::basic_json<>>::from_payload(
+    return pln::utils::Result<nlohmann::basic_json<>>::from_payload(
       nlohmann::json::parse(*stream));
   };
   return does_file_exist(file_path)
@@ -121,7 +121,7 @@ load_json(const std::string& file_path)
     .then<nlohmann::basic_json<>>(parse);
 }
 
-Result<nlohmann::basic_json<>>
+pln::utils::Result<nlohmann::basic_json<>>
 load_local_json(const std::filesystem::path& file_path)
 {
   return load_json(file_path);

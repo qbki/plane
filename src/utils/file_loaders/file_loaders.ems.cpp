@@ -16,10 +16,11 @@ module;
 #include "src/services.h"
 #include "src/utils/result.h" // IWYU pragma: export
 
-#include "utils.h"
 #endif
 
 module pln.utils.file_loaders;
+
+import pln.utils.file_loaders.utils;
 
 #if defined(__EMSCRIPTEN__)
 namespace pln::utils::file_loaders {

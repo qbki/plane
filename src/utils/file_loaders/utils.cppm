@@ -1,12 +1,18 @@
+module;
 #include <filesystem>
 #include <format>
 #include <memory>
 #include <stdexcept>
 #include <string>
 
-#include "src/utils/result.h"
+export module pln.utils.file_loaders.utils;
 
-Result<const std::string>
+import pln.utils.result;
+
+namespace pln::utils::file_loaders {
+
+export
+pln::utils::Result<const std::string>
 does_file_exist(const std::string& file_path)
 {
   static auto make_error = [](const std::string& path) {
@@ -16,4 +22,6 @@ does_file_exist(const std::string& file_path)
   return { std::filesystem::exists(file_path)
              ? Result<const std::string>::from_payload(file_path)
              : Result<const std::string>::from_error(make_error(file_path)) };
+}
+
 }

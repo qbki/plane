@@ -3,13 +3,13 @@ module;
 #include <functional>
 #include <nlohmann/json.hpp>
 
-#include "src/utils/result.h"
-
 export module pln.fileio.settings_io;
 
 import pln.utils.file_loaders;
+import pln.utils.result;
 
 using namespace pln::utils::file_loaders;
+using namespace pln::utils;
 
 namespace pln::fileio {
 

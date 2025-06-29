@@ -1,13 +1,18 @@
+module;
+#include <GL/glew.h>
 #include <array>
 #include <format>
 #include <sstream>
 #include <string>
 
-#include "src/utils/gl.h"
+export module pln.utils.gl;
 
 import pln.services.logger;
 import pln.utils.crash;
 
+namespace pln::utils {
+
+export
 int
 buffer_size()
 {
@@ -16,10 +21,12 @@ buffer_size()
   return size;
 }
 
+
 /**
  * It should be used with OpenGL functions that returns text data.
  * For instance: glGetStringi
  */
+export
 std::string
 glubyte_to_string(const GLubyte* value)
 {
@@ -27,9 +34,11 @@ glubyte_to_string(const GLubyte* value)
   return { reinterpret_cast<const char*>(value) };
 }
 
+
 /**
  * Thanks to the documentation: https://www.khronos.org/opengl/wiki/OpenGL_Error
  */
+export
 void
 print_opengl_errors(const std::string& place)
 {
@@ -83,6 +92,8 @@ print_opengl_errors(const std::string& place)
   }
 }
 
+
+export
 void
 print_opengl_info()
 {
@@ -94,6 +105,8 @@ print_opengl_info()
     std::format("Renderer: {}", glubyte_to_string(glGetString(GL_RENDERER))));
 }
 
+
+export
 void
 print_extension_support(std::string extension_name)
 {
@@ -110,6 +123,8 @@ print_extension_support(std::string extension_name)
   return;
 }
 
+
+export
 GLuint
 gen_color_attachment(GLint internal_color_format,
                      GLint color_attachment,
@@ -138,6 +153,8 @@ gen_color_attachment(GLint internal_color_format,
   return texture_handle;
 }
 
+
+export
 GLuint
 gen_render_buffer(unsigned int width, unsigned int height)
 {
@@ -162,4 +179,6 @@ gen_render_buffer(unsigned int width, unsigned int height)
     pln::utils::crash(status_text);
   }
   return render_buffer;
+}
+
 }

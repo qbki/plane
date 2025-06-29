@@ -5,8 +5,6 @@
 #include <string>
 #include <utility>
 
-#include "utils/types.h"
-
 import pln.app.app;
 import pln.cache;
 import pln.common_handlers;
@@ -32,9 +30,11 @@ import pln.systems.renderer;
 import pln.utils.file_loaders;
 import pln.utils.platform;
 import pln.utils.system;
+import pln.utils.types;
 
-using namespace pln::utils::file_loaders;
 using namespace pln::gui::core;
+using namespace pln::utils::file_loaders;
+using namespace pln::utils;
 
 int
 main(int argc, char* argv[])

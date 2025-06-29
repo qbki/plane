@@ -14,14 +14,14 @@ module;
 #include <tuple>
 #include <vector>
 
-#include "src/utils/gl.h"
-
 export module pln.mesh;
 
 import pln.math.intersections;
 import pln.math.shapes;
+import pln.utils.gl;
 
 using namespace pln::math;
+using namespace pln::utils;
 
 namespace pln::mesh {
 

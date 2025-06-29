@@ -1,17 +1,20 @@
-#pragma once
+module;
 #include <cstdlib>
 #include <functional>
 #include <memory>
 #include <variant>
 
-#include "src/utils/types.h"
+export module pln.utils.result;
 
 import pln.utils.crash;
+import pln.utils.types;
 
+namespace pln::utils {
 
 /**
  * TODO Should be replaced by std::expected (C++23)
  */
+export
 template<typename T>
 class Result
 {
@@ -78,3 +81,5 @@ public:
       _variant);
   }
 };
+
+}

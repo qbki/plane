@@ -3,12 +3,12 @@
 
 #include "deferred_shading.h"
 
-import pln.meshes;
+import pln.mesh;
 
 
 DeferredShading::DeferredShading(std::unique_ptr<pln::shaders::Shader> geometry_pass,
                                  std::unique_ptr<pln::shaders::Shader> light_pass,
-                                 std::unique_ptr<pln::meshes::Mesh> quad,
+                                 std::unique_ptr<pln::mesh::Mesh> quad,
                                  unsigned int width,
                                  unsigned int height)
   : _g_buffer(std::make_unique<GBuffer>())
@@ -47,7 +47,7 @@ DeferredShading::light_path()
 void
 DeferredShading::draw_quad()
 {
-  pln::meshes::Mesh::DrawParams draw_params { .transforms { glm::mat4 {} } };
+  pln::mesh::Mesh::DrawParams draw_params { .transforms { glm::mat4 {} } };
   _quad->draw(draw_params);
 }
 

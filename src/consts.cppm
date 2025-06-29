@@ -1,9 +1,9 @@
 module;
 #include <filesystem>
 
-#include "src/math/shapes.h"
-
 export module pln.consts;
+
+import pln.math.shapes;
 
 namespace pln::consts {
 
@@ -25,6 +25,6 @@ export const std::filesystem::path SAVES_DIR("saves");
 export const std::filesystem::path SETTINGS_FILE(SAVES_DIR / "settings.json");
 export const std::filesystem::path SAVE_DATA_FILE(SAVES_DIR / "save.json");
 
-export const Shape::Sphere DEFAULT_COLLIDER { .radius = 0.5 };
+export const pln::math::Sphere DEFAULT_COLLIDER { .radius = 0.5 };
 
 }

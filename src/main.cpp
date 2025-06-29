@@ -21,13 +21,13 @@ import pln.game_loop;
 import pln.gui.core.theme;
 import pln.logger.console_logger;
 import pln.logger;
+import pln.mesh_generators;
 import pln.sdl;
 import pln.service;
 import pln.services.app;
 import pln.services.gui_quad;
 import pln.services.logger;
 import pln.shaders;
-import pln.shapes;
 import pln.systems.renderer;
 import pln.utils.file_loaders;
 import pln.utils.platform;
@@ -102,7 +102,7 @@ main(int argc, char* argv[])
   auto deferred_shading = std::make_unique<DeferredShading>(
     std::move(geometry_pass_shader),
     std::move(light_pass_shader),
-    pln::shapes::create_quad(1.0, 1.0, pln::consts::FARTHEST_NDS_Z_COORD),
+    pln::mesh::create_quad(1.0, 1.0, pln::consts::FARTHEST_NDS_Z_COORD),
     pln::consts::DEFAULT_SCREEN_WIDTH,
     pln::consts::DEFAULT_SCREEN_HEIGHT);
 
@@ -149,7 +149,7 @@ main(int argc, char* argv[])
   auto theme = pln::fileio::load_theme(pln::services::app().levels_dir() / "theme.json");
   pln::Service<const Theme>::install(std::move(theme));
 
-  auto quad = std::make_unique<pln::services::GuiQuad>(pln::shapes::create_quad(1, 1, 0));
+  auto quad = std::make_unique<pln::services::GuiQuad>(pln::mesh::create_quad(1, 1, 0));
   pln::Service<const pln::services::GuiQuad>::install(std::move(quad));
 
   pln::common_handlers::register_common_handlers();

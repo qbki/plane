@@ -7,7 +7,7 @@ export module pln.gui.components.div;
 import pln.components.common;
 import pln.components.transform;
 import pln.gui.components.utils;
-import pln.shapes;
+import pln.math.shapes;
 
 using namespace pln::components;
 
@@ -35,7 +35,7 @@ div(std::shared_ptr<entt::registry>& registry, const DivConfig& config)
   registry->emplace<Children>(entity, config.children);
   registry->emplace<GUIKind>(entity);
   registry->emplace<Parent>(entity, config.parent);
-  registry->emplace<pln::shapes::RectSize>(entity, valid_width, valid_height);
+  registry->emplace<pln::math::RectSize>(entity, valid_width, valid_height);
   registry->emplace<Transform>(entity);
 
   utils::reparent(registry, config.children.value, entity);

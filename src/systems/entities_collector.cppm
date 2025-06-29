@@ -3,12 +3,13 @@ module;
 #include <memory>
 #include <utility>
 
-#include "src/math/intersection.h"
-
 export module pln.systems.entities_collector;
 
 import pln.collections.octree;
 import pln.components.common;
+import pln.components.transform;
+import pln.math.intersections;
+import pln.math.shapes;
 import pln.scene.iscene;
 
 using namespace pln::components;
@@ -32,7 +33,7 @@ collect_entities(pln::scene::IScene& scene)
               const MeshPointer& mesh) {
       auto collider = apply_transform_to_collider(transform,
                                                   mesh->bounding_volume());
-      octree->insert(std::get<Shape::Sphere>(collider), entity);
+      octree->insert(std::get<pln::math::Sphere>(collider), entity);
     });
 
   scene.entities(std::move(octree));

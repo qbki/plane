@@ -5,11 +5,12 @@ module;
 #include <memory>
 #include <utility>
 
-#include "src/math/shapes.h"    // IWYU pragma: export
-
 export module pln.game_state.state;
 
 import pln.cameras.icamera;
+import pln.math.shapes;
+
+using namespace pln::math;
 
 namespace pln::game_state {
 
@@ -21,7 +22,7 @@ private:
   glm::vec3 _cursor = glm::zero<glm::vec3>();
   std::shared_ptr<entt::registry>
     _registry = std::make_shared<entt::registry>();
-  Shape::AABB _world_bbox;
+  pln::math::AABB _world_bbox;
 
 public:
   State() = default;
@@ -61,13 +62,13 @@ public:
 
 
   void
-  world_bbox(const Shape::AABB& value)
+  world_bbox(const pln::math::AABB& value)
   {
     _world_bbox = value;
   }
 
 
-  [[nodiscard]] const Shape::AABB&
+  [[nodiscard]] const pln::math::AABB&
   world_bbox() const
   {
     return _world_bbox;

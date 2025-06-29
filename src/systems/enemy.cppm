@@ -9,8 +9,6 @@ module;
 #include <ranges>
 #include <tuple>
 
-#include "src/math/shapes.h"
-
 export module pln.systems.enemy;
 
 import pln.components.common;
@@ -18,11 +16,13 @@ import pln.components.transform;
 import pln.components.turret_rotation;
 import pln.components.weapon;
 import pln.consts;
+import pln.math.shapes;
 import pln.scene.iscene;
 import pln.services.app;
 import pln.utils.common;
 
 using namespace pln::components;
+using namespace pln::math;
 
 namespace pln::systems::enemy {
 
@@ -64,12 +64,12 @@ enemy_hunting(pln::scene::IScene& scene)
 
     auto position_a = transform_a.translation();
     const auto shooting_distance = weapon_a.bullet_speed * weapon_a.lifetime;
-    auto bvolume_a = std::get_if<Shape::Sphere>(&mesh_a->bounding_volume());
+    auto bvolume_a = std::get_if<pln::math::Sphere>(&mesh_a->bounding_volume());
     weapon_a.is_shooting = false;
     if (bvolume_a == nullptr) {
       continue;
     }
-    auto found_ids = scene.entities()->at(Shape::Sphere {
+    auto found_ids = scene.entities()->at(pln::math::Sphere {
       .center = position_a,
       .radius = shooting_distance,
     });
@@ -100,7 +100,7 @@ enemy_hunting(pln::scene::IScene& scene)
         continue;
       }
       auto [transform_b, mesh_b] = registry.get<Transform, MeshPointer>(id_b);
-      auto bvolume_b = std::get_if<Shape::Sphere>(&mesh_b->bounding_volume());
+      auto bvolume_b = std::get_if<pln::math::Sphere>(&mesh_b->bounding_volume());
       float hit_distance = 0.0;
       auto result = glm::intersectRaySphere(transform_a.translation(),
                                             forward_direction,

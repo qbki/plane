@@ -12,9 +12,9 @@ import pln.components.common;
 import pln.components.transform;
 import pln.control;
 import pln.gui.components.text;
+import pln.mesh_generators;
 import pln.services.cache;
 import pln.services.theme;
-import pln.shapes;
 
 using namespace pln::components;
 
@@ -153,7 +153,7 @@ make_text(std::shared_ptr<entt::registry>& registry, const std::string&)
 {
   auto entity = pln::gui::components::text(registry);
   registry->emplace<ParticleKind>(entity); // TODO Add better type
-  registry->emplace<MeshPointer>(entity, pln::shapes::create_quad());
+  registry->emplace<MeshPointer>(entity, pln::mesh::create_quad());
   return entity;
 }
 

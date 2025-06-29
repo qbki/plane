@@ -11,9 +11,9 @@ module;
 
 export module pln.cache;
 
-import pln.meshes;
+import pln.mesh;
+import pln.mesh_generators;
 import pln.services.app;
-import pln.shapes;
 import pln.textures;
 import pln.utils.color;
 import pln.utils.file_loaders;
@@ -26,7 +26,7 @@ export
 class Cache
 {
 public:
-  using MeshPtr = std::shared_ptr<pln::meshes::Mesh>;
+  using MeshPtr = std::shared_ptr<pln::mesh::Mesh>;
   using TexturePtr = std::shared_ptr<pln::textures::Texture>;
   using ModelPair = std::tuple<MeshPtr, TexturePtr>;
   using SoundPtr = std::shared_ptr<Sound::Sound>;
@@ -54,7 +54,7 @@ public:
     auto texture = extracted_texture_opt.has_value()
                      ? extracted_texture_opt.value()
                      : generate_texture(gltf_model);
-    auto mesh = std::make_shared<pln::meshes::Mesh>(gltf_model);
+    auto mesh = std::make_shared<pln::mesh::Mesh>(gltf_model);
     _meshes[mesh_path] = std::make_tuple(mesh, texture);
     return { mesh, texture };
   }
@@ -69,7 +69,7 @@ public:
     }
     std::vector<unsigned char> data { color.r, color.g, color.b, color.a };
     auto texture = std::make_shared<pln::textures::Texture>(1, 1, data);
-    auto mesh = std::shared_ptr(pln::shapes::create_quad());
+    auto mesh = std::shared_ptr(pln::mesh::create_quad());
     auto pair = std::make_tuple(mesh, texture);
     _meshes[rect_id] = pair;
     return pair;

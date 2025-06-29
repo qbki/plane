@@ -3,7 +3,7 @@
 
 #include "src/shading/g_buffer.h" // IWYU pragma: export
 
-import pln.meshes;
+import pln.mesh;
 import pln.shaders;
 
 class DeferredShading
@@ -12,12 +12,12 @@ private:
   std::unique_ptr<GBuffer> _g_buffer;
   std::unique_ptr<pln::shaders::Shader> _geometry_pass;
   std::unique_ptr<pln::shaders::Shader> _light_pass;
-  std::unique_ptr<pln::meshes::Mesh> _quad;
+  std::unique_ptr<pln::mesh::Mesh> _quad;
 
 public:
   DeferredShading(std::unique_ptr<pln::shaders::Shader> geometry_pass,
                   std::unique_ptr<pln::shaders::Shader> light_pass,
-                  std::unique_ptr<pln::meshes::Mesh> quad,
+                  std::unique_ptr<pln::mesh::Mesh> quad,
                   unsigned int width,
                   unsigned int height);
   DeferredShading(const DeferredShading&) = delete;

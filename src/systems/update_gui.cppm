@@ -3,23 +3,23 @@ module;
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
-#include "src/math/intersection.h"
-
 export module pln.systems.update_gui;
 
 import pln.components.common;
 import pln.components.transform;
 import pln.events.event;
 import pln.events.event_emitter;
+import pln.math.intersections;
+import pln.math.shapes;
 import pln.scene.iscene;
 import pln.service;
 import pln.services.app;
-import pln.shapes;
 import pln.utils.ecs;
 import pln.utils.mouse;
 
 using namespace pln::components;
 using namespace pln::events;
+using namespace pln::math;
 
 namespace pln::systems::update_gui {
 
@@ -48,7 +48,7 @@ update_gui(pln::scene::IScene& scene)
           EventEmitter<PointerLeave>,
           EventEmitter<PointerDown>,
           Transform,
-          pln::shapes::RectSize,
+          pln::math::RectSize,
           Parent,
           IsPointerInside,
           IsPointerDownEventAccepted>()
@@ -62,7 +62,7 @@ update_gui(pln::scene::IScene& scene)
             EventEmitter<PointerLeave>& pointer_leave,
             EventEmitter<PointerDown>& pointer_down,
             Transform& transform,
-            pln::shapes::RectSize& rect_size,
+            pln::math::RectSize& rect_size,
             Parent& parent,
             IsPointerInside& was_pointer_inside,
             IsPointerDownEventAccepted& is_down_event_accepted) {
@@ -70,7 +70,7 @@ update_gui(pln::scene::IScene& scene)
       auto is_pointer_down = pln::services::app().control().pointer_pressed;
       auto is_pointer_up = !is_pointer_down;
       auto point = global_matrix * glm::vec4(transform.translation(), 1);
-      pln::shapes::Rect<int> rect {
+      pln::math::Rect<int> rect {
         .x = static_cast<int>(point.x),
         .y = static_cast<int>(point.y),
         .width = rect_size.width,

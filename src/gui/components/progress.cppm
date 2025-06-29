@@ -12,7 +12,7 @@ import pln.events.event;
 import pln.events.event_emitter;
 import pln.gui.components.div;
 import pln.gui.components.rect;
-import pln.shapes;
+import pln.math.shapes;
 
 using namespace pln::components;
 using namespace pln::events;
@@ -62,16 +62,16 @@ progress(std::shared_ptr<entt::registry>& registry,
   auto& layout = registry->emplace<EventEmitter<GUILayout>>(entity);
 
   layout.add([registry, entity, line, progress](auto&) {
-    auto [percent, rect, is_dirty] = registry->get<Percent, pln::shapes::RectSize, IsDirty>(
+    auto [percent, rect, is_dirty] = registry->get<Percent, pln::math::RectSize, IsDirty>(
       entity);
     if (!is_dirty.value) {
       return;
     }
     auto [progress_size,
-          is_progress_dirty] = registry->get<pln::shapes::RectSize, IsDirty>(progress);
+          is_progress_dirty] = registry->get<pln::math::RectSize, IsDirty>(progress);
     progress_size.width = static_cast<int>(rect.width * percent.norm());
 
-    auto [line_transform, line_size] = registry->get<Transform, pln::shapes::RectSize>(line);
+    auto [line_transform, line_size] = registry->get<Transform, pln::math::RectSize>(line);
     auto line_position = line_transform.translation();
     line_position.y = static_cast<float>(progress_size.height
                                          - line_size.height)

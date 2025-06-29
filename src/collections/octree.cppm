@@ -3,15 +3,17 @@ module;
 #include <entt/entt.hpp>
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
+#include <glm/vec3.hpp>
 #include <memory>
 #include <vector>
-
-#include "src/math/intersection.h"
-#include "src/math/shapes.h"
 
 export module pln.collections.octree;
 
 import pln.consts;
+import pln.math.intersections;
+import pln.math.shapes;
+
+using namespace pln::math;
 
 namespace pln::collections {
 
@@ -46,8 +48,8 @@ private:
                                   Octree::CHILDREN_SIZE>;
 
   std::vector<T> _data;
-  std::array<Shape::AABB, CHILDREN_SIZE> _partitioning;
-  Shape::AABB _bbox;
+  std::array<AABB, CHILDREN_SIZE> _partitioning;
+  AABB _bbox;
   unsigned int _depth;
   unsigned int _max_depth;
   glm::vec3 _center = { 0.0, 0.0, 0.0 };
@@ -55,26 +57,26 @@ private:
 
 public:
   Octree();
-  explicit Octree(const Shape::AABB& bbox,
+  explicit Octree(const AABB& bbox,
                   unsigned int max_depth = DEFAULT_MAX_DEPTH,
                   unsigned int depth = 0);
-  void insert(Shape::Sphere collider, const T& value);
-  std::vector<T> at(const Shape::AABB& bbox) const;
-  void at(const Shape::AABB& bbox, std::vector<T>& acc) const;
+  void insert(Sphere collider, const T& value);
+  std::vector<T> at(const AABB& bbox) const;
+  void at(const AABB& bbox, std::vector<T>& acc) const;
 
-  std::vector<T> at(const Shape::Sphere& sphere) const;
+  std::vector<T> at(const Sphere& sphere) const;
 };
 
 template<typename T>
 Octree<T>::Octree()
-  : _bbox(Shape::AABB {})
+  : _bbox(AABB {})
   , _depth(0)
   , _max_depth(0)
 {
 }
 
 template<typename T>
-Octree<T>::Octree(const Shape::AABB& bbox,
+Octree<T>::Octree(const AABB& bbox,
                   unsigned int max_depth,
                   unsigned int depth)
   : _bbox(bbox)
@@ -118,7 +120,7 @@ Octree<T>::Octree(const Shape::AABB& bbox,
 
 template<typename T>
 void
-Octree<T>::insert(Shape::Sphere collider, const T& value)
+Octree<T>::insert(Sphere collider, const T& value)
 {
   const auto collider_size = collider.radius * 2.0f;
   const auto bbox_child_size = (_bbox.max - _bbox.min) * pln::consts::HALF;
@@ -144,7 +146,7 @@ Octree<T>::insert(Shape::Sphere collider, const T& value)
 
 template<typename T>
 std::vector<T>
-Octree<T>::at(const Shape::AABB& bbox) const
+Octree<T>::at(const AABB& bbox) const
 {
   std::vector<T> result;
   at(bbox, result);
@@ -153,9 +155,9 @@ Octree<T>::at(const Shape::AABB& bbox) const
 
 template<typename T>
 std::vector<T>
-Octree<T>::at(const Shape::Sphere& sphere) const
+Octree<T>::at(const Sphere& sphere) const
 {
-  auto bbox = Shape::AABB {
+  auto bbox = AABB {
     .min = sphere.center - glm::vec3(sphere.radius),
     .max = sphere.center + glm::vec3(sphere.radius),
   };
@@ -164,7 +166,7 @@ Octree<T>::at(const Shape::Sphere& sphere) const
 
 template<typename T>
 void
-Octree<T>::at(const Shape::AABB& bbox, std::vector<T>& acc) const
+Octree<T>::at(const AABB& bbox, std::vector<T>& acc) const
 {
   std::ranges::copy(_data, std::back_inserter(acc));
   if (_depth >= _max_depth) {

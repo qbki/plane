@@ -4,9 +4,9 @@ module;
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
-#include "src/math/shapes.h"
-
 export module pln.cameras.icamera;
+
+import pln.math.shapes;
 
 namespace pln::cameras {
 
@@ -27,7 +27,7 @@ public:
   static constexpr glm::vec3 DEFAULT_UP_NORM { 0, 1, 0 };
 
   virtual void screen_size(int width, int height) = 0;
-  [[nodiscard]] virtual Shape::Frustum frustum() const = 0;
+  [[nodiscard]] virtual pln::math::Frustum frustum() const = 0;
 
   ICamera(const ICamera&) = default;
   ICamera(ICamera&&) = delete;

@@ -2,12 +2,11 @@ module;
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/vec3.hpp>
 
-#include "src/math/shapes.h"
-
 export module pln.cameras.ortho_camera;
 
 import pln.cameras.icamera;
 import pln.consts;
+import pln.math.shapes;
 
 namespace pln::cameras {
 
@@ -41,7 +40,7 @@ public:
   }
 
 
-  Shape::Frustum
+  pln::math::Frustum
   frustum() const
   {
     auto near = ICamera::near();

@@ -3,17 +3,18 @@ module;
 #include <glm/geometric.hpp>
 #include <variant>
 
-#include "src/math/intersection.h"
-
 export module pln.systems.collision;
 
 import pln.components.common;
 import pln.components.transform;
 import pln.consts;
+import pln.math.intersections;
+import pln.math.shapes;
 import pln.scene.iscene;
 import pln.services.app;
 
 using namespace pln::components;
+using namespace pln::math;
 
 namespace pln::systems::collision {
 
@@ -28,7 +29,7 @@ collision(pln::scene::IScene& scene)
     [&](entt::entity entity, Transform& transform_a, Velocity& velocity_a) {
       auto collider_a = apply_transform_to_collider(transform_a,
                                                     pln::consts::DEFAULT_COLLIDER);
-      auto shape_a = std::get_if<Shape::Sphere>(&collider_a);
+      auto shape_a = std::get_if<pln::math::Sphere>(&collider_a);
       if (!shape_a) {
         return;
       }
@@ -45,7 +46,7 @@ collision(pln::scene::IScene& scene)
                           .get<Transform, Velocity, MeshPointer>(near_entity);
         auto collider_b = apply_transform_to_collider(transform_b,
                                                       pln::consts::DEFAULT_COLLIDER);
-        auto shape_b = std::get_if<Shape::Sphere>(&collider_b);
+        auto shape_b = std::get_if<pln::math::Sphere>(&collider_b);
         if (!shape_b) {
           continue;
         }

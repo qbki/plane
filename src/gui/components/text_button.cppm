@@ -12,8 +12,8 @@ import pln.events.event_emitter;
 import pln.gui.components.text;
 import pln.gui.core.button_state;
 import pln.gui.core.theme;
+import pln.math.shapes;
 import pln.services.theme;
-import pln.shapes;
 
 using namespace pln::components;
 using namespace pln::events;
@@ -78,7 +78,7 @@ text_button(std::shared_ptr<entt::registry>& registry,
   registry->emplace<IsPointerDownEventAccepted>(entity, false);
   registry->emplace<IsPointerInside>(entity, false);
   registry->emplace<Parent>(entity, config.parent);
-  registry->emplace<pln::shapes::RectSize>(entity, 0, 0);
+  registry->emplace<pln::math::RectSize>(entity, 0, 0);
   registry->emplace<Transform>(entity);
 
   registry->emplace<EventEmitter<PointerMove>>(entity);
@@ -99,8 +99,8 @@ text_button(std::shared_ptr<entt::registry>& registry,
 
   layout.add([registry, entity](auto&) {
     auto [state,
-          parent_rect_size] = registry->get<ButtonState, pln::shapes::RectSize>(entity);
-    const auto& child_rect_size = registry->get<pln::shapes::RectSize>(state.current());
+          parent_rect_size] = registry->get<ButtonState, pln::math::RectSize>(entity);
+    const auto& child_rect_size = registry->get<pln::math::RectSize>(state.current());
     parent_rect_size = child_rect_size;
   });
 

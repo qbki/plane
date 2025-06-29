@@ -13,7 +13,7 @@ module;
 export module pln.components.common;
 
 import pln.control;
-import pln.meshes;
+import pln.mesh;
 import pln.textures;
 
 namespace pln::components {
@@ -32,7 +32,7 @@ export using InitialPosition = NewType<glm::vec3, struct InitialPositionTag>;
 export using IsDirty = NewType<bool, struct IsDirtyTag>;
 export using Lifetime = NewType<float, struct LifeTimeTag>;
 export using LifetimeMax = NewType<float, struct LifeTimeMaxTag>;
-export using MeshPointer = std::shared_ptr<pln::meshes::Mesh>;
+export using MeshPointer = std::shared_ptr<pln::mesh::Mesh>;
 export using Owner = NewType<entt::entity, struct OwnerTag>;
 export using Parent = NewType<std::optional<entt::entity>, struct ParentTag>;
 export using ShotSound = NewType<std::optional<std::string>, struct ShotSoundTag>;

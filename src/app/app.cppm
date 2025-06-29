@@ -20,10 +20,10 @@ import pln.app.save;
 import pln.app.settings;
 import pln.consts;
 import pln.control;
+import pln.math.shapes;
 import pln.scene.iscene;
 import pln.sdl;
 import pln.shaders;
-import pln.shapes;
 import pln.utils.crash;
 
 namespace pln::app {
@@ -46,8 +46,8 @@ private:
   pln::app::Save _save { pln::consts::SAVE_DATA_FILE };
   std::vector<std::unique_ptr<pln::scene::IScene>> _scenes {};
   std::unique_ptr<pln::control::Control> _control {};
-  pln::shapes::RectSize _screen_size { pln::consts::DEFAULT_SCREEN_WIDTH,
-                                       pln::consts::DEFAULT_SCREEN_HEIGHT };
+  pln::math::RectSize _screen_size { pln::consts::DEFAULT_SCREEN_WIDTH,
+                                     pln::consts::DEFAULT_SCREEN_HEIGHT };
   std::unique_ptr<DeferredShading> _deferred_shading {};
   std::unique_ptr<FrameBuffer>
     _intermediate_fb = std::make_unique<FrameBuffer>();
@@ -86,12 +86,12 @@ public:
   }
 
   void
-  screen_size(const pln::shapes::RectSize& size)
+  screen_size(const pln::math::RectSize& size)
   {
     _screen_size = size;
   }
 
-  pln::shapes::RectSize
+  pln::math::RectSize
   screen_size() const
   {
     return _screen_size;

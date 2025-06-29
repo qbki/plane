@@ -7,8 +7,8 @@ export module pln.gui.components.rect;
 import pln.components.common;
 import pln.components.transform;
 import pln.gui.ui_canvas;
+import pln.math.shapes;
 import pln.services.theme;
-import pln.shapes;
 import pln.utils.color;
 
 using namespace pln::components;
@@ -39,7 +39,7 @@ rect(std::shared_ptr<entt::registry>& registry,
   registry->emplace<GUIKind>(entity);
   registry->emplace<IsDirty>(entity, true);
   registry->emplace<Parent>(entity, config.parent);
-  registry->emplace<pln::shapes::RectSize>(entity, config.width, config.height);
+  registry->emplace<pln::math::RectSize>(entity, config.width, config.height);
   registry->emplace<Transform>(entity);
   registry->emplace<UIRect>(entity);
   registry->emplace<pln::gui::UiCanvas>(entity, std::move(canvas));

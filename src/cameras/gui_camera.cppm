@@ -1,11 +1,10 @@
 module;
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "src/math/shapes.h"
-
 export module pln.cameras.gui_camera;
 
 import pln.cameras.icamera;
+import pln.math.shapes;
 
 namespace pln::cameras {
 
@@ -36,7 +35,7 @@ public:
   }
 
 
-  Shape::Frustum
+  pln::math::Frustum
   frustum() const
   {
     // No need now

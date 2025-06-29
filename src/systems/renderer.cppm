@@ -8,8 +8,6 @@ module;
 #include <string>
 #include <unordered_map>
 
-#include "src/math/intersection.h"
-
 export module pln.systems.renderer;
 
 import pln.app.app;
@@ -18,14 +16,17 @@ import pln.components.transform;
 import pln.consts;
 import pln.gui.ui_canvas;
 import pln.materals;
-import pln.meshes;
+import pln.math.intersections;
+import pln.math.shapes;
+import pln.mesh;
+import pln.mesh_generators;
 import pln.scene.iscene;
 import pln.services.app;
-import pln.shapes;
 import pln.textures;
 import pln.utils.ecs;
 
 using namespace pln::components;
+using namespace pln::math;
 
 namespace pln::systems::renderer {
 
@@ -35,9 +36,9 @@ static const pln::materials::Material COMMON_MATERIAL(glm::vec3(0.05, 0.05, 0.05
 
 struct TransformHolder
 {
-  pln::meshes::Mesh* mesh = nullptr;
+  pln::mesh::Mesh* mesh = nullptr;
   const pln::textures::Texture* texture = nullptr;
-  pln::meshes::Mesh::DrawParams draw_params;
+  pln::mesh::Mesh::DrawParams draw_params;
 };
 
 /**
@@ -52,7 +53,7 @@ struct TransformHolder
  * @see https://registry.khronos.org/webgl/specs/latest/2.0-compute/
  */
 void
-draw_sorted(const std::unordered_map<pln::meshes::Mesh*, TransformHolder>& transform_holders)
+draw_sorted(const std::unordered_map<pln::mesh::Mesh*, TransformHolder>& transform_holders)
 {
   auto values = transform_holders | std::views::values;
   std::vector<const TransformHolder*> filtered_holders {};
@@ -72,7 +73,7 @@ draw_sorted(const std::unordered_map<pln::meshes::Mesh*, TransformHolder>& trans
 }
 
 void
-draw(std::unordered_map<pln::meshes::Mesh*, TransformHolder>& transform_holders)
+draw(std::unordered_map<pln::mesh::Mesh*, TransformHolder>& transform_holders)
 {
   for (auto& [_, holder] : transform_holders) {
     holder.texture->use(0);
@@ -82,8 +83,8 @@ draw(std::unordered_map<pln::meshes::Mesh*, TransformHolder>& transform_holders)
 
 void
 update_transform_mapping(
-  std::unordered_map<pln::meshes::Mesh*, TransformHolder>& transform_mapping,
-  pln::meshes::Mesh* mesh_pointer,
+  std::unordered_map<pln::mesh::Mesh*, TransformHolder>& transform_mapping,
+  pln::mesh::Mesh* mesh_pointer,
   const pln::textures::Texture* texture_pointer,
   glm::mat4& transform)
 {
@@ -114,7 +115,7 @@ render_generic_objects(pln::app::App& app, const pln::scene::IScene& scene)
   auto& geometry_pass_shader = deferred_shading.geometry_pass();
   geometry_pass_shader.uniform("u_PV", camera.pv());
 
-  std::unordered_map<pln::meshes::Mesh*, TransformHolder> transform_mapping;
+  std::unordered_map<pln::mesh::Mesh*, TransformHolder> transform_mapping;
 
   glDisable(GL_BLEND);
   registry
@@ -209,7 +210,7 @@ render_particles(pln::app::App& app, const pln::scene::IScene& scene)
   auto& particle_shader = app.particle_shader();
   particle_shader.use();
   particle_shader.uniform("u_PV", camera.pv());
-  std::unordered_map<pln::meshes::Mesh*, TransformHolder> transform_mapping;
+  std::unordered_map<pln::mesh::Mesh*, TransformHolder> transform_mapping;
   registry
     .view<const Transform,
           const MeshPointer,
@@ -231,7 +232,7 @@ render_particles(pln::app::App& app, const pln::scene::IScene& scene)
 void
 render_ui(const pln::scene::IScene& scene)
 {
-  static auto quad = pln::shapes::create_ui_quad();
+  static auto quad = pln::mesh::create_ui_quad();
 
   GLint stored_gl_depth_func = 0;
   auto& registry = scene.state().registry();
@@ -251,14 +252,14 @@ render_ui(const pln::scene::IScene& scene)
   registry
     .view<pln::gui::UiCanvas,
           Transform,
-          pln::shapes::RectSize,
+          pln::math::RectSize,
           IsDirty,
           Parent,
           GUIKind,
           Available>()
     .each([&](pln::gui::UiCanvas& canvas,
               const Transform& transform,
-              const pln::shapes::RectSize& rect,
+              const pln::math::RectSize& rect,
               IsDirty& is_dirty,
               const Parent& parent) {
       if (rect.width <= 0 || rect.height <= 0) {

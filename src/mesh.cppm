@@ -1,6 +1,4 @@
 module;
-#include "src/math/shapes.h"
-
 #include <GL/glew.h>
 #include <algorithm>
 #include <cstddef>
@@ -16,12 +14,16 @@ module;
 #include <tuple>
 #include <vector>
 
-#include "src/math/shapes.h"
 #include "src/utils/gl.h"
 
-export module pln.meshes;
+export module pln.mesh;
 
-namespace pln::meshes {
+import pln.math.intersections;
+import pln.math.shapes;
+
+using namespace pln::math;
+
+namespace pln::mesh {
 
 export class Mesh
 {
@@ -63,7 +65,7 @@ private:
   size_t _number_of_elements {0};
   size_t _instance_quantity {1};
   int _componentType {GL_UNSIGNED_INT};
-  Shape::Collider _bounding_volume;
+  pln::math::Collider _bounding_volume;
 
 
 
@@ -144,7 +146,7 @@ public:
        std::vector<unsigned int>& indices)
     : _number_of_elements(indices.size())
   {
-    Shape::Sphere volume = {
+    pln::math::Sphere volume = {
       .center = { 0, 0, 0 },
       .radius = 0,
     };
@@ -202,7 +204,7 @@ public:
   }
 
 
-  [[nodiscard]] const Shape::Collider& bounding_volume() const
+  [[nodiscard]] const pln::math::Collider& bounding_volume() const
   {
     return _bounding_volume;
   }
@@ -223,7 +225,7 @@ private:
 
   void calculate_bounding_volume(tinygltf::Model& model)
   {
-    Shape::Sphere volume {
+    pln::math::Sphere volume {
       .center = { 0, 0, 0 },
       .radius = 0,
     };

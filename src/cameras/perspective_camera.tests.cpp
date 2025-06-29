@@ -8,10 +8,13 @@
 #include <glm/vec3.hpp>
 #include <memory>
 
-#include "src/math/shapes.h"
-#include "src/tests-utils/common.h"
+import pln.cameras.perspective_camera;
+import pln.math.shapes;
+import pln.tests_utils.common;
 
-#include "perspective_camera.h"
+using namespace pln::cameras;
+using namespace pln::math;
+using namespace pln::tests_utils;
 
 const float NEAR = 0.1;
 const float FAR = 1.0;
@@ -21,7 +24,7 @@ const int SCREEN_HEIGHT = 100;
 const glm::vec3 ORIGIN = glm::zero<glm::vec3>();
 const float TERM = glm::normalize(glm::vec2(1, 1)).x;
 
-const Shape::Frustum EXPECTED_FRUSTUM = {
+const Frustum EXPECTED_FRUSTUM = {
   .near {
     .point = { 0, 0, -NEAR },
     .normal = { 0, 0, -1 },

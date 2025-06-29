@@ -111,6 +111,7 @@ file(GLOB_RECURSE SOURCES_MODULES src/*.cppm)
 set(TEST_SOURCES ${SOURCES})
 set(MODULES_SOURCES src/control.cpp)
 list(FILTER SOURCES EXCLUDE REGEX ".tests.cpp$")
+list(FILTER SOURCES EXCLUDE REGEX ".*tests-utils.*")
 list(FILTER TEST_SOURCES EXCLUDE REGEX "main.cpp$")
 
 if(BUILD_EXECUTABLE)
@@ -147,6 +148,10 @@ if(BUILD_TESTS)
   enable_testing()
   set(TESTS_TARGET tests)
   add_executable(${TESTS_TARGET} ${TEST_SOURCES})
+  target_sources(${TESTS_TARGET}
+    PUBLIC
+      FILE_SET cpp_modules
+      TYPE CXX_MODULES FILES ${SOURCES_MODULES})
   set_target_properties(
     tests
     PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests)

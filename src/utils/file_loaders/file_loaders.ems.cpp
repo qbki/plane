@@ -1,6 +1,6 @@
+#if defined(__EMSCRIPTEN__)
 module;
 #pragma clang diagnostic ignored "-Wdollar-in-identifier-extension"
-#if defined(__EMSCRIPTEN__)
 #include <SDL_mixer.h>
 #include <emscripten.h>
 #include <filesystem>
@@ -11,18 +11,16 @@ module;
 #include <nlohmann/json.hpp>
 #include <stdexcept>
 #include <string>
+#include <tiny_gltf.h>
 #include <vector>
-
-#include "src/services.h"
-#include "src/utils/result.h" // IWYU pragma: export
-
-#endif
 
 module pln.utils.file_loaders;
 
+import pln.services.logger;
+import pln.utils.crash;
 import pln.utils.file_loaders.utils;
+import pln.utils.result;
 
-#if defined(__EMSCRIPTEN__)
 namespace pln::utils::file_loaders {
 
 // clang-format off
@@ -94,7 +92,6 @@ EM_ASYNC_JS(void, em_store_file, (const char* file_path_cstr, const char* parent
 // clang-format on
 
 
-export
 Result<std::string>
 load_string_by_emscripten(const std::string& file_name)
 {
@@ -117,7 +114,6 @@ load_string_by_emscripten(const std::string& file_name)
 }
 
 
-export
 Result<std::vector<char>>
 load_binary_by_emscripten(const std::string& file_name)
 {
@@ -140,7 +136,6 @@ load_binary_by_emscripten(const std::string& file_name)
 }
 
 
-export
 Result<tinygltf::Model>
 load_gltf_model(const std::string& file_name)
 {
@@ -163,15 +158,15 @@ load_gltf_model(const std::string& file_name)
     file_name);
 
   if (!warn.empty()) {
-    Services::logger().warn(warn);
+    pln::services::logger().warn(warn);
   }
 
   if (!err.empty()) {
-    Services::logger().error(err);
+    pln::services::logger().error(err);
   }
 
   if (status) {
-    Services::logger().info(std::format("Loaded glTF: {}", file_name));
+    pln::services::logger().info(std::format("Loaded glTF: {}", file_name));
     return Result<tinygltf::Model>::from_payload(model);
   }
   auto message = std::format("Failed to load glTF: {}", file_name);
@@ -180,7 +175,6 @@ load_gltf_model(const std::string& file_name)
 }
 
 
-export
 Result<std::string>
 load_text(const std::string& file_name)
 {
@@ -188,7 +182,6 @@ load_text(const std::string& file_name)
 }
 
 
-export
 Result<std::vector<char>>
 load_binary(const std::string& file_name)
 {
@@ -196,7 +189,6 @@ load_binary(const std::string& file_name)
 }
 
 
-export
 Result<nlohmann::basic_json<>>
 load_json(const std::string& file_path)
 {
@@ -208,7 +200,6 @@ load_json(const std::string& file_path)
 }
 
 
-export
 Result<nlohmann::basic_json<>>
 load_local_json(const std::filesystem::path& file_path)
 {
@@ -220,7 +211,6 @@ load_local_json(const std::filesystem::path& file_path)
 }
 
 
-export
 void
 save_local_json(const std::filesystem::path& file_path, nlohmann::json json)
 {
@@ -230,7 +220,6 @@ save_local_json(const std::filesystem::path& file_path, nlohmann::json json)
 }
 
 
-export
 bool
 is_file_exists(const std::filesystem::path&)
 {

@@ -1,5 +1,5 @@
-module;
 #if defined (__linux__)
+module;
 #include <SDL_mixer.h>
 #include <filesystem>
 #include <format>
@@ -12,15 +12,11 @@ module;
 #include <tiny_gltf.h>
 #include <vector>
 
-#endif
-
 module pln.utils.file_loaders;
 
+import pln.services.logger;
 import pln.utils.file_loaders.utils;
 import pln.utils.result;
-
-#if defined (__linux__)
-import pln.services.logger;
 
 namespace pln::utils::file_loaders {
 

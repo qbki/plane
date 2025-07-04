@@ -3,15 +3,17 @@
 #include <catch2/catch_test_macros.hpp>
 #include <glm/vec3.hpp>
 
-#include "../intersection.h"
-#include "../shapes.h"
+import pln.math.intersections;
+import pln.math.shapes;
 
-const Shape::Plane PLANE {
+using namespace pln::math;
+
+const Plane PLANE {
   .point { 0, 0, 0 },
   .normal { 0, 1, 0 },
 };
 
-Shape::Sphere
+Sphere
 sphere(glm::vec3 center)
 {
   return {
@@ -20,7 +22,7 @@ sphere(glm::vec3 center)
   };
 }
 
-Shape::AABB
+AABB
 aabb(glm::vec3 center)
 {
   return { .min = center - glm::vec3(0.5, 0.5, 0.5),

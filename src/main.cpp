@@ -1,105 +1,130 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include <cstdlib>
+#include <filesystem>
 #include <format>
 #include <string>
 #include <utility>
 
-#include "common_handlers.h"
-#include "consts.h"
-#include "fileio/theme_loader.h"
-#include "fileio/translation_loader.h"
-#include "game_loop.h"
-#include "logger/logger.h"
-#include "mesh.h"
-#include "sdl_init.h"
-#include "service.h"
-#include "services.h"
-#include "src/services/logger.h"
-#include "systems/render.h"
-#include "utils/file_loaders/file_loaders.h"
-#include "utils/system.h"
-#include "utils/types.h"
+import pln.app.app;
+import pln.cache;
+import pln.common_handlers;
+import pln.consts;
+import pln.control;
+import pln.events.event;
+import pln.events.event_emitter;
+import pln.fileio.theme_loader;
+import pln.fileio.translation_loader;
+import pln.game_loop;
+import pln.gui.core.theme;
+import pln.logger.console_logger;
+import pln.logger;
+import pln.mesh_generators;
+import pln.sdl;
+import pln.service;
+import pln.services.app;
+import pln.services.gui_quad;
+import pln.services.logger;
+import pln.shaders;
+import pln.shading.deferred_shading;
+import pln.systems.renderer;
+import pln.utils.file_loaders;
+import pln.utils.platform;
+import pln.utils.system;
+import pln.utils.types;
+
+using namespace pln::gui::core;
+using namespace pln::utils::file_loaders;
+using namespace pln::utils;
 
 int
 main(int argc, char* argv[])
 {
-  Service<AbstractLogger>::install(std::make_unique<Logger>());
-  Service<Cache>::install(std::make_unique<Cache>());
-  Service<Events::EventEmitter<const Events::ShootEvent>>::install(
-    std::make_unique<Events::EventEmitter<const Events::ShootEvent>>());
-  Service<Events::EventEmitter<const Events::LoadNextLevelEvent>>::install(
-    std::make_unique<Events::EventEmitter<const Events::LoadNextLevelEvent>>());
-  Service<Events::EventEmitter<const Events::LoseEvent>>::install(
-    std::make_unique<Events::EventEmitter<const Events::LoseEvent>>());
-  Service<Events::EventEmitter<const Events::LoadCurrentLevelEvent>>::install(
+  pln::Service<pln::logger::AbstractLogger>::install(
+    std::make_unique<pln::logger::ConsoleLogger>());
+
+  pln::Service<pln::cache::Cache>::install(std::make_unique<pln::cache::Cache>());
+
+  pln::Service<pln::events::EventEmitter<const pln::events::ShootEvent>>::install(
+    std::make_unique<pln::events::EventEmitter<const pln::events::ShootEvent>>());
+
+  pln::Service<pln::events::EventEmitter<const pln::events::LoadNextLevelEvent>>::install(
+    std::make_unique<pln::events::EventEmitter<const pln::events::LoadNextLevelEvent>>());
+
+  pln::Service<pln::events::EventEmitter<const pln::events::LoseEvent>>::install(
+    std::make_unique<pln::events::EventEmitter<const pln::events::LoseEvent>>());
+
+  pln::Service<pln::events::EventEmitter<const pln::events::LoadCurrentLevelEvent>>::install(
     std::make_unique<
-      Events::EventEmitter<const Events::LoadCurrentLevelEvent>>());
+      pln::events::EventEmitter<const pln::events::LoadCurrentLevelEvent>>());
 
-  auto window = init_window(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
-  auto context = init_context(window.get());
-  auto control = std::make_unique<Control>();
+  auto window = pln::sdl::init_window(pln::consts::DEFAULT_SCREEN_WIDTH,
+                                      pln::consts::DEFAULT_SCREEN_HEIGHT);
+  auto context = pln::sdl::init_context(window.get());
+  auto control = std::make_unique<pln::control::Control>();
 
-  auto geometry_pass_shader = std::make_unique<Shader>();
+  auto geometry_pass_shader = std::make_unique<pln::shaders::Shader>();
   {
-    auto vertex = load_text(SHADERS_DIR / "main_v.glsl").or_crash();
-    auto fragment = load_text(SHADERS_DIR / "deferred_geometry_pass_f.glsl")
+    auto vertex = load_text(pln::consts::SHADERS_DIR / "main_v.glsl").or_crash();
+    auto fragment = load_text(pln::consts::SHADERS_DIR / "deferred_geometry_pass_f.glsl")
                       .or_crash();
     geometry_pass_shader->compile(vertex, fragment);
   }
 
-  auto light_pass_shader = std::make_unique<Shader>();
+  auto light_pass_shader = std::make_unique<pln::shaders::Shader>();
   {
-    auto vertex = load_text(SHADERS_DIR / "output_v.glsl").or_crash();
-    auto fragment = load_text(SHADERS_DIR / "deferred_light_pass_f.glsl")
+    auto vertex = load_text(pln::consts::SHADERS_DIR / "output_v.glsl").or_crash();
+    auto fragment = load_text(pln::consts::SHADERS_DIR / "deferred_light_pass_f.glsl")
                       .or_crash();
     light_pass_shader->compile(vertex, fragment);
   }
 
-  auto particle_shader = std::make_unique<Shader>();
+  auto particle_shader = std::make_unique<pln::shaders::Shader>();
   {
-    auto vertex = load_text(SHADERS_DIR / "main_v.glsl").or_crash();
-    auto fragment = load_text(SHADERS_DIR / "particle_f.glsl").or_crash();
+    auto vertex = load_text(pln::consts::SHADERS_DIR / "main_v.glsl").or_crash();
+    auto fragment = load_text(pln::consts::SHADERS_DIR / "particle_f.glsl").or_crash();
     particle_shader->compile(vertex, fragment);
   }
 
-  auto ui_shader = std::make_unique<Shader>();
+  auto ui_shader = std::make_unique<pln::shaders::Shader>();
   {
-    auto vertex = load_text(SHADERS_DIR / "main_v.glsl").or_crash();
-    auto fragment = load_text(SHADERS_DIR / "particle_f.glsl").or_crash();
+    auto vertex = load_text(pln::consts::SHADERS_DIR / "main_v.glsl").or_crash();
+    auto fragment = load_text(pln::consts::SHADERS_DIR / "particle_f.glsl").or_crash();
     ui_shader->compile(vertex, fragment);
   }
 
-  auto inter_shader = std::make_unique<Shader>();
+  auto inter_shader = std::make_unique<pln::shaders::Shader>();
   {
-    auto vertex = load_text(SHADERS_DIR / "output_v.glsl").or_crash();
-    auto fragment = load_text(SHADERS_DIR / "output_f.glsl").or_crash();
+    auto vertex = load_text(pln::consts::SHADERS_DIR / "output_v.glsl").or_crash();
+    auto fragment = load_text(pln::consts::SHADERS_DIR / "output_f.glsl").or_crash();
     inter_shader->compile(vertex, fragment);
   }
 
-  auto deferred_shading = std::make_unique<DeferredShading>(
+  auto deferred_shading = std::make_unique<pln::shading::DeferredShading>(
     std::move(geometry_pass_shader),
     std::move(light_pass_shader),
-    create_quad(1.0, 1.0, FARTHEST_NDS_Z_COORD),
-    DEFAULT_SCREEN_WIDTH,
-    DEFAULT_SCREEN_HEIGHT);
+    pln::mesh::create_quad(1.0, 1.0, pln::consts::FARTHEST_NDS_Z_COORD),
+    pln::consts::DEFAULT_SCREEN_WIDTH,
+    pln::consts::DEFAULT_SCREEN_HEIGHT);
 
-  auto vg_canvas = init_vg_canvas(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
+  auto vg_canvas = pln::sdl::init_vg_canvas(pln::consts::DEFAULT_SCREEN_WIDTH,
+                                            pln::consts::DEFAULT_SCREEN_HEIGHT);
 
-  auto assets_dir = get_excutable_path() / DEFAULT_ASSETS_DIR;
+  auto assets_dir = pln::utils::system::get_excutable_path() / pln::consts::DEFAULT_ASSETS_DIR;
   if (argc == 2) {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     assets_dir = std::filesystem::path(std::string(argv[1]));
   }
-  if (System::is_pc) {
+  if (pln::utils::platform::IS_PC) {
     if (!is_file_exists(assets_dir)) {
-      Services::logger().error(
+      pln::services::logger().error(
         std::format("Assets directory was not found {}", assets_dir.string()));
       return 1;
     }
   }
-  Services::logger().info(
+  pln::services::logger().info(
     std::format("Used assets directory: {}", assets_dir.string()));
 
-  auto app = std::make_unique<App>(assets_dir);
+  auto app = std::make_unique<pln::app::App>(assets_dir);
   app->gl_context(std::move(context));
   app->control(std::move(control));
   app->deferred_shading(std::move(deferred_shading));
@@ -109,24 +134,24 @@ main(int argc, char* argv[])
   app->window(std::move(window));
   app->validate();
 
-  app->add_handler([](App& app) {
+  app->add_handler([](pln::app::App& app) {
     for (auto& scene : app.scenes()) {
       scene->update();
     }
   });
-  app->add_handler(render_system);
+  app->add_handler(pln::systems::renderer::render);
 
-  auto translations = load_translations(app->assets_dir() / "text" / "en.json");
+  auto translations = pln::fileio::load_translations(app->assets_dir() / "text" / "en.json");
   app->set_translations(translations);
 
-  Service<App>::install(std::move(app));
+  pln::Service<pln::app::App>::install(std::move(app));
 
-  auto theme = load_theme(Services::app().levels_dir() / "theme.json");
-  Service<const GUI::Theme>::install(std::move(theme));
+  auto theme = pln::fileio::load_theme(pln::services::app().levels_dir() / "theme.json");
+  pln::Service<const Theme>::install(std::move(theme));
 
-  auto quad = std::make_unique<Services::GuiQuad>(create_quad(1, 1, 0));
-  Service<const Services::GuiQuad>::install(std::move(quad));
+  auto quad = std::make_unique<pln::services::GuiQuad>(pln::mesh::create_quad(1, 1, 0));
+  pln::Service<const pln::services::GuiQuad>::install(std::move(quad));
 
-  register_common_handlers();
-  game_loop();
+  pln::common_handlers::register_common_handlers();
+  pln::game_loop();
 }

@@ -4,9 +4,10 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "src/utils/interpolations.h"
+import pln.utils.interpolations;
 
 using Catch::Matchers::WithinRel;
+using namespace pln::utils::interpolations;
 
 const float HALF_SMOOTH = 0.5f;
 

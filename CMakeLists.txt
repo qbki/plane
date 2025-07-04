@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.27)
+cmake_minimum_required(VERSION 3.31.6)
 include(${CMAKE_SOURCE_DIR}/configs/cmake/utils.cmake)
 include(${CMAKE_SOURCE_DIR}/configs/cmake/license.cmake)
 
@@ -38,7 +38,9 @@ endfunction()
 
 set(JSON_ImplicitConversions, OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_SCAN_FOR_MODULES ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(SRC_SHADERS_DIRECTORY ${CMAKE_SOURCE_DIR}/shaders)
@@ -58,6 +60,7 @@ find_package(glm CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_path(TINYGLTF_INCLUDE_DIRS "tiny_gltf.h")
 find_package(Catch2 CONFIG REQUIRED)
+
 # <thorvg>
 find_package(PkgConfig)
 pkg_check_modules(thorvg REQUIRED IMPORTED_TARGET thorvg)
@@ -77,6 +80,7 @@ add_compile_flag("-Wextra")
 add_compile_flag("-Wpedantic")
 add_compile_flag("-pedantic-errors")
 add_compile_flag("-fno-exceptions")
+add_linker_flag("-fopenmp")
 if(DEFINED EMSCRIPTEN)
   add_compile_flag("-O1")
   add_linker_flag("-sUSE_SDL=2")
@@ -103,13 +107,21 @@ if(DEFINED EMSCRIPTEN)
   #add_linker_flag("-gsource-map")
 endif()
 
-file(GLOB_RECURSE SOURCES src/*)
+file(GLOB_RECURSE SOURCES src/*.cpp)
+file(GLOB_RECURSE SOURCES_MODULES src/*.cppm)
 set(TEST_SOURCES ${SOURCES})
+set(MODULES_SOURCES src/control.cpp)
 list(FILTER SOURCES EXCLUDE REGEX ".tests.cpp$")
+list(FILTER SOURCES_MODULES EXCLUDE REGEX ".*tests-utils.*")
 list(FILTER TEST_SOURCES EXCLUDE REGEX "main.cpp$")
 
 if(BUILD_EXECUTABLE)
   add_executable(${PROJECT_NAME} ${SOURCES})
+  target_sources(${PROJECT_NAME}
+    PUBLIC
+      FILE_SET cpp_modules
+      TYPE CXX_MODULES FILES ${SOURCES_MODULES})
+  target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
   setup_link_libraries(${PROJECT_NAME})
   if(DEFINED EMSCRIPTEN)
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "index")
@@ -137,6 +149,10 @@ if(BUILD_TESTS)
   enable_testing()
   set(TESTS_TARGET tests)
   add_executable(${TESTS_TARGET} ${TEST_SOURCES})
+  target_sources(${TESTS_TARGET}
+    PUBLIC
+      FILE_SET cpp_modules
+      TYPE CXX_MODULES FILES ${SOURCES_MODULES})
   set_target_properties(
     tests
     PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests)

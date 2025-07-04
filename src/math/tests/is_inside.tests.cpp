@@ -3,8 +3,10 @@
 #include <catch2/catch_test_macros.hpp>
 #include <glm/vec2.hpp>
 
-#include "../intersection.h"
-#include "../shapes.h"
+import pln.math.intersections;
+import pln.math.shapes;
+
+using namespace pln::math;
 
 TEST_CASE("is_inside")
 {

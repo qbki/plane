@@ -4,43 +4,45 @@
 #include <glm/vec3.hpp>
 #include <vector>
 
-#include "src/math/shapes.h"
+import pln.collections.octree;
+import pln.math.shapes;
 
-#include "octree.h"
+using namespace pln::collections;
+using namespace pln::math;
 
-const Shape::AABB UNIT_BBOX { .min = { -1, -1, -1 }, .max = { 1, 1, 1 } };
+const AABB UNIT_BBOX { .min = { -1, -1, -1 }, .max = { 1, 1, 1 } };
 
 // I have to make a small offset, in other case
 // there will be intersections of volumes.
-const Shape::AABB BBOX_MIN_MAX_TOP {
+const AABB BBOX_MIN_MAX_TOP {
   .min = { -1, 0.0001, 0.0001 },
   .max = { -0.0001, 1, 1 },
 };
-const Shape::AABB BBOX_MAX_MAX_TOP {
+const AABB BBOX_MAX_MAX_TOP {
   .min = { 0.0001, 0.0001, 0.0001 },
   .max = { 1, 1, 1 },
 };
-const Shape::AABB BBOX_MIN_MIN_TOP {
+const AABB BBOX_MIN_MIN_TOP {
   .min = { -1, -1, 0.0001 },
   .max = { -0.0001, -0.0001, 1 },
 };
-const Shape::AABB BBOX_MAX_MIN_TOP {
+const AABB BBOX_MAX_MIN_TOP {
   .min = { 0.0001, -1, 0.0001 },
   .max = { 1, -0.0001, 1 },
 };
-const Shape::AABB BBOX_MIN_MAX_BOTTOM {
+const AABB BBOX_MIN_MAX_BOTTOM {
   .min = { -1, 0.0001, -1 },
   .max = { -0.0001, 1, -0.0001 },
 };
-const Shape::AABB BBOX_MAX_MAX_BOTTOM {
+const AABB BBOX_MAX_MAX_BOTTOM {
   .min = { 0.0001, 0.0001, -1 },
   .max = { 1, 1, -0.0001 },
 };
-const Shape::AABB BBOX_MIN_MIN_BOTTOM {
+const AABB BBOX_MIN_MIN_BOTTOM {
   .min = { -1, -1, -1 },
   .max = { -0.0001, -0.0001, -0.0001 },
 };
-const Shape::AABB BBOX_MAX_MIN_BOTTOM {
+const AABB BBOX_MAX_MIN_BOTTOM {
   .min = { 0.0001, -1, -1 },
   .max = { 1, -0.0001, -0.0001 },
 };
@@ -50,7 +52,7 @@ TEST_CASE("Octree")
   SECTION(
     "should return an item in a circumscribing valume if that item exists")
   {
-    const Shape::Sphere sphere {
+    const Sphere sphere {
       .center = { 0.5, 0.5, 0.5 },
       .radius = 0.4,
     };
@@ -71,7 +73,7 @@ TEST_CASE("Octree")
   SECTION(
     "should return an item in the center of the bounding volume in all cases")
   {
-    const Shape::Sphere sphere {
+    const Sphere sphere {
       .center = { 0, 0, 0 },
       .radius = 0.4,
     };
@@ -92,7 +94,7 @@ TEST_CASE("Octree")
   SECTION("should return an exact item by requesting associated bounding boxes")
   {
     auto sphere = [](float x, float y, float z) {
-      return Shape::Sphere {
+      return Sphere {
         .center = { x, y, z },
         .radius = 0.4,
       };

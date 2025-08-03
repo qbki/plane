@@ -11,6 +11,7 @@ import pln.events.event_emitter;
 import pln.game_state.state;
 import pln.scene.iscene;
 import pln.services.app;
+import pln.sounds.sound_source;
 
 using namespace pln::game_state;
 
@@ -96,6 +97,12 @@ public:
     return _entities;
   }
 
+  void
+  add_sound(sounds::SoundSource source) override
+  {
+    _sounds.push_back(std::move(source));
+  }
+
 private:
   bool _is_deferred = true;
   bool _is_paused = false;
@@ -106,6 +113,7 @@ private:
   pln::events::EventEmitter<IScene> _events {};
   pln::events::EventEmitter<IScene> _cancel_events {};
   std::unique_ptr<State> _state = std::make_unique<State>();
+  std::list<sounds::SoundSource> _sounds {};
 };
 
 }

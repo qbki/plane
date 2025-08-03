@@ -16,7 +16,9 @@ import pln.events.event;
 import pln.game_state.factory;
 import pln.scene.iscene;
 import pln.services.app;
+import pln.services.cache;
 import pln.services.events;
+import pln.sounds.sound_source;
 import pln.utils.common;
 import pln.utils.random;
 
@@ -69,23 +71,14 @@ gun_shooting(pln::scene::IScene& scene)
       projectile_transform.translate(owner_transform.translation());
 
       if (weapon.shot_sound_path.has_value()) {
-        auto player_position = pln::services::app().info().player_position;
-        auto owner_position = owner_transform.translation();
-        auto distance = glm::distance(owner_position, player_position);
+        // TODO add sound position
+        //auto player_position = pln::services::app().info().player_position;
+        //auto owner_position = owner_transform.translation();
 
-        // <>
-        // Used modified Inverse Square Law for Sound.
-        // The coefficient was lined up empirically.
-        const auto coefficient = 10.0f;
-        auto intencity = is_approx_equal(distance, 0.0f)
-                           ? 1.0f
-                           : coefficient / (distance * distance);
-        // </>
-
-        pln::services::events<const pln::events::ShootEvent>().emit({
-          .sound_path { weapon.shot_sound_path.value() },
-          .volume = intencity,
-        });
+        auto buffer = services::cache().get_sound(*weapon.shot_sound_path);
+        auto sound_source = sounds::SoundSource(buffer->buffer_idx());
+        sound_source.play();
+        scene.add_sound(std::move(sound_source));
       }
       weapon.left_time_to_shoot = 1.0f / weapon.fire_rate;
     });

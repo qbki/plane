@@ -5,6 +5,7 @@ export module pln.gui.main_menu_factory;
 
 import pln.components.common;
 import pln.events.event;
+import pln.events.event_emitter;
 import pln.fileio.save_data_io;
 import pln.gui.components.ui;
 import pln.gui.screens.settings_screen;

@@ -226,17 +226,10 @@ load_next_level(const LoadNextLevelEvent&)
   }
 }
 
-void
-play_sound(const ShootEvent& sound_event)
-{
-  pln::services::cache().get_sound(sound_event.sound_path)->play(sound_event.volume);
-}
-
 export
 void
 register_common_handlers()
 {
-  pln::services::events<const ShootEvent>().add(play_sound);
   pln::services::events<const LoadCurrentLevelEvent>().add(
     load_current_level);
   pln::services::events<const LoseEvent>().add(load_lose_menu);

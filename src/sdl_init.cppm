@@ -1,8 +1,9 @@
 module;
+#include <AL/al.h>
+#include <AL/alc.h>
 #include <GL/glew.h>
 #include <SDL.h>
 #include <SDL_error.h>
-#include <SDL_mixer.h>
 #include <SDL_video.h>
 #include <cstddef>
 #include <format>
@@ -54,22 +55,11 @@ init_window(int screen_width, int screen_height)
 {
   // SDL
   int error = 0;
-  error = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+  error = SDL_Init(SDL_INIT_VIDEO);
   if (error < 0) {
     crash_with_sdl_error("Unable to init SDL");
   }
   pln::services::logger().info("SDL has been initialized.");
-
-  // Audio
-  error = Mix_OpenAudio(MIX_DEFAULT_FREQUENCY,
-                        MIX_DEFAULT_FORMAT,
-                        MIX_DEFAULT_CHANNELS,
-                        pln::consts::DEFAULT_AUDIO_CHUNKSIZE);
-  if (error < 0) {
-    crash_with_sdl_error("Unable to init SDL_mixer");
-  }
-  Mix_AllocateChannels(pln::consts::DEFAULT_MAX_CHANNELS);
-  pln::services::logger().info("SDL_mixer has been initialized.");
 
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 #ifdef __EMSCRIPTEN__

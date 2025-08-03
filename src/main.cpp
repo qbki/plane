@@ -26,6 +26,7 @@ import pln.services.gui_quad;
 import pln.services.logger;
 import pln.shaders;
 import pln.shading.deferred_shading;
+import pln.sounds.sound_device;
 import pln.systems.renderer;
 import pln.utils.file_loaders;
 import pln.utils.platform;
@@ -132,6 +133,7 @@ main(int argc, char* argv[])
   app->ui_shader(std::move(ui_shader));
   app->intermediate_shader(std::move(inter_shader));
   app->window(std::move(window));
+  app->sound_device(std::make_unique<pln::sounds::SoundDevice>());
   app->validate();
 
   app->add_handler([](pln::app::App& app) {

@@ -1,5 +1,4 @@
 module;
-#include <SDL_mixer.h>
 #include <SDL_rwops.h>
 #include <filesystem>
 #include <format>
@@ -14,7 +13,7 @@ module;
 export module pln.utils.file_loaders;
 
 import pln.services.logger;
-import pln.sounds.sound;
+import pln.sounds.sound_buffer;
 import pln.utils.data_holder;
 import pln.utils.result;
 import pln.utils.tvg;
@@ -46,10 +45,6 @@ std::shared_ptr<pln::utils::data_holder::DataHolder>
 load_sdl_rw_data(const std::filesystem::path& path);
 
 export
-std::unique_ptr<pln::sounds::Sound>
-load_sound(const std::filesystem::path& sound_file_path);
-
-export
 void
 load_font(const std::filesystem::path&);
 
@@ -75,13 +70,10 @@ load_sdl_rw_data(const std::filesystem::path& path)
 
 
 export
-std::unique_ptr<pln::sounds::Sound>
+std::unique_ptr<pln::sounds::SoundBuffer>
 load_sound(const std::filesystem::path& sound_file_path)
 {
-  auto holder = load_sdl_rw_data(sound_file_path);
-  auto rwops = holder->rwops();
-  auto chunk = Mix_LoadWAV_RW(rwops.get(), 0);
-  return std::make_unique<pln::sounds::Sound>(chunk);
+  return std::make_unique<pln::sounds::SoundBuffer>(sound_file_path);
 }
 
 

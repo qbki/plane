@@ -1,5 +1,4 @@
 module;
-#include <SDL_mixer.h>
 #include <filesystem>
 #include <utility>
 
@@ -27,11 +26,12 @@ public:
     , _master_volume({})
   {
     _master_volume.value(Percent::TOP);
-    _master_volume.on_changed().add([this](auto) {
-      auto volume = this->master_volume().norm() * MIX_MAX_VOLUME;
-      auto mix_volume = static_cast<unsigned char>(volume);
-      Mix_MasterVolume(mix_volume);
-    });
+    // TODO Add master volume changing instead of this:
+    //_master_volume.on_changed().add([this](auto) {
+      //auto volume = this->master_volume().norm() * MIX_MAX_VOLUME;
+      //auto mix_volume = static_cast<unsigned char>(volume);
+      //Mix_MasterVolume(mix_volume);
+    //});
   }
 
 

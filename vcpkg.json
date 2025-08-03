@@ -7,9 +7,9 @@
     "nlohmann-json",
     "thorvg",
     "tinygltf",
+    { "name": "openal-soft", "platform": "linux", "features": ["pipewire", "pulseaudio"] },
     { "name": "glew", "platform": "linux" },
-    { "name": "sdl2", "platform": "linux", "features": ["alsa"] },
-    { "name": "sdl2-mixer", "platform": "linux" }
+    { "name": "sdl2", "platform": "linux" }
   ],
   "overrides": [
     { "name": "catch2", "version": "3.5.4" },
@@ -18,8 +18,8 @@
     { "name": "glm", "version": "1.0.1#2" },
     { "name": "ms-gsl", "version": "4.0.0" },
     { "name": "nlohmann-json", "version": "3.11.3" },
+    { "name": "openal-soft", "version": "1.24.3#1" },
     { "name": "sdl2", "version": "2.30.1" },
-    { "name": "sdl2-mixer", "version": "2.8.0" },
     { "name": "thorvg", "version": "0.15.13" },
     { "name": "tinygltf", "version": "2.8.21" }
   ]

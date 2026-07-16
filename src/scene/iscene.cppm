@@ -7,6 +7,7 @@ export module pln.scene.iscene;
 import pln.collections.octree;
 import pln.events.event_emitter;
 import pln.game_state.state;
+import pln.sounds.sound_source;
 
 using namespace pln::events;
 using namespace pln::game_state;

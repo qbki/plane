@@ -1,10 +1,11 @@
 module;
 #include <SDL_timer.h>
 #include <SDL_video.h>
-#include <filesystem> // IWYU pragma: export
+#include <filesystem>
 #include <format>
 #include <functional>
-#include <glm/vec2.hpp> // IWYU pragma: export
+#include <glm/vec2.hpp>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -23,6 +24,7 @@ import pln.sdl;
 import pln.shaders;
 import pln.shading.deferred_shading;
 import pln.shading.framebuffer;
+import pln.sounds.sound_device;
 import pln.utils.crash;
 
 namespace pln::app {
@@ -33,33 +35,6 @@ public:
   using Handler = std::function<void(App& app)>;
   using TranslationsMapping = std::unordered_map<std::string, std::string>;
 
-private:
-  unsigned long _last_time_point {};
-  float _delta_time {};
-  float _time {};
-  bool _is_game_running = true;
-  pln::app::Info _info {};
-  pln::sdl::WindowPtr _window { nullptr, [](SDL_Window*) {} };
-  pln::sdl::ContextPtr _gl_context { nullptr, [](SDL_GLContext) {} };
-  pln::app::Settings _settings { pln::consts::SETTINGS_FILE };
-  pln::app::Save _save { pln::consts::SAVE_DATA_FILE };
-  std::vector<std::unique_ptr<pln::scene::IScene>> _scenes {};
-  std::unique_ptr<pln::control::Control> _control {};
-  pln::math::RectSize _screen_size { pln::consts::DEFAULT_SCREEN_WIDTH,
-                                     pln::consts::DEFAULT_SCREEN_HEIGHT };
-  std::unique_ptr<pln::shading::DeferredShading> _deferred_shading {};
-  std::unique_ptr<pln::shading::FrameBuffer>
-    _intermediate_fb = std::make_unique<pln::shading::FrameBuffer>();
-  std::unique_ptr<pln::shaders::Shader> _particle_shader {};
-  std::unique_ptr<pln::shaders::Shader> _ui_shader {};
-  std::unique_ptr<pln::shaders::Shader> _intermediate_shader {};
-  TranslationsMapping _translations;
-  std::filesystem::path _assets_dir { pln::consts::DEFAULT_ASSETS_DIR };
-
-  std::vector<Handler> _handlers = std::vector<Handler>();
-  std::vector<Handler> _once_handlers = std::vector<Handler>();
-
-public:
   App(const App&) = delete;
   App& operator=(const App&) = delete;
   App(App&&) = delete;
@@ -179,6 +154,20 @@ public:
   {
     return _gl_context.get();
   }
+
+
+  void
+  sound_device(std::unique_ptr<sounds::SoundDevice> sound_device)
+  {
+    _sound_device = std::move(sound_device);
+  }
+
+  sounds::SoundDevice &
+  sound_device()
+  {
+    return *_sound_device;
+  }
+
 
   /**
    * Returns seconds since the last frame.
@@ -328,6 +317,33 @@ public:
   }
 
 private:
+  unsigned long _last_time_point {};
+  float _delta_time {};
+  float _time {};
+  bool _is_game_running = true;
+  pln::app::Info _info {};
+  pln::sdl::WindowPtr _window { nullptr, [](SDL_Window*) {} };
+  pln::sdl::ContextPtr _gl_context { nullptr, [](SDL_GLContext) {} };
+  std::unique_ptr<sounds::SoundDevice> _sound_device { nullptr };
+  pln::app::Settings _settings { pln::consts::SETTINGS_FILE };
+  pln::app::Save _save { pln::consts::SAVE_DATA_FILE };
+  std::vector<std::unique_ptr<pln::scene::IScene>> _scenes {};
+  std::unique_ptr<pln::control::Control> _control {};
+  pln::math::RectSize _screen_size { pln::consts::DEFAULT_SCREEN_WIDTH,
+                                     pln::consts::DEFAULT_SCREEN_HEIGHT };
+  std::unique_ptr<pln::shading::DeferredShading> _deferred_shading {};
+  std::unique_ptr<pln::shading::FrameBuffer>
+    _intermediate_fb = std::make_unique<pln::shading::FrameBuffer>();
+  std::unique_ptr<pln::shaders::Shader> _particle_shader {};
+  std::unique_ptr<pln::shaders::Shader> _ui_shader {};
+  std::unique_ptr<pln::shaders::Shader> _intermediate_shader {};
+  TranslationsMapping _translations;
+  std::filesystem::path _assets_dir { pln::consts::DEFAULT_ASSETS_DIR };
+
+  std::vector<Handler> _handlers = std::vector<Handler>();
+  std::vector<Handler> _once_handlers = std::vector<Handler>();
+
+
   template<typename T, typename F>
   void
   or_crash(std::unique_ptr<T, F>& ptr, const std::string& message)

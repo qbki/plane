@@ -151,6 +151,20 @@ public:
     }
     return _matrix;
   }
+
+
+  glm::vec3
+  up() const
+  {
+    return matrix() * glm::vec4(0, 1, 0, 0);
+  }
+
+
+  glm::vec3
+  forward() const
+  {
+    return matrix() * glm::vec4(1, 0, 0, 0);
+  }
 };
 
 }

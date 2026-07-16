@@ -3,7 +3,6 @@ module;
 #include <algorithm>
 #include <format>
 #include <glm/mat3x3.hpp>
-#include <iterator>
 #include <ranges>
 #include <string>
 #include <unordered_map>

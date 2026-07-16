@@ -11,6 +11,7 @@ import pln.events.event_emitter;
 import pln.game_state.state;
 import pln.scene.iscene;
 import pln.services.app;
+import pln.sounds.sound_source;
 
 using namespace pln::game_state;
 

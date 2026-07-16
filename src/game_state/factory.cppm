@@ -1,4 +1,5 @@
 module;
+#include <al.h>
 #include <entt/entt.hpp>
 #include <functional>
 #include <glm/gtc/constants.hpp>
@@ -15,6 +16,7 @@ import pln.gui.components.text;
 import pln.mesh_generators;
 import pln.services.cache;
 import pln.services.theme;
+import pln.sounds.sound_source;
 
 using namespace pln::components;
 
@@ -223,6 +225,21 @@ make_directional_light(std::shared_ptr<entt::registry>& registry,
   registry->emplace<Direction>(entity, glm::zero<glm::vec3>());
   registry->emplace<Color>(entity, glm::zero<glm::vec3>());
   registry->emplace<DirectionalLightKind>(entity);
+  return entity;
+}
+
+
+export
+entt::entity
+make_sound_source(std::shared_ptr<entt::registry>& registry,
+                  ALuint buffer)
+{
+  auto sound_source = sounds::SoundSource(buffer);
+  sound_source.play();
+
+  auto entity = registry->create();
+  registry->emplace<sounds::SoundSource>(entity, std::move(sound_source));
+  registry->emplace<Transform>(entity);
   return entity;
 }
 

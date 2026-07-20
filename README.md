@@ -42,6 +42,15 @@ fork this project and populate it with your assets
 and code.
 
 
+## Build
+
+```sh
+conan install . --build=missing  --profile=./configs/profiles/x64-linux-rel
+cmake --preset x86_64-linux-release -DBUILD_EXECUTABLE=True
+cmake --build --preset x86_64-linux-release
+```
+
+
 ## Linux build
 
 Run this command and install all system

@@ -21,6 +21,7 @@ install-tools:
 
 
 init:
+	@conan install . --build=missing --profile $(CONFIGS_DIR)/profiles/x64-linux-rel
 	@cmake --preset x86_64-linux-release
 	@cd $(BUILD_DIR) && \
 		(ls compile_commands.json 2> /dev/null && \

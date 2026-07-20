@@ -1,5 +1,5 @@
-#if defined (__linux__)
 module;
+#if defined (__linux__)
 #include <filesystem>
 #include <format>
 #include <fstream>

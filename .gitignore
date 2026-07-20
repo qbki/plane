@@ -1,5 +1,6 @@
 /CMakeUserPresets.json
 /CMakeLists.txt.user
+/ConanPresets.json
 
 /assets
 /build

@@ -2,18 +2,14 @@ cmake_minimum_required(VERSION 3.31.6)
 include(${CMAKE_SOURCE_DIR}/configs/cmake/utils.cmake)
 include(${CMAKE_SOURCE_DIR}/configs/cmake/license.cmake)
 
-set(CMAKE_TOOLCHAIN_FILE
-    "${CMAKE_CURRENT_SOURCE_DIR}/tools/vcpkg/scripts/buildsystems/vcpkg.cmake"
-    CACHE STRING "Vcpkg toolchain file")
-
 project(plane VERSION 0.1.7)
 
 function(setup_link_libraries target_name)
   target_link_libraries(${target_name} PRIVATE EnTT::EnTT)
   target_link_libraries(${target_name} PRIVATE Microsoft.GSL::GSL)
   target_link_libraries(${target_name} PRIVATE OpenAL::OpenAL)
-  target_link_libraries(${target_name} PRIVATE PkgConfig::thorvg)
-  target_link_libraries(${target_name} PRIVATE glm::glm-header-only)
+  target_link_libraries(${target_name} PRIVATE thorvg::thorvg)
+  target_link_libraries(${target_name} PRIVATE TinyGLTF::TinyGLTF)
 
   target_link_libraries(${target_name} PRIVATE nlohmann_json::nlohmann_json)
   set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
@@ -25,9 +21,7 @@ function(setup_link_libraries target_name)
     target_link_libraries(${target_name} PRIVATE GL GLEW SDL2)
   else()
     target_link_libraries(${target_name} PRIVATE GLEW::GLEW)
-    target_link_libraries(${target_name} PRIVATE
-      $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-      $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>)
+    target_link_libraries(${target_name} PRIVATE SDL2::SDL2main)
   endif()
 
   if(${BUILD_TESTS})
@@ -53,18 +47,16 @@ set(THIRD_PARTY_LICENSES_FILE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/THIRD_PARTY_LICE
 option(BUILD_TESTS "Turn this ON to compile tests" OFF)
 option(BUILD_EXECUTABLE "Turn this ON to compile an executable file" OFF)
 
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;${CMAKE_FIND_LIBRARY_SUFFIXES}")
+
 find_package(EnTT CONFIG REQUIRED)
 find_package(Microsoft.GSL CONFIG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
-find_path(TINYGLTF_INCLUDE_DIRS "tiny_gltf.h")
+find_package(TinyGLTF REQUIRED)
 find_package(Catch2 CONFIG REQUIRED)
-
-# <thorvg>
-find_package(PkgConfig)
-pkg_check_modules(thorvg REQUIRED IMPORTED_TARGET thorvg)
-# </thorvg>
+find_package(thorvg REQUIRED)
 
 if(NOT DEFINED EMSCRIPTEN)
   find_package(GLEW REQUIRED)
@@ -79,8 +71,7 @@ add_compile_flag("-Wextra")
 add_compile_flag("-Wpedantic")
 add_compile_flag("-pedantic-errors")
 add_compile_flag("-fno-exceptions")
-add_compile_flag("-fopenmp")
-add_linker_flag("-fopenmp")
+add_compile_flag("-fopenmp") # for thorvg multithreading
 if(DEFINED EMSCRIPTEN)
   add_compile_flag("-O1")
   add_linker_flag("-sUSE_SDL=2")
@@ -170,4 +161,23 @@ if(BUILD_EXECUTABLE)
     install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
   endif()
   include(${CMAKE_SOURCE_DIR}/configs/cmake/pack.cmake)
+
+  # <> For making a portable build and ignoring system compilers
+  execute_process (
+    COMMAND bash -c "clang -print-file-name=libomp.so"
+    OUTPUT_VARIABLE PATH_TO_LIBOMP
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  file(COPY ${PATH_TO_LIBOMP} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+  execute_process (
+    COMMAND bash -c "clang -print-file-name=libc++.so"
+    OUTPUT_VARIABLE PATH_TO_LIBCPP
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  file(GLOB PATH_TO_LIBCPP_FILES "${PATH_TO_LIBCPP}*")
+  file(COPY ${PATH_TO_LIBCPP_FILES} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+  # </>
+
 endif()
+

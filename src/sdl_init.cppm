@@ -2,15 +2,16 @@ module;
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <GL/glew.h>
-#include <SDL.h>
-#include <SDL_error.h>
-#include <SDL_video.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_error.h>
+#include <SDL3/SDL_video.h>
 #include <cstddef>
 #include <format>
 #include <memory>
 #include <string>
 #include <thorvg.h>
 #include <thread>
+#include <type_traits>
 #ifdef __EMSCRIPTEN__
 #include <emscripten/html5.h>
 #endif
@@ -28,7 +29,7 @@ import pln.utils.tvg;
 namespace pln::sdl {
 
 export using WindowPtr = std::unique_ptr<SDL_Window, void (*)(SDL_Window*)>;
-export using ContextPtr = std::unique_ptr<void, void (*)(SDL_GLContext)>;
+export using ContextPtr = std::unique_ptr<SDL_GLContextState, void (*)(SDL_GLContext)>;
 export using UiCanvasPtr = std::unique_ptr<pln::gui::UiCanvas>;
 
 void
@@ -72,11 +73,9 @@ init_window(int screen_width, int screen_height)
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
   auto window = SDL_CreateWindow("Plane",
-                                 SDL_WINDOWPOS_CENTERED,
-                                 SDL_WINDOWPOS_CENTERED,
                                  screen_width,
                                  screen_height,
-                                 SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL
+                                 SDL_WINDOW_OPENGL
                                    | SDL_WINDOW_RESIZABLE
                                    | SDL_WINDOW_MAXIMIZED);
   if (window == nullptr) {
@@ -102,14 +101,14 @@ export
 ContextPtr
 init_context(SDL_Window* window)
 {
-  auto ctx = SDL_GL_CreateContext(window);
+  auto* ctx = SDL_GL_CreateContext(window);
   if (ctx == nullptr) {
     crash_with_sdl_error("Unable to create GL Context");
   }
   pln::services::logger().info("Context has been created.");
 
   auto swap_interwal_error = SDL_GL_SetSwapInterval(1);
-  if (swap_interwal_error < 0) {
+  if (!swap_interwal_error) {
     crash_with_sdl_error("Unable to enable VSync");
   }
 
@@ -133,7 +132,7 @@ init_context(SDL_Window* window)
   glDebugMessageCallback(messageCallback, nullptr);
 #endif
 
-  return { ctx, [](auto c) { SDL_GL_DeleteContext(c); } };
+  return { ctx, [](auto* c) { SDL_GL_DestroyContext(c); } };
 }
 
 export

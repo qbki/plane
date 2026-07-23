@@ -1,5 +1,5 @@
 module;
-#include <SDL_mouse.h>
+#include <SDL3/SDL_mouse.h>
 #include <glm/vec2.hpp>
 
 export module pln.utils.mouse;
@@ -7,11 +7,11 @@ export module pln.utils.mouse;
 namespace pln::utils::mouse {
 
 export
-glm::ivec2
+glm::vec2
 mouse_position()
 {
-  int x = 0;
-  int y = 0;
+  float x = 0;
+  float y = 0;
   SDL_GetMouseState(&x, &y);
   return { x, y };
 }

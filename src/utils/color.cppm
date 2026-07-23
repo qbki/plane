@@ -1,5 +1,4 @@
 module;
-#include <SDL_rwops.h>
 #include <glm/vec3.hpp>
 #include <limits>
 #include <vector>

@@ -20,7 +20,7 @@ class App(ConanFile):
     self.requires("ms-gsl/4.0.0")
     self.requires("nlohmann_json/3.12.0")
     self.requires("openal-soft/1.24.3")
-    self.requires("sdl/2.32.10")
+    self.requires("sdl/3.4.8")
     self.requires("thorvg/0.15.16")
     self.requires("tinygltf/2.9.7")
 

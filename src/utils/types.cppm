@@ -1,5 +1,4 @@
 module;
-#include <SDL_rwops.h>
 #include <cxxabi.h>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/vec3.hpp>

@@ -1,7 +1,7 @@
 module;
 #include <AL/al.h>
 #include <AL/alc.h>
-#include <SDL2/SDL_audio.h>
+#include <SDL3/SDL_audio.h>
 #include <filesystem>
 #include <format>
 
@@ -27,10 +27,10 @@ public:
     uint32_t data_size {0};
 
     SDL_AudioSpec audio_spec;
-    auto *result = SDL_LoadWAV(path.c_str(),
-                               &audio_spec,
-                               &_data_buffer,
-                               &data_size);
+    bool result = SDL_LoadWAV(path.c_str(),
+                              &audio_spec,
+                              &_data_buffer,
+                              &data_size);
     if (!result) {
       utils::crash(std::format("Can't load WAV file: {}", path.c_str()));
     }
@@ -54,7 +54,7 @@ public:
       alDeleteBuffers(static_cast<ALuint>(1), &_al_buffer);
       check_al_error("Can't remove OpenAL buffer");
     }
-    SDL_FreeWAV(_data_buffer);
+    SDL_free(_data_buffer);
   }
 
 
@@ -73,13 +73,12 @@ private:
     bool is_stereo {channels > 1};
 
     switch (samples) {
-    case AUDIO_U8:
-    case AUDIO_S8:
+    case SDL_AUDIO_U8:
+    case SDL_AUDIO_S8:
       return is_stereo
         ? AL_FORMAT_STEREO8
         : AL_FORMAT_MONO8;
-    case AUDIO_S16:
-    case AUDIO_U16:
+    case SDL_AUDIO_S16:
       return is_stereo
         ? AL_FORMAT_STEREO16
         : AL_FORMAT_MONO16;

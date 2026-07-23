@@ -1,9 +1,9 @@
 module;
 #include <GL/glew.h>
-#include <SDL_events.h>
-#include <SDL_keycode.h>
-#include <SDL_timer.h>
-#include <SDL_video.h>
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_keycode.h>
+#include <SDL3/SDL_timer.h>
+#include <SDL3/SDL_video.h>
 #include <memory>
 #include <vector>
 #ifdef __EMSCRIPTEN__
@@ -71,29 +71,27 @@ inner_game_loop(pln::app::App& app)
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     switch (event.type) {
-      case SDL_QUIT: {
+      case SDL_EVENT_QUIT: {
         app.is_running(false);
         break;
       }
-      case SDL_KEYDOWN: {
-        if (event.key.keysym.sym == SDLK_q) {
+      case SDL_EVENT_KEY_DOWN: {
+        if (event.key.key == SDLK_Q) {
           app.is_running(false);
         }
         break;
       }
-      case SDL_WINDOWEVENT: {
-        if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-          auto width = event.window.data1;
-          auto height = event.window.data2;
-          resize_screens(app, width, height);
-        }
+      case SDL_EVENT_WINDOW_RESIZED: {
+        auto width = event.window.data1;
+        auto height = event.window.data2;
+        resize_screens(app, width, height);
         break;
       }
     }
     app.control().update(event);
   }
 
-  app.update(SDL_GetTicks64());
+  app.update(SDL_GetTicks());
 
   SDL_GL_SwapWindow(&app.window());
 };

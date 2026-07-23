@@ -1,5 +1,4 @@
 module;
-#include <SDL_rwops.h>
 #include <filesystem>
 #include <format>
 #include <memory>

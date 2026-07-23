@@ -1,5 +1,5 @@
 module;
-#include <SDL_rwops.h>
+#include <SDL3/SDL_iostream.h>
 #include <functional>
 #include <memory>
 #include <string>
@@ -15,8 +15,8 @@ namespace pln::utils::data_holder {
 export class DataHolder
 {
 public:
-  using RWopsPtrType = std::unique_ptr<SDL_RWops,
-                                       std::function<void(SDL_RWops*)>>;
+  using RWopsPtrType = std::unique_ptr<SDL_IOStream,
+                                       std::function<void(SDL_IOStream*)>>;
 
 private:
   std::vector<char> _data;
@@ -35,12 +35,12 @@ public:
   }
 
 
-  SDL_RWops*
+  SDL_IOStream*
   unsafe_rwops()
   {
-    auto rw = SDL_RWFromConstMem(_data.data(), static_cast<int>(_data.size()));
+    auto rw = SDL_IOFromConstMem(_data.data(), static_cast<int>(_data.size()));
     if (rw == nullptr) {
-      pln::utils::crash("Can't create RWops");
+      pln::utils::crash("Can't create stream from raw data");
     }
     return rw;
   }
@@ -55,9 +55,9 @@ public:
 
 private:
   static void
-  rwops_deleter(SDL_RWops* rwops)
+  rwops_deleter(SDL_IOStream* stream)
   {
-    SDL_FreeRW(rwops);
+    SDL_CloseIO(stream);
   }
 };
 

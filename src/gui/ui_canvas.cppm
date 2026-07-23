@@ -1,5 +1,5 @@
 module;
-#include <SDL_surface.h>
+#include <SDL3/SDL_surface.h>
 #include <algorithm>
 #include <cstdint>
 #include <filesystem>
@@ -108,27 +108,17 @@ public:
   void
   save_to_file(const std::filesystem::path& path)
   {
-    constexpr int DEPTH = 32;
-    constexpr uint32_t R_MASK = 0x00ff0000;
-    constexpr uint32_t G_MASK = 0x0000ff00;
-    constexpr uint32_t B_MASK = 0x000000ff;
-    constexpr uint32_t A_MASK = 0xff000000;
-
     if (_width <= 0 || _height <= 0) {
       pln::services::logger().info(
         "Canvas has zero size, it can't be saved into a file");
       return;
     }
 
-    auto sirface = SDL_CreateRGBSurfaceFrom(_target.data(),
-                                            _width,
-                                            _height,
-                                            DEPTH,
-                                            _width * 4,
-                                            R_MASK,
-                                            G_MASK,
-                                            B_MASK,
-                                            A_MASK);
+    auto sirface = SDL_CreateSurfaceFrom(_width,
+                                         _height,
+                                         SDL_PIXELFORMAT_RGBA8888,
+                                         _target.data(),
+                                         _width * 4);
     SDL_SaveBMP(sirface, path.c_str());
   }
 

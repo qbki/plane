@@ -21,7 +21,7 @@ function(setup_link_libraries target_name)
     target_link_libraries(${target_name} PRIVATE GL GLEW SDL2)
   else()
     target_link_libraries(${target_name} PRIVATE GLEW::GLEW)
-    target_link_libraries(${target_name} PRIVATE SDL2::SDL2main)
+    target_link_libraries(${target_name} PRIVATE sdl::sdl)
   endif()
 
   if(${BUILD_TESTS})
@@ -60,7 +60,7 @@ find_package(thorvg REQUIRED)
 
 if(NOT DEFINED EMSCRIPTEN)
   find_package(GLEW REQUIRED)
-  find_package(SDL2 CONFIG REQUIRED)
+  find_package(SDL3 CONFIG REQUIRED)
 endif()
 
 include_directories(${CMAKE_SOURCE_DIR})

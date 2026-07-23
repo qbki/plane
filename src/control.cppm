@@ -1,6 +1,6 @@
 module;
-#include <SDL_events.h>
-#include <SDL_keycode.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL_keycode.h>
 
 export module pln.control;
 
@@ -34,50 +34,50 @@ void
 Control::update(const SDL_Event& event)
 {
   switch (event.type) {
-    case SDL_KEYDOWN: {
-      if (event.key.keysym.sym == SDLK_a) {
+    case SDL_EVENT_KEY_DOWN: {
+      if (event.key.key == SDLK_A) {
         this->left = true;
       }
-      if (event.key.keysym.sym == SDLK_d) {
+      if (event.key.key == SDLK_D) {
         this->right = true;
       }
-      if (event.key.keysym.sym == SDLK_w) {
+      if (event.key.key == SDLK_W) {
         this->up = true;
       }
-      if (event.key.keysym.sym == SDLK_s) {
+      if (event.key.key == SDLK_S) {
         this->down = true;
       }
-      if (event.key.keysym.sym == SDLK_ESCAPE) {
+      if (event.key.key == SDLK_ESCAPE) {
         this->cancel = true;
       }
       break;
     }
-    case SDL_KEYUP: {
-      if (event.key.keysym.sym == SDLK_a) {
+    case SDL_EVENT_KEY_UP: {
+      if (event.key.key == SDLK_A) {
         this->left = false;
       }
-      if (event.key.keysym.sym == SDLK_d) {
+      if (event.key.key == SDLK_D) {
         this->right = false;
       }
-      if (event.key.keysym.sym == SDLK_w) {
+      if (event.key.key == SDLK_W) {
         this->up = false;
       }
-      if (event.key.keysym.sym == SDLK_s) {
+      if (event.key.key == SDLK_S) {
         this->down = false;
       }
-      if (event.key.keysym.sym == SDLK_ESCAPE) {
+      if (event.key.key == SDLK_ESCAPE) {
         this->cancel = false;
       }
       break;
     }
-    case SDL_MOUSEBUTTONDOWN: {
+    case SDL_EVENT_MOUSE_BUTTON_DOWN: {
       if (event.button.button == 1) {
         this->shooting = true;
         this->pointer_pressed = true;
       }
       break;
     }
-    case SDL_MOUSEBUTTONUP: {
+    case SDL_EVENT_MOUSE_BUTTON_UP: {
       if (event.button.button == 1) {
         this->shooting = false;
         this->pointer_pressed = false;

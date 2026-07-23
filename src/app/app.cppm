@@ -1,6 +1,6 @@
 module;
-#include <SDL_timer.h>
-#include <SDL_video.h>
+#include <SDL3/SDL_timer.h>
+#include <SDL3/SDL_video.h>
 #include <filesystem>
 #include <format>
 #include <functional>
@@ -42,7 +42,7 @@ public:
   ~App() = default;
 
   App(std::filesystem::path assets_dir)
-    : _last_time_point(SDL_GetTicks64())
+    : _last_time_point(SDL_GetTicks())
     , _assets_dir(std::move(assets_dir))
   {
   }
